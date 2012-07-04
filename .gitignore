@@ -1,0 +1,13 @@
+# Ignore /lib folder
+lib/
+
+# Build output
+build/
+
+src/**/**/bin
+src/**/**/obj
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates

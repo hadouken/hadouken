@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hadouken</RootNamespace>
+    <AssemblyName>Hadouken</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ninject">
+      <HintPath>..\..\..\lib\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
+    <Compile Include="BitTorrent\IPeer.cs" />
+    <Compile Include="BitTorrent\ITorrent.cs" />
+    <Compile Include="BitTorrent\ITorrentFile.cs" />
+    <Compile Include="BitTorrent\ITracker.cs" />
+    <Compile Include="BitTorrent\Priority.cs" />
+    <Compile Include="BitTorrent\TorrentState.cs" />
+    <Compile Include="ComponentAttribute.cs" />
+    <Compile Include="ComponentLifestyle.cs" />
+    <Compile Include="Data\DataRepositoryExtensions.cs" />
+    <Compile Include="Data\IDataRepository.cs" />
+    <Compile Include="Data\IMigratorRunner.cs" />
+    <Compile Include="Data\IModel.cs" />
+    <Compile Include="Data\Models\PluginInfo.cs" />
+    <Compile Include="Data\Models\Setting.cs" />
+    <Compile Include="Data\Models\TorrentInfo.cs" />
+    <Compile Include="Hosting\IHost.cs" />
+    <Compile Include="Http\ContentResult.cs" />
+    <Compile Include="Http\HttpGetAttribute.cs" />
+    <Compile Include="Http\HttpMethodAttribute.cs" />
+    <Compile Include="Http\ActionResult.cs" />
+    <Compile Include="Http\Controller.cs" />
+    <Compile Include="Http\IController.cs" />
+    <Compile Include="Http\IHttpContext.cs" />
+    <Compile Include="Http\IHttpHandlerExtensions.cs" />
+    <Compile Include="Http\IHttpRequest.cs" />
+    <Compile Include="Http\IHttpResponse.cs" />
+    <Compile Include="Http\IHttpServer.cs" />
+    <Compile Include="Http\JsonResult.cs" />
+    <Compile Include="Http\RouteAttribute.cs" />
+    <Compile Include="Http\ViewResult.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="Kernel.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Messaging\IMessage.cs" />
+    <Compile Include="Messaging\IMessageBus.cs" />
+    <Compile Include="Plugins\IPlugin.cs" />
+    <Compile Include="Plugins\IPluginFactory.cs" />
+    <Compile Include="Plugins\IPluginLoader.cs" />
+    <Compile Include="Plugins\PluginAttribute.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IComponent.cs" />
+    <Compile Include="Reflection\ReflectionExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
