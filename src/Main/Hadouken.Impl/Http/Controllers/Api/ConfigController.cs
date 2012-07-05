@@ -21,6 +21,15 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/config")]
         public ActionResult GetConfig()
         {
+            if (!String.IsNullOrEmpty(Context.Request.QueryString["key"]))
+            {
+                string[] keys = Context.Request.QueryString["key"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                var settings = _data.List<Setting>(s => keys.Contains(s.Key));
+
+                return Json(settings.ToDictionary(s => s.Key, s => s.Value));
+            }
+
             return Json(_data.List<Setting>().ToDictionary(x => x.Key, x => x.Value));
         }
 

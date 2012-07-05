@@ -12,17 +12,25 @@ namespace Hadouken.Impl.BitTorrent
     {
         private TorrentManager _manager;
         private string _label;
+        private long _dlBytes;
+        private long _ulBytes;
 
-        internal HdknTorrent(TorrentManager tm, string label)
+        internal HdknTorrent(TorrentManager tm, byte[] fileData, long dlBytes, long ulBytes, string label)
         {
             _manager = tm;
+            _dlBytes = dlBytes;
+            _ulBytes = ulBytes;
             _label = label;
+
+            FileData = fileData;
         }
 
         internal TorrentManager Manager
         {
             get { return _manager; }
         }
+
+        internal byte[] FileData { get; private set; }
 
         public string Name
         {
@@ -41,12 +49,12 @@ namespace Hadouken.Impl.BitTorrent
 
         public long DownloadedBytes
         {
-            get { return _manager.Monitor.DataBytesDownloaded; }
+            get { return _dlBytes + _manager.Monitor.DataBytesDownloaded; }
         }
 
         public long UploadedBytes
         {
-            get { return _manager.Monitor.DataBytesUploaded; }
+            get { return _ulBytes + _manager.Monitor.DataBytesUploaded; }
         }
 
         public long DownloadSpeed

@@ -27,7 +27,7 @@ namespace Hadouken.BitTorrent
         void PauseTorrent(ITorrent torrent);
         void PauseTorrent(string infoHash);
 
-        void MoveTorrent(ITorrent torrent, string newPath);
-        void MoveTorrent(string infoHash, string newPath);
+        void MoveTorrent(ITorrent torrent, string newPath, bool appendName = false);
+        void MoveTorrent(string infoHash, string newPath, bool appendName = false);
     }
 }

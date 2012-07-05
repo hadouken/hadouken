@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    LoadSettings();
+
     $("#save").on('click', function () {
         var username = $("#http_username").val();
         var password = $("#http_password").val();
@@ -22,3 +24,11 @@ $(document).ready(function () {
         });
     });
 });
+
+function LoadSettings() {
+    $.getJSON('/api/config?key=http.auth.username&key=http.auth.password&key=bt.savePath', function (data) {
+        $("#http_username").val(data["http.auth.username"]);
+        $("#http_password").val(data["http.auth.password"]);
+        $("#bt_savepath").val(data["bt.savePath"]);
+    });
+}

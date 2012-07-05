@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPluginLoading.cs" />
+    <Compile Include="ITorrentAdded.cs" />
     <Compile Include="ITorrentCompleted.cs" />
+    <Compile Include="ITorrentMoved.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

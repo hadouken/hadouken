@@ -43,5 +43,20 @@ namespace Hadouken.Impl.IO
         {
             return Directory.GetFiles(path);
         }
+
+        public string[] GetDirectories(string path)
+        {
+            return Directory.GetDirectories(path);
+        }
+
+        public void CreateDirectory(string path)
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        public void DeleteDirectory(string path)
+        {
+            Directory.Delete(path);
+        }
     }
 }

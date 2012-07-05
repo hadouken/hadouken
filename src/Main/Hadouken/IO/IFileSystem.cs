@@ -19,5 +19,10 @@ namespace Hadouken.IO
 
         FileSystemInfo[] GetFileSystemInfos(string path);
         string[] GetFiles(string path);
+
+        void DeleteDirectory(string path);
+        void CreateDirectory(string path);
+
+        string[] GetDirectories(string path);
     }
 }
