@@ -33,12 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JsonFx">
+      <HintPath>..\..\..\lib\JsonFx.2.0.1106.2610\lib\net40\JsonFx.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\..\lib\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,6 +70,7 @@
     <Compile Include="Http\HttpMethodAttribute.cs" />
     <Compile Include="Http\ActionResult.cs" />
     <Compile Include="Http\Controller.cs" />
+    <Compile Include="Http\HttpPostAttribute.cs" />
     <Compile Include="Http\IController.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpHandlerExtensions.cs" />

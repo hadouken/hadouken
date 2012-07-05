@@ -13,7 +13,7 @@ namespace Hadouken.Impl.Http.Handlers
         [Route("/")]
         public ActionResult Index()
         {
-            return View("index.html");
+            return View("Index");
         }
     }
 }

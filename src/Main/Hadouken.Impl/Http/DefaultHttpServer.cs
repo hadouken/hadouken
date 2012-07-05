@@ -10,6 +10,7 @@ using Hadouken.Reflection;
 using System.Net;
 using System.IO;
 using Hadouken.IO;
+using Hadouken.Data;
 
 namespace Hadouken.Impl.Http
 {
@@ -19,12 +20,15 @@ namespace Hadouken.Impl.Http
 
         private ILogger _log;
         private IFileSystem _fs;
+        private IDataRepository _data;
+
         private HttpListener _listener;
         
-        public DefaultHttpServer(IFileSystem fs, ILogger logger)
+        public DefaultHttpServer(IDataRepository data, IFileSystem fs, ILogger logger)
         {
             _fs = fs;
             _log = logger;
+            _data = data;
             _listener = new HttpListener();
         }
 
@@ -99,7 +103,7 @@ namespace Hadouken.Impl.Http
 
         private ActionResult CheckFileSystem(IHttpContext context)
         {
-            string path = "WebUI" + context.Request.Url.AbsolutePath;
+            string path = "WebUI/Content" + context.Request.Url.AbsolutePath;
 
             if (_fs.FileExists(path))
             {
@@ -107,11 +111,11 @@ namespace Hadouken.Impl.Http
 
                 switch (Path.GetExtension(path))
                 {
-                    case "css":
+                    case ".css":
                         contentType = "text/css";
                         break;
 
-                    case "js":
+                    case ".js":
                         contentType = "text/javascript";
                         break;
                 }
@@ -128,8 +132,10 @@ namespace Hadouken.Impl.Http
             {
                 var id = (HttpListenerBasicIdentity)context.User.Identity;
 
-                if (id.Name == "hdkn" && id.Password == "hdkn")
-                    return true;
+                string usr = _data.GetSetting("http.auth.username", "hdkn");
+                string pwd = _data.GetSetting("http.auth.password", "hdkn");
+
+                return (id.Name == usr && id.Password == pwd);
             }
 
             return false;

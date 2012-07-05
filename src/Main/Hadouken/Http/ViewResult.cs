@@ -17,8 +17,9 @@ namespace Hadouken.Http
 
         public override void Execute(IHttpContext context)
         {
-            byte[] data = File.ReadAllBytes("WebUI/" + _viewPath);
+            byte[] data = File.ReadAllBytes("WebUI/Views/" + _viewPath + ".html");
 
+            context.Response.ContentType = "text/html";
             context.Response.OutputStream.Write(data, 0, data.Length);
         }
     }
