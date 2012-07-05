@@ -6,6 +6,7 @@ build/
 
 src/**/**/bin
 src/**/**/obj
+src/Shared/CommonAssemblyInfo.cs
 
 # User-specific files
 *.suo
