@@ -22,5 +22,17 @@ namespace Hadouken.Impl.Http.Controllers.Api
         {
             return new JsonResult() { Data = _torrentEngine.Torrents };
         }
+
+        [HttpPost]
+        [Route("/api/torrents")]
+        public ActionResult Post()
+        {
+            foreach (var file in Context.Request.Form.Files)
+            {
+                _torrentEngine.AddTorrent(file.FileData);
+            }
+
+            return Redirect("/");
+        }
     }
 }

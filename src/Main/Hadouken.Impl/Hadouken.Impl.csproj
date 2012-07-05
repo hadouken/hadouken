@@ -97,6 +97,7 @@
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
+    <Compile Include="Messaging\PropertiesInterceptor.cs" />
     <Compile Include="Plugins\AssemblyPluginLoader.cs" />
     <Compile Include="Plugins\DefaultPluginFactory.cs" />
     <Compile Include="Plugins\DirectoryPluginLoader.cs" />

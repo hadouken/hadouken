@@ -22,6 +22,11 @@ namespace Hadouken.Http
             return new JsonResult() { Data = data };
         }
 
+        public ActionResult Redirect(string url)
+        {
+            return new RedirectResult(url);
+        }
+
         public T BindModel<T>()
         {
             using (var reader = new StreamReader(Context.Request.InputStream))

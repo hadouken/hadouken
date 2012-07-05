@@ -14,7 +14,6 @@ $(document).ready(function () {
             success: function (result) {
                 if (result) {
                     var url = window.location.protocol + "//" + username + ":" + password + "@" + window.location.host;
-                    alert(url);
                     window.location.replace(url);
                 }
             },

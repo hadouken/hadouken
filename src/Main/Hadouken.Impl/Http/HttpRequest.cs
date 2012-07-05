@@ -14,6 +14,7 @@ namespace Hadouken.Impl.Http
         public HttpRequest(HttpListenerRequest listenerRequest)
         {
             _request = listenerRequest;
+            Form = new FormData(listenerRequest);
         }
 
         public string[] AcceptTypes
@@ -45,6 +46,8 @@ namespace Hadouken.Impl.Http
         {
             get { return _request.Cookies; }
         }
+
+        public FormData Form { get; private set; }
 
         public bool HasEntityBody
         {

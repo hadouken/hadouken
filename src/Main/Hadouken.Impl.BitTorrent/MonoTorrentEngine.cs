@@ -208,6 +208,9 @@ namespace Hadouken.Impl.BitTorrent
         {
             byte[] fastResume = null;
 
+            if (!torrent.Manager.HashChecked)
+                torrent.Manager.HashCheck(false);
+
             using(var ms = new MemoryStream()) {
                 torrent.Manager.SaveFastResume().Encode(ms);
                 fastResume = ms.ToArray();

@@ -25,7 +25,7 @@ namespace Hadouken.Impl.Messaging
             return Task.Factory.StartNew(() =>
             {
                 // create dynamic proxy
-                var msg = _generator.CreateInterfaceProxyWithoutTarget<TMessage>();
+                var msg = _generator.CreateInterfaceProxyWithoutTarget<TMessage>(new PropertiesInterceptor());
 
                 builder(msg);
 
