@@ -17,6 +17,13 @@ namespace Hadouken.Impl.Http.Controllers.Api
             _data = data;
         }
 
+        [HttpGet]
+        [Route("/api/config")]
+        public ActionResult GetConfig()
+        {
+            return Json(_data.List<Setting>().ToDictionary(x => x.Key, x => x.Value));
+        }
+
         [HttpPost]
         [Route("/api/config")]
         public ActionResult ChangeConfig()

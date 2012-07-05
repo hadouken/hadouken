@@ -34,7 +34,9 @@ namespace Hadouken.Impl.Http
 
         public void Start()
         {
-            _listener.Prefixes.Add("http://localhost:12012/");
+            var binding = _data.GetSetting("http.binding", "http://localhost:12012/");
+
+            _listener.Prefixes.Add(binding);
             _listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
             _listener.Start();
 
