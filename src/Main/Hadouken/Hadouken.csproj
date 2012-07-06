@@ -41,7 +41,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,12 +67,12 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHost.cs" />
     <Compile Include="Http\ContentResult.cs" />
-    <Compile Include="Http\FormData.cs" />
     <Compile Include="Http\HttpGetAttribute.cs" />
     <Compile Include="Http\HttpMethodAttribute.cs" />
     <Compile Include="Http\ActionResult.cs" />
     <Compile Include="Http\Controller.cs" />
     <Compile Include="Http\HttpPostAttribute.cs" />
+    <Compile Include="Http\IHttpPostedFile.cs" />
     <Compile Include="Http\IController.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpHandlerExtensions.cs" />
@@ -81,9 +80,6 @@
     <Compile Include="Http\IHttpResponse.cs" />
     <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Http\JsonResult.cs" />
-    <Compile Include="Http\MultiPartStreamEnumerator.cs" />
-    <Compile Include="Http\MultiPartStreamReader.cs" />
-    <Compile Include="Http\MultiPartStreamValue.cs" />
     <Compile Include="Http\RedirectResult.cs" />
     <Compile Include="Http\RouteAttribute.cs" />
     <Compile Include="Http\ViewResult.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Hadouken.Http;
 using Hadouken.BitTorrent;
+using System.IO;
 
 namespace Hadouken.Impl.Http.Controllers.Api
 {
@@ -27,9 +28,14 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult Post()
         {
-            foreach (var file in Context.Request.Form.Files)
+            foreach (var file in Context.Request.Files)
             {
-                _torrentEngine.AddTorrent(file.FileData);
+                using (var ms = new MemoryStream())
+                {
+                    file.InputStream.CopyTo(ms);
+
+                    _torrentEngine.AddTorrent(ms.ToArray());
+                }
             }
 
             return Redirect("/");

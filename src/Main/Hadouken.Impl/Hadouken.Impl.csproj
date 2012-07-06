@@ -72,6 +72,7 @@
     <Reference Include="System.Data.SQLite.Linq">
       <HintPath>..\..\..\lib\System.Data.SQLite.1.0.81.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,9 +92,14 @@
     <Compile Include="Http\Controllers\SetupController.cs" />
     <Compile Include="Http\DefaultHttpServer.cs" />
     <Compile Include="Http\Controllers\HomeController.cs" />
+    <Compile Include="Http\FormData.cs" />
     <Compile Include="Http\HttpContext.cs" />
+    <Compile Include="Http\HttpPostedFile.cs" />
     <Compile Include="Http\HttpRequest.cs" />
     <Compile Include="Http\HttpResponse.cs" />
+    <Compile Include="Http\MultiPartStreamEnumerator.cs" />
+    <Compile Include="Http\MultiPartStreamReader.cs" />
+    <Compile Include="Http\MultiPartStreamValue.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />

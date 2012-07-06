@@ -12,11 +12,11 @@ using Hadouken.Extensions;
 // boldly borrowed from
 // http://blog.peterlesliemorris.com/archive/2011/04/02/a-webserver-for-monotouch-that-also-parses-posted-form-data.aspx
 
-namespace Hadouken.Http
+namespace Hadouken.Impl.Http
 {
     public class FormData
     {
-        readonly NameValueCollection FormValues;
+        readonly NameValueCollection _formValues;
         readonly NameValueCollection FileNames;
         readonly Dictionary<string, MultiPartStreamFileValue> FileObjects;
 
@@ -27,15 +27,15 @@ namespace Hadouken.Http
 
 
             FileNames = new NameValueCollection();
-            FormValues = new NameValueCollection();
+            _formValues = new NameValueCollection();
             FileObjects = new Dictionary<string, MultiPartStreamFileValue>();
             if (request.HasEntityBody)
                 ParsePostedValues(request);
         }
 
-        public string this[string name]
+        public NameValueCollection FormValues
         {
-            get { return FormValues[name]; }
+            get { return _formValues; }
         }
 
         public MultiPartStreamFileValue GetFile(string name)
@@ -88,9 +88,9 @@ namespace Hadouken.Http
 
         void AddParsedFormValue(string key, string value)
         {
-            if (FormValues.AllKeys.Contains(key))
-                value = FormValues[key] + "," + value;
-            FormValues[key] = value;
+            if (_formValues.AllKeys.Contains(key))
+                value = _formValues[key] + "," + value;
+            _formValues[key] = value;
         }
 
         void ParseMultiPartPostValues(HttpListenerRequest request, Encoding encoding)

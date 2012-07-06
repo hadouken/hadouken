@@ -16,7 +16,10 @@ namespace Hadouken.Http
         long ContentLength64 { get; }
         string ContentType { get; }
         CookieCollection Cookies { get; }
-        FormData Form { get; }
+
+        NameValueCollection Form { get; }
+        IEnumerable<IHttpPostedFile> Files { get; }
+
         bool HasEntityBody { get; }
         NameValueCollection Headers { get; }
         string HttpMethod { get; }

@@ -10,7 +10,7 @@ using Hadouken.Extensions;
 // boldly borrowed from
 // http://blog.peterlesliemorris.com/archive/2011/04/02/a-webserver-for-monotouch-that-also-parses-posted-form-data.aspx
 
-namespace Hadouken.Http
+namespace Hadouken.Impl.Http
 {
     public class MultiPartStreamEnumerator : IEnumerator<MultiPartStreamValue>
     {

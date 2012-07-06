@@ -4,17 +4,33 @@ using System.Linq;
 using System.Text;
 using Hadouken.Http;
 using System.Net;
+using System.Collections.Specialized;
+using System.IO;
 
 namespace Hadouken.Impl.Http
 {
     public class HttpRequest : IHttpRequest
     {
         private HttpListenerRequest _request;
+        private FormData _formData;
+        private List<IHttpPostedFile> _files = new List<IHttpPostedFile>();
 
         public HttpRequest(HttpListenerRequest listenerRequest)
         {
             _request = listenerRequest;
-            Form = new FormData(listenerRequest);
+            _formData = new FormData(listenerRequest);
+
+            LoadFormData();
+        }
+
+        private void LoadFormData()
+        {
+            Form = new NameValueCollection(_formData.FormValues);
+
+            foreach (var file in _formData.Files)
+            {
+                _files.Add(new HttpPostedFile(file.FileData.Length, file.ContentType, file.FileName, new MemoryStream(file.FileData, false)));
+            }
         }
 
         public string[] AcceptTypes
@@ -47,7 +63,12 @@ namespace Hadouken.Impl.Http
             get { return _request.Cookies; }
         }
 
-        public FormData Form { get; private set; }
+        public NameValueCollection Form { get; private set; }
+
+        public IEnumerable<IHttpPostedFile> Files
+        {
+            get { return _files; }
+        }
 
         public bool HasEntityBody
         {
