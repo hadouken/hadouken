@@ -40,7 +40,9 @@ namespace Hadouken.Impl.Hosting
 
         public void Unload()
         {
-            throw new NotImplementedException();
+            _httpServer.Stop();
+            _pluginFactory.UnloadAll();
+            _torrentEngine.Unload();
         }
     }
 }

@@ -21,6 +21,8 @@ namespace Hadouken.Hosts.CommandLine
             host.Load();
 
             Console.ReadLine();
+
+            host.Unload();
         }
     }
 }
