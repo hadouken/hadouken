@@ -3,6 +3,8 @@
         <title>Hadouken</title>
 
         <link rel="Stylesheet" type="text/css" href="/css/hdkn.css" />
+        
+        <script src="/js/hdkn.js"></script>
     </head>
 
     <body>
@@ -11,5 +13,20 @@
         <form action="/api/torrents" method="post" enctype="multipart/form-data">
             <input type="file" name="foo" /> <input type="submit" value="send" />
         </form>
+        
+        <hr />
+        
+        <div id="torrents">
+        </div>
+        
+        <!-- Templates -->
+
+  <script type="text/template" id="torrent-template">
+    <div>
+      <label><%= Name %> [<%= InfoHash %>]</label>
+      <%= Progress %>
+    </div>
+  </script>
+  
     </body>
 </html>

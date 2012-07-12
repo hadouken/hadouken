@@ -14,6 +14,7 @@ namespace Hadouken.Impl.BitTorrent
         private string _label;
         private long _dlBytes;
         private long _ulBytes;
+        private List<HdknTorrentFile> _files = new List<HdknTorrentFile>();
 
         internal HdknTorrent(TorrentManager tm, byte[] fileData, long dlBytes, long ulBytes, string label)
         {
@@ -21,6 +22,11 @@ namespace Hadouken.Impl.BitTorrent
             _dlBytes = dlBytes;
             _ulBytes = ulBytes;
             _label = label;
+
+            foreach (var f in tm.Torrent.Files)
+            {
+                _files.Add(new HdknTorrentFile(f));
+            }
 
             FileData = fileData;
         }
@@ -95,17 +101,17 @@ namespace Hadouken.Impl.BitTorrent
 
         public IList<ITorrentFile> Files
         {
-            get { throw new NotImplementedException(); }
+            get { return _files.ToList<ITorrentFile>(); }
         }
 
         public IList<IPeer> Peers
         {
-            get { throw new NotImplementedException(); }
+            get { return null; }
         }
 
         public IList<ITracker> Trackers
         {
-            get { throw new NotImplementedException(); }
+            get { return null; }
         }
     }
 }

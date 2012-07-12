@@ -157,7 +157,7 @@ namespace Hadouken.Impl.Http
 
         private ActionResult FindAndExecuteController(IHttpContext context)
         {
-            if (_cache.ContainsKey(context.Request.Url.AbsolutePath))
+            if (_cache.ContainsKey(context.Request.Url.AbsolutePath) && _cache[context.Request.Url.AbsolutePath].Method == context.Request.HttpMethod)
             {
                 var cacheItem = _cache[context.Request.Url.AbsolutePath];
                 IController instance = (IController)Kernel.Get(cacheItem.Controller);
@@ -183,7 +183,7 @@ namespace Hadouken.Impl.Http
 
                     if (method != null)
                     {
-                        _cache.Add(context.Request.Url.AbsolutePath, new ActionCacheItem() { Action = method, Controller = instance.GetType() });
+                        _cache.Add(context.Request.Url.AbsolutePath, new ActionCacheItem() { Action = method, Controller = instance.GetType(), Method = context.Request.HttpMethod });
                         return method.Invoke(instance, null) as ActionResult;
                     }
                 }

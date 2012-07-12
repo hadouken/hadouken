@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HdknTorrent.cs" />
+    <Compile Include="HdknTorrentFile.cs" />
     <Compile Include="MonoTorrentEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -222,6 +222,11 @@ namespace Hadouken.Impl.BitTorrent
             info.InfoHash = torrent.InfoHash;
             info.Label = torrent.Label;
             info.SavePath = torrent.SavePath;
+
+            // to prevent nesting directories
+            if (torrent.Files.Count > 1)
+                info.SavePath = Directory.GetParent(torrent.SavePath).FullName;
+
             info.State = torrent.State;
             info.UploadedBytes = torrent.UploadedBytes;
         }
