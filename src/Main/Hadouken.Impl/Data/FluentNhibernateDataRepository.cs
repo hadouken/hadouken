@@ -14,6 +14,8 @@ using System.Reflection;
 using FluentNHibernate.Automapping;
 using System.Configuration;
 using FluentNHibernate.Conventions;
+using System.IO;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Data
 {
@@ -56,8 +58,11 @@ namespace Hadouken.Impl.Data
 
         private void RebuildSessionFactory()
         {
+            string dataPath = HdknConfig.GetPath("Paths.Data");
+            string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
+
             _sessionFactory = Fluently.Configure()
-                .Database(SQLiteConfiguration.Standard.ConnectionString(ConfigurationManager.ConnectionStrings["hdkn"].ConnectionString))
+                .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
                 .Mappings(m =>
                 {
                     m.AutoMappings.Add(AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies).Conventions.Add(new EnumMappingConvention()));

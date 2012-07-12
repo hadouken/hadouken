@@ -7,6 +7,8 @@ using System.Text;
 
 using Hadouken.Data;
 using Migrator.Providers.SQLite;
+using System.IO;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Data
 {
@@ -14,7 +16,10 @@ namespace Hadouken.Impl.Data
     {
         public void Run(Assembly target)
         {
-            var m = new Migrator.Migrator(new SQLiteTransformationProvider(new SQLiteDialect(), ConfigurationManager.ConnectionStrings["hdkn"].ConnectionString), target, false);
+            string dataPath = HdknConfig.GetPath("Paths.Data");
+            string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
+
+            var m = new Migrator.Migrator(new SQLiteTransformationProvider(new SQLiteDialect(), connectionString), target, false);
             m.MigrateToLastVersion();
         }
     }

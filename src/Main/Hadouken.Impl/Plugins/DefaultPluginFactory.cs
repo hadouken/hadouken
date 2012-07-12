@@ -10,6 +10,8 @@ using Hadouken.Data.Models;
 using Hadouken.IO;
 using Hadouken.Reflection;
 using System.IO;
+using System.Configuration;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Plugins
 {
@@ -106,7 +108,7 @@ namespace Hadouken.Impl.Plugins
 
         private void AddNewPlugins()
         {
-            string pluginPath = _data.GetSetting("plugins.searchPath", "Plugins");
+            string pluginPath = HdknConfig.GetPath("Paths.Plugins");
 
             var loaders = Kernel.GetAll<IPluginLoader>();
 

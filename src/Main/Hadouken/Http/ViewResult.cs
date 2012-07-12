@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Configuration;
+using Hadouken.Configuration;
 
 namespace Hadouken.Http
 {
@@ -17,7 +19,8 @@ namespace Hadouken.Http
 
         public override void Execute(IHttpContext context)
         {
-            byte[] data = File.ReadAllBytes("WebUI/Views/" + _viewPath + ".html");
+            string webUIRoot = HdknConfig.GetPath("Paths.WebUI");
+            byte[] data = File.ReadAllBytes(Path.Combine(webUIRoot, "Views", _viewPath + ".html"));
 
             context.Response.ContentType = "text/html";
             context.Response.OutputStream.Write(data, 0, data.Length);

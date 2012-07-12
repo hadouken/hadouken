@@ -11,6 +11,8 @@ using System.Net;
 using System.IO;
 using Hadouken.IO;
 using Hadouken.Data;
+using System.Configuration;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Http
 {
@@ -52,25 +54,18 @@ namespace Hadouken.Impl.Http
 
         private void GetContext(IAsyncResult ar)
         {
-            var context = _listener.EndGetContext(ar);
-
-            if (context != null)
+            try
             {
-                // authenticate user
-                if (IsAuthenticatedUser(context))
+                var context = _listener.EndGetContext(ar);
+
+                if (context != null)
                 {
-                    var httpContext = new HttpContext(context);
-
-                    ActionResult result = FindAndExecuteController(httpContext);
-
-                    if (result != null)
+                    // authenticate user
+                    if (IsAuthenticatedUser(context))
                     {
-                        result.Execute(httpContext);
-                    }
-                    else
-                    {
-                        // check file system
-                        result = CheckFileSystem(httpContext);
+                        var httpContext = new HttpContext(context);
+
+                        ActionResult result = FindAndExecuteController(httpContext);
 
                         if (result != null)
                         {
@@ -78,34 +73,51 @@ namespace Hadouken.Impl.Http
                         }
                         else
                         {
-                            context.Response.StatusCode = 404;
+                            // check file system
+                            result = CheckFileSystem(httpContext);
 
-                            byte[] notFound = Encoding.UTF8.GetBytes("404 - Not found!");
+                            if (result != null)
+                            {
+                                result.Execute(httpContext);
+                            }
+                            else
+                            {
+                                context.Response.StatusCode = 404;
 
-                            context.Response.OutputStream.Write(notFound, 0, notFound.Length);
+                                byte[] notFound = Encoding.UTF8.GetBytes("404 - Not found!");
+
+                                context.Response.OutputStream.Write(notFound, 0, notFound.Length);
+                            }
                         }
                     }
+                    else
+                    {
+                        context.Response.ContentType = "text/html";
+                        context.Response.StatusCode = 401;
+
+                        byte[] unauthorized = Encoding.UTF8.GetBytes("<h1>401 - Unauthorized</h1>");
+
+                        context.Response.OutputStream.Write(unauthorized, 0, unauthorized.Length);
+                    }
+
+                    context.Response.OutputStream.Close();
+
                 }
-                else
-                {
-                    context.Response.ContentType = "text/html";
-                    context.Response.StatusCode = 401;
 
-                    byte[] unauthorized = Encoding.UTF8.GetBytes("<h1>401 - Unauthorized</h1>");
-
-                    context.Response.OutputStream.Write(unauthorized, 0, unauthorized.Length);
-                }
-
-                context.Response.OutputStream.Close();
-
+                _listener.BeginGetContext(GetContext, null);
             }
-
-            _listener.BeginGetContext(GetContext, null);
+            catch (HttpListenerException e)
+            {
+                // probably closing
+                return;
+            }
         }
 
         private ActionResult CheckFileSystem(IHttpContext context)
         {
-            string path = "WebUI/Content" + context.Request.Url.AbsolutePath;
+            string webUIPath = HdknConfig.GetPath("Paths.WebUI");
+
+            string path = Path.Combine(webUIPath, "Content") + context.Request.Url.AbsolutePath;
 
             if (_fs.FileExists(path))
             {

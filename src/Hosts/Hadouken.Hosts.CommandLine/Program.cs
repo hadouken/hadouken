@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Hadouken.Hosting;
+using System.IO;
 
 namespace Hadouken.Hosts.CommandLine
 {
