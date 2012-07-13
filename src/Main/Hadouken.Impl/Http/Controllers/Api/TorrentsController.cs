@@ -24,6 +24,13 @@ namespace Hadouken.Impl.Http.Controllers.Api
             return new JsonResult() { Data = _torrentEngine.Torrents };
         }
 
+        [HttpGet]
+        [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)")]
+        public ActionResult Single(string infoHash)
+        {
+            return null;
+        }
+
         [HttpPost]
         [Route("/api/torrents")]
         public ActionResult Post()

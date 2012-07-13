@@ -8,6 +8,6 @@ namespace Hadouken.Http
     [Component(ComponentLifestyle.Transient)]
     public interface IController : IComponent
     {
-        IHttpContext Context { get; }
+        IHttpContext Context { get; set; }
     }
 }

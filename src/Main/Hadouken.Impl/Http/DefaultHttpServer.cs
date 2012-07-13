@@ -13,6 +13,8 @@ using Hadouken.IO;
 using Hadouken.Data;
 using System.Configuration;
 using Hadouken.Configuration;
+using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace Hadouken.Impl.Http
 {
@@ -160,10 +162,11 @@ namespace Hadouken.Impl.Http
             if (_cache.ContainsKey(context.Request.Url.AbsolutePath) && _cache[context.Request.Url.AbsolutePath].Method == context.Request.HttpMethod)
             {
                 var cacheItem = _cache[context.Request.Url.AbsolutePath];
-                IController instance = (IController)Kernel.Get(cacheItem.Controller);
-                ((Controller)instance).Context = context;
 
-                return cacheItem.Action.Invoke(instance, null) as ActionResult;
+                IController instance = (IController)Kernel.Get(cacheItem.Controller);
+                instance.Context = context;
+
+                return InvokeAction(context, instance, cacheItem.Action);
             }
             else
             {
@@ -171,25 +174,50 @@ namespace Hadouken.Impl.Http
 
                 foreach (var instance in handlers)
                 {
-                    ((Controller)instance).Context = context;
+                    instance.Context = context;
 
                     var method = (from mi in instance.GetType().GetMethods()
                                   where mi.HasAttribute<RouteAttribute>()
                                   where mi.HasAttribute<HttpMethodAttribute>()
                                   let methodAttribute = mi.GetAttribute<HttpMethodAttribute>()
                                   let routeAttribute = mi.GetAttribute<RouteAttribute>()
-                                  where routeAttribute.Route == context.Request.Url.AbsolutePath && methodAttribute.Method == context.Request.HttpMethod
+                                  where Regex.IsMatch(context.Request.Url.AbsolutePath, "^" + routeAttribute.Route + "$", RegexOptions.IgnoreCase | RegexOptions.Singleline) && methodAttribute.Method == context.Request.HttpMethod
                                   select mi).FirstOrDefault();
 
                     if (method != null)
                     {
                         _cache.Add(context.Request.Url.AbsolutePath, new ActionCacheItem() { Action = method, Controller = instance.GetType(), Method = context.Request.HttpMethod });
-                        return method.Invoke(instance, null) as ActionResult;
+                        return InvokeAction(context, instance, method);
                     }
                 }
             }
 
             return null;
+        }
+
+        private ActionResult InvokeAction(IHttpContext context, IController controller, MethodInfo method)
+        {
+            var regex = new Regex("^" + method.GetAttribute<RouteAttribute>().Route + "$", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
+
+            // get parameters from regex
+            Match match = regex.Match(context.Request.Url.AbsolutePath);
+
+            if (match.Groups.Count == 1)
+            {
+                return method.Invoke(controller, null) as ActionResult;
+            }
+            else
+            {
+                ParameterInfo[] parameters = method.GetParameters();
+
+                object[] methodParams = (from parameter in parameters
+                                         let type = parameter.ParameterType
+                                         let value = match.Groups[parameter.Name].Value
+                                         let param = Convert.ChangeType(value, type)
+                                         select param).ToArray();
+
+                return method.Invoke(controller, methodParams) as ActionResult;
+            }
         }
     }
 }
