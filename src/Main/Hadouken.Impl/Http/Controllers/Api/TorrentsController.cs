@@ -21,14 +21,14 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult List()
         {
-            return new JsonResult() { Data = _torrentEngine.Torrents };
+            return Json(_torrentEngine.Torrents);
         }
 
         [HttpGet]
         [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)")]
         public ActionResult Single(string infoHash)
         {
-            return null;
+            return Json(_torrentEngine.Torrents.FirstOrDefault(t => t.InfoHash == infoHash));
         }
 
         [HttpPost]
