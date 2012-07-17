@@ -23,7 +23,7 @@ namespace Hadouken.Impl.Http
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private Dictionary<string, ActionCacheItem> _cache = new Dictionary<string, ActionCacheItem>();
+        private List<ActionCacheItem> _cache = new List<ActionCacheItem>();
 
         private IFileSystem _fs;
         private IDataRepository _data;
@@ -53,6 +53,7 @@ namespace Hadouken.Impl.Http
         public void Stop()
         {
             _listener.Stop();
+            _listener.Close();
         }
 
         private void GetContext(IAsyncResult ar)
@@ -109,7 +110,7 @@ namespace Hadouken.Impl.Http
 
                 _listener.BeginGetContext(GetContext, null);
             }
-            catch (HttpListenerException)
+            catch (ObjectDisposedException)
             {
                 // probably closing
                 return;
@@ -168,10 +169,10 @@ namespace Hadouken.Impl.Http
 
         private ActionResult FindAndExecuteController(IHttpContext context)
         {
-            if (_cache.ContainsKey(context.Request.Url.AbsolutePath) && _cache[context.Request.Url.AbsolutePath].Method == context.Request.HttpMethod)
-            {
-                var cacheItem = _cache[context.Request.Url.AbsolutePath];
+            var cacheItem = _cache.Where(c => c.Path == context.Request.Url.AbsolutePath && c.Method == context.Request.HttpMethod).SingleOrDefault();
 
+            if (cacheItem != null)
+            {
                 IController instance = (IController)Kernel.Get(cacheItem.Controller);
                 instance.Context = context;
 
@@ -195,7 +196,7 @@ namespace Hadouken.Impl.Http
 
                     if (method != null)
                     {
-                        _cache.Add(context.Request.Url.AbsolutePath, new ActionCacheItem() { Action = method, Controller = instance.GetType(), Method = context.Request.HttpMethod });
+                        _cache.Add(new ActionCacheItem() { Action = method, Controller = instance.GetType(), Method = context.Request.HttpMethod, Path = context.Request.Url.AbsolutePath });
                         return InvokeAction(context, instance, method);
                     }
                 }
