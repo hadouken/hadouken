@@ -15,7 +15,7 @@ namespace Hadouken.BitTorrent
         void StartAll();
         void StopAll();
 
-        ITorrentManager CreateManager(byte[] torrentData);
+        ITorrentManager AddTorrent(byte[] torrentData);
 
         /// <summary>
         /// Creates a new ITorrentManager based on the gived data. Registers it to the engine and adds it in a stopped state.
@@ -23,12 +23,12 @@ namespace Hadouken.BitTorrent
         /// <param name="torrentData">The byte array defining the torrent file contents.</param>
         /// <param name="savePath">Where on the disk to save the downloaded data. Can point to existing (uncomplete or complete) data.</param>
         /// <returns>A ITorrentManager instance representing the successfully created manager, or null if creation failed.</returns>
-        ITorrentManager CreateManager(byte[] torrentData, string savePath);
+        ITorrentManager AddTorrent(byte[] torrentData, string savePath);
         
         /// <summary>
         /// Remove and unregister the given manager from the engine.
         /// </summary>
         /// <param name="manager">The manager to remove.</param>
-        void RemoveManager(ITorrentManager manager);
+        void RemoveTorrent(ITorrentManager manager);
     }
 }

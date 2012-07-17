@@ -61,7 +61,7 @@ namespace Hadouken.Impl.BitTorrent
 
             foreach (var torrentInfo in _data.List<TorrentInfo>())
             {
-                var manager = (HdknTorrentManager)CreateManager(torrentInfo.Data, torrentInfo.SavePath);
+                var manager = (HdknTorrentManager)AddTorrent(torrentInfo.Data, torrentInfo.SavePath);
 
                 manager.DownloadedBytes = torrentInfo.DownloadedBytes;
                 manager.UploadedBytes = torrentInfo.UploadedBytes;
@@ -169,13 +169,16 @@ namespace Hadouken.Impl.BitTorrent
                 manager.Stop();
         }
 
-        public ITorrentManager CreateManager(byte[] data)
+        public ITorrentManager AddTorrent(byte[] data)
         {
-            return CreateManager(data, String.Empty);
+            return AddTorrent(data, String.Empty);
         }
 
-        public ITorrentManager CreateManager(byte[] data, string savePath)
+        public ITorrentManager AddTorrent(byte[] data, string savePath)
         {
+            if (data == null || data.Length == 0)
+                return null;
+
             Torrent t = null;
 
             if (Torrent.TryLoad(data, out t))
@@ -202,7 +205,7 @@ namespace Hadouken.Impl.BitTorrent
             return null;
         }
 
-        public void RemoveManager(ITorrentManager manager)
+        public void RemoveTorrent(ITorrentManager manager)
         {
             var hdknManager = manager as HdknTorrentManager;
 

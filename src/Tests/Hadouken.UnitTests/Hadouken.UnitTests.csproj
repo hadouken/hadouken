@@ -48,13 +48,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="Resources\ubuntu.torrent" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
+      <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>
+      <Name>Hadouken.Impl.BitTorrent</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl\Hadouken.Impl.csproj">
       <Project>{28B6D10B-1CA2-43A9-B247-FAA7DD2155FA}</Project>
       <Name>Hadouken.Impl</Name>

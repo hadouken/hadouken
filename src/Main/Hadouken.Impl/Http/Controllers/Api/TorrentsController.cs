@@ -61,7 +61,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
                 using (var ms = new MemoryStream())
                 {
                     file.InputStream.CopyTo(ms);
-                    _torrentEngine.CreateManager(ms.ToArray());
+                    _torrentEngine.AddTorrent(ms.ToArray());
                 }
             }
 
