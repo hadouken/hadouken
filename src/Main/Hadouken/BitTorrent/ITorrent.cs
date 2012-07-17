@@ -7,22 +7,24 @@ namespace Hadouken.BitTorrent
 {
     public interface ITorrent
     {
-        string Name { get; }
+        List<List<string>> AnnounceUrls { get; }
+        string Comment { get; }
+        string CreatedBy { get; }
+        DateTime CreationDate { get; }
+        byte[] ED2K { get; }
+        string Encoding { get; }
+        List<string> GetRightHttpSeeds { get; }
         string InfoHash { get; }
+        bool IsPrivate { get; }
+        string Name { get; }
+        int PieceLength { get; }
+        string Publisher { get; }
+        string PublisherUrl { get; }
+        byte[] SHA1 { get; }
         long Size { get; }
-        long DownloadedBytes { get; }
-        long UploadedBytes { get; }
-        long DownloadSpeed { get; }
-        long UploadSpeed { get; }
-        double Progress { get; }
-        string SavePath { get; }
-        string Label { get; }
-        TorrentState State { get; }
+        string Source { get; }
+        byte[] TorrentData { get; }
 
-        bool IsMultiFile { get; }
-        
-        IList<ITorrentFile> Files { get; }
-        IList<IPeer> Peers { get; }
-        IList<ITracker> Trackers { get; }
+        ITorrentFile[] Files { get; }
     }
 }

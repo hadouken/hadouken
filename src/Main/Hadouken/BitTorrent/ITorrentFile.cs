@@ -7,7 +7,16 @@ namespace Hadouken.BitTorrent
 {
     public interface ITorrentFile
     {
-        string Name { get; }
-        long Size { get; }
+        IBitField BitField { get; }
+        long BytesDownloaded { get; }
+        byte[] ED2K { get; }
+        int EndPieceIndex { get; }
+        string FullPath { get; }
+        long Length { get; }
+        byte[] MD5 { get; }
+        string Path { get; }
+        Priority Priority { get; set; }
+        byte[] SHA1 { get; }
+        int StartPieceIndex { get; }
     }
 }

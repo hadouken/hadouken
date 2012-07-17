@@ -5,113 +5,116 @@ using System.Text;
 
 using Hadouken.BitTorrent;
 using MonoTorrent.Client;
+using MonoTorrent.Common;
 
 namespace Hadouken.Impl.BitTorrent
 {
     public class HdknTorrent : ITorrent
     {
-        private TorrentManager _manager;
-        private string _label;
-        private long _dlBytes;
-        private long _ulBytes;
+        private Torrent _torrent;
         private List<HdknTorrentFile> _files = new List<HdknTorrentFile>();
 
-        internal HdknTorrent(TorrentManager tm, byte[] fileData, long dlBytes, long ulBytes, string label)
-        {
-            _manager = tm;
-            _dlBytes = dlBytes;
-            _ulBytes = ulBytes;
-            _label = label;
+        private byte[] _data;
 
-            foreach (var f in tm.Torrent.Files)
+        internal HdknTorrent(Torrent torrent)
+        {
+            _torrent = torrent;
+
+            foreach (var file in torrent.Files)
             {
-                _files.Add(new HdknTorrentFile(f));
+                _files.Add(new HdknTorrentFile(file));
             }
-
-            FileData = fileData;
         }
 
-        internal TorrentManager Manager
+        public List<List<string>> AnnounceUrls
         {
-            get { return _manager; }
+            get { return _torrent.AnnounceUrls; }
         }
 
-        internal byte[] FileData { get; private set; }
-
-        public string Name
+        public string Comment
         {
-            get { return _manager.Torrent.Name; }
+            get { return _torrent.Comment; }
+        }
+
+        public string CreatedBy
+        {
+            get { return _torrent.CreatedBy; }
+        }
+
+        public DateTime CreationDate
+        {
+            get { return _torrent.CreationDate; }
+        }
+
+        public byte[] ED2K
+        {
+            get { return _torrent.ED2K; }
+        }
+
+        public string Encoding
+        {
+            get { return _torrent.Encoding; }
+        }
+
+        public List<string> GetRightHttpSeeds
+        {
+            get { return _torrent.GetRightHttpSeeds; }
         }
 
         public string InfoHash
         {
-            get { return _manager.InfoHash.ToString().Replace("-", ""); }
+            get { return _torrent.InfoHash.ToString().Replace("-", ""); }
+        }
+
+        public bool IsPrivate
+        {
+            get { return _torrent.IsPrivate; }
+        }
+
+        public string Name
+        {
+            get { return _torrent.Name; }
+        }
+
+        public int PieceLength
+        {
+            get { return _torrent.PieceLength; }
+        }
+
+        public string Publisher
+        {
+            get { return _torrent.Publisher; }
+        }
+
+        public string PublisherUrl
+        {
+            get { return _torrent.PublisherUrl; }
+        }
+
+        public byte[] SHA1
+        {
+            get { return _torrent.SHA1; }
         }
 
         public long Size
         {
-            get { return _manager.Torrent.Size; }
+            get { return _torrent.Size; }
         }
 
-        public long DownloadedBytes
+        public string Source
         {
-            get { return _dlBytes + _manager.Monitor.DataBytesDownloaded; }
+            get { return _torrent.Source; }
         }
 
-        public long UploadedBytes
+        public byte[] TorrentData
         {
-            get { return _ulBytes + _manager.Monitor.DataBytesUploaded; }
+            get { return _data; }
+            internal set { _data = value; }
         }
 
-        public long DownloadSpeed
+        public ITorrentFile[] Files
         {
-            get { return _manager.Monitor.DownloadSpeed; }
-        }
-
-        public long UploadSpeed
-        {
-            get { return _manager.Monitor.UploadSpeed; }
-        }
-
-        public double Progress
-        {
-            get { return _manager.Progress; }
-        }
-
-        public string SavePath
-        {
-            get { return _manager.SavePath; }
-        }
-
-        public string Label
-        {
-            get { return _label; }
-            set { _label = value; }
-        }
-
-        public TorrentState State
-        {
-            get { return (TorrentState)(int)_manager.State; }
-        }
-
-        public bool IsMultiFile
-        {
-            get { return _manager.Torrent.Files.Length > 1; }
-        }
-
-        public IList<ITorrentFile> Files
-        {
-            get { return _files.ToList<ITorrentFile>(); }
-        }
-
-        public IList<IPeer> Peers
-        {
-            get { return null; }
-        }
-
-        public IList<ITracker> Trackers
-        {
-            get { return null; }
+            get { return _files.ToArray<ITorrentFile>(); }
         }
     }
 }

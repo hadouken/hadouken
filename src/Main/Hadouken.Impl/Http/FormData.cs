@@ -57,15 +57,13 @@ namespace Hadouken.Impl.Http
         {
             Encoding encoding = request.ContentEncoding;
 
-            if (string.Compare(request.ContentType, "application/x-www-form-urlencoded", true) == 0)
+            if (request.ContentType.StartsWith("application/x-www-form-urlencoded"))
                 ParseStandardPostValues(request, encoding);
             else
             {
                 if (request.ContentType.Length > 20 &&
                         string.Compare(request.ContentType.Substring(0, 20), "multipart/form-data;", true) == 0)
                     ParseMultiPartPostValues(request, encoding);
-                else
-                    throw new NotImplementedException("Content type not implemented: " + request.ContentType);
             }
         }
 

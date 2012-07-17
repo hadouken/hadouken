@@ -63,6 +63,9 @@
     <Reference Include="NHibernate">
       <HintPath>..\..\..\lib\NHibernate.3.3.1.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\..\lib\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -100,7 +103,6 @@
     <Compile Include="Http\MultiPartStreamEnumerator.cs" />
     <Compile Include="Http\MultiPartStreamReader.cs" />
     <Compile Include="Http\MultiPartStreamValue.cs" />
-    <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
     <Compile Include="Messaging\PropertiesInterceptor.cs" />

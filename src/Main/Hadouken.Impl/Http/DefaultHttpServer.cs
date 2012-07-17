@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using Hadouken.Http;
-using Hadouken.Logging;
 using Hadouken.Reflection;
 
 using System.Net;
@@ -16,22 +15,24 @@ using Hadouken.Configuration;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
+using NLog;
+
 namespace Hadouken.Impl.Http
 {
     public class DefaultHttpServer : IHttpServer
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private Dictionary<string, ActionCacheItem> _cache = new Dictionary<string, ActionCacheItem>();
 
-        private ILogger _log;
         private IFileSystem _fs;
         private IDataRepository _data;
 
         private HttpListener _listener;
         
-        public DefaultHttpServer(IDataRepository data, IFileSystem fs, ILogger logger)
+        public DefaultHttpServer(IDataRepository data, IFileSystem fs)
         {
             _fs = fs;
-            _log = logger;
             _data = data;
             _listener = new HttpListener();
         }
@@ -46,7 +47,7 @@ namespace Hadouken.Impl.Http
 
             _listener.BeginGetContext(GetContext, null);
 
-            _log.Info("HTTP server up and running");
+            _logger.Info("HTTP server up and running");
         }
 
         public void Stop()
@@ -108,7 +109,7 @@ namespace Hadouken.Impl.Http
 
                 _listener.BeginGetContext(GetContext, null);
             }
-            catch (HttpListenerException e)
+            catch (HttpListenerException)
             {
                 // probably closing
                 return;
@@ -133,6 +134,14 @@ namespace Hadouken.Impl.Http
 
                     case ".js":
                         contentType = "text/javascript";
+                        break;
+
+                    case ".png":
+                        contentType = "image/png";
+                        break;
+
+                    case ".gif":
+                        contentType = "image/gif";
                         break;
                 }
 

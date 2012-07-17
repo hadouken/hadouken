@@ -9,7 +9,7 @@ namespace Hadouken.Messages
 {
     public interface ITorrentMoved : IMessage
     {
-        ITorrent Torrent { get; set; }
+        ITorrentManager TorrentManager { get; set; }
 
         string OldPath { get; set; }
         string NewPath { get; set; }

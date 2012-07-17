@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
 
 namespace Hadouken.BitTorrent
 {
@@ -11,23 +10,25 @@ namespace Hadouken.BitTorrent
         void Load();
         void Unload();
 
-        IList<ITorrent> Torrents { get; }
+        IDictionary<string, ITorrentManager> Managers { get; }
 
-        ITorrent AddTorrent(byte[] data, bool autoStart = false, string savePath = "", string tag = "");
+        void StartAll();
+        void StopAll();
 
-        void RemoveTorrent(ITorrent torrent);
-        void RemoveTorrent(string infoHash);
+        ITorrentManager CreateManager(byte[] torrentData);
 
-        void StartTorrent(ITorrent torrent);
-        void StartTorrent(string infoHash);
-
-        void StopTorrent(ITorrent torrent);
-        void StopTorrent(string infoHash);
-
-        void PauseTorrent(ITorrent torrent);
-        void PauseTorrent(string infoHash);
-
-        void MoveTorrent(ITorrent torrent, string newPath, bool appendName = false);
-        void MoveTorrent(string infoHash, string newPath, bool appendName = false);
+        /// <summary>
+        /// Creates a new ITorrentManager based on the gived data. Registers it to the engine and adds it in a stopped state.
+        /// </summary>
+        /// <param name="torrentData">The byte array defining the torrent file contents.</param>
+        /// <param name="savePath">Where on the disk to save the downloaded data. Can point to existing (uncomplete or complete) data.</param>
+        /// <returns>A ITorrentManager instance representing the successfully created manager, or null if creation failed.</returns>
+        ITorrentManager CreateManager(byte[] torrentData, string savePath);
+        
+        /// <summary>
+        /// Remove and unregister the given manager from the engine.
+        /// </summary>
+        /// <param name="manager">The manager to remove.</param>
+        void RemoveManager(ITorrentManager manager);
     }
 }

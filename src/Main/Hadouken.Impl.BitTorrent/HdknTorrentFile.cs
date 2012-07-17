@@ -17,14 +17,60 @@ namespace Hadouken.Impl.BitTorrent
             _tf = tf;
         }
 
-        public string Name
+        public IBitField BitField
+        {
+            get { return new HdknBitField(_tf.BitField); }
+        }
+
+        public long BytesDownloaded
+        {
+            get { return _tf.BytesDownloaded; }
+        }
+
+        public byte[] ED2K
+        {
+            get { return _tf.ED2K; }
+        }
+
+        public int EndPieceIndex
+        {
+            get { return _tf.EndPieceIndex; }
+        }
+
+        public string FullPath
         {
             get { return _tf.FullPath; }
         }
 
-        public long Size
+        public long Length
         {
             get { return _tf.Length; }
+        }
+
+        public byte[] MD5
+        {
+            get { return _tf.MD5; }
+        }
+
+        public string Path
+        {
+            get { return _tf.Path; }
+        }
+
+        public Hadouken.BitTorrent.Priority Priority
+        {
+            get { return (Hadouken.BitTorrent.Priority)(int)_tf.Priority; }
+            set { _tf.Priority = (MonoTorrent.Common.Priority)(int)value; }
+        }
+
+        public byte[] SHA1
+        {
+            get { return _tf.SHA1; }
+        }
+
+        public int StartPieceIndex
+        {
+            get { return _tf.StartPieceIndex; }
         }
     }
 }

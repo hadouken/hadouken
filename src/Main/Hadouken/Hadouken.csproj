@@ -49,13 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitTorrent\EncryptionTypes.cs" />
+    <Compile Include="BitTorrent\IBitField.cs" />
     <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
     <Compile Include="BitTorrent\IPeer.cs" />
     <Compile Include="BitTorrent\ITorrent.cs" />
     <Compile Include="BitTorrent\ITorrentFile.cs" />
+    <Compile Include="BitTorrent\ITorrentManager.cs" />
     <Compile Include="BitTorrent\ITracker.cs" />
     <Compile Include="BitTorrent\Priority.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />
+    <Compile Include="BitTorrent\TrackerState.cs" />
     <Compile Include="ComponentAttribute.cs" />
     <Compile Include="ComponentLifestyle.cs" />
     <Compile Include="Configuration\HdknConfig.cs" />
@@ -87,7 +91,6 @@
     <Compile Include="Http\ViewResult.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Kernel.cs" />
-    <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Plugins\IPlugin.cs" />

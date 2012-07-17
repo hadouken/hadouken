@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Hadouken.Data;
 using System.Linq.Expressions;
-using Hadouken.Logging;
 using NHibernate;
 using NHibernate.Linq;
 using FluentNHibernate.Cfg;
@@ -16,6 +15,7 @@ using System.Configuration;
 using FluentNHibernate.Conventions;
 using System.IO;
 using Hadouken.Configuration;
+using NLog;
 
 namespace Hadouken.Impl.Data
 {
@@ -42,15 +42,15 @@ namespace Hadouken.Impl.Data
 
     public class FluentNhibernateDataRepository : IDataRepository
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private List<Assembly> _modelAssemblies = new List<Assembly>();
-        private ILogger _log;
 
         private ISessionFactory _sessionFactory;
         private ISession _session;
 
-        public FluentNhibernateDataRepository(IMessageBus mbus, ILogger logger)
+        public FluentNhibernateDataRepository(IMessageBus mbus)
         {
-            _log = logger;
             _modelAssemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(asm => asm.GetName().Name.StartsWith("Hadouken")));
             
             RebuildSessionFactory();
@@ -58,6 +58,8 @@ namespace Hadouken.Impl.Data
 
         private void RebuildSessionFactory()
         {
+            _logger.Info("Rebuilding session factory");
+
             string dataPath = HdknConfig.GetPath("Paths.Data");
             string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
 

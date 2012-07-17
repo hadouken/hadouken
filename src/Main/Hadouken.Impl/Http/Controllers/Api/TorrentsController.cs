@@ -21,14 +21,35 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult List()
         {
-            return Json(_torrentEngine.Torrents);
+            var torrents = (from manager in _torrentEngine.Managers.Values
+                            let torrent = manager.Torrent
+                            select new
+                            {
+                                Name = torrent.Name,
+                                InfoHash = torrent.InfoHash,
+                                Size = torrent.Size,
+                                DownloadedBytes = manager.DownloadedBytes,
+                                UploadedBytes = manager.UploadedBytes,
+                                DownloadSpeed = manager.DownloadSpeed,
+                                UploadSpeed = manager.UploadSpeed,
+                                Progress = manager.Progress,
+                                Label = manager.Label,
+                                State = manager.State
+                                //PeersCount = manager.,
+                                //Seeders = torrent.Peers.Where(p => p.IsSeeder).Count()
+                            });
+
+            return Json(torrents);
         }
 
         [HttpGet]
         [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)")]
         public ActionResult Single(string infoHash)
         {
-            return Json(_torrentEngine.Torrents.FirstOrDefault(t => t.InfoHash == infoHash));
+            if (_torrentEngine.Managers.ContainsKey(infoHash))
+                return Json(_torrentEngine.Managers[infoHash]);
+
+            return Json(null);
         }
 
         [HttpPost]
@@ -40,8 +61,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
                 using (var ms = new MemoryStream())
                 {
                     file.InputStream.CopyTo(ms);
-
-                    _torrentEngine.AddTorrent(ms.ToArray());
+                    _torrentEngine.CreateManager(ms.ToArray());
                 }
             }
 

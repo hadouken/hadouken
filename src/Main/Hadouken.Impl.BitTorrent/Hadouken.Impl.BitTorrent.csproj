@@ -36,6 +36,9 @@
     <Reference Include="MonoTorrent">
       <HintPath>..\..\..\lib\MonoTorrent.0.9.0\lib\net20\MonoTorrent.dll</HintPath>
     </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\..\lib\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,8 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HdknBitField.cs" />
+    <Compile Include="HdknPeer.cs" />
     <Compile Include="HdknTorrent.cs" />
     <Compile Include="HdknTorrentFile.cs" />
+    <Compile Include="HdknTorrentManager.cs" />
     <Compile Include="MonoTorrentEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
