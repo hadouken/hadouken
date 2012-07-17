@@ -56,6 +56,19 @@ namespace Hadouken.Impl.Http
             _listener.Close();
         }
 
+        public Uri ListenUri
+        {
+            get
+            {
+                if (_listener.IsListening)
+                {
+                    return new Uri(_listener.Prefixes.FirstOrDefault());
+                }
+
+                return null;
+            }
+        }
+
         private void GetContext(IAsyncResult ar)
         {
             try

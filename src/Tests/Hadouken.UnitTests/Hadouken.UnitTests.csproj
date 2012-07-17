@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
+    <Compile Include="Http\HttpServerTests.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelper.cs" />
