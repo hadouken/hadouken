@@ -23,6 +23,9 @@ namespace Hadouken.Configuration
 
         private static string ExpandPath(string path)
         {
+            if (String.IsNullOrEmpty(path))
+                return null;
+
             return Environment.ExpandEnvironmentVariables(Path.GetFullPath(path));
         }
 
