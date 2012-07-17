@@ -26,7 +26,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
                             select new
                             {
                                 Name = torrent.Name,
-                                InfoHash = torrent.InfoHash,
+                                InfoHash = manager.InfoHash,
                                 Size = torrent.Size,
                                 DownloadedBytes = manager.DownloadedBytes,
                                 UploadedBytes = manager.UploadedBytes,
