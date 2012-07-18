@@ -12,18 +12,23 @@ using Hadouken.Reflection;
 using System.IO;
 using System.Configuration;
 using Hadouken.Configuration;
+using NLog;
 
 namespace Hadouken.Impl.Plugins
 {
     public class DefaultPluginFactory : IPluginFactory
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private IDataRepository _data;
         private IFileSystem _fs;
+        private IMigratorRunner _runner;
 
-        public DefaultPluginFactory(IFileSystem fs, IDataRepository data)
+        public DefaultPluginFactory(IFileSystem fs, IDataRepository data, IMigratorRunner migratorRunner)
         {
             _fs = fs;
             _data = data;
+            _runner = migratorRunner;
         }
 
         public void ScanForChanges()
@@ -68,13 +73,14 @@ namespace Hadouken.Impl.Plugins
 
         private void RegisterAndPossiblyLoad(PluginInfo info, Type pluginType)
         {
+            // run migrations from plugin assembly
+            _runner.Run(pluginType.Assembly);
+
+            Kernel.Register(pluginType.Assembly);
             Kernel.Bind(typeof(IPlugin), pluginType, ComponentLifestyle.Singleton, info.Name);
 
-            if (info.State == PluginState.Activated)
-            {
-                IPlugin plugin = Kernel.Get<IPlugin>(info.Name);
-                plugin.Load();
-            }
+            IPlugin plugin = Kernel.Get<IPlugin>(info.Name);
+            plugin.Load();
         }
 
         public void Unload(string name)
@@ -110,6 +116,8 @@ namespace Hadouken.Impl.Plugins
         {
             string pluginPath = HdknConfig.GetPath("Paths.Plugins");
 
+            _logger.Info("Scanning for new plugins in path {0}", pluginPath);
+
             var loaders = Kernel.GetAll<IPluginLoader>();
 
             foreach (FileSystemInfo info in _fs.GetFileSystemInfos(pluginPath))
@@ -124,6 +132,8 @@ namespace Hadouken.Impl.Plugins
 
                             foreach (var type in types)
                             {
+                                _logger.Info("Found new plugin {0}", type.FullName);
+
                                 PluginInfo pi = new PluginInfo();
                                 pi.Name = type.Assembly.GetAttribute<AssemblyTitleAttribute>().Title;
                                 pi.Version = type.Assembly.GetName().Version;

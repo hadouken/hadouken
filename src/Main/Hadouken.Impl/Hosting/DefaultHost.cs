@@ -33,6 +33,7 @@ namespace Hadouken.Impl.Hosting
 
             _torrentEngine.Load();
 
+            _pluginFactory.ScanForChanges();
             _pluginFactory.LoadAll();
 
             _httpServer.Start();
