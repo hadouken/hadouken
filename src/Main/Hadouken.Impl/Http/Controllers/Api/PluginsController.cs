@@ -34,12 +34,24 @@ namespace Hadouken.Impl.Http.Controllers.Api
         public ActionResult List()
         {
             return Json((from man in _engine.Managers.Values
-                         select new { man.Name, man.Version }));
+                         select new { Name = man.Name, Version = man.Version }));
         }
 
         [HttpPost]
         [Route("/api/plugins")]
-        public ActionResult Install()
+        public ActionResult Create()
+        {
+            var info = BindModel<PluginInfo>();
+            info.Id = 0;
+
+            _repo.Save(info);
+
+            return Json(true);
+        }
+
+        [HttpPost]
+        [Route("/api/plugins/upload")]
+        public ActionResult UploadPlugin()
         {
             List<PluginInfo> newPlugins = new List<PluginInfo>();
 
@@ -78,7 +90,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
                 }
             }
 
-            return Json(from i in newPlugins select new { i.Name, i.Version });
+            return Json(from i in newPlugins select new { Name = i.Name, Version = i.Version });
         }
     }
 }
