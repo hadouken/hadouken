@@ -49,6 +49,16 @@ namespace Hadouken.Impl.IO
             return Directory.GetFiles(path);
         }
 
+        public string[] GetFiles(string path, string pattern)
+        {
+            return Directory.GetFiles(path, pattern);
+        }
+
+        public string[] GetFiles(string path, string pattern, SearchOption option)
+        {
+            return Directory.GetFiles(path, pattern, option);
+        }
+
         public string[] GetDirectories(string path)
         {
             return Directory.GetDirectories(path);
@@ -57,6 +67,11 @@ namespace Hadouken.Impl.IO
         public void CreateDirectory(string path)
         {
             Directory.CreateDirectory(path);
+        }
+
+        public void DeleteFile(string path)
+        {
+            File.Delete(path);
         }
 
         public void DeleteDirectory(string path)

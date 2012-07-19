@@ -57,6 +57,8 @@ namespace Hadouken.Impl.Data
 
     public class FluentNhibernateDataRepository : IDataRepository
     {
+        private object _lock = new object();
+
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private List<Assembly> _modelAssemblies = new List<Assembly>();
@@ -79,62 +81,86 @@ namespace Hadouken.Impl.Data
 
         private void RebuildSessionFactory()
         {
-            _logger.Info("Rebuilding session factory");
+            lock (_lock)
+            {
+                _logger.Info("Rebuilding session factory");
 
-            string dataPath = HdknConfig.GetPath("Paths.Data");
-            string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
+                string dataPath = HdknConfig.GetPath("Paths.Data");
+                string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
 
-            _sessionFactory = Fluently.Configure()
-                .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
-                .Mappings(m =>
-                {
-                    m.AutoMappings.Add(
-                        AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
-                            .Conventions.Add(new EnumMappingConvention())
-                            .Conventions.Add(new TableNameConvention())
-                    );
-                })
-                .BuildSessionFactory();
+                _sessionFactory = Fluently.Configure()
+                    .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
+                    .Mappings(m =>
+                    {
+                        m.AutoMappings.Add(
+                            AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
+                                .Conventions.Add(new EnumMappingConvention())
+                                .Conventions.Add(new TableNameConvention())
+                        );
+                    })
+                    .BuildSessionFactory();
 
-            _session = _sessionFactory.OpenSession();
+                _session = _sessionFactory.OpenSession();
+            }
         }
 
         public void Save<TModel>(TModel instance) where TModel : IModel, new()
         {
-            _session.Save(instance);
-            _session.Flush();
+            lock (_lock)
+            {
+                _session.Save(instance);
+                _session.Flush();
+            }
         }
 
         public void Update<TModel>(TModel instance) where TModel : IModel, new()
         {
-            _session.Update(instance);
-            _session.Flush();
+            lock (_lock)
+            {
+                _session.Update(instance);
+                _session.Flush();
+            }
         }
 
         public void Delete<TModel>(TModel instance) where TModel : IModel, new()
         {
-            _session.Delete(instance);
-            _session.Flush();
+            lock (_lock)
+            {
+                _session.Delete(instance);
+                _session.Flush();
+            }
         }
 
         public TModel Single<TModel>(int id) where TModel : IModel, new()
         {
-            return _session.Load<TModel>(id);
+            lock (_lock)
+            {
+                return _session.Load<TModel>(id);
+            }
         }
 
         public TModel Single<TModel>(Expression<Func<TModel, bool>> where) where TModel : IModel, new()
         {
-            return _session.Query<TModel>().Where(where).SingleOrDefault();
+            lock (_lock)
+            {
+                return _session.Query<TModel>().Where(where).SingleOrDefault();
+            }
         }
 
         public IList<TModel> List<TModel>() where TModel : IModel, new()
         {
-            return _session.Query<TModel>().ToList();
+            lock (_lock)
+            {
+                return _session.Query<TModel>().ToList();
+            }
         }
 
         public IList<TModel> List<TModel>(Expression<Func<TModel, bool>> where) where TModel : IModel, new()
         {
-            return _session.Query<TModel>().Where(where).ToList();
+            lock (_lock)
+            {
+                return _session.Query<TModel>().Where(where).ToList();
+            }
         }
     }
 }

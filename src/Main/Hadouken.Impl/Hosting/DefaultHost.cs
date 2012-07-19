@@ -45,6 +45,7 @@ namespace Hadouken.Impl.Hosting
             _torrentEngine.Load();
 
             _pluginEngine.Refresh();
+            _pluginEngine.LoadAll();
 
             _httpServer.Start();
         }

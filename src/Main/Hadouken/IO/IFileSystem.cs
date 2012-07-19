@@ -19,8 +19,12 @@ namespace Hadouken.IO
         bool DirectoryExists(string path);
 
         FileSystemInfo[] GetFileSystemInfos(string path);
-        string[] GetFiles(string path);
 
+        string[] GetFiles(string path);
+        string[] GetFiles(string path, string pattern);
+        string[] GetFiles(string path, string pattern, SearchOption option);
+
+        void DeleteFile(string path);
         void DeleteDirectory(string path);
         void CreateDirectory(string path);
 
