@@ -13,6 +13,7 @@ namespace Hadouken.IO
         Stream OpenRead(string path);
 
         byte[] ReadAllBytes(string path);
+        void WriteAllBytes(string path, byte[] bytes);
 
         bool FileExists(string path);
         bool DirectoryExists(string path);

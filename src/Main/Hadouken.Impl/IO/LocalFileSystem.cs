@@ -24,6 +24,11 @@ namespace Hadouken.Impl.IO
             return File.ReadAllBytes(path);
         }
 
+        public void WriteAllBytes(string path, byte[] bytes)
+        {
+            File.WriteAllBytes(path, bytes);
+        }
+
         public bool FileExists(string path)
         {
             return File.Exists(path);
