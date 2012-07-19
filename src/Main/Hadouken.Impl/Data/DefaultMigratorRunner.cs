@@ -12,15 +12,24 @@ using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Data
 {
-    public class DefaultMigratorRunner : IMigratorRunner
+    public class DefaultMigratorRunner : IMigrationRunner
     {
-        public void Run(Assembly target)
+        public void Up(Assembly target)
         {
             string dataPath = HdknConfig.GetPath("Paths.Data");
             string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
 
             var m = new Migrator.Migrator(new SQLiteTransformationProvider(new SQLiteDialect(), connectionString), target, false);
             m.MigrateToLastVersion();
+        }
+
+        public void Down(Assembly target)
+        {
+            string dataPath = HdknConfig.GetPath("Paths.Data");
+            string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
+
+            var m = new Migrator.Migrator(new SQLiteTransformationProvider(new SQLiteDialect(), connectionString), target, false);
+            m.MigrateTo(-1);
         }
     }
 }

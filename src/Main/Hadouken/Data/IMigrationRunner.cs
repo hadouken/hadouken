@@ -6,8 +6,9 @@ using System.Reflection;
 
 namespace Hadouken.Data
 {
-    public interface IMigratorRunner : IComponent
+    public interface IMigrationRunner : IComponent
     {
-        void Run(Assembly target);
+        void Up(Assembly target);
+        void Down(Assembly target);
     }
 }

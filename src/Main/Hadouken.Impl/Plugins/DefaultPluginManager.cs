@@ -14,10 +14,10 @@ namespace Hadouken.Impl.Plugins
         private PluginInfo _info;
         private IPlugin _instance;
 
-        private IMigratorRunner _runner;
+        private IMigrationRunner _runner;
         private IPluginLoader[] _loaders;
 
-        internal DefaultPluginManager(PluginInfo info, IMigratorRunner runner, IPluginLoader[] loaders)
+        internal DefaultPluginManager(PluginInfo info, IMigrationRunner runner, IPluginLoader[] loaders)
         {
             _info = info;
 
@@ -77,11 +77,13 @@ namespace Hadouken.Impl.Plugins
         public void Install()
         {
             // run migrator up
+            _runner.Up(_instance.GetType().Assembly);
         }
 
         public void Uninstall()
         {
             // run migrator down
+            _runner.Down(_instance.GetType().Assembly);
         }
 
         public string Name

@@ -65,7 +65,7 @@
     <Compile Include="Configuration\HdknConfig.cs" />
     <Compile Include="Data\DataRepositoryExtensions.cs" />
     <Compile Include="Data\IDataRepository.cs" />
-    <Compile Include="Data\IMigratorRunner.cs" />
+    <Compile Include="Data\IMigrationRunner.cs" />
     <Compile Include="Data\IModel.cs" />
     <Compile Include="Data\Models\PluginInfo.cs" />
     <Compile Include="Data\Models\Setting.cs" />

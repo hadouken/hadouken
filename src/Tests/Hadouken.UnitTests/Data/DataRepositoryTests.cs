@@ -25,7 +25,7 @@ namespace Hadouken.UnitTests.Data
             // apply migrations
 
             var runner = new DefaultMigratorRunner();
-            runner.Run(AppDomain.CurrentDomain.Load("Hadouken.Impl"));
+            runner.Up(AppDomain.CurrentDomain.Load("Hadouken.Impl"));
         }
 
         [Test]

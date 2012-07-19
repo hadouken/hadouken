@@ -13,10 +13,10 @@ namespace Hadouken.Impl.Plugins
         private Dictionary<string, IPluginManager> _managers = new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
 
         private IDataRepository _repo;
-        private IMigratorRunner _runner;
+        private IMigrationRunner _runner;
         private IPluginLoader[] _loaders;
 
-        public DefaultPluginEngine(IDataRepository repo, IMigratorRunner runner, IPluginLoader[] loaders)
+        public DefaultPluginEngine(IDataRepository repo, IMigrationRunner runner, IPluginLoader[] loaders)
         {
             _repo = repo;
             _runner = runner;

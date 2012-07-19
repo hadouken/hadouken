@@ -46,6 +46,8 @@ namespace Hadouken.Impl.Http.Controllers.Api
 
             _repo.Save(info);
 
+            _engine.Refresh();
+
             return Json(true);
         }
 
