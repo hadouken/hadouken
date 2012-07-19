@@ -25,6 +25,17 @@ namespace Hadouken.Impl.Hosting
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
             _httpServer = httpServer;
+
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+        }
+
+        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var result = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                          where asm.GetName().FullName == args.Name
+                          select asm).FirstOrDefault();
+
+            return result;
         }
 
         public void Load()

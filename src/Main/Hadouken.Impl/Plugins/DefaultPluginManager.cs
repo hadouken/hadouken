@@ -6,27 +6,36 @@ using Hadouken.Plugins;
 using Hadouken.Data.Models;
 using Hadouken.Data;
 using System.Reflection;
+using NLog;
+using Hadouken.Messaging;
+using Hadouken.Messages;
 
 namespace Hadouken.Impl.Plugins
 {
     public class DefaultPluginManager : IPluginManager
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private PluginInfo _info;
         private IPlugin _instance;
 
+        private IMessageBus _mbus;
         private IMigrationRunner _runner;
         private IPluginLoader[] _loaders;
 
-        internal DefaultPluginManager(PluginInfo info, IMigrationRunner runner, IPluginLoader[] loaders)
+        internal DefaultPluginManager(PluginInfo info, IMessageBus mbus, IMigrationRunner runner, IPluginLoader[] loaders)
         {
             _info = info;
 
+            _mbus = mbus;
             _runner = runner;
             _loaders = loaders;
         }
 
         internal void Initialize()
         {
+            _logger.Debug("Initializing plugin manager for {0}", _info.Name);
+
             var loader = (from l in _loaders
                           where l.CanLoad(_info.Path)
                           select l).First();
@@ -37,11 +46,24 @@ namespace Hadouken.Impl.Plugins
 
                 if (t != null)
                 {
+                    // register types in plugin assembly
+                    Kernel.Register(t.Assembly);
+
+                    // send IPluginLoading
+                    _mbus.Send<IPluginLoading>(msg =>
+                    {
+                        msg.PluginName = _info.Name;
+                        msg.PluginVersion = _info.Version;
+                        msg.PluginType = t;
+                    }).Wait();
+
                     // create IPlugin instance
                     _instance = CreatePluginFromType(t);
 
                     if (_instance == null)
                         throw new Exception("Could not load plugin");
+
+                    _logger.Info("Plugin {0} loaded", _info.Name);
                 }
             }
         }

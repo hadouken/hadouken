@@ -17,6 +17,7 @@ using System.IO;
 using Hadouken.Configuration;
 using NLog;
 using Hadouken.Reflection;
+using Hadouken.Messages;
 
 namespace Hadouken.Impl.Data
 {
@@ -66,6 +67,12 @@ namespace Hadouken.Impl.Data
         public FluentNhibernateDataRepository(IMessageBus mbus)
         {
             _modelAssemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(asm => asm.GetName().Name.StartsWith("Hadouken")));
+
+            mbus.Subscribe<IPluginLoading>(msg =>
+            {
+                _modelAssemblies.Add(msg.PluginType.Assembly);
+                RebuildSessionFactory();
+            });
             
             RebuildSessionFactory();
         }

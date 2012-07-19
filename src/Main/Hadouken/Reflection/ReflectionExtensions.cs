@@ -15,6 +15,9 @@ namespace Hadouken.Reflection
 
         public static bool HasAttribute<T>(this MemberInfo mi)
         {
+            if (mi == null)
+                return false;
+
             return mi.GetCustomAttributes(typeof(T), true).Any();
         }
 

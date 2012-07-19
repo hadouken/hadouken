@@ -26,6 +26,7 @@ namespace Hadouken.Impl.Plugins
         public IEnumerable<Type> Load(string path)
         {
             var assemblies = (from f in _fs.GetFiles(path)
+                              where f.EndsWith(".dll")
                               let data = _fs.ReadAllBytes(f)
                               select AppDomain.CurrentDomain.Load(data));
 

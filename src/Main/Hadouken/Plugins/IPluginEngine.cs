@@ -8,6 +8,8 @@ namespace Hadouken.Plugins
     public interface IPluginEngine : IComponent
     {
         void Refresh();
+
+        void LoadAll();
         void UnloadAll();
 
         IDictionary<string, IPluginManager> Managers { get;}

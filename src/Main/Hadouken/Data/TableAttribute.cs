@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Hadouken.Impl.Data
+namespace Hadouken.Data
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class TableAttribute : Attribute
