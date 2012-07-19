@@ -7,7 +7,7 @@ namespace Hadouken.Plugins
 {
     public interface IPluginEngine : IComponent
     {
-        void Refresh();
+        IEnumerable<IPluginManager> Refresh();
 
         void LoadAll();
         void UnloadAll();

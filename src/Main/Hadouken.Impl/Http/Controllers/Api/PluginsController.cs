@@ -55,7 +55,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/plugins/upload")]
         public ActionResult UploadPlugin()
         {
-            List<PluginInfo> newPlugins = new List<PluginInfo>();
+            List<Type> newPlugins = new List<Type>();
 
             foreach (var file in Context.Request.Files)
             {
@@ -76,23 +76,20 @@ namespace Hadouken.Impl.Http.Controllers.Api
 
                 if (pluginType.HasAttribute<PluginAttribute>())
                 {
-                    PluginAttribute attr = pluginType.GetAttribute<PluginAttribute>();
-                    
                     PluginInfo info = new PluginInfo();
-                    info.Name = attr.Name;
-                    info.Version = attr.Version;
                     info.Path = path;
-                    info.State = PluginState.Uninstalled;
 
                     _repo.Save(info);
 
                     _engine.Refresh();
 
-                    newPlugins.Add(info);
+                    newPlugins.Add(pluginType);
                 }
             }
 
-            return Json(from i in newPlugins select new { Name = i.Name, Version = i.Version });
+            return Json(from i in newPlugins
+                        let attr = i.GetAttribute<PluginAttribute>()
+                        select new { Name = attr.Name, Version = attr.Version });
         }
     }
 }

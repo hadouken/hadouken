@@ -26,18 +26,24 @@ namespace Hadouken.Impl.Plugins
             _loaders = loaders;
         }
 
-        public void Refresh()
+        public IEnumerable<IPluginManager> Refresh()
         {
             // load all PluginInfo where Name not in _managers.Keys
-            var infos = _repo.List<PluginInfo>(pi => !_managers.Keys.Contains(pi.Name));
+            var infos = _repo.List<PluginInfo>();
 
             foreach (PluginInfo info in infos)
             {
                 var manager = new DefaultPluginManager(info, _mbus, _runner, _loaders);
-                manager.Initialize();
-                manager.Install();
 
-                _managers.Add(manager.Name, manager);
+                if (!_managers.ContainsKey(manager.Name))
+                {
+                    manager.Initialize();
+                    manager.Install();
+
+                    _managers.Add(manager.Name, manager);
+
+                    yield return manager;
+                }
             }
         }
 

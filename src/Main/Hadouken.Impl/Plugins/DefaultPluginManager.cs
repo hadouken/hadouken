@@ -5,6 +5,7 @@ using System.Text;
 using Hadouken.Plugins;
 using Hadouken.Data.Models;
 using Hadouken.Data;
+using Hadouken.Reflection;
 using System.Reflection;
 using NLog;
 using Hadouken.Messaging;
@@ -17,6 +18,7 @@ namespace Hadouken.Impl.Plugins
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private PluginInfo _info;
+        private Type _pluginType;
         private IPlugin _instance;
 
         private IMessageBus _mbus;
@@ -30,11 +32,6 @@ namespace Hadouken.Impl.Plugins
             _mbus = mbus;
             _runner = runner;
             _loaders = loaders;
-        }
-
-        internal void Initialize()
-        {
-            _logger.Debug("Initializing plugin manager for {0}", _info.Name);
 
             var loader = (from l in _loaders
                           where l.CanLoad(_info.Path)
@@ -42,30 +39,39 @@ namespace Hadouken.Impl.Plugins
 
             if (loader != null)
             {
-                Type t = loader.Load(_info.Path).First();
+                _pluginType = loader.Load(_info.Path).First();
 
-                if (t != null)
+                if (_pluginType == null)
                 {
-                    // register types in plugin assembly
-                    Kernel.Register(t.Assembly);
-
-                    // send IPluginLoading
-                    _mbus.Send<IPluginLoading>(msg =>
-                    {
-                        msg.PluginName = _info.Name;
-                        msg.PluginVersion = _info.Version;
-                        msg.PluginType = t;
-                    }).Wait();
-
-                    // create IPlugin instance
-                    _instance = CreatePluginFromType(t);
-
-                    if (_instance == null)
-                        throw new Exception("Could not load plugin");
-
-                    _logger.Info("Plugin {0} loaded", _info.Name);
+                    throw new ArgumentException("Could not find plugin type in given PluginInfo.Path", "info");
                 }
             }
+        }
+
+        internal void Initialize()
+        {
+            PluginAttribute attr = _pluginType.GetAttribute<PluginAttribute>();
+
+            _logger.Info("Loading plugin {0} [version {1}]", attr.Name, attr.Version);
+
+            // register types in plugin assembly
+            Kernel.Register(_pluginType.Assembly);
+
+            // send IPluginLoading
+            _mbus.Send<IPluginLoading>(msg =>
+            {
+                msg.PluginName = attr.Name;
+                msg.PluginVersion = attr.Version;
+                msg.PluginType = _pluginType;
+            });
+
+            // create IPlugin instance
+            _instance = CreatePluginFromType(_pluginType);
+
+            if (_instance == null)
+                throw new Exception("Could not load plugin");
+
+            _logger.Info("Plugin {0} loaded", attr.Name);
         }
 
         private IPlugin CreatePluginFromType(Type t)
@@ -110,12 +116,12 @@ namespace Hadouken.Impl.Plugins
 
         public string Name
         {
-            get { return _info.Name; }
+            get { return _pluginType.GetAttribute<PluginAttribute>().Name; }
         }
 
         public Version Version
         {
-            get { return _info.Version; }
+            get { return _pluginType.GetAttribute<PluginAttribute>().Version; }
         }
     }
 }

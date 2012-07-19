@@ -15,10 +15,7 @@ namespace Hadouken.Impl.Data.Migrations
         {
             Database.AddTable("PluginInfo",
                 new Column("Id", System.Data.DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
-                new Column("Name", System.Data.DbType.String),
-                new Column("Version", System.Data.DbType.Binary),
-                new Column("Path", System.Data.DbType.String),
-                new Column("State", System.Data.DbType.String)
+                new Column("Path", System.Data.DbType.String)
             );
         }
 
