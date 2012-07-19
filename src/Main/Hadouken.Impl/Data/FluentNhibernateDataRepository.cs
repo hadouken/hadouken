@@ -81,25 +81,26 @@ namespace Hadouken.Impl.Data
 
         private void RebuildSessionFactory()
         {
+            
+            _logger.Info("Rebuilding session factory");
+
+            string dataPath = HdknConfig.GetPath("Paths.Data");
+            string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
+
+            _sessionFactory = Fluently.Configure()
+                .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
+                .Mappings(m =>
+                {
+                    m.AutoMappings.Add(
+                        AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
+                            .Conventions.Add(new EnumMappingConvention())
+                            .Conventions.Add(new TableNameConvention())
+                    );
+                })
+                .BuildSessionFactory();
+
             lock (_lock)
             {
-                _logger.Info("Rebuilding session factory");
-
-                string dataPath = HdknConfig.GetPath("Paths.Data");
-                string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
-
-                _sessionFactory = Fluently.Configure()
-                    .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
-                    .Mappings(m =>
-                    {
-                        m.AutoMappings.Add(
-                            AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
-                                .Conventions.Add(new EnumMappingConvention())
-                                .Conventions.Add(new TableNameConvention())
-                        );
-                    })
-                    .BuildSessionFactory();
-
                 _session = _sessionFactory.OpenSession();
             }
         }
