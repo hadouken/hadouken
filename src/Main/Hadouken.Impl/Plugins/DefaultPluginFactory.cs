@@ -23,16 +23,20 @@ namespace Hadouken.Impl.Plugins
         private IDataRepository _data;
         private IFileSystem _fs;
         private IMigratorRunner _runner;
+        private IPluginLoader[] _loaders;
 
-        public DefaultPluginFactory(IFileSystem fs, IDataRepository data, IMigratorRunner migratorRunner)
+        public DefaultPluginFactory(IFileSystem fs, IDataRepository data, IMigratorRunner migratorRunner, IPluginLoader[] loaders)
         {
             _fs = fs;
             _data = data;
             _runner = migratorRunner;
+            _loaders = loaders;
         }
 
         public void ScanForChanges()
         {
+            _logger.Info("Scanning for new plugins/removing deleted plugins");
+
             RemoveDeletedPlugins();
             AddNewPlugins();
         }
@@ -55,9 +59,7 @@ namespace Hadouken.Impl.Plugins
 
         private void LoadFromPluginInfo(PluginInfo info)
         {
-            var loaders = Kernel.GetAll<IPluginLoader>();
-
-            foreach (var loader in loaders)
+            foreach (var loader in _loaders)
             {
                 if (loader.CanLoad(info.Path))
                 {
@@ -118,13 +120,11 @@ namespace Hadouken.Impl.Plugins
 
             _logger.Info("Scanning for new plugins in path {0}", pluginPath);
 
-            var loaders = Kernel.GetAll<IPluginLoader>();
-
             foreach (FileSystemInfo info in _fs.GetFileSystemInfos(pluginPath))
             {
                 if (_data.Single<PluginInfo>(p => p.Path == info.FullName) == null)
                 {
-                    foreach (var loader in loaders)
+                    foreach (var loader in _loaders)
                     {
                         if (loader.CanLoad(info.FullName))
                         {
