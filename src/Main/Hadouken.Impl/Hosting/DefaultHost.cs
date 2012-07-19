@@ -15,15 +15,15 @@ namespace Hadouken.Impl.Hosting
         private IDataRepository _data;
         private IBitTorrentEngine _torrentEngine;
         private IMigratorRunner _migratorRunner;
-        private IPluginFactory _pluginFactory;
+        private IPluginEngine _pluginEngine;
         private IHttpServer _httpServer;
 
-        public DefaultHost(IDataRepository data, IBitTorrentEngine torrentEngine, IMigratorRunner runner, IPluginFactory pluginFactory, IHttpServer httpServer)
+        public DefaultHost(IDataRepository data, IBitTorrentEngine torrentEngine, IMigratorRunner runner, IPluginEngine pluginEngine, IHttpServer httpServer)
         {
             _data = data;
             _torrentEngine = torrentEngine;
             _migratorRunner = runner;
-            _pluginFactory = pluginFactory;
+            _pluginEngine = pluginEngine;
             _httpServer = httpServer;
         }
 
@@ -33,8 +33,7 @@ namespace Hadouken.Impl.Hosting
 
             _torrentEngine.Load();
 
-            _pluginFactory.ScanForChanges();
-            _pluginFactory.LoadAll();
+            _pluginEngine.Refresh();
 
             _httpServer.Start();
         }
@@ -42,7 +41,9 @@ namespace Hadouken.Impl.Hosting
         public void Unload()
         {
             _httpServer.Stop();
-            _pluginFactory.UnloadAll();
+
+            _pluginEngine.UnloadAll();
+
             _torrentEngine.Unload();
         }
     }
