@@ -30,6 +30,7 @@ namespace Hadouken.Impl.Plugins
         {
             // load all PluginInfo where Name not in _managers.Keys
             var infos = _repo.List<PluginInfo>();
+            var ret = new List<IPluginManager>();
 
             foreach (PluginInfo info in infos)
             {
@@ -42,9 +43,11 @@ namespace Hadouken.Impl.Plugins
 
                     _managers.Add(manager.Name, manager);
 
-                    yield return manager;
+                    ret.Add(manager);
                 }
             }
+
+            return ret;
         }
 
         public void LoadAll()

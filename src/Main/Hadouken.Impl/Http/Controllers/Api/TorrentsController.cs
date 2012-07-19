@@ -52,6 +52,40 @@ namespace Hadouken.Impl.Http.Controllers.Api
             return Json(null);
         }
 
+        [HttpPut]
+        [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)")]
+        public ActionResult Change(string infoHash)
+        {
+            ITorrentManager manager = null;
+
+            if (_torrentEngine.Managers.TryGetValue(infoHash, out manager))
+            {
+                Dictionary<string, string> actions = BindModel<Dictionary<string, string>>();
+
+                if (actions.ContainsKey("Action"))
+                {
+                    switch (actions["Action"])
+                    {
+                        case "Start":
+                            manager.Start();
+                            break;
+
+                        case "Stop":
+                            manager.Stop();
+                            break;
+
+                        case "Pause":
+                            manager.Pause();
+                            break;
+                    }
+                }
+
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
         [HttpPost]
         [Route("/api/torrents")]
         public ActionResult Post()

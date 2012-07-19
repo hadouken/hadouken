@@ -171,7 +171,7 @@ namespace Hadouken.Impl.BitTorrent
 
         public ITorrentManager AddTorrent(byte[] data)
         {
-            return AddTorrent(data, String.Empty);
+            return AddTorrent(data, null);
         }
 
         public ITorrentManager AddTorrent(byte[] data, string savePath)
@@ -183,6 +183,9 @@ namespace Hadouken.Impl.BitTorrent
 
             if (Torrent.TryLoad(data, out t))
             {
+                if (String.IsNullOrEmpty(savePath))
+                    savePath = _clientEngine.Settings.SavePath;
+
                 TorrentManager manager = new TorrentManager(t, savePath, new TorrentSettings());
 
                 // register with engine
