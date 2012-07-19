@@ -63,13 +63,15 @@ namespace Hadouken.Impl.Plugins
                 msg.PluginName = attr.Name;
                 msg.PluginVersion = attr.Version;
                 msg.PluginType = _pluginType;
-            });
+            }).Wait();
 
             // create IPlugin instance
             _instance = CreatePluginFromType(_pluginType);
 
             if (_instance == null)
                 throw new Exception("Could not load plugin");
+
+            _mbus.Send<IPluginLoaded>(m => m.Manager = this).Wait();
 
             _logger.Info("Plugin {0} loaded", attr.Name);
         }
