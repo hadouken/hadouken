@@ -16,6 +16,7 @@ using FluentNHibernate.Conventions;
 using System.IO;
 using Hadouken.Configuration;
 using NLog;
+using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Data
 {
@@ -37,6 +38,19 @@ namespace Hadouken.Impl.Data
         public void Apply(FluentNHibernate.Conventions.Instances.IPropertyInstance instance)
         {
             instance.CustomType(instance.Property.PropertyType);
+        }
+    }
+
+    internal class TableNameConvention : IClassConvention
+    {
+        public void Apply(FluentNHibernate.Conventions.Instances.IClassInstance instance)
+        {
+            Type t = Type.GetType(instance.Name);
+
+            if (t.HasAttribute<TableAttribute>())
+            {
+                instance.Table(t.GetAttribute<TableAttribute>().TableName);
+            }
         }
     }
 
@@ -67,7 +81,11 @@ namespace Hadouken.Impl.Data
                 .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
                 .Mappings(m =>
                 {
-                    m.AutoMappings.Add(AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies).Conventions.Add(new EnumMappingConvention()));
+                    m.AutoMappings.Add(
+                        AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
+                            .Conventions.Add(new EnumMappingConvention())
+                            .Conventions.Add(new TableNameConvention())
+                    );
                 })
                 .BuildSessionFactory();
 

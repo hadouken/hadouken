@@ -88,6 +88,7 @@
     <Compile Include="Data\Migrations\CreatePluginInfoTable_001.cs" />
     <Compile Include="Data\Migrations\CreateSettingTable_001.cs" />
     <Compile Include="Data\Migrations\CreateTorrentInfoTable_001.cs" />
+    <Compile Include="Data\TableAttribute.cs" />
     <Compile Include="Hosting\DefaultHost.cs" />
     <Compile Include="Http\ActionCacheItem.cs" />
     <Compile Include="Http\Controllers\Api\ConfigController.cs" />
