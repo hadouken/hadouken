@@ -49,7 +49,15 @@ namespace Hadouken.Impl.BitTorrent
 
         private void TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
         {
-            //
+            if (e.NewState == MonoTorrent.Common.TorrentState.Error)
+            {
+                _mbus.Send<ITorrentError>(msg => msg.Torrent = this);
+            }
+
+            if (e.OldState == MonoTorrent.Common.TorrentState.Downloading && e.NewState == MonoTorrent.Common.TorrentState.Seeding)
+            {
+                _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this);
+            }
         }
 
         public IBitField BitField

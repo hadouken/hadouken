@@ -199,7 +199,7 @@ namespace Hadouken.Impl.BitTorrent
 
                 _mbus.Send<ITorrentAdded>(m =>
                 {
-                    m.TorrentManager = hdknManager;
+                    m.Torrent = hdknManager;
                 });
 
                 return hdknManager;

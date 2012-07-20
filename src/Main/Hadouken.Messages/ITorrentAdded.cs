@@ -9,6 +9,6 @@ namespace Hadouken.Messages
 {
     public interface ITorrentAdded : IMessage
     {
-        ITorrentManager TorrentManager { get; set; }
+        ITorrentManager Torrent { get; set; }
     }
 }
