@@ -107,5 +107,20 @@ namespace Hadouken.Impl.BitTorrent
             _bitfield = _bitfield.Xor(((HdknBitField)value)._bitfield);
             return this;
         }
+
+        public override string ToString()
+        {
+            return _bitfield.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return _bitfield.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return _bitfield.Equals(obj);
+        }
     }
 }
