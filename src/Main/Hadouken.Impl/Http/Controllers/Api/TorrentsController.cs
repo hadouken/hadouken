@@ -21,25 +21,25 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult List()
         {
-            var torrents = (from manager in _torrentEngine.Managers.Values
-                            let torrent = manager.Torrent
-                            select new
-                            {
-                                Name = torrent.Name,
-                                InfoHash = manager.InfoHash,
-                                Size = torrent.Size,
-                                DownloadedBytes = manager.DownloadedBytes,
-                                UploadedBytes = manager.UploadedBytes,
-                                DownloadSpeed = manager.DownloadSpeed,
-                                UploadSpeed = manager.UploadSpeed,
-                                Progress = manager.Progress,
-                                Label = manager.Label,
-                                State = manager.State
-                                //PeersCount = manager.,
-                                //Seeders = torrent.Peers.Where(p => p.IsSeeder).Count()
-                            });
+            var torrents = _torrentEngine.Managers.Values.ToDictionary(s => s.InfoHash, s => new
+            {
+                Name = s.Torrent.Name,
+                InfoHash = s.Torrent.InfoHash,
+                Size = s.Torrent.Size,
+                DownloadedBytes = s.DownloadedBytes,
+                UploadedBytes = s.UploadedBytes,
+                DownloadSpeed = s.DownloadSpeed,
+                UploadSpeed = s.UploadSpeed,
+                Progress = s.Progress,
+                Label = s.Label,
+                State = s.State
+                //PeersCount = manager.,
+                //Seeders = torrent.Peers.Where(p => p.IsSeeder).Count()
+            });
 
-            return Json(torrents);
+            // labels
+
+            return Json(new { torrents = torrents });
         }
 
         [HttpGet]

@@ -4,71 +4,45 @@
     <head>
         <meta charset='utf-8' />
         
-        <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-
-        <link rel="stylesheet" type="text/css" media="screen" href="/css/stable.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="/css/dxstable.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
-        <link rel="stylesheet" type="text/css" media="screen" href="/css/dialogs.css" />
-
-        <script type="text/javascript" src="/js/mootools.js"></script>
-        <script type="text/javascript" src="/js/utils.js"></script>
-        <script type="text/javascript" src="/js/stable.js"></script>
+        
+        <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/dxstable.js"></script>
+        <script type="text/javascript" src="/js/network.js"></script>
+        <script type="text/javascript" src="/js/converter.js"></script>
+        <script type="text/javascript" src="/js/formatter.js"></script>
+        <script type="text/javascript" src="/js/contextmenu.js"></script>
         <script type="text/javascript" src="/js/webui.js"></script>
-        <script type="text/javascript" src="/js/dialogmanager.js"></script>
         <script type="text/javascript" src="/js/main.js"></script>
-
+        
         <title>Hadouken</title>
     </head>
 
     <body>
-    	<div id="modalbg"></div>
+        <div id="modalbg"></div>
+        <div id="dragmask"></div>
 
-        <div id="dlgAdd" class="dlg-window">
-            	<a href="#" class="dlg-close"></a>
-<div id="dlgAdd-head" class="dlg-head">Add torrent</div>
-<form id="dlgAdd-form" action="/api/torrents" method="post" enctype="multipart/form-data">
-<div class="dlg-body">
-<div class="line-cont">
-<input type="file" id="dlgAdd-file" name="torrent_file" multiple="multiple" class="fbox flr" />
-<label for="dlgAdd-file">Torrent file: </label>
-</div>
 
-<fieldset><!-- TODO: Localize -->
-<legend>Options</legend>
-<div id="dlgAdd-basePathDiv" class="line-cont">
-<select id="dlgAdd-basePath" class="tbox flr">
-<option value="0">Default download directory</option>
-</select>
-<label for="dlgAdd-basePath">Path:</label>
-</div>
-<div class="line-cont">
-<input type="text" id="dlgAdd-subPath" class="tbox flr" />
-<label for="dlgAdd-subPath">Sub-path:</label>
-</div>
-</fieldset>
-</div>
-<div class="dlg-foot">
-<input type="submit" id="ADD_FILE_OK" class="btn" value="Add" />
-</div>
-</form>
-        </div>
-
-        <div id="mainToolbar">
-            <div id="mainToolbar-searchbar">
-                <input type="text" id="query" /><a href="#" id="search"></a><a href="#" id="searchsel"></a>
-            </div>
+        <div id="toolbar">
+            <a id="mnu_add" href="#"><div id="add"></div></a>
             
-            <a href="#" id="tbchevron">&raquo;</a>
-
-            <a href="#" id="add" class="tbbutton inchev"></a>
-            <a href="#" id="addurl" class="tbbutton inchev"></a>
-
-            <div class="separator inchev"></div>
-
-            <a href="#" id="setting" class="tbbutton inchev"></a>
+            <div class="separator"></div>
+            
+            
+        </div>
+        
+        <div id="categories">
+            <div class="panel" id="state_header">State</div>
+            
+            <ul id="state" class="state_list">
+                <li id="state_all" class="selected category">All (<span id="state_all_count">0</span>)</li>
+            </ul>
         </div>
     
-        <div id="mainTorList"></div>
-
+        <div id="torrents"></div>
+        
+        <div id="statusbar"></div>
     </body>
 </html>
