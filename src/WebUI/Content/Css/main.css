@@ -196,6 +196,7 @@ td.disabled, label.disabled, span.disabled, div.disabled {
 #modalbg {
 	display: none;
 	z-index: 500;
+	background: rgb(255, 0, 0) ; opacity: 0.6;
 }
 
 #cover {

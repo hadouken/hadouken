@@ -14,21 +14,23 @@
         <script type="text/javascript" src="/js/utils.js"></script>
         <script type="text/javascript" src="/js/stable.js"></script>
         <script type="text/javascript" src="/js/webui.js"></script>
+        <script type="text/javascript" src="/js/dialogmanager.js"></script>
         <script type="text/javascript" src="/js/main.js"></script>
 
         <title>Hadouken</title>
     </head>
 
     <body>
-    
+    	<div id="modalbg"></div>
+
         <div id="dlgAdd" class="dlg-window">
             	<a href="#" class="dlg-close"></a>
-<div id="dlgAdd-head" class="dlg-head"></div>
+<div id="dlgAdd-head" class="dlg-head">Add torrent</div>
 <form id="dlgAdd-form" action="./?action=add-file" method="post" enctype="multipart/form-data">
 <div class="dlg-body">
 <div class="line-cont">
 <input type="file" id="dlgAdd-file" name="torrent_file" multiple="multiple" class="fbox flr" />
-<label for="dlgAdd-file">Torrent file:</label>
+<label for="dlgAdd-file">Torrent file: </label>
 </div>
 
 <fieldset><!-- TODO: Localize -->
@@ -62,6 +64,8 @@
             <a href="#" id="addurl" class="tbbutton inchev"></a>
 
             <div class="separator inchev"></div>
+
+            <a href="#" id="setting" class="tbbutton inchev"></a>
         </div>
     
         <div id="mainTorList"></div>
