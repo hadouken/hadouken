@@ -86,6 +86,19 @@ namespace Hadouken.Impl.Http.Controllers.Api
             return Json(false);
         }
 
+        [HttpDelete]
+        [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)")]
+        public ActionResult Remove(string infoHash)
+        {
+            if (_torrentEngine.Managers.ContainsKey(infoHash))
+            {
+                _torrentEngine.RemoveTorrent(_torrentEngine.Managers[infoHash]);
+                return Json(true);
+            }
+
+            return Json(false);
+        }
+
         [HttpPost]
         [Route("/api/torrents")]
         public ActionResult Post()
