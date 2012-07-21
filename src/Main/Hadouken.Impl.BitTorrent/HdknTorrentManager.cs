@@ -15,6 +15,8 @@ namespace Hadouken.Impl.BitTorrent
 {
     public class HdknTorrentManager : ITorrentManager
     {
+        private object _lock = new object();
+
         private TorrentManager _manager;
 
         private HdknTorrent _torrent;
@@ -25,6 +27,8 @@ namespace Hadouken.Impl.BitTorrent
 
         private long _dlBytes;
         private long _ulBytes;
+
+        private double _progress;
 
         internal HdknTorrentManager(TorrentManager manager, IFileSystem fileSystem, IMessageBus mbus)
         {
@@ -39,12 +43,25 @@ namespace Hadouken.Impl.BitTorrent
 
         internal void Load()
         {
+            _manager.PieceHashed += new EventHandler<PieceHashedEventArgs>(PieceHashed);
             _manager.TorrentStateChanged += TorrentStateChanged;
         }
 
         internal void Unload()
         {
+            _manager.PieceHashed -= PieceHashed;
             _manager.TorrentStateChanged -= TorrentStateChanged;
+        }
+
+        private void PieceHashed(object sender, PieceHashedEventArgs e)
+        {
+            int pieceIndex = e.PieceIndex;
+            int totalPieces = e.TorrentManager.Torrent.Pieces.Count;
+
+            lock (_lock)
+            {
+                _progress = (double)pieceIndex / totalPieces * 100.0;
+            }
         }
 
         private void TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
@@ -127,7 +144,13 @@ namespace Hadouken.Impl.BitTorrent
 
         public double Progress
         {
-            get { return _manager.Progress; }
+            get 
+            {
+                if (State == TorrentState.Hashing)
+                    return _progress;
+
+                return _manager.Progress;
+            }
         }
 
         public string SavePath
