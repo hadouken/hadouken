@@ -39,7 +39,7 @@ namespace Hadouken.Impl.Http
 
         public void Start()
         {
-            var binding = _data.GetSetting("http.binding", "http://localhost:12012/");
+            var binding = ConfigurationManager.AppSettings["WebUI.Url"];
 
             _listener.Prefixes.Add(binding);
             _listener.AuthenticationSchemes = AuthenticationSchemes.Basic;

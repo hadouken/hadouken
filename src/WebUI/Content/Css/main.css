@@ -16,6 +16,19 @@ Input.TextboxLarge {border: 1px solid #B0B0B0; font-size: 11px; font-family: Tah
 Input.TextboxVShort {border: 1px solid #B0B0B0; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; padding: 2px; width: 30px}
 input.Button {padding: 0px 10px; background: #F0F0F0 url(/img/h.gif) repeat-x center bottom; width: 80px; height: 22px; border: 1px solid #A0A0A0;}
 
+/* category list */
+div#categories {background-color: #FFFFFF;border: 1px solid #868686;float: left;margin: 3px;overflow: auto;position: relative;}
+div#categories .panel { background: url(/img/pnl_open.gif) 2px no-repeat; background-color: #F0F0F0; border-bottom: 1px solid #A0A0A0; border-top: 1px solid #A0A0A0; padding: 2px 21px; margin: 0px; line-height: 16px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; cursor: pointer; -moz-user-select: none; -moz-user-focus: normal; -moz-user-input: enabled }
+div#categories ul {padding: 0; margin: 0; list-style: none; white-space: nowrap}
+div#categories ul li {padding: 2px 25px; margin: 0; line-height: 14px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; cursor: pointer; border: 1px solid #FFFFFF; background-repeat: no-repeat}
+div#categories ul li.sel {background-color: #CFDEEF; border-color: #CFDEEF }
+#-_-_-all-_-_-, #-_-_-dls-_-_-, #-_-_-com-_-_-, #-_-_-act-_-_-, #-_-_-iac-_-_-, #-_-_-err-_-_- {background-image: url(/img/tstatus.png)}
+#-_-_-all-_-_- {background-position: 4px -174px;}
+#-_-_-dls-_-_- {background-position: 4px 2px;}
+#-_-_-com-_-_- {background-position: 4px -14px;}
+#-_-_-act-_-_- {background-position: 4px -158px;}
+#-_-_-iac-_-_- {background-position: 4px -30px;}
+#-_-_-err-_-_- {background-position: 4px -94px;}
 
 /* toolbar */
 div#toolbar {width: 100%; height: 36px; background: #F0F0F0 url(/img/t_bg.png) repeat-x center center; line-height: 36px; border-bottom: 1px solid #D0D0D0; white-space: nowrap}
@@ -37,6 +50,23 @@ div#toolbar div#search {background: transparent url(/img/toolbar.png) no-repeat 
 div#toolbar div#rss {background: transparent url(/img/toolbar.png) no-repeat -240px center}
 div#toolbar div#setting {background: transparent url(/img/toolbar.png) no-repeat -264px center}
 
+/* status icons */
+.stable-icon {background-image: url(/img/tstatus.png); background-repeat: no-repeat}
+.Status_Down {background-position: 0px 0px}
+.Status_Seeding {background-position: 0px -16px}
+.Status_Incompleted {background-position: 0px -32px}
+.Status_Paused {background-position: 0px -48px}
+.Status_Error_Down {background-position: 0px -64px}
+.Status_Error_Up {background-position: 0px -80px}
+.Status_Error {background-position: 0px -96px}
+.Status_Completed {background-position: 0px -112px}
+.Status_Queued_Down {background-position: 0px -128px}
+.Status_Queued_Up {background-position: 0px -144px}
+.Status_Up_Down {background-position: 0px -160px}
+.Status_Checking {background-position: 0px -176px}
+.Status_RSS {background-position: 0px -208px}
+
+
 /* dialogs */
 div.dlg-window {position: absolute; left: 0px; top: 0px; background-color: #FAFAFA; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; color: #000000; border: 2px solid #909090; display: none; overflow: hidden}
 div.fxcaret {overflow: auto}
@@ -57,4 +87,4 @@ div#dlgAddTorrent input {margin-bottom: 1px}
 div#dragmask {width: 10px; height: 10px; left: 0px; top: 0px; position: absolute; z-index: 5000; display: none; border: 1px dotted #A0A0A0}
 
 
-div#torrents {border: 1px solid #A0A0A0;}
+div#torrents {border: 1px solid #A0A0A0; margin: 3px;}
