@@ -28,6 +28,11 @@ var Formatter =
                     case 7: // dl speed
                     case 8: // ul speed
                         arr[i] = Converter.toSpeed(arr[i]);
+                        break;
+                        
+                    case 13:
+                        arr[i] = Converter.toDate(arr[i]);
+                        break;
                 }
             }
         }

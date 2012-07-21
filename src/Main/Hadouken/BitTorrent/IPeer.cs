@@ -8,6 +8,8 @@ namespace Hadouken.BitTorrent
 {
     public interface IPeer
     {
+        string PeerId { get; }
+        bool IsSeeder { get; }
         IPEndPoint Endpoint { get; }
     }
 }

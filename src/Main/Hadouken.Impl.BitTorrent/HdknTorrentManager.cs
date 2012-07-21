@@ -16,11 +16,13 @@ namespace Hadouken.Impl.BitTorrent
     public class HdknTorrentManager : ITorrentManager
     {
         private object _lock = new object();
+        private object _peersLock = new object();
 
         private TorrentManager _manager;
 
         private HdknTorrent _torrent;
-        private List<HdknPeer> _peers = new List<HdknPeer>();
+        private List<IPeer> _peers = new List<IPeer>();
+        private List<ITracker> _trackers = new List<ITracker>();
 
         private IFileSystem _fileSystem;
         private IMessageBus _mbus;
@@ -35,6 +37,14 @@ namespace Hadouken.Impl.BitTorrent
             _manager = manager;
             _torrent = new HdknTorrent(manager.Torrent);
 
+            foreach (var t in _manager.TrackerManager.TrackerTiers)
+            {
+                foreach (var t2 in t.GetTrackers())
+                {
+                    _trackers.Add(new HdknTracker(t2));
+                }
+            }
+
             _fileSystem = fileSystem;
             _mbus = mbus;
         }
@@ -43,14 +53,39 @@ namespace Hadouken.Impl.BitTorrent
 
         internal void Load()
         {
+            _manager.PeerConnected += new EventHandler<PeerConnectionEventArgs>(PeerConnected);
+            _manager.PeerDisconnected += new EventHandler<PeerConnectionEventArgs>(PeerDisconnected);
             _manager.PieceHashed += new EventHandler<PieceHashedEventArgs>(PieceHashed);
             _manager.TorrentStateChanged += TorrentStateChanged;
         }
 
         internal void Unload()
         {
+            _manager.PeerConnected -= PeerConnected;
+            _manager.PeerDisconnected -= PeerDisconnected;
             _manager.PieceHashed -= PieceHashed;
             _manager.TorrentStateChanged -= TorrentStateChanged;
+        }
+
+        private void PeerConnected(object sender, PeerConnectionEventArgs e)
+        {
+            HdknPeer p = new HdknPeer(e.PeerID);
+
+            lock (_peersLock)
+            {
+                _peers.Add(p);
+            }
+        }
+
+        private void PeerDisconnected(object sender, PeerConnectionEventArgs e)
+        {
+            lock (_peersLock)
+            {
+                var p = (HdknPeer)_peers.FirstOrDefault(i => i.PeerId == e.PeerID.PeerID);
+
+                if (p != null)
+                    _peers.Remove(p);
+            }
         }
 
         private void PieceHashed(object sender, PieceHashedEventArgs e)
@@ -216,7 +251,12 @@ namespace Hadouken.Impl.BitTorrent
 
         public IPeer[] Peers
         {
-            get { return _peers.ToArray<IPeer>(); }
+            get { return _peers.ToArray(); }
+        }
+
+        public ITracker[] Trackers
+        {
+            get { return _trackers.ToArray(); }
         }
 
         public void Start()

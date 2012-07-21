@@ -77,7 +77,8 @@ namespace Hadouken.Impl.BitTorrent
 
                     _logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
 
-                    manager.LoadFastResume(torrentInfo.FastResumeData);
+                    if (torrentInfo.FastResumeData != null)
+                        manager.LoadFastResume(torrentInfo.FastResumeData);
 
                     BringToState(manager, torrentInfo.State);
                 }
@@ -143,15 +144,18 @@ namespace Hadouken.Impl.BitTorrent
 
         private void CreateTorrentInfo(HdknTorrentManager manager, TorrentInfo info)
         {
-            if (!manager.HashChecked)
-                manager.HashCheck(false);
-
-            while (manager.State == HdknTorrentState.Hashing)
-                Thread.Sleep(100);
-
             info.Data = manager.TorrentData;
             info.DownloadedBytes = manager.DownloadedBytes;
-            info.FastResumeData = manager.SaveFastResume();
+
+            if (manager.HashChecked)
+            {
+                info.FastResumeData = manager.SaveFastResume();
+            }
+            else
+            {
+                info.FastResumeData = null;
+            }
+            
             info.InfoHash = manager.InfoHash;
             info.Label = manager.Label;
             info.SavePath = manager.SavePath;

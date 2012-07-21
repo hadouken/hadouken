@@ -16,6 +16,16 @@ namespace Hadouken.Impl.BitTorrent
             _peer = peer;
         }
 
+        public string PeerId
+        {
+            get { return _peer.PeerID; }
+        }
+
+        public bool IsSeeder
+        {
+            get { return _peer.IsSeeder; }
+        }
+
         public System.Net.IPEndPoint Endpoint
         {
             get { return null; }

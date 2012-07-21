@@ -21,20 +21,37 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult List()
         {
-            var torrents = _torrentEngine.Managers.Values.ToDictionary(s => s.InfoHash, s => new
+            var torrents = _torrentEngine.Managers.Values.ToDictionary(s => s.InfoHash, s =>
             {
-                Name = s.Torrent.Name,
-                InfoHash = s.Torrent.InfoHash,
-                Size = s.Torrent.Size,
-                DownloadedBytes = s.DownloadedBytes,
-                UploadedBytes = s.UploadedBytes,
-                DownloadSpeed = s.DownloadSpeed,
-                UploadSpeed = s.UploadSpeed,
-                Progress = s.Progress,
-                Label = s.Label,
-                State = s.State
-                //PeersCount = manager.,
-                //Seeders = torrent.Peers.Where(p => p.IsSeeder).Count()
+                var peersAll = s.Trackers.Sum(t => t.Incomplete);
+                var peersActual = s.Peers.Count(p => !p.IsSeeder);
+
+                var seedsAll = s.Trackers.Sum(t => t.Complete);
+                var seedsActual = s.Peers.Count(p => p.IsSeeder);
+
+                var eta = -1;
+
+                return new
+                    {
+                        Name = s.Torrent.Name,
+                        InfoHash = s.Torrent.InfoHash,
+                        Size = s.Torrent.Size,
+                        DownloadedBytes = s.DownloadedBytes,
+                        UploadedBytes = s.UploadedBytes,
+                        DownloadSpeed = s.DownloadSpeed,
+                        UploadSpeed = s.UploadSpeed,
+                        Progress = s.Progress,
+                        Label = s.Label,
+                        State = s.State,
+                        Peers_Info = peersActual + " (" + peersAll + ")",
+                        Peers_All = peersAll,
+                        Peers_Actual = peersActual,
+                        Seeders_Info = seedsActual + " (" + seedsAll + ")",
+                        Seeders_All = seedsAll,
+                        Seeders_Actual = seedsActual,
+                        ETA = eta,
+                        CreatedOn = s.Torrent.CreationDate.ToUnixTime()
+                    };
             });
 
             // labels

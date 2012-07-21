@@ -12,10 +12,11 @@ namespace Hadouken.BitTorrent
         int Complete { get; }
         int Downloaded { get; }
         string FailureMessage { get; }
+        int Incomplete { get; }
         TimeSpan MinUpdateInterval { get; }
         TrackerState Status { get; }
-        Uri Uri { get; }
         TimeSpan UpdateInterval { get; }
+        Uri Uri { get; }
         string WarningMessage { get; }
     }
 }

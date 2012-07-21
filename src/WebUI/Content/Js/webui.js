@@ -7,20 +7,20 @@ var WebUI =
             obj: new dxSTable(),
             columns:
             [
-                { text: "Name",                 width: "200px",         id: "torrent_name",         type: TYPE_STRING },
-                { text: "Status",               width: "100px",         id: "torrent_status",       type: TYPE_STRING },
-                { text: "Size",                 width: "60px",          id: "torrent_size",         type: TYPE_NUMBER },
-                { text: "Progress",             width: "100px",         id: "torrent_progress",     type: TYPE_PROGRESS },
-                { text: "Downloaded",           width: "100px",         id: "torrent_downloaded",   type: TYPE_NUMBER },
-                { text: "Uploaded",             width: "100px",         id: "torrent_uploaded",     type: TYPE_NUMBER },
-                { text: "Ratio",                width: "60px",          id: "torrent_ratio",        type: TYPE_NUMBER },
-                { text: "DL Speed",             width: "60px",          id: "torrent_downspeed",    type: TYPE_NUMBER },
-                { text: "UL Speed",             width: "60px",          id: "torrent_upspeed",      type: TYPE_NUMBER },
-                { text: "ETA",                  width: "60px",          id: "torrent_eta",          type: TYPE_NUMBER },
-                { text: "Label",                width: "60px",          id: "torrent_label",        type: TYPE_STRING },
-                { text: "Peers",                width: "60px",          id: "torrent_peers",        type: TYPE_NUMBER },
-                { text: "Seeds",                width: "60px",          id: "torrent_seeds",        type: TYPE_NUMBER },
-                { text: "Created on",           width: "100px",         id: "torrent_created",      type: TYPE_NUMBER }
+                { text: "Name",                 width: "200px",         id: "Name",              type: TYPE_STRING },
+                { text: "Status",               width: "100px",         id: "State",             type: TYPE_STRING },
+                { text: "Size",                 width: "60px",          id: "Size",              type: TYPE_NUMBER },
+                { text: "Progress",             width: "100px",         id: "Progress",          type: TYPE_PROGRESS },
+                { text: "Downloaded",           width: "100px",         id: "DownloadedBytes",   type: TYPE_NUMBER },
+                { text: "Uploaded",             width: "100px",         id: "UploadedBytes",     type: TYPE_NUMBER },
+                { text: "Ratio",                width: "60px",          id: "Ratio",             type: TYPE_NUMBER },
+                { text: "DL Speed",             width: "60px",          id: "DownloadSpeed",     type: TYPE_NUMBER },
+                { text: "UL Speed",             width: "60px",          id: "UploadSpeed",       type: TYPE_NUMBER },
+                { text: "ETA",                  width: "60px",          id: "ETA",               type: TYPE_NUMBER },
+                { text: "Label",                width: "60px",          id: "Label",             type: TYPE_STRING },
+                { text: "Peers",                width: "60px",          id: "Peers_Info",        type: TYPE_NUMBER },
+                { text: "Seeds",                width: "60px",          id: "Seeders_Info",        type: TYPE_NUMBER },
+                { text: "Created on",           width: "100px",         id: "CreatedOn",         type: TYPE_NUMBER }
             ],
             container: "torrents",
             format: Formatter.torrents,
@@ -228,13 +228,12 @@ var WebUI =
             
             var statusInfo = WebUI.getStatusIcon(torrent);
             var label = WebUI.getLabels(hash, torrent);
-            var rowData = WebUI.torrentDataToRow(torrent);
             
             if(!$type(WebUI.torrents[hash]))
             {
                 WebUI.labels[hash] = label;
                 
-                table.addRow(rowData, hash, statusInfo[0], { label: label });
+                table.addRowById(torrent, hash, statusInfo[0], {label : label});
                 
                 tArray.push(hash);
                 
@@ -243,66 +242,41 @@ var WebUI =
             else 
             {
                 // update existing torrent
-                var oldTorrent = WebUI.torrents[hash];
+                table.setIcon(hash, statusInfo[0]);
+                
+                for( var prop in torrent)
+                {
+                    table.setValueById(hash, prop, torrent[prop]);
+                }
             }
+            
+            torrent._updated = true;
         });
-        
-        // compare this.torrents with data.torrents and get hashes that exist locally but not remote. delete findings
         
         $.extend(this.torrents, data.torrents);
         
-        this.loadTorrents();
-    },
-    
-    torrentDataToRow: function(data)
-    {
-        return this.tables.torrents.columns.map(function(item)
+        // set speed values
+        
+        var wasRemoved = false;
+        
+        // clear tegs?
+        
+        $.each(this.torrents, function(hash, torrent)
+        {
+            if(!torrent._updated)
             {
-                switch(item["text"])
-                {
-                    case "Name":
-                        return data.Name;
-                    
-                    case "Status":
-                        return data.State;
-                        
-                    case "Size":
-                        return data.Size;
-                        
-                    case "Progress":
-                        return data.Progress;
-                        
-                    case "Downloaded":
-                        return data.DownloadedBytes;
-                    
-                    case "Uploaded":
-                        return data.UploadedBytes;
-                        
-                    case "Ratio":
-                        return 0;
-                        
-                    case "DL Speed":
-                        return data.DownloadSpeed;
-                        
-                    case "UL Speed":
-                        return data.UploadSpeed;
-                    
-                    case "ETA":
-                        return "-";
-                    
-                    case "Label":
-                        return data.Label;
-                        
-                    case "Peers":
-                        return -1;
-                        
-                    case "Seeds":
-                        return -1;
-                        
-                    case "Created on":
-                        return -1;
-                }
-            });
+                delete WebUI.torrents[hash];
+                
+                // decrement labels
+                
+                delete WebUI.labels[hash];
+                
+                table.removeRow(hash);
+                wasRemoved = true;
+            }
+        });
+        
+        this.loadTorrents();
     },
     
     getStatusIcon: function(torrent)

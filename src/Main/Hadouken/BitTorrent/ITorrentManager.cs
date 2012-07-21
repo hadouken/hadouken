@@ -37,6 +37,7 @@ namespace Hadouken.BitTorrent
         ITorrent Torrent { get; }
         byte[] TorrentData { get; }
         IPeer[] Peers { get; }
+        ITracker[] Trackers { get; }
 
         void Start();
         void Stop();
