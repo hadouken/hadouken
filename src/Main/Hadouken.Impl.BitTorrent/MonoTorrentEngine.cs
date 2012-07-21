@@ -16,6 +16,7 @@ using Hadouken.IO;
 using Hadouken.Messaging;
 using System.Collections.ObjectModel;
 using Hadouken.Messages;
+using System.Threading;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -59,16 +60,21 @@ namespace Hadouken.Impl.BitTorrent
         {
             _logger.Info("Loading torrent state");
 
-            foreach (var torrentInfo in _data.List<TorrentInfo>())
+            var infos = _data.List<TorrentInfo>();
+
+            if(infos == null)
+                return;
+
+            foreach (var torrentInfo in infos)
             {
                 var manager = (HdknTorrentManager)AddTorrent(torrentInfo.Data, torrentInfo.SavePath);
 
-                manager.DownloadedBytes = torrentInfo.DownloadedBytes;
-                manager.UploadedBytes = torrentInfo.UploadedBytes;
-                manager.Label = torrentInfo.Label;
-
                 if (manager != null)
                 {
+                    manager.DownloadedBytes = torrentInfo.DownloadedBytes;
+                    manager.UploadedBytes = torrentInfo.UploadedBytes;
+                    manager.Label = torrentInfo.Label;
+
                     _logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
 
                     manager.LoadFastResume(torrentInfo.FastResumeData);
@@ -82,21 +88,19 @@ namespace Hadouken.Impl.BitTorrent
         {
             var infoList = _data.List<TorrentInfo>();
 
-            foreach (TorrentInfo info in infoList)
+            foreach (var m in _torrents.Values)
             {
-                if (_torrents.ContainsKey(info.InfoHash))
-                {
-                    HdknTorrentManager manager = (HdknTorrentManager)_torrents[info.InfoHash];
+                HdknTorrentManager manager = (HdknTorrentManager)m;
+                TorrentInfo info = infoList.SingleOrDefault(i => i.InfoHash == manager.InfoHash);
 
-                    _logger.Debug("Saving state for torrent {0}", manager.Torrent.Name);
+                if (info == null)
+                    info = new TorrentInfo();
 
-                    CreateTorrentInfo(manager, info);
-                    _data.Update(info);
-                }
-                else
-                {
-                    _data.Delete(info);
-                }
+                _logger.Debug("Saving state for torrent {0}", manager.Torrent.Name);
+
+                CreateTorrentInfo(manager, info);
+
+                _data.SaveOrUpdate(info);
             }
         }
 
@@ -141,6 +145,9 @@ namespace Hadouken.Impl.BitTorrent
         {
             if (!manager.HashChecked)
                 manager.HashCheck(false);
+
+            while (manager.State == HdknTorrentState.Hashing)
+                Thread.Sleep(100);
 
             info.Data = manager.TorrentData;
             info.DownloadedBytes = manager.DownloadedBytes;
@@ -193,6 +200,7 @@ namespace Hadouken.Impl.BitTorrent
 
                 // add to dictionary
                 HdknTorrentManager hdknManager = new HdknTorrentManager(manager, _fs, _mbus);
+                hdknManager.TorrentData = data;
                 hdknManager.Load();
 
                 _torrents.Add(hdknManager.InfoHash, hdknManager);

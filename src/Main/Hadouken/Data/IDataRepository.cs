@@ -9,6 +9,7 @@ namespace Hadouken.Data
     public interface IDataRepository : IComponent
     {
         void Save<TModel>(TModel instance) where TModel : IModel, new();
+        void SaveOrUpdate<TModel>(TModel instance) where TModel : IModel, new();
         void Update<TModel>(TModel instance) where TModel : IModel, new();
         void Delete<TModel>(TModel instance) where TModel : IModel, new();
 

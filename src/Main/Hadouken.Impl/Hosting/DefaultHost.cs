@@ -52,11 +52,11 @@ namespace Hadouken.Impl.Hosting
 
         public void Unload()
         {
-            _httpServer.Stop();
-
             _pluginEngine.UnloadAll();
 
             _torrentEngine.Unload();
+
+            _httpServer.Stop();
         }
     }
 }

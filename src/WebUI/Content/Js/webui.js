@@ -183,7 +183,7 @@ var WebUI =
     
     getUISettings: function()
     {
-        Network.get("/api/config?g=webui.", [ this.config, this ], false);
+        Network.getJson("/api/config?g=webui.", [ this.config, this ], false);
     },
     
     remove: function()
@@ -211,7 +211,7 @@ var WebUI =
         if(this.updateTimer)
             window.clearTimeout(this.updateTimer);
             
-        Network.get("/api/torrents", [ this.addTorrents, this ], true);
+        Network.getJson("/api/torrents", [ this.addTorrents, this ], true);
     },
     
     addTorrents: function(data)
@@ -462,5 +462,10 @@ var WebUI =
         }
         
         this.updateTimer = window.setTimeout(this.update, this.interval);
+    },
+    
+    showAddTorrent: function()
+    {
+        Dialogs.toggle("dlgAddTorrent");
     }
 };

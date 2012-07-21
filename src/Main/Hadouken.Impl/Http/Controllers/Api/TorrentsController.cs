@@ -103,16 +103,20 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult Post()
         {
+            List<string> hashes = new List<string>();
+
             foreach (var file in Context.Request.Files)
             {
                 using (var ms = new MemoryStream())
                 {
                     file.InputStream.CopyTo(ms);
-                    _torrentEngine.AddTorrent(ms.ToArray());
+                    var manager = _torrentEngine.AddTorrent(ms.ToArray());
+
+                    hashes.Add(manager.InfoHash);
                 }
             }
 
-            return Redirect("/");
+            return Json(hashes);
         }
     }
 }

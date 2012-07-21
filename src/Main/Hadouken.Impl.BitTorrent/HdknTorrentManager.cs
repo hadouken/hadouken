@@ -259,11 +259,15 @@ namespace Hadouken.Impl.BitTorrent
 
         public void HashCheck(bool autoStart)
         {
-            _manager.HashCheck(autoStart);
+            if (State == TorrentState.Stopped)
+                _manager.HashCheck(autoStart);
         }
 
         public byte[] SaveFastResume()
         {
+            if (!HashChecked)
+                HashCheck(false);
+
             using (var ms = new MemoryStream())
             {
                 _manager.SaveFastResume().Encode(ms);

@@ -23,7 +23,6 @@ namespace Hadouken.BitTorrent
         byte[] SHA1 { get; }
         long Size { get; }
         string Source { get; }
-        byte[] TorrentData { get; }
 
         ITorrentFile[] Files { get; }
     }

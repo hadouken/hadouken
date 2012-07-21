@@ -114,6 +114,15 @@ namespace Hadouken.Impl.Data
             }
         }
 
+        public void SaveOrUpdate<TModel>(TModel instance) where TModel : IModel, new()
+        {
+            lock (_lock)
+            {
+                _session.SaveOrUpdate(instance);
+                _session.Flush();
+            }
+        }
+
         public void Update<TModel>(TModel instance) where TModel : IModel, new()
         {
             lock (_lock)

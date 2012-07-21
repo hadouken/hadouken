@@ -106,12 +106,6 @@ namespace Hadouken.Impl.BitTorrent
             get { return _torrent.Source; }
         }
 
-        public byte[] TorrentData
-        {
-            get { return _data; }
-            internal set { _data = value; }
-        }
-
         public ITorrentFile[] Files
         {
             get { return _files.ToArray<ITorrentFile>(); }
