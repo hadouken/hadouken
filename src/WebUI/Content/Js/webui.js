@@ -62,7 +62,19 @@ var WebUI =
     timer: new Timer(),
     
     torrents: {},
-    labels: {},
+    labels:
+    {
+        "-_-_-all-_-_-": 0,
+        "-_-_-dls-_-_-": 0,
+        "-_-_-com-_-_-": 0,
+        "-_-_-act-_-_-": 0,
+        "-_-_-iac-_-_-": 0,
+        "-_-_-nlb-_-_-": 0,
+        "-_-_-err-_-_-": 0
+    },
+    cLabels: {},
+    actLbl: "-_-_-all-_-_-",
+    tegs: {},
     
     init: function()
     {
@@ -241,7 +253,15 @@ var WebUI =
             }
             else 
             {
-                // update existing torrent
+                var oldTorrent = WebUI.torrents[hash];
+                
+                if(label != WebUI.labels[hash])
+                {
+                    WebUI.labels[hash] = label;
+                    table.setAttr(hash, { label: label });
+                    WebUI.filterByLabel(hash);
+                }
+                
                 table.setIcon(hash, statusInfo[0]);
                 
                 for( var prop in torrent)
@@ -268,15 +288,102 @@ var WebUI =
                 delete WebUI.torrents[hash];
                 
                 // decrement labels
+                if(WebUI.labels[hash].indexOf("-_-_-nlb-_-_-") >= -1)
+                    WebUI.labels["-_-_-nlb-_-_-"]--;
+                
+                if(WebUI.labels[hash].indexOf("-_-_-com-_-_-") >= -1)
+                    WebUI.labels["-_-_-com-_-_-"]--;
+                    
+                if(WebUI.labels[hash].indexOf("-_-_-dls-_-_-") >= -1)
+                    WebUI.labels["-_-_-dls-_-_-"]--;
+                    
+                if(WebUI.labels[hash].indexOf("-_-_-act-_-_-") >= -1)
+                    WebUI.labels["-_-_-act-_-_-"]--;
+                    
+                if(WebUI.labels[hash].indexOf("-_-_-iac-_-_-") >= -1)
+                    WebUI.labels["-_-_-err-_-_-"]--;
+                    
+                if(WebUI.labels[hash].indexOf("-_-_-err-_-_-") >= -1)
+                    WebUI.labels["-_-_-err-_-_-"]--;
+                
+                WebUI.labels["-_-_-all-_-_-"]--;
                 
                 delete WebUI.labels[hash];
                 
                 table.removeRow(hash);
                 wasRemoved = true;
             }
+            else
+            {
+                torrent._updated = false;
+                WebUI.updateTegs(torrent);
+            }
         });
         
+        this.loadLabels(data.labels);
+        this.updateLabels(wasRemoved);
+        
         this.loadTorrents();
+    },
+    
+    setTeg: function(str)
+    {
+        
+    },
+    
+    clearTegs: function()
+    {
+        for(var id in this.tegs)
+        {
+            this.tegs[id].cnt = 0;
+        }
+    },
+    
+    updateTeg: function(id)
+    {
+        var teg = this.tegs[id];
+        var str = teg.val.toLowerCase();
+        
+        $.each(this.torrents, function(hash, torrent)
+        {
+            if(torrent.Name.ToLowerCase().indexOf(str) >= -1)
+            {
+                teg.cnt++;
+            }
+        });
+        
+        var counter = $("#" + id + "-c");
+        
+        if(counter.text() != teg.cnt)
+        {
+            counter.text(teg.cnt);
+            $("#" + id).attr("title", teg.val + " (" + teg.cnt + ")");
+        }
+    },
+    
+    updateTegs: function(torrent)
+    {
+        var str = torrent.Name.toLowerCase();
+        
+        for(var id in this.tegs)
+        {
+            var teg = this.tegs[id];
+            
+            if(str.indexOf(teg.val.toLowerCase()) >= -1)
+            {
+                teg.cnt++;
+            }
+        }
+    },
+    
+    removeTeg: function(id)
+    {
+        delete this.tegs[id];
+        
+        $($$(id)).remove();
+        
+        this.actLbl = "";
+        this.switchLabel($$("-_-_-all-_-_-"));
     },
     
     getStatusIcon: function(torrent)
@@ -291,6 +398,77 @@ var WebUI =
         return [ icon, status ];
     },
     
+    labelContextMenu: function(e)
+    {
+        // if right click
+        if(e.which == 3)
+        {
+        }
+        else
+        {
+            WebUI.switchLabel(this);
+        }
+        
+        return false;
+    },
+    
+    loadLabels: function(d)
+    {
+        var p = $("#lbll");
+        var temp = [];
+        var keys = [];
+        
+        for(var lbl in d)
+        {
+            keys.push(lbl);
+        }
+        keys.sort();
+        
+        for(var i = 0; i < keys.length; i++)
+        {
+            var lbl = keys[i];
+            
+            this.labels["-_-_-" + lbl + "-_-_-"] = d[lbl];
+            this.cLabels[lbl] = 1;
+            
+            temp["-_-_-" + lbl + "-_-_-"] = true;
+            
+            if(!$$("-_-_-" + lbl + "-_-_-"))
+            {
+                p.append($("<li>").
+                    attr("id", "-_-_-" + lbl + "-_-_-").
+                    html(escapeHTML(lbl) + "&nbsp;(<span id=\"-_-_-" + lbl + "-_-_-c\">" + d[lbl] + "</span>").
+                    mouseclick(WebUI.labelContextMenu).addClass("cat"));
+            }
+        }
+        
+        var actDeleted = false;
+        
+        p.children().each(function(ndx, val)
+        {
+            var id = val.id;
+            
+            if(id && !$type(temp[id]))
+            {
+                $(val).remove();
+                
+                delete WebUI.labels[id];
+                delete WebUI.cLabels[id.substr(5, id.length - 10)];
+                
+                if(WebUI.actLabel == id)
+                {
+                    actDeleted = true;
+                }
+            }
+        });
+        
+        if(actDeleted)
+        {
+            this.actLabel = "";
+            this.switchLabel($$("-_-_-all-_-_-"));
+        }
+    },
+    
     getLabels: function(id, torrent)
     {
         if(!$type(this.labels[id]))
@@ -298,7 +476,7 @@ var WebUI =
         
         var lbl = torrent.Label;
         
-        if(lbl == "")
+        if(lbl == "" || lbl == null )
         {
             lbl += "-_-_-nlb-_-_-";
             
@@ -346,12 +524,145 @@ var WebUI =
             }
         }
         
+        if((torrent.DownloadSpeed >= 1024) || (torrent.UploadSpeed >= 1024))
+        {
+            lbl += "-_-_-act-_-_-";
+            
+            if(this.labels[id].indexOf("-_-_-act-_-_-") == -1)
+            {
+                this.labels["-_-_-act-_-_-"]++;
+            }
+            
+            if(this.labels[id].indexOf("-_-_-iac-_-_-") > -1)
+            {
+                this.labels["-_-_-iac-_-_-"]--;
+            }
+        }
+        else
+        {
+            lbl += "-_-_-iac-_-_-";
+            
+            if(this.labels[id].indexOf("-_-_-iac-_-_-") == -1)
+            {
+                this.labels["-_-_-iac-_-_-"]++;
+            }
+            
+            if(this.labels[id].indexOf("-_-_-act-_-_-") > -1)
+            {
+                this.labels["-_-_-act-_-_-"]--;
+            }
+        }
+        
+        if(torrent.State == "Error")
+        {
+            lbl += "-_-_-err-_-_-";
+            
+            if(this.labels[id].indexOf("-_-_-err-_-_-") == -1)
+            {
+                this.labels["-_-_-err-_-_-"]++;
+            }
+        }
+        else
+        {
+            if(this.labels[id].indexOf("-_-_-err-_-_-") > -1)
+            {
+                this.labels["-_-_-err-_-_-"]--;
+            }
+        }
+        
+        lbl += "-_-_-all-_-_-";
+        
+        if(this.labels[id] == "")
+        {
+            this.labels["-_-_-all-_-_-"]++;
+        }
+        
         return lbl;
+    },
+    
+    updateLabels: function(wasRemoved)
+    {
+        for(var k in this.labels)
+        {
+            if(k.substr(0,5) == "-_-_-")
+            {
+                $($$(k + "c")).text(this.labels[k]);
+            }
+        }
+        
+        for(var id in this.tegs)
+        {
+            var counter = $("#" + id + "-c");
+            var teg = this.tegs[id];
+            
+            if(counter.text() != teg.cnt)
+            {
+                counter.text(teg.cnt);
+                $("#" + id).attr("title", teg.val + " (" + teg.cnt + ")");
+            }
+        }
+    },
+    
+    switchLabel: function(obj)
+    {
+        if(obj.id != this.actLbl)
+        {
+            if((this.actLbl != "") && $$(this.actLbl))
+            {
+                $($$(this.actLbl)).removeClass("sel");
+            }
+            
+            $(obj).addClass("sel");
+            
+            this.actLbl = obj.id;
+            
+            var table = this.getTable("torrents");
+            table.scrollTo(0);
+            
+            for(var k in this.torrents)
+            {
+                this.filterByLabel(k);
+            }
+            
+            table.clearSelection();
+            
+            // dID details something
+            
+            table.refreshRows();
+        }
     },
     
     filterByLabel: function(id)
     {
-    
+        var table = this.getTable("torrents");
+        
+        if($($$(this.actLbl)).hasClass("teg"))
+        {
+            var teg = this.tegs[this.actLbl];
+            
+            if(teg)
+            {
+                if(table.getValueById(id, "Name").toLowerCase().indexOf(teg.val.toLowerCase()) > -1)
+                {
+                    table.unhideRow(id);
+                }
+                else
+                {
+                    table.hideRow(id);
+                }
+            }
+        }
+        else
+        {
+            if(table.getAttr(id, "label").indexOf(this.actLbl) > -1)
+            {
+                table.unhideRow(id);
+            }
+            else
+            {
+                table.hideRow(id);
+            }
+        }
     },
     
     resize: function()

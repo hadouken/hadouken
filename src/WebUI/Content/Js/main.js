@@ -1,6 +1,7 @@
 $(document).ready(function() {
     loadContent();
     loadDialogs();
+    loadEvents();
     
     ContextMenu.init();
     WebUI.init();
@@ -26,4 +27,9 @@ function loadDialogs()
     {
         Dialogs.create("dlgAddTorrent", "Add torrent", data, true);
     });
+}
+
+function loadEvents()
+{
+    $(".cat").mouseclick(WebUI.labelContextMenu);
 }
