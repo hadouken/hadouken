@@ -51,7 +51,7 @@ namespace Hadouken.Impl.BitTorrent
             string defaultSavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
             string savePath = _data.GetSetting("bt.savePath", defaultSavePath);
-            int listenPort = Convert.ToInt32(_data.GetSetting("bt.listenPort", "6999"));
+            int listenPort = Convert.ToInt32(_data.GetSetting("bt.listenPort", "6998"));
 
             _clientEngine = new ClientEngine(new EngineSettings(savePath, listenPort));
         }
