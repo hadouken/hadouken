@@ -55,8 +55,9 @@ namespace Hadouken.Impl.Http.Controllers.Api
             });
 
             // labels
+            var labels = new Dictionary<string, int>();
 
-            return Json(new { torrents = torrents });
+            return Json(new { labels = labels, torrents = torrents });
         }
 
         [HttpGet]
