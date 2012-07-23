@@ -114,10 +114,10 @@ var WebUI =
         $.each(this.tables, function(ndx, table)
         {
             // array with column widths
-            var width = WebUI.settings["webui.tables." + ndx +".columnsWidth"];
+            var width = WebUI.settings["webui." + ndx +".colwidth"];
             
             // array deciding if columns are enabled or disabled
-            var enabled = WebUI.settings["webui.tables." + ndx + ".columnsEnabled"];
+            var enabled = WebUI.settings["webui." + ndx + ".colenabled"];
             
             $.each(table.columns, function(i, column)
             {
@@ -187,10 +187,30 @@ var WebUI =
     {
         $.each(data, function(key, value)
         {
-            console.log(key + ": " + value);
+            switch(value)
+            {
+                case "true":
+                case "auto":
+                case "on":
+                    data[key] = 1;
+                    break;
+                    
+                case "false":
+                    data[key] = 0;
+                    break;
+            }
+            
+            data[key] = eval(data[key]);
         });
         
         $.extend(this.settings, data);
+        
+        this.loadSettings();
+    },
+    
+    loadSettings: function()
+    {
+        
     },
     
     getUISettings: function()
@@ -205,7 +225,153 @@ var WebUI =
     
     selectTorrent: function(e, id)
     {
-        console.log("selectTorrent");
+        var table = this.getTable("torrents");
+        var hash = table.getFirstSelected();
+        
+        if((table.selCount == 1) && hash)
+        {
+            // show etails
+        }
+        else
+        {
+            //WebUI.dID = "";
+            //WebUI.clearDetails();
+        }
+        
+        if(e.which == 3)
+        {
+            WebUI.createMenu(e, id);
+            ContextMenu.show(e.clientX, e.clientY);
+        }
+    },
+    
+    createMenu: function(e, id)
+    {
+        ContextMenu.clear();
+        
+        var table = this.getTable("torrents");
+        
+        if(table.selCount > 1)
+        {
+            ContextMenu.add([ "Start", "WebUI.start()" ]);
+            ContextMenu.add([ "Pause", "WebUI.pause()" ]);
+            ContextMenu.add([ "Stop", "WebUI.stop()" ]);
+        }
+        else
+        {
+            ContextMenu.add(["Start", this.isTorrentCommandEnabled("start",id) ? "WebUI.start()" : null]);
+            ContextMenu.add(["Pause", this.isTorrentCommandEnabled("pause",id) ? "WebUI.pause()" : null]);
+            ContextMenu.add(["Stop", this.isTorrentCommandEnabled("stop",id) ? "WebUI.stop()" : null]);
+        }
+        
+        ContextMenu.add([CMENU_SEP]);
+        
+        var _labels = [];
+        
+        for(var lbl in this.cLabels)
+        {
+            if((table.selCount == 1) && (this.torrents[id].Label == lbl))
+            {
+                _labels.push([CMENU_SEL, lbl + " "]);
+            }
+            else
+            {
+                _labels.push([ lbl + " ", (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel", id) ? "WebUI.setLabel('" + addslashes(lbl) + "')" : null ]);
+            }
+        }
+        
+        if(_labels.length > 0)
+        {
+            _labels.push([CMENU_SEP]);
+        }
+        
+        _labels.push(["New label", (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel", id) ? "WebUI.newLabel()" : null ]);
+        _labels.push(["Remove label", (table.selCount > 1) || this.isTorrentCommandEnabled("remlabel", id) ? "WebUI.removeLabel()" : null ]);
+        
+        ContextMenu.add([CMENU_CHILD, "Labels", _labels]);
+        
+    },
+    
+    isTorrentCommandEnabled: function(action, hash)
+    {
+        var ret = true;
+        var state = this.torrents[hash].State;
+        
+        switch(action)
+        {
+            case "start":
+                ret = (state == "Stopped" || state == "Paused");
+                break;
+            
+            case "stop":
+                ret = (state == "Downloading" || state == "Paused" || state == "Seeding");
+                break;
+                
+            case "pause":
+                ret = (state == "Downloading" || state == "Seeding");
+                break;
+                
+            case "remlabel":
+                ret = (!this.torrents[hash].Label == null || !this.torrents[hash].Label == "");
+                break;
+        }
+        
+        return ret;
+    },
+    
+    // return selected torrent hashes which can perform the action
+    getHashes: function(action)
+    {
+        var h = "";
+        var res = [];
+        
+        var table = this.getTable("torrents");
+        var selectedRows = table.rowSel;
+        
+        for(var k in selectedRows)
+        {
+            if((selectedRows[k] == true) && this.isTorrentCommandEnabled(action, k))
+            {
+                res.push(k);
+            }
+        }
+        
+        return res;
+    },
+    
+    stop: function()
+    {
+        this.performAction("stop", { action: "stop" });
+    },
+    
+    start: function()
+    {
+        this.performAction("start", { action: "start" });
+    },
+    
+    pause: function()
+    {
+        this.performAction("pause", { action: "pause" });
+    },
+    
+    performAction: function(action, dataObj)
+    {
+        var hashes = this.getHashes(action);
+        
+        if(hashes.length > 0)
+        {
+            var data = {};
+            
+            for(var h in hashes)
+            {
+                data[hashes[h]] = dataObj;
+            }
+            
+            Network.putJson("/api/torrents", data, function(resp)
+            {
+                WebUI.update();
+            });
+        }
     },
     
     showTorrentDetails: function(id)
@@ -279,7 +445,7 @@ var WebUI =
         
         var wasRemoved = false;
         
-        // clear tegs?
+        this.clearTegs();
         
         $.each(this.torrents, function(hash, torrent)
         {
@@ -328,7 +494,15 @@ var WebUI =
     
     setTeg: function(str)
     {
+        str = $.trim(str);
         
+        if(str != "")
+        {
+            for(var id in this.tegs)
+            {
+                
+            }
+        }
     },
     
     clearTegs: function()
@@ -390,10 +564,15 @@ var WebUI =
     {
         var state = torrent.State;
         var progress = iv(torrent.Progress);
+        var complete = torrent.Complete;
         
         var icon = "Status_" + state, status = state;
         
-        
+        if(state == "Stopped" && complete)
+        {
+            icon = "Status_Completed";
+            status = "Completed";
+        }
         
         return [ icon, status ];
     },
@@ -403,6 +582,24 @@ var WebUI =
         // if right click
         if(e.which == 3)
         {
+            var table = WebUI.getTable("torrents");
+            table.clearSelection();
+            
+            WebUI.switchLabel(this);
+            
+            table.fillSelection();
+            
+            var id = table.getFirstSelected();
+            
+            if(id)
+            {
+                WebUI.createMenu(null, id);
+                ContextMenu.show(e.x, e.y);
+            }
+            else
+            {
+                ContextMenu.hide();
+            }
         }
         else
         {
@@ -437,7 +634,8 @@ var WebUI =
             {
                 p.append($("<li>").
                     attr("id", "-_-_-" + lbl + "-_-_-").
-                    html(escapeHTML(lbl) + "&nbsp;(<span id=\"-_-_-" + lbl + "-_-_-c\">" + d[lbl] + "</span>").
+                    addClass("lbl_" + lbl).
+                    html(escapeHTML(lbl) + "&nbsp;(<span id=\"-_-_-" + lbl + "-_-_-c\">" + d[lbl] + "</span>)").
                     mouseclick(WebUI.labelContextMenu).addClass("cat"));
             }
         }
@@ -580,6 +778,48 @@ var WebUI =
         return lbl;
     },
     
+    removeLabel: function()
+    {
+        this.performAction("setlabel", { label: "" });
+    },
+    
+    setLabel: function(lbl)
+    {
+        this.performAction("setlabel", { label: lbl });
+    },
+    
+    newLabel: function()
+    {
+        var table = this.getTable("torrents");
+        var s = "New label";
+        
+        if(table.selCount == 1)
+        {
+            var k = table.getFirstSelected();
+            var lbl = this.torrents[k].Label;
+            
+            if(lbl != "")
+            {
+                s = this.torrents[k].Label;
+            }
+        }
+        
+        $("#txtLabel").val(s);
+        
+        Dialogs.show("dlgLabel");
+    },
+    
+    createLabel: function()
+    {
+        var lbl = $.trim($("#txtLabel").val());
+        lbl = lbl.replace(/\"/g, "'");
+        
+        if(lbl != "")
+        {
+            this.performAction("setlabel", { label: lbl });
+        }
+    },
+    
     updateLabels: function(wasRemoved)
     {
         for(var k in this.labels)
@@ -670,16 +910,89 @@ var WebUI =
         var ww = $(window).width();
         var wh = $(window).height();
         var w = Math.floor(ww * (1 - WebUI.settings["webui.hsplit"])) - 5;
-        var th = ($("#t").is(":visible") ? $("#t").height() : -1)+$("#StatusBar").height()+12;
+        var th = ($("#toolbar").is(":visible") ? $("#toolbar").height() : -1)+$("#statusbar").height()+12;
 
         $("#statusbar").width(ww);
+                
+        WebUI.resizeLeft(w, wh - th);
+        w = ww - w;
         
-        WebUI.resizeTop( w, Math.floor(wh * (WebUI.settings["webui.show_dets"] ? WebUI.settings["webui.vsplit"] : 1))-th-7 );
+        w -= 11;
+        
+        WebUI.resizeTop(w, Math.floor(wh * (WebUI.settings["webui.show_dets"] ? WebUI.settings["webui.vsplit"] : 1)) - th - 7);
+        
+        if(WebUI.settings["webui.show_dets"])
+        {
+            WebUI.resizeBottom(w, Math.floor(wh * (1 - WebUI.settings["webui.vsplit"])));
+        }
+        
+        $("#HDivider").height(wh - th + 2);
+    },
+    
+    resizeLeft: function(w, h)
+    {
+        if(w !== null)
+        {
+            $("#categories").width(w);
+            $("#VDivider").width = $(window).width() - w - 10;
+        }
+        
+        if(h !== null)
+        {
+            $("#categories").height(h);
+        }
     },
     
     resizeTop: function(w, h)
     {
-        this.getTable("torrents").resize(undefined, h); 
+        this.getTable("torrents").resize(w, h); 
+    },
+    
+    resizeBottom: function(w, h)
+    {
+        if(w !== null)
+        {
+            $("#details").width(w);
+            w -= 8;
+        }
+        
+        if(h !== null)
+        {
+            $("#details").height(h);
+            h -= ($("#tabbar").height());
+            
+            $("#tdcont").height(h);
+            h -= 2;
+        }
+        
+        if(WebUI.configured)
+        {
+            // resize other tables and speedgraph
+        }
+    },
+    
+    setHSplitter: function()
+    {
+        var r = 1 - ($("#categories").width() + 5) / $(window).width();
+        r = Math.floor(r * Math.pow(10, 3)) / Math.pow(10, 3);
+        
+        if((WebUI.settings["webui.hsplit"] != r) && (r > 0 && r < 1))
+        {
+            WebUI.settings["webui.hsplit"] = r;
+            WebUI.save();
+        }
+    },
+    
+    setVSplitter: function()
+    {
+        var r = 1 - ($("#details").height() / $(window).height());
+        r = Math.floor(r * Math.pow(10, 3)) / Math.pow(10, 3);
+
+        if((WebUI.settings["webui.vsplit"] != r) && (r > 0) && (r < 1)) 
+        {
+            WebUI.settings["webui.vsplit"] = r;
+            WebUI.save();
+        }
     },
     
     update: function()
@@ -716,7 +1029,44 @@ var WebUI =
     
     save: function()
     {
-    
+        if(!WebUI.configured)
+        {
+            return;
+        }
+        
+        $.each(WebUI.tables, function(ndx, table)
+        {
+            var width = [];
+            var enabled = [];
+            
+            for(i = 0; i < table.obj.cols; i++)
+            {
+                width.push(table.obj.getColWidth(i));
+                enabled.push(table.obj.isColumnEnabled(i));
+            }
+            
+            console.log(width);
+            
+            WebUI.settings["webui." + ndx + ".colwidth"] = width;
+            WebUI.settings["webui." + ndx + ".colenabled"] = enabled;
+            WebUI.settings["webui." + ndx +".colorder"] = table.obj.colOrder;
+            WebUI.settings["webui." + ndx +".sindex"] = table.obj.sIndex;
+            WebUI.settings["webui." + ndx +".rev"] = table.obj.reverse;
+            WebUI.settings["webui." + ndx +".sindex2"] = table.obj.secIndex;
+            WebUI.settings["webui." + ndx +".rev2"] = table.obj.secRev;
+        });
+        
+        var cfg = {};
+        
+        $.each(WebUI.settings, function(key, value)
+        {
+            if((/^webui\./).test(key))
+            {
+                cfg[key] = JSON.stringify(value);
+            }
+        });
+        
+        Network.postJson("/api/config", cfg, null, true);
     },
     
     resetInterval: function()

@@ -30,6 +30,10 @@ var Formatter =
                         arr[i] = Converter.toSpeed(arr[i]);
                         break;
                         
+                    case 9: // eta
+                        arr[i] = Converter.toTime(arr[i]);
+                        break;
+                        
                     case 13:
                         arr[i] = Converter.toDate(arr[i]);
                         break;

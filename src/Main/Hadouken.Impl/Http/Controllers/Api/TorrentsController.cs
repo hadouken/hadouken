@@ -29,7 +29,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
                 var seedsAll = s.Trackers.Sum(t => t.Complete);
                 var seedsActual = s.Peers.Count(p => p.IsSeeder);
 
-                var eta = -1;
+                var eta = s.ETA.TotalSeconds;
 
                 return new
                     {
@@ -41,6 +41,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
                         DownloadSpeed = s.DownloadSpeed,
                         UploadSpeed = s.UploadSpeed,
                         Progress = s.Progress,
+                        Complete = s.Complete,
                         Label = s.Label,
                         State = s.State,
                         Peers_Info = peersActual + " (" + peersAll + ")",
@@ -55,9 +56,66 @@ namespace Hadouken.Impl.Http.Controllers.Api
             });
 
             // labels
-            var labels = new Dictionary<string, int>();
+            var disctinctLabels = (from man in _torrentEngine.Managers.Values where !String.IsNullOrEmpty(man.Label) select man.Label).Distinct();
+
+            var labels = (from lbl in disctinctLabels
+                          let cnt = _torrentEngine.Managers.Values.Where(m => m.Label == lbl).Count()
+                          select new
+                          {
+                              Label = lbl,
+                              Count = cnt
+                          }).ToDictionary(s => s.Label, s => s.Count);
 
             return Json(new { labels = labels, torrents = torrents });
+        }
+
+        [HttpPut]
+        [Route("/api/torrents")]
+        public ActionResult Edit()
+        {
+            var actions = BindModel<Dictionary<string, Dictionary<string, string>>>();
+
+            foreach (var p in actions)
+            {
+                if (_torrentEngine.Managers.ContainsKey(p.Key))
+                {
+                    var man = _torrentEngine.Managers[p.Key];
+
+                    foreach (var a in p.Value)
+                    {
+                        switch (a.Key)
+                        {
+                            case "action":
+                                PerformAction(man, a.Value);
+                                break;
+
+                            case "label":
+                                man.Label = a.Value;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return Json(true);
+        }
+
+        private void PerformAction(ITorrentManager manager, string action)
+        {
+            switch (action.ToLowerInvariant())
+            {
+                case "start":
+                    manager.Start();
+                    break;
+
+                case "stop":
+                    manager.Stop();
+                    break;
+
+                case "pause":
+                    manager.Pause();
+                    break;
+            }
         }
 
         [HttpGet]
@@ -80,19 +138,19 @@ namespace Hadouken.Impl.Http.Controllers.Api
             {
                 Dictionary<string, string> actions = BindModel<Dictionary<string, string>>();
 
-                if (actions.ContainsKey("Action"))
+                if (actions.ContainsKey("action"))
                 {
-                    switch (actions["Action"])
+                    switch (actions["action"])
                     {
-                        case "Start":
+                        case "start":
                             manager.Start();
                             break;
 
-                        case "Stop":
+                        case "stop":
                             manager.Stop();
                             break;
 
-                        case "Pause":
+                        case "pause":
                             manager.Pause();
                             break;
                     }

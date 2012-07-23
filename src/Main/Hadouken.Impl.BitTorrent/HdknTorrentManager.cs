@@ -124,7 +124,27 @@ namespace Hadouken.Impl.BitTorrent
 
         public bool Complete
         {
-            get { return _manager.Complete; }
+            get { return CalculateCompleted(); }
+        }
+
+        private bool CalculateCompleted()
+        {
+            if (_manager.Complete)
+                return true;
+
+            double progress = 0;
+            int count = 0;
+            foreach (var file in Torrent.Files)
+            {
+                if (file.Priority != Priority.DoNotDownload)
+                {
+                    progress += file.BitField.PercentComplete; // This is 0 -> 100.
+                    count++;
+                }
+            }
+            progress /= count; 
+
+            return (progress == 100.0);
         }
 
         public bool HashChecked
@@ -215,7 +235,20 @@ namespace Hadouken.Impl.BitTorrent
 
         public TimeSpan ETA
         {
-            get { throw new NotImplementedException(); }
+            get { return CalculateETA(); }
+        }
+
+        private TimeSpan CalculateETA()
+        {
+            if (DownloadSpeed == 0 || Complete)
+                return TimeSpan.FromSeconds(-1);
+
+            long downloadedBytes = (long)((double)Torrent.Size * (Progress / 100));
+
+            var s = (Torrent.Size - downloadedBytes) / DownloadSpeed;
+            var finishDate = DateTime.Now.AddSeconds(s);
+
+            return finishDate - DateTime.Now;
         }
 
         public string Label { get; set; }

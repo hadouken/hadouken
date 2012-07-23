@@ -44,11 +44,11 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/config")]
         public ActionResult ChangeConfig()
         {
-            var dictionary = BindModel<Dictionary<string, string>>();
+            var dictionary = BindModel<Dictionary<string, object>>();
 
             foreach (var key in dictionary.Keys)
             {
-                string value = dictionary[key];
+                string value = dictionary[key].ToString();
 
                 Setting setting = _data.Single<Setting>(x => x.Key == key);
 

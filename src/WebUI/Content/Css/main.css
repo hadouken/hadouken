@@ -5,8 +5,46 @@ div#modalbg {width: 100%; height: 100%; left: 0px; top: 0px; position: absolute;
 .konqueror div#modalbg { background: none; }
 .ie div#modalbg { filter:alpha(opacity=50); }
 
+div.aright {text-align: right}
 div.cont {padding: 6px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif}
 div.fxcaret {overflow: auto}
+
+a {font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; color: #686868; text-decoration:none}
+
+table#maincont {margin: 5px 0 0 0}
+table#maincont td.uicell {vertical-align: top; padding: 0 }
+div.table_tab {background-color: #FFFFFF; overflow: hidden; display: block; -moz-user-select: none; -moz-user-focus: normal; -moz-user-input: enabled}
+
+/**************************************************
+* MAIN UI DIVIDERS
+**************************************************/
+
+div#HDivider, div#VDivider { font-size: 0; }
+div#HDivider { width: 5px; height: 0px; padding: 0; margin: 0; cursor: e-resize; }
+div#VDivider { width: 100%; height: 5px; padding: 0; margin: 0; cursor: n-resize; }
+div#dividerDrag { width: 5px; height: 5px; padding: 0; margin: 0; background: #A0A0A0; position: absolute; display: none }
+div#HDivider:hover, div#VDivider:hover { background: #A0A0A0; }
+
+/* context menu */
+ul.CMenu {width: 150px; left: 0px; top: 0px; display: none; border: 1px solid #A0A0A0; border-right: 2px solid #A0A0A0; border-bottom: 2px solid #808080; background: #F0F0F0; text-decoration: none; padding: 2px 0 0 2px; margin: 0; list-style-type: none; z-index: 1000}
+ul.CMenu li {float: left; margin-right: 1px; position: relative; width: 150px; background: #FFFFFF}
+ul.CMenu li a {display: block}
+ul.CMenu li a.dis {color: #C0C0C0}
+ul.CMenu li a.dis:hover {background-color: #FFFFFF; color: #C0C0C0}
+ul.CMenu li a {line-height: 16px; padding: 3px 4px 3px 16px; font-weight: normal}
+ul.CMenu li hr {width: 90%; border-top: 1px solid #D0D0D0; height: 0px; margin-top: 2px; margin-bottom: 2px; }
+.ie ul.CMenu li hr { line-height:1px; font-size:1px; margin: 0 }
+ul.CMenu li a.exp {background: transparent url(/img/menuexp.gif) no-repeat scroll 140px center; }
+ul.CMenu li a.sel {background: transparent url(/img/menusel.gif) no-repeat scroll 4px center}
+ul.CMenu li a:hover {background-color: #CFDEEF; color: #000000}
+
+ul.CMenu li:hover ul {display: block; position: absolute; top: 0; left: 146px; width:150px;}
+ul.CMenu li:hover ul li ul {display: none;}
+ul.CMenu li:hover ul li a {display: block; background-color: #FFFFFF; color: #000000}
+ul.CMenu li:hover ul li a:hover {background-color: #CFDEEF; color: #000000}
+ul.CMenu li:hover ul.left {left: -150px}
+ul.CMenu li ul li a.dis {color: #C0C0C0}
+ul.CMenu li ul li a.dis:hover {background-color: #FFFFFF; color: #C0C0C0}
 
 /* input */
 input.Textbox, input.Button, select {border: 1px solid #B0B0B0; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; padding: 2px}
@@ -17,7 +55,7 @@ Input.TextboxVShort {border: 1px solid #B0B0B0; font-size: 11px; font-family: Ta
 input.Button {padding: 0px 10px; background: #F0F0F0 url(/img/h.gif) repeat-x center bottom; width: 80px; height: 22px; border: 1px solid #A0A0A0;}
 
 /* category list */
-div#categories {background-color: #FFFFFF;border: 1px solid #868686;float: left;margin: 3px;overflow: auto;position: relative;}
+div#categories {width:0px;background-color: #FFFFFF;border: 1px solid #868686;float: left;overflow: auto;position: relative;}
 div#categories .panel { background: url(/img/pnl_open.gif) 2px no-repeat; background-color: #F0F0F0; border-bottom: 1px solid #A0A0A0; border-top: 1px solid #A0A0A0; padding: 2px 21px; margin: 0px; line-height: 16px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; cursor: pointer; -moz-user-select: none; -moz-user-focus: normal; -moz-user-input: enabled }
 div#categories ul {padding: 0; margin: 0; list-style: none; white-space: nowrap}
 div#categories ul li {padding: 2px 25px; margin: 0; line-height: 14px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; cursor: pointer; border: 1px solid #FFFFFF; background-repeat: no-repeat}
@@ -52,7 +90,7 @@ div#toolbar div#setting {background: transparent url(/img/toolbar.png) no-repeat
 
 /* status icons */
 .stable-icon {background-image: url(/img/tstatus.png); background-repeat: no-repeat}
-.Status_Down {background-position: 0px 0px}
+.Status_Downloading {background-position: 0px 0px}
 .Status_Seeding {background-position: 0px -16px}
 .Status_Incompleted {background-position: 0px -32px}
 .Status_Paused {background-position: 0px -48px}
@@ -63,8 +101,25 @@ div#toolbar div#setting {background: transparent url(/img/toolbar.png) no-repeat
 .Status_Queued_Down {background-position: 0px -128px}
 .Status_Queued_Up {background-position: 0px -144px}
 .Status_Up_Down {background-position: 0px -160px}
-.Status_Checking {background-position: 0px -176px}
+.Status_Hashing {background-position: 0px -176px}
 .Status_RSS {background-position: 0px -208px}
+
+/* tabbar */
+.tabbar {height: 18px; margin: 0; padding: 0; list-style-type: none; text-align: left}
+.tabbar li {margin: 0; padding: 0; display: inline; white-space: nowrap;}
+.tabbar li a {position: relative; top: 3px; text-decoration: none; border: 1px solid #D0D0D0; border-bottom: 0; margin: -5px 1px 0 1px; padding: 1px 5px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; vertical-align: top}
+.tabbar li a:hover {border-top: 2px solid #FFC73C}
+.tabbar li.selected a {margin: 0 -2px 0 0; padding: 1px 7px 4px 7px; position: relative; top: 2px; vertical-align: top; border-top: 2px solid #FFC73C; background: #FFFFFF; color: #000000}
+
+/**************************************************
+* STATUS BAR
+**************************************************/
+
+#statusbar { background: #EEEEEE; border-top: 1px solid #AAAAAA; bottom: 0; height: 1.25em; left: 0; line-height: 1.25em; margin: 0; overflow: hidden; padding: 1px; position: absolute; right: 0; }
+#statusbar .section { border-left: 1px solid #CCCCCC; float: right; padding: 0 0.5em; text-align: left; } 
+#statusbar-download, #statusbar-upload { width: 15em; } 
+#statusbar-menu { background: transparent url(/img/hdkn.png) no-repeat center center; float: left; height: 100%; min-height: 16px; opacity: 0.50; width: 16px; }
+#statusbar-menu:hover { opacity: 1.00; }
 
 
 /* dialogs */
@@ -83,8 +138,16 @@ div#dlgAddTorrent br {clear: left; line-height: 0}
 div#dlgAddTorrent input {margin-bottom: 1px}
 
 
+/* Label dialog */
+div#dlgLabel {width: 250px; height: 140px}
+div#dlgLabel div.dlg-header {background-image: url(/img/icon_label.png)}
+div#dlgLabel div.content {width: 230px; margin: 5px; padding: 5px; line-height: 16px}
+div#dlgLabel div.content input {margin-top: 5px}
+#txtLabel {width: 200px}
+
+
 /* drag mask */
 div#dragmask {width: 10px; height: 10px; left: 0px; top: 0px; position: absolute; z-index: 5000; display: none; border: 1px dotted #A0A0A0}
 
 
-div#torrents {border: 1px solid #A0A0A0; margin: 3px;}
+div#torrents {border: 1px solid #A0A0A0; }

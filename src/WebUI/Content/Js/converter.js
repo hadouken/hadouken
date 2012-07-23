@@ -29,55 +29,36 @@ var Converter =
             
         return(s);
     },
-    toTime: function(tm,noRound)
+    toTime: function(secs)
     {
-        if((noRound==null) && (tm >= 2419200))
-            return "\u221e";
-            
-        var val = tm % (604800 * 52);
-        var w = iv(val / 604800);
+        if (secs > 63072000 || secs < 0) return "\u221E"; // secs > 2 years ~= inf. :)
         
-        val = val % 604800;
+        var div, y, w, d, h, m, s, output = "";
         
-        var d = iv(val / 86400);
-        
-        val = val % 86400;
-        
-        var h = iv(val / 3600);
-        
-        val = val % 3600;
-        
-        var m = iv(val / 60);
-        
-        val = iv(val % 60);
-        
-        var v = 0;
-        var ret = "";
-        
-        if(w > 0)
-        {       
-            ret = w + "w";
-            v++;
+        y = Math.floor(secs / 31536000);
+        div = secs % 31536000;
+        w = Math.floor(div / 604800);
+        div = div % 604800;
+        d = Math.floor(div / 86400);
+        div = div % 86400;
+        h = Math.floor(div / 3600);
+        div = div % 3600;
+        m = Math.floor(div / 60);
+        s = div % 60;
+        if (y > 0) {
+            output = "%dy %dw".replace(/%d/, y).replace(/%d/, w);
+        } else if (w > 0) {
+            output = "%dw %dd".replace(/%d/, w).replace(/%d/, d);
+        } else if (d > 0) {
+            output = "%dd %dh".replace(/%d/, d).replace(/%d/, h);
+        } else if (h > 0) {
+            output = "%dh %dm".replace(/%d/, h).replace(/%d/, m);
+        } else if (m > 0) {
+            output = "%dm %ds".replace(/%d/, m).replace(/%d/, s);
+        } else {
+            output = "%ds".replace(/%d/, s);
         }
-        if(d > 0)
-        {
-            ret += d + "d";
-            v++;
-        }
-        if((h > 0) && (v < 2))
-        {
-            ret += h + "h";
-            v++;
-        }
-        if((m > 0) && (v < 2))
-        {       
-            ret += m + "m";
-            v++;
-        }
-        if(v < 2)
-            ret += val + "s";
-        
-        return( ret.substring(0,ret.length-1) );
+        return output;
     },
     toFileSize: function(bt, p)
     {

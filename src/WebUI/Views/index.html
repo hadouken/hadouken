@@ -25,41 +25,83 @@
     <body>
         <div id="modalbg"></div>
         <div id="dragmask"></div>
-
+        <div id="dividerDrag"></div>
 
         <div id="toolbar">
-            <a id="mnu_add" href="#" onclick="WebUI.showAddTorrent(); return false;"><div id="add"></div></a>
+            <a id="mnu_add" href="#" onclick="WebUI.showAddTorrent(); return false;" title="Add torrent"><div id="add"></div></a>
             
             <div class="separator"></div>
             
+            <a id="mnu_remove" href="#" onclick="WebUI.remove(); return false;" title="Remove"><div id="remove"></div></a>
             
+            <div class="separator"></div>
+            
+            <a id="mnu_start" href="#" onclick="WebUI.start(); return false;" title="Start"><div id="start"></div></a>
+            
+            <a id="mnu_pause" href="#" onclick="WebUI.pause(); return false;" title="Pause"><div id="pause"></div></a>
+            
+            <a id="mnu_stop" href="#" onclick="WebUI.stop(); return false;" title="Stop"><div id="stop"></div></a>
+            
+            <div class="separator"></div>
+            
+            <a id="mnu_settings" href="#" onclick="WebUI.showSettings(); return false;" title="Settings"><div id="setting"></div></a>
         </div>
         
-        <div id="categories">
-            <div class="panel" id="state">State</div>
-            
-            <ul id="state_content" class="panel_content">
-                <li id="-_-_-all-_-_-" class="sel cat">All (<span id="-_-_-all-_-_-c">0</span>)</li>
-                <li id="-_-_-dls-_-_-" class="cat">Downloading (<span id="-_-_-dls-_-_-c">0</span>)</li>
-                <li id="-_-_-com-_-_-" class="cat">Completed (<span id="-_-_-com-_-_-c">0</span>)</li>
-                <li id="-_-_-act-_-_-" class="cat">Active (<span id="-_-_-act-_-_-c">0</span>)</li>
-                <li id="-_-_-iac-_-_-" class="cat">Inactive (<span id="-_-_-iac-_-_-c">0</span>)</li>
-                <li id="-_-_-err-_-_-" class="cat">Error (<span id="-_-_-err-_-_-c">0</span>)</li>
-            </ul>
-            
-            <div class="panel" id="labels">Labels</div>
-            
-            <div id="labels_content" class="panel_content">
-                <ul>
-                    <li id="-_-_-nlb-_-_-" class="cat">No label (<span id="-_-_-nlb-_-_-c">0</span>)</li>
-                </ul>
-                <ul id="lbll">
-                </ul>
-            </div>
-        </div>
-    
-        <div id="torrents"></div>
+        <table id="maincont" cellpadding="0" cellspacing="0" summary="layout table">
+            <tr>
+                <td class="uicell" rowspan="3">
+                    <div id="categories">
+                        <div class="panel" id="state">State</div>
+                        
+                        <ul id="state_content" class="panel_content">
+                            <li id="-_-_-all-_-_-" class="sel cat">All (<span id="-_-_-all-_-_-c">0</span>)</li>
+                            <li id="-_-_-dls-_-_-" class="cat">Downloading (<span id="-_-_-dls-_-_-c">0</span>)</li>
+                            <li id="-_-_-com-_-_-" class="cat">Completed (<span id="-_-_-com-_-_-c">0</span>)</li>
+                            <li id="-_-_-act-_-_-" class="cat">Active (<span id="-_-_-act-_-_-c">0</span>)</li>
+                            <li id="-_-_-iac-_-_-" class="cat">Inactive (<span id="-_-_-iac-_-_-c">0</span>)</li>
+                            <li id="-_-_-err-_-_-" class="cat">Error (<span id="-_-_-err-_-_-c">0</span>)</li>
+                        </ul>
+                        
+                        <div class="panel" id="labels">Labels</div>
+                        
+                        <div id="labels_content" class="panel_content">
+                            <ul>
+                                <li id="-_-_-nlb-_-_-" class="cat">No label (<span id="-_-_-nlb-_-_-c">0</span>)</li>
+                            </ul>
+                            <ul id="lbll">
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+                <td class="uicell" rowspan="3">
+                    <div id="HDivider"></div><div id="dividerDrag"></div>
+                </td>
+                <td class="uicell">
+                    <div id="torrents" class="table_tab"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="uicell">
+                    <div id="VDivider"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="uicell">
+                    <div id="details">
+                        <ul id="tabbar" class="tabbar">
+                        </ul>
+                        
+                        <div id="tdcont">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
         
-        <div id="statusbar"></div>
+        <div id="statusbar">
+            <div id="statusbar-menu"></div>
+            <div id="statusbar-upload" class="section">asdfsadf</div>
+            <div id="statusbar-download" class="section">asdfsadf</div>
+        </div>
     </body>
 </html>
