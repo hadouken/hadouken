@@ -200,7 +200,7 @@ var WebUI =
                     break;
             }
             
-            data[key] = eval(data[key]);
+            data[key] = JSON.parse(data[key]);
         });
         
         $.extend(this.settings, data);
