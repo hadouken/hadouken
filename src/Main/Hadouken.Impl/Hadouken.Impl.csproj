@@ -92,6 +92,7 @@
     <Compile Include="Http\ActionCacheItem.cs" />
     <Compile Include="Http\Controllers\Api\ConfigController.cs" />
     <Compile Include="Http\Controllers\Api\PluginsController.cs" />
+    <Compile Include="Http\Controllers\Api\SystemController.cs" />
     <Compile Include="Http\Controllers\Api\TorrentsController.cs" />
     <Compile Include="Http\Controllers\SetupController.cs" />
     <Compile Include="Http\DefaultHttpServer.cs" />

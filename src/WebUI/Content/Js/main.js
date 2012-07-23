@@ -5,6 +5,7 @@ $(document).ready(function() {
     loadDividers();
     
     ContextMenu.init();
+    Tabs.init();
     WebUI.init();
 });
 
@@ -32,6 +33,11 @@ function loadDialogs()
     Network.getHtml("/dialogs/label.html", function(data)
     {
         Dialogs.create("dlgLabel", "New label", data, true);
+    });
+    
+    Network.getHtml("/dialogs/about.html", function(data)
+    {
+        Dialogs.create("dlgAbout", "About Hadouken", data, true);
     });
 }
 
@@ -65,7 +71,7 @@ function loadDividers()
     
     new DnD("VDivider",
     {
-        top : function() { return(60); },
+        top : function() { return(160); },
         bottom : function() { return( $(window).height()-60 ); },
         restrictX : true,
         maskId : "dividerDrag",

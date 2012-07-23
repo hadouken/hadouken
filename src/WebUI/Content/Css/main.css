@@ -9,7 +9,7 @@ div.aright {text-align: right}
 div.cont {padding: 6px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif}
 div.fxcaret {overflow: auto}
 
-a {font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; color: #686868; text-decoration:none}
+a {font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; color: #ff3232; text-decoration}
 
 table#maincont {margin: 5px 0 0 0}
 table#maincont td.uicell {vertical-align: top; padding: 0 }
@@ -75,6 +75,7 @@ div#toolbar a:hover {background: transparent url(/img/tb_bg.gif) no-repeat scrol
 div#toolbar a:active {padding: 4px 2px 2px 4px}
 div#toolbar div {width: 24px; height: 24px; float: left; cursor: pointer}
 div#toolbar div.separator {width: 1px; height: 22px; margin: 7px 0 0 5px; padding: 0; border: 0; background-color: #A0A0A0}
+div#toolbar div#about {background: transparent url(/img/quest.gif) no-repeat 0px center}
 
 div#toolbar div#add {background: transparent url(/img/toolbar.png) no-repeat -24px center}
 div#toolbar div#create {background: transparent url(/img/toolbar.png) no-repeat -48px center}
@@ -107,19 +108,24 @@ div#toolbar div#setting {background: transparent url(/img/toolbar.png) no-repeat
 /* tabbar */
 .tabbar {height: 18px; margin: 0; padding: 0; list-style-type: none; text-align: left}
 .tabbar li {margin: 0; padding: 0; display: inline; white-space: nowrap;}
-.tabbar li a {position: relative; top: 3px; text-decoration: none; border: 1px solid #D0D0D0; border-bottom: 0; margin: -5px 1px 0 1px; padding: 1px 5px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; vertical-align: top}
+.tabbar li a {color: #686868;position: relative; top: 3px; text-decoration: none; border: 1px solid #D0D0D0; border-bottom: 0; margin: -5px 1px 0 1px; padding: 1px 5px; font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; vertical-align: top}
 .tabbar li a:hover {border-top: 2px solid #FFC73C}
 .tabbar li.selected a {margin: 0 -2px 0 0; padding: 1px 7px 4px 7px; position: relative; top: 2px; vertical-align: top; border-top: 2px solid #FFC73C; background: #FFFFFF; color: #000000}
+div.tab { height:100%; background: #F5F5F5; overflow: auto }
 
 /**************************************************
 * STATUS BAR
 **************************************************/
 
-#statusbar { background: #EEEEEE; border-top: 1px solid #AAAAAA; bottom: 0; height: 1.25em; left: 0; line-height: 1.25em; margin: 0; overflow: hidden; padding: 1px; position: absolute; right: 0; }
+#statusbar { background: #fff; border-top: 1px solid #AAAAAA; bottom: 0; height: 1.25em; left: 0; line-height: 1.25em; margin: 0; overflow: hidden; padding: 1px; position: absolute; right: 0; }
 #statusbar .section { border-left: 1px solid #CCCCCC; float: right; padding: 0 0.5em; text-align: left; } 
 #statusbar-download, #statusbar-upload { width: 15em; } 
 #statusbar-menu { background: transparent url(/img/hdkn.png) no-repeat center center; float: left; height: 100%; min-height: 16px; opacity: 0.50; width: 16px; }
 #statusbar-menu:hover { opacity: 1.00; }
+
+
+/* TABS */
+div#tdcont {height: 200px; background: #FFFFFF; border: 1px solid #D0D0D0; padding: 0 2px 0 2px; overflow: hidden }
 
 
 /* dialogs */
@@ -145,6 +151,12 @@ div#dlgLabel div.content {width: 230px; margin: 5px; padding: 5px; line-height: 
 div#dlgLabel div.content input {margin-top: 5px}
 #txtLabel {width: 200px}
 
+
+/* About dialog */
+div#dlgAbout {width: 250px; height: 140px}
+div#dlgAbout div.dlg-header {background-image: url(/img/hdkn.png)}
+div#dlgAbout div.content {width: 230px; margin: 5px; padding: 5px; line-height: 16px}
+div#dlgAbout div.content input {margin-top: 5px}
 
 /* drag mask */
 div#dragmask {width: 10px; height: 10px; left: 0px; top: 0px; position: absolute; z-index: 5000; display: none; border: 1px dotted #A0A0A0}

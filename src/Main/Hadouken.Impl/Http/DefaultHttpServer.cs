@@ -100,10 +100,7 @@ namespace Hadouken.Impl.Http
                             else
                             {
                                 context.Response.StatusCode = 404;
-
-                                byte[] notFound = Encoding.UTF8.GetBytes("404 - Not found!");
-
-                                context.Response.OutputStream.Write(notFound, 0, notFound.Length);
+                                context.Response.StatusDescription = "404 - File not found";
                             }
                         }
                     }

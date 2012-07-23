@@ -30,6 +30,11 @@ var WebUI =
         }
     },
     
+    sysInfo:
+    {
+        version: "-"
+    },
+    
     configured: false,
     firstLoad: true,
     settings:
@@ -60,6 +65,7 @@ var WebUI =
     updateTimer: null,
     interval: 1500,
     timer: new Timer(),
+    activeView: null,
     
     torrents: {},
     labels:
@@ -78,8 +84,8 @@ var WebUI =
     
     init: function()
     {
-        // load plugins
-        
+        this.getSystemInfo();
+        this.getPlugins();        
         this.getUISettings();
         
         if(!this.configured)
@@ -92,13 +98,27 @@ var WebUI =
         this.update();
     },
     
-    setStatusUpdate: function()
+    getSystemInfo: function()
     {
-        document.title = "Hadouken";
+        Network.getJson("/api/system", function(data)
+        {
+            WebUI.sysInfo.version = data.version;
+        }, false);
         
-        
+        document.title = "Hadouken " + this.sysInfo.version;
     },
     
+    getPlugins: function()
+    {
+        Network.getJson("/api/plugins", function(data)
+        {
+            for(var i in data)
+            {
+                $.getScript("/plugins/" + data[i] + "/boot.js");
+            }
+        }, false);
+    },
+        
     assignEvents: function()
     {
         window.onresize = WebUI.resize;
@@ -216,6 +236,21 @@ var WebUI =
     getUISettings: function()
     {
         Network.getJson("/api/config?g=webui.", [ this.config, this ], false);
+    },
+    
+    start: function()
+    {
+        this.performAction("start", { "action": "start" });
+    },
+    
+    stop: function()
+    {
+        this.performAction("stop", { "action": "stop" });
+    },
+    
+    pause: function()
+    {
+        this.performAction("pause", { "action": "pause" });
     },
     
     remove: function()
@@ -910,7 +945,7 @@ var WebUI =
         var ww = $(window).width();
         var wh = $(window).height();
         var w = Math.floor(ww * (1 - WebUI.settings["webui.hsplit"])) - 5;
-        var th = ($("#toolbar").is(":visible") ? $("#toolbar").height() : -1)+$("#statusbar").height()+12;
+        var th = ($("#toolbar").is(":visible") ? $("#toolbar").height() : -1)+$("#statusbar").height()+15;
 
         $("#statusbar").width(ww);
                 
@@ -993,6 +1028,11 @@ var WebUI =
             WebUI.settings["webui.vsplit"] = r;
             WebUI.save();
         }
+    },
+    
+    setActiveView: function(id)
+    {
+        this.activeView = id;
     },
     
     update: function()
@@ -1102,5 +1142,10 @@ var WebUI =
     showAddTorrent: function()
     {
         Dialogs.toggle("dlgAddTorrent");
+    },
+    
+    showAbout: function()
+    {
+        Dialogs.toggle("dlgAbout");
     }
 };
