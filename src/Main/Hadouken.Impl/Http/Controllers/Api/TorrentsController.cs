@@ -140,20 +140,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
 
                 if (actions.ContainsKey("action"))
                 {
-                    switch (actions["action"])
-                    {
-                        case "start":
-                            manager.Start();
-                            break;
-
-                        case "stop":
-                            manager.Stop();
-                            break;
-
-                        case "pause":
-                            manager.Pause();
-                            break;
-                    }
+                    PerformAction(manager, actions["action"]);
                 }
 
                 return Json(true);
