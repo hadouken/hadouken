@@ -5,16 +5,20 @@ using System.Text;
 using Hadouken.Http;
 using Hadouken.Data;
 using Hadouken.Data.Models;
+using Hadouken.Messaging;
+using Hadouken.Messages;
 
 namespace Hadouken.Impl.Http.Controllers.Api
 {
     public class ConfigController : Controller
     {
         private IDataRepository _data;
+        private IMessageBus _mbus;
 
-        public ConfigController(IDataRepository data)
+        public ConfigController(IDataRepository data, IMessageBus mbus)
         {
             _data = data;
+            _mbus = mbus;
         }
 
         [HttpGet]
@@ -54,14 +58,15 @@ namespace Hadouken.Impl.Http.Controllers.Api
 
                 if (setting == null)
                 {
-                    setting = new Setting() { Key = key, Value = value };
-                    _data.Save(setting);
+                    setting = new Setting() { Key = key };
                 }
-                else
-                {
-                    setting.Value = value;
-                    _data.Update(setting);
-                }
+
+                string oldValue = setting.Value;
+
+                setting.Value = value;
+                _data.SaveOrUpdate(setting);
+
+                _mbus.Send<ISettingChanged>(m => { m.Key = setting.Key; m.OldValue = oldValue; m.NewValue = setting.Value; });
             }
 
             return Json(true);
