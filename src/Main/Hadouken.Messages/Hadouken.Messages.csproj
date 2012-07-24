@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="IPluginLoaded.cs" />
     <Compile Include="IPluginLoading.cs" />
+    <Compile Include="ISettingChanged.cs" />
     <Compile Include="ITorrentAdded.cs" />
     <Compile Include="ITorrentCompleted.cs" />
     <Compile Include="ITorrentError.cs" />
