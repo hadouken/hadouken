@@ -19,7 +19,7 @@ var WebUI =
                 { text: "ETA",                  width: "60px",          id: "ETA",               type: TYPE_NUMBER },
                 { text: "Label",                width: "60px",          id: "Label",             type: TYPE_STRING },
                 { text: "Peers",                width: "60px",          id: "Peers_Info",        type: TYPE_NUMBER },
-                { text: "Seeds",                width: "60px",          id: "Seeders_Info",        type: TYPE_NUMBER },
+                { text: "Seeds",                width: "60px",          id: "Seeders_Info",      type: TYPE_NUMBER },
                 { text: "Created on",           width: "100px",         id: "CreatedOn",         type: TYPE_NUMBER }
             ],
             container: "torrents",
@@ -27,6 +27,24 @@ var WebUI =
             ondelete: function() { WebUI.remove(); },
             onselect: function(e, id) { WebUI.selectTorrent(e, id); },
             ondblclick: function(obj) { WebUI.showTorrentDetails(obj.id); return false; }
+        },
+        
+        files:
+        {
+            obj: new dxSTable(),
+            columns:
+            [
+                { text: "Name",                 width: "200px",         id: "Name",             type: TYPE_STRING },
+                { text: "Size",                 width: "60px",          id: "Size",             type: TYPE_NUMBER, align: ALIGN_RIGHT },
+                { text: "Progress",             width: "100px",         id: "Progress",         type: TYPE_PROGRESS },
+                { text: "Priority",             width: "80px",          id: "Priority",         type: TYPE_STRING }
+            ],
+            container: "torrent_files",
+            format: Formatter.files,
+            onselect: function(e, id) { WebUI.selectFile(e, id); },
+            ondblclick: function(obj)
+            {
+            }
         }
     },
     
@@ -66,6 +84,7 @@ var WebUI =
     interval: 1500,
     timer: new Timer(),
     activeView: null,
+    detailsId: null,
     
     torrents: {},
     labels:
@@ -194,6 +213,12 @@ var WebUI =
         
         // do something with to each table perhaps...
         
+        var table = this.getTable("files");
+        table.oldFilesSortAlphaNumeric = table.sortAlphaNumeric;
+        table.sortAlphaNumeric = function(x, y)
+        {
+        }
+        
         $.each(this.tables, function(ndx,table)
         {
             table.obj.create($$(table.container), table.columns, ndx);
@@ -255,7 +280,9 @@ var WebUI =
     
     remove: function()
     {
-        console.log("remove torrent");
+        this.performAction("remove", { "action": "remove" });
+        this.detailsId = "";
+        this.clearDetails();
     },
     
     selectTorrent: function(e, id)
@@ -266,17 +293,67 @@ var WebUI =
         if((table.selCount == 1) && hash)
         {
             // show etails
+            WebUI.showDetails(hash, true);
         }
         else
         {
-            //WebUI.dID = "";
-            //WebUI.clearDetails();
+            WebUI.detailsId = "";
+            WebUI.clearDetails();
         }
         
         if(e.which == 3)
         {
             WebUI.createMenu(e, id);
             ContextMenu.show(e.clientX, e.clientY);
+        }
+    },
+    
+    showDetails: function(hash, noSwitch)
+    {
+        if(!noSwitch)
+        {
+            Tabs.show("general");
+        }
+        
+        this.detailsId = hash;
+        
+        //this.getFiles(hash);
+        //this.getTrackers(hash);
+        this.updateDetails();
+    },
+    
+    clearDetails: function()
+    {
+        $(".det").text("");
+        
+        this.getTable("files").clearRows();
+        // clear tracker table
+        // clear peers
+    },
+    
+    updateDetails: function()
+    {
+        if((this.detailsId != "") && this.torrents[this.detailsId])
+        {
+            var t = this.torrents[this.detailsId];
+            
+            $("#dl").text(Converter.toFileSize(t.DownloadedBytes,2));
+            /*
+            $("#ul").text(theConverter.bytes(d.uploaded,2));
+            $("#ra").html( (d.ratio ==- 1) ? "&#8734;" : theConverter.round(d.ratio/1000,3));
+            $("#us").text(theConverter.speed(d.ul));
+            $("#ds").text(theConverter.speed(d.dl));
+            $("#rm").html((d.eta ==- 1) ? "&#8734;" : theConverter.time(d.eta));
+            $("#se").text(d.seeds_actual + " " + theUILang.of + " " + d.seeds_all + " " + theUILang.connected);
+            $("#pe").text(d.peers_actual + " " + theUILang.of + " " + d.peers_all + " " + theUILang.connected);
+            $("#et").text(theConverter.time(Math.floor((new Date().getTime()-theWebUI.deltaTime)/1000-iv(d.state_changed)),true));
+            $("#wa").text(theConverter.bytes(d.skip_total,2));
+            $("#bf").text(d.base_path);
+            $("#co").text(theConverter.date(iv(d.created)+theWebUI.deltaTime/1000));
+            $("#tu").text(  $type(this.trackers[this.dID]) && $type(this.trackers[this.dID][d.tracker_focus]) ? this.trackers[this.dID][d.tracker_focus].name : '');
+            $("#hs").text(this.dID.substring(0,40));
+            $("#ts").text(d.msg);
+            */
         }
     },
     
@@ -901,7 +978,11 @@ var WebUI =
             
             table.clearSelection();
             
-            // dID details something
+            if(this.detailsId != "")
+            {
+                this.detailsId = "";
+                this.clearDetails();
+            }
             
             table.refreshRows();
         }
@@ -1003,6 +1084,7 @@ var WebUI =
         if(WebUI.configured)
         {
             // resize other tables and speedgraph
+            this.getTable("files").resize(w,h);
         }
     },
     
@@ -1147,5 +1229,17 @@ var WebUI =
     showAbout: function()
     {
         Dialogs.toggle("dlgAbout");
+    },
+    
+    checkForUpdates: function()
+    {
+        $("#checkUpdates").attr("disabled", true);
+        
+        $.getJSON("http://localhost:13410/updates?jsoncallback=?", function(data)
+        {
+            $("#checkUpdates").attr("disabled", false);
+            
+            $("#upd").text(data.latestVersion);
+        });
     }
 };

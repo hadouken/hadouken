@@ -98,10 +98,69 @@
                         
                         <div id="tdcont">
                             <div id="tab_general_content" class="tab">
-                                sadfasdfasdf
+                                <table cellpadding="5" cellspacing="2" width="100%" summary="layout table" id="mainlayout">
+                                    <tr>
+                                            <td colspan="6" class="Header">Transfer</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="6%" nowrap>Elapsed time:</td><td width="11%" nowrap><span id="et" class="det"></span></td>
+                                        <td width="6%" nowrap>Remaining:</td><td width="11%" nowrap><span id="rm" class="det"></span></td>
+                                        <td width="6%" nowrap>Ratio:</td><td width="11%" nowrap><span id="ra" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="6%" nowrap>Downloaded:</td><td width="11%" nowrap><span id="dl" class="det"></span></td>
+                                        <td width="6%" nowrap>DL Speed:</td><td width="11%" nowrap><span id="ds" class="det"></span></td>
+                                        <td width="6%" nowrap>Wasted data:</td><td width="11%" nowrap><span id="wa" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Uploaded:</td><td nowrap><span id="ul" class="det"></span></td>
+                                        <td nowrap>UL Speed:</td><td nowrap><span id="us" class="det"></span></td>
+                                        <td nowrap>&nbsp;</td><td nowrap>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Seeds:</td><td nowrap><span id="se" class="det"></span></td>
+                                        <td nowrap>Peers:</td><td nowrap><span id="pe" class="det"></span></td>
+                                        <td nowrap>&nbsp;</td><td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6" class="Header">Tracker</td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>URL:</td>
+                                        <td colspan="5" nowrap><span id="tu" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Status:</td>
+                                        <td colspan="5" nowrap><span id="ts" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6" class="Header">General</td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Save path:</td>
+                                        <td colspan="5" nowrap><span id="bf" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Free disk space:</td>
+                                        <td colspan="5" nowrap><span id="dsk" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Created on:</td>
+                                        <td colspan="5" nowrap><span id="co" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Hash:</td>
+                                        <td colspan="5" nowrap><span id="hs" class="det"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td nowrap>Comment:</td>
+                                        <td colspan="5"><span id="cmt" class="det"></span></td>
+                                    </tr>
+                                </table>
                             </div>
                             
                             <div id="tab_files_content" class="tab">
+                                <div id="torrent_files"></div>
                             </div>
                             
                             <div id="tab_trackers_content" class="tab">

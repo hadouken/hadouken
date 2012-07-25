@@ -42,5 +42,10 @@ var Formatter =
         }
         
         return arr;
+    },
+    
+    files: function(table, arr)
+    {
+        return arr;
     }
 };

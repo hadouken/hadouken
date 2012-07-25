@@ -125,6 +125,9 @@ div.tab { height:100%; background: #F5F5F5; overflow: auto }
 
 
 /* TABS */
+div#tab_general_content table {font-size: 11px; font-family: Tahoma, Arial, Helvetica, sans-serif; line-height: 10px}
+div#tab_general_content table td.Header {font-weight: bold; background: #FCFCFC}
+
 div#tdcont {height: 200px; background: #FFFFFF; border: 1px solid #D0D0D0; padding: 0 2px 0 2px; overflow: hidden }
 
 
@@ -153,7 +156,7 @@ div#dlgLabel div.content input {margin-top: 5px}
 
 
 /* About dialog */
-div#dlgAbout {width: 250px; height: 140px}
+div#dlgAbout {width: 250px; height: 200px}
 div#dlgAbout div.dlg-header {background-image: url(/img/hdkn.png)}
 div#dlgAbout div.content {width: 230px; margin: 5px; padding: 5px; line-height: 16px}
 div#dlgAbout div.content input {margin-top: 5px}
