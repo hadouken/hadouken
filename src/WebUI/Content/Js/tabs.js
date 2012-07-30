@@ -41,6 +41,10 @@ var Tabs =
                     
                     switch(n)
                     {
+                        case "files":
+                            prefix = "files";
+                            break;
+                            
                         default:
                             this.onShow(n);
                             break;

@@ -105,6 +105,10 @@ div#toolbar div#setting {background: transparent url(/img/toolbar.png) no-repeat
 .Status_Hashing {background-position: 0px -176px}
 .Status_RSS {background-position: 0px -208px}
 
+.Icon_File {background: transparent url(/img/file.gif) no-repeat left center}
+.Icon_Dir {background: transparent url(/img/dir.gif) no-repeat left center}
+.Icon_Iso {background: transparent url(/img/disc.png) no-repeat left center}
+
 /* tabbar */
 .tabbar {height: 18px; margin: 0; padding: 0; list-style-type: none; text-align: left}
 .tabbar li {margin: 0; padding: 0; display: inline; white-space: nowrap;}

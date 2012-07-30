@@ -37,11 +37,6 @@ namespace Hadouken.Impl.BitTorrent
             get { return _tf.EndPieceIndex; }
         }
 
-        public string FullPath
-        {
-            get { return _tf.FullPath; }
-        }
-
         public long Length
         {
             get { return _tf.Length; }

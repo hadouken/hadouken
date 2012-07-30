@@ -8,7 +8,7 @@ var WebUI =
             columns:
             [
                 { text: "Name",                 width: "200px",         id: "Name",              type: TYPE_STRING },
-                { text: "Status",               width: "100px",         id: "State",             type: TYPE_STRING },
+                { text: "Status",               width: "100px",         id: "Status",             type: TYPE_STRING },
                 { text: "Size",                 width: "60px",          id: "Size",              type: TYPE_NUMBER },
                 { text: "Progress",             width: "100px",         id: "Progress",          type: TYPE_PROGRESS },
                 { text: "Downloaded",           width: "100px",         id: "DownloadedBytes",   type: TYPE_NUMBER },
@@ -34,8 +34,8 @@ var WebUI =
             obj: new dxSTable(),
             columns:
             [
-                { text: "Name",                 width: "200px",         id: "Name",             type: TYPE_STRING },
-                { text: "Size",                 width: "60px",          id: "Size",             type: TYPE_NUMBER, align: ALIGN_RIGHT },
+                { text: "Name",                 width: "200px",         id: "Path",             type: TYPE_STRING },
+                { text: "Size",                 width: "60px",          id: "Length",             type: TYPE_NUMBER, align: ALIGN_RIGHT },
                 { text: "Progress",             width: "100px",         id: "Progress",         type: TYPE_PROGRESS },
                 { text: "Priority",             width: "80px",          id: "Priority",         type: TYPE_STRING }
             ],
@@ -57,7 +57,7 @@ var WebUI =
     firstLoad: true,
     settings:
     {
-        "webui.fls.view":               0, 
+        "webui.files.view":               0, 
         "webui.show_cats":              1, 
         "webui.show_dets":              1, 
         "webui.needmessage":            1, 
@@ -87,6 +87,8 @@ var WebUI =
     detailsId: null,
     
     torrents: {},
+    files: {},
+    dirs: {},
     labels:
     {
         "-_-_-all-_-_-": 0,
@@ -317,9 +319,135 @@ var WebUI =
         
         this.detailsId = hash;
         
-        //this.getFiles(hash);
+        this.getFiles(hash);
         //this.getTrackers(hash);
         this.updateDetails();
+    },
+    
+    getFiles: function(hash, isUpdate)
+    {
+        var table = this.getTable("files");
+        
+        if(!isUpdate)
+        {
+            table.dBody.scrollTop = 0;
+            $(table.tpad).height(0);
+            $(table.bpad).height(0);
+            table.clearRows();
+        }
+        
+        if($type(this.files[hash]) && !isUpdate)
+        {
+            this.redrawFiles(hash);
+        }
+        else
+        {
+            if(!$type(this.files[hash]))
+            {
+                this.files[hash] = [];
+            }
+            
+            Network.getJson("/api/torrents/" + hash + "/files", [ this.addFiles, this ]);
+        }
+    },
+    
+    addFiles: function(data)
+    {
+        $.extend(this.files, data);
+        
+        for(var hash in data)
+        {
+            this.redrawFiles(hash);
+        }
+    },
+    
+    redrawFiles: function(hash)
+    {
+        if(this.detailsId == hash)
+        {
+            var table = this.getTable("files");
+            
+            for(var i in this.files[hash])
+            {
+                var sId = hash + "_f_" + i;
+                var file = this.files[hash][i];
+                file.Progress = (file.Length > 0) ? Converter.round((file.BytesDownloaded/file.Length)*100,1): "100.0";
+                
+                if(this.settings["webui.files.view"])
+                {
+                    if(!$type(table.rowdata(sId)))
+                    {
+                        table.addRowById(file, sId, file.icon, file.attr);
+                    }
+                    else
+                    {
+                        for(var j in file)
+                        {
+                            table.setValueById(sId, j, file[j]);
+                        }
+                        
+                        table.setIcon(sId, file.icon);
+                        table.setAttr(sId, file.attr);
+                    }
+                }
+                else
+                {
+                    if(!$type(this.dirs[hash]))
+                    {
+                        this.dirs[hash] = new rDirectory();
+                    }
+                    
+                    this.dirs[hash].addFile(file, i);
+                }
+            }
+            
+            if(!this.settings["webui.fls.view"] && this.dirs[hash])
+            {
+                var dir = this.dirs[hash].getDirectory();
+                
+                for(var i in dir)
+                {
+                    var entry = dir[i];
+                    
+                    if(entry.link != null)
+                    {
+                        if(!$type(table.rowdata[i]))
+                        {
+                            table.addRowById(entry.data, i, entry.icon, { link: entry.link });
+                        }
+                        else
+                        {
+                            for(var j in entry.data)
+                            {
+                                table.setValueById(i, j, entry.data[j]);
+                            }
+                        }
+                    }
+                }
+                
+                for(var i in dir)
+                {
+                    var entry = dir[i];
+                    
+                    if(entry.link == null)
+                    {
+                        if(!$type(table.rowdata[i]))
+                        {
+                            table.addRowById(entry.data, i, entry.icon, { link: null });
+                        }
+                        else
+                        {
+                            for(var j in entry.data)
+                            {
+                                table.setValueById(i, j, entry.data[j]);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            table.Sort();
+        }
     },
     
     clearDetails: function()
@@ -517,6 +645,8 @@ var WebUI =
             totalDown += torrent.DownloadedBytes;
             
             var statusInfo = WebUI.getStatusIcon(torrent);
+            torrent.Status = statusInfo[1];
+            
             var label = WebUI.getLabels(hash, torrent);
             
             if(!$type(WebUI.torrents[hash]))
@@ -678,12 +808,32 @@ var WebUI =
         var progress = iv(torrent.Progress);
         var complete = torrent.Complete;
         
-        var icon = "Status_" + state, status = state;
+        var icon = "", status = "";
         
-        if(state == "Stopped" && complete)
+        if(state == TorrentState.stopped && complete)
         {
             icon = "Status_Completed";
             status = "Completed";
+        }
+        else if(state == TorrentState.stopped)
+        {
+            icon = "Status_Stopped";
+            status = "Stopped";
+        }
+        else if(state == TorrentState.seeding)
+        {
+            icon = "Status_Seeding";
+            status = "Seeding";
+        }
+        else if(state == TorrentState.paused)
+        {
+            icon = "Status_Paused";
+            status = "Paused";
+        }
+        else if(state == TorrentState.downloading)
+        {
+            icon = "Status_Downloading";
+            status = "Downloading";
         }
         
         return [ icon, status ];

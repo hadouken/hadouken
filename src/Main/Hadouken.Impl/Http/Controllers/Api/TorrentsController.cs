@@ -128,6 +128,19 @@ namespace Hadouken.Impl.Http.Controllers.Api
             return Json(null);
         }
 
+        [HttpGet]
+        [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)/files")]
+        public ActionResult GetFiles(string infoHash)
+        {
+            if (_torrentEngine.Managers.ContainsKey(infoHash))
+            {
+                var manager = _torrentEngine.Managers[infoHash];
+                return Json(new Dictionary<string, IList<ITorrentFile>>() { { manager.InfoHash, manager.Torrent.Files.ToList() } });
+            }                
+
+            return Json(null);
+        }
+
         [HttpPut]
         [Route("/api/torrents/(?<infoHash>[a-zA-Z0-9]+)")]
         public ActionResult Change(string infoHash)

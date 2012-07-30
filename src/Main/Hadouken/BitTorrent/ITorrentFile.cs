@@ -11,7 +11,6 @@ namespace Hadouken.BitTorrent
         long BytesDownloaded { get; }
         byte[] ED2K { get; }
         int EndPieceIndex { get; }
-        string FullPath { get; }
         long Length { get; }
         byte[] MD5 { get; }
         string Path { get; }

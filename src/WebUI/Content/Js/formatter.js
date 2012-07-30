@@ -46,6 +46,22 @@ var Formatter =
     
     files: function(table, arr)
     {
+        for(var i in arr)
+        {
+            if(arr[i] == null)
+            {
+                arr[i] = '';
+            }
+            else
+            {
+                switch(table.getIdByCol(i)) {
+                    case "Length": // size
+                        arr[i] = Converter.toFileSize(arr[i]);
+                        break;
+                }
+            }
+        }
+        
         return arr;
     }
 };
