@@ -1,0 +1,39 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="src/Build/TokenReplace.targets" />
+  
+  <PropertyGroup>
+    <BuildConfiguration Condition="$(BuildConfiguration) == ''">Debug</BuildConfiguration>
+    <BuildRevision Condition="$(BuildRevision) == ''">-</BuildRevision>
+    <BuildVersion Condition="$(BuildVersion) == ''">0.0.1000.0</BuildVersion> <!-- build number 1000 denotes a local build -->
+  </PropertyGroup>
+  
+  <Target Name="Clean">
+    <ItemGroup>
+      <BinFiles Include="bin\*.*" />
+    </ItemGroup>
+
+    <Delete Files="@(BinFiles)" />
+    <RemoveDir Directories="bin" />
+
+    <MakeDir Directories="bin" />
+    <MakeDir Directories="bin/hdkn-$(BuildVersion)" />
+    
+    <Touch Files="bin/hdkn-$(BuildVersion)/$(BuildConfiguration.ToUpper())" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="GenerateAssemblyInfo">
+    <Copy SourceFiles="src/Shared/CommonAssemblyInfo.template.cs" DestinationFiles="src/Shared/CommonAssemblyInfo.cs" />
+
+    <TokenReplace Path="src/Shared/CommonAssemblyInfo.cs" Token="$Version$" Replacement="$(BuildVersion)" />
+    <TokenReplace Path="src/Shared/CommonAssemblyInfo.cs" Token="$Revision$" Replacement="$(BuildRevision)" />
+    <TokenReplace Path="src/Shared/CommonAssemblyInfo.cs" Token="$Configuration$" Replacement="$(BuildConfiguration.ToUpper())" />
+  </Target>
+  
+  <Target Name="Compile" DependsOnTargets="Clean; GenerateAssemblyInfo">
+    <MSBuild Projects="Hadouken.sln" Targets="Rebuild" Properties="Configuration=$(BuildConfiguration)" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="Compile">
+    <Message Text="All built." />
+  </Target>
+</Project>

@@ -54,12 +54,6 @@
     <Reference Include="Migrator.Providers">
       <HintPath>..\..\..\lib\MigratorDotNet.0.9.0.33276\lib\NET40\Migrator.Providers.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy">
-      <HintPath>..\..\..\lib\Nancy.0.11.0\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\..\..\lib\Nancy.Hosting.Self.0.11.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\..\..\lib\NHibernate.3.3.1.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>

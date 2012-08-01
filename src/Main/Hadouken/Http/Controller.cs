@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using JsonFx;
 using System.IO;
+using System.Web.Script.Serialization;
 
 namespace Hadouken.Http
 {
@@ -32,7 +32,9 @@ namespace Hadouken.Http
             using (var reader = new StreamReader(Context.Request.InputStream))
             {
                 string data = reader.ReadToEnd();
-                return new JsonFx.Json.JsonReader().Read<T>(data);
+
+                var ser = new JavaScriptSerializer();
+                return ser.Deserialize<T>(data);
             }
         }
     }

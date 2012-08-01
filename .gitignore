@@ -2,7 +2,7 @@
 lib/
 
 # Build output
-build/
+bin/
 
 src/**/**/bin
 src/**/**/obj

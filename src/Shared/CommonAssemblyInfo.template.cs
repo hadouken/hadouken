@@ -8,5 +8,6 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Hadouken")]
 
-[assembly: AssemblyVersion("0.0.0.0")]
-[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly: AssemblyVersion("$Version$")]
+[assembly: AssemblyFileVersion("$Version$")]
+[assembly: AssemblyInformationalVersion("$Version$ (rev $Revision$) $Configuration$")]
