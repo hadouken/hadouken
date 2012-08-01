@@ -1,5 +1,4 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- This simple inline task displays "Hello, world!" -->
   <UsingTask
     TaskName="TokenReplace"
     TaskFactory="CodeTaskFactory"
