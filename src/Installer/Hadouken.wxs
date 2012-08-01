@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product
+        Name="Hadouken"
+        Version="1.0.0"
+        Manufacturer="Hadouken"
+        Id="A62F76A5-4422-4B3A-B8AB-EBD1031FDF93"
+        UpgradeCode="52A66249-5BE7-4F0B-BE83-7C7B7AED65D1"
+        Language="1033"
+        CodePage="1252">
+    
+    </Product>
+</Wix>

@@ -12,3 +12,6 @@ src/Shared/CommonAssemblyInfo.cs
 *.suo
 *.user
 *.sln.docstates
+
+#Wix
+*.wixobj
