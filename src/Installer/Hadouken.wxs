@@ -22,9 +22,11 @@
           </Component>
 
           <Component Id="HdknImpl" Guid="79C85E28-7AB4-432D-8AF2-2D20C8CB1278">
-            <File Id="HadoukenImplDll" Name="Hadouken.Impl.dll" Source="$(var.BinDir)/Hadouken.Impl.dll" KeyPath="yes" />
-            
-            <File Id="HadoukenImplBitTorrentDll" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" />
+            <File Id="HadoukenImpl" Name="Hadouken.Impl.dll" Source="$(var.BinDir)/Hadouken.Impl.dll" KeyPath="yes" />
+          </Component>
+
+          <Component Id="HdknImplBt" Guid="5992CB2D-A2D3-4F52-B1B7-28F34DE75307">
+            <File Id="HdknImplBt" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" />
             <File Id="HadoukenMessagesDll" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" />
 
             <!-- Web UI -->
