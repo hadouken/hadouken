@@ -3,7 +3,10 @@
   
   <PropertyGroup>
     <BuildConfiguration Condition="$(BuildConfiguration) == ''">Debug</BuildConfiguration>
-    
+
+    <BuildNumber Condition="$(BUILD_NUMBER) == ''">0</BuildNumber>
+    <BuildNumber Condition="$(BUILD_NUMBER) != ''">$(BUILD_NUMBER)</BuildNumber>
+
     <BuildRevision Condition="$(GIT_COMMIT) == ''">-</BuildRevision>
     <BuildRevision Condition="$(GIT_COMMIT) != ''">$(GIT_COMMIT)</BuildRevision>
 
@@ -25,13 +28,13 @@
 
   <Target Name="SetupVersion_Nightly">
     <PropertyGroup>
-      <BuildVersion>$(BuildVersion).2000</BuildVersion>
+      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(2000, $(BuildNumber))</BuildVersion>
     </PropertyGroup>
   </Target>
 
   <Target Name="SetupVersion_RC">
     <PropertyGroup>
-      <BuildVersion>$(BuildVersion).3000</BuildVersion>
+      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(3000, $(BuildNumber))</BuildVersion>
     </PropertyGroup>
   </Target>
 
