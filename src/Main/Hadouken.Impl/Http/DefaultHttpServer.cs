@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 
 using NLog;
+using Ionic.Zip;
 
 namespace Hadouken.Impl.Http
 {
@@ -29,6 +30,7 @@ namespace Hadouken.Impl.Http
         private IDataRepository _data;
 
         private HttpListener _listener;
+        private string _webUIPath;
         
         public DefaultHttpServer(IDataRepository data, IFileSystem fs)
         {
@@ -39,6 +41,8 @@ namespace Hadouken.Impl.Http
 
         public void Start()
         {
+            UnzipWebUI();
+
             var binding = ConfigurationManager.AppSettings["WebUI.Url"];
 
             _listener.Prefixes.Add(binding);
@@ -66,6 +70,28 @@ namespace Hadouken.Impl.Http
                 }
 
                 return null;
+            }
+        }
+
+        private void UnzipWebUI()
+        {
+            _webUIPath = HdknConfig.GetPath("Paths.WebUI");
+
+            string uiZip = Path.Combine(_webUIPath, "webui.zip");
+
+            if (_fs.FileExists(uiZip))
+            {
+                string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                _fs.CreateDirectory(path);
+
+                _logger.Info("Extracting webui.zip to {0}", path);
+
+                using (var zip = ZipFile.Read(uiZip))
+                {
+                    zip.ExtractAll(path);
+                }
+
+                _webUIPath = path;
             }
         }
 
@@ -129,9 +155,7 @@ namespace Hadouken.Impl.Http
 
         private ActionResult CheckFileSystem(IHttpContext context)
         {
-            string webUIPath = HdknConfig.GetPath("Paths.WebUI");
-
-            string path = Path.Combine(webUIPath, "Content") + context.Request.Url.AbsolutePath;
+            string path = _webUIPath + (context.Request.Url.AbsolutePath == "/" ? "/index.html" : context.Request.Url.AbsolutePath);
 
             if (_fs.FileExists(path))
             {
