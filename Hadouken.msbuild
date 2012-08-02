@@ -3,7 +3,10 @@
   
   <PropertyGroup>
     <BuildConfiguration Condition="$(BuildConfiguration) == ''">Debug</BuildConfiguration>
-    <BuildRevision Condition="$(BuildRevision) == ''">-</BuildRevision>
+    
+    <BuildRevision Condition="$(GIT_COMMIT) == ''">-</BuildRevision>
+    <BuildRevision Condition="$(GIT_COMMIT) != ''">$(GIT_COMMIT)</BuildRevision>
+
     <BuildVersion Condition="$(BuildVersion) == ''">$([System.IO.File]::ReadAllText("VERSION"))</BuildVersion>
     <BuildType Condition="$(BuildType) == ''">Local</BuildType>
   </PropertyGroup>
