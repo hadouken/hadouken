@@ -10,7 +10,7 @@
     Language="1033"
     Codepage="1252">
 
-    <Package Id="*" Keywords="Installer" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="100" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
+    <Package Id="*" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="100" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
 
@@ -18,20 +18,20 @@
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="INSTALLDIR" Name="Hadouken">
           <Component Id="MainApp" Guid="A3FACA94-3F24-4EAC-AF60-5F4985179D33">
-            <File Id="HadoukenDll" Name="Hadouken.dll" DiskId="1" Source="$(var.BinDir)/Hadouken.dll" KeyPath="yes" />
-            <File Id="HadoukenImplDll" Name="Hadouken.Impl.dll" DiskId="1" Source="$(var.BinDir)/Hadouken.Impl.dll" />
-            <File Id="HadoukenImplBitTorrentDll" Name="Hadouken.Impl.BitTorrent.dll" DiskId="1" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" />
-            <File Id="HadoukenMessagesDll" Name="Hadouken.Messages.dll" DiskId="1" Source="$(var.BinDir)/Hadouken.Messages.dll" />
+            <File Id="HadoukenDll" Name="Hadouken.dll" Source="$(var.BinDir)/Hadouken.dll" KeyPath="yes" />
+            <File Id="HadoukenImplDll" Name="Hadouken.Impl.dll" Source="$(var.BinDir)/Hadouken.Impl.dll" />
+            <File Id="HadoukenImplBitTorrentDll" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" />
+            <File Id="HadoukenMessagesDll" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" />
             
             <!-- Web UI -->
-            <File Id="WebUiZip" Name="webui.zip" DiskId="1" Source="$(var.BinDir)/webui.zip" />
+            <File Id="WebUiZip" Name="webui.zip" Source="$(var.BinDir)/webui.zip" />
             
             <!-- 3rd party libraries -->
-            <File Id="CastleCoreDll" Name="Castle.Core.dll" DiskId="1" Source="$(var.BinDir)/Castle.Core.dll" />
-            <File Id="FluentNHibernateDll" Name="FluentNHibernate.dll" DiskId="1" Source="$(var.BinDir)/FluentNHibernate.dll" />
-            <File Id="IesiCollectionsDll" Name="Iesi.Collections.dll" DiskId="1" Source="$(var.BinDir)/Iesi.Collections.dll" />
-            <File Id="IonicZipDll" Name="Ionic.Zip.dll" DiskId="1" Source="$(var.BinDir)/Ionic.Zip.dll" />
-            <File Id="MigratorDll" Name="Migrator.dll" DiskId="1" Source="$(var.BinDir)/Migrator.dll" />
+            <File Id="CastleCoreDll" Name="Castle.Core.dll" Source="$(var.BinDir)/Castle.Core.dll" />
+            <File Id="FluentNHibernateDll" Name="FluentNHibernate.dll" Source="$(var.BinDir)/FluentNHibernate.dll" />
+            <File Id="IesiCollectionsDll" Name="Iesi.Collections.dll" Source="$(var.BinDir)/Iesi.Collections.dll" />
+            <File Id="IonicZipDll" Name="Ionic.Zip.dll" Source="$(var.BinDir)/Ionic.Zip.dll" />
+            <File Id="MigratorDll" Name="Migrator.dll" Source="$(var.BinDir)/Migrator.dll" />
             <File Id="MigratorFrameworkDll" Name="Migrator.Framework.dll" Source="$(var.BinDir)/Migrator.Framework.dll" />
             <File Id="MigratorProvidersDll" Name="Migrator.Providers.dll" Source="$(var.BinDir)/Migrator.Providers.dll" />
             <File Id="MonoTorrentDll" Name="MonoTorrent.dll" Source="$(var.BinDir)/MonoTorrent.dll" />
@@ -48,6 +48,5 @@
     <Feature Id="Complete" Level="1">
       <ComponentRef Id="MainApp" />
     </Feature>
-    
   </Product>
 </Wix>
