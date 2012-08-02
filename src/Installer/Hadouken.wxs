@@ -17,15 +17,19 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="INSTALLDIR" Name="Hadouken">
-          <Component Id="MainApp" Guid="A3FACA94-3F24-4EAC-AF60-5F4985179D33">
-            <File Id="HadoukenDll" Name="Hadouken.dll" Source="$(var.BinDir)/Hadouken.dll" KeyPath="yes" />
-            <File Id="HadoukenImplDll" Name="Hadouken.Impl.dll" Source="$(var.BinDir)/Hadouken.Impl.dll" />
+          <Component Id="Hdkn" Guid="A3FACA94-3F24-4EAC-AF60-5F4985179D33">
+            <File Id="Hdkn" Name="Hadouken.dll" Source="$(var.BinDir)/Hadouken.dll" KeyPath="yes" />
+          </Component>
+
+          <Component Id="HdknImpl" Guid="79C85E28-7AB4-432D-8AF2-2D20C8CB1278">
+            <File Id="HadoukenImplDll" Name="Hadouken.Impl.dll" Source="$(var.BinDir)/Hadouken.Impl.dll" KeyPath="yes" />
+            
             <File Id="HadoukenImplBitTorrentDll" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" />
             <File Id="HadoukenMessagesDll" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" />
-            
+
             <!-- Web UI -->
             <File Id="WebUiZip" Name="webui.zip" Source="$(var.BinDir)/webui.zip" />
-            
+
             <!-- 3rd party libraries -->
             <File Id="CastleCoreDll" Name="Castle.Core.dll" Source="$(var.BinDir)/Castle.Core.dll" />
             <File Id="FluentNHibernateDll" Name="FluentNHibernate.dll" Source="$(var.BinDir)/FluentNHibernate.dll" />
@@ -46,7 +50,8 @@
     </Directory>
 
     <Feature Id="Complete" Level="1">
-      <ComponentRef Id="MainApp" />
+      <ComponentRef Id="Hdkn" />
+      <ComponentRef Id="HdknImpl" />
     </Feature>
   </Product>
 </Wix>
