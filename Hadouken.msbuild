@@ -4,11 +4,35 @@
   <PropertyGroup>
     <BuildConfiguration Condition="$(BuildConfiguration) == ''">Debug</BuildConfiguration>
     <BuildRevision Condition="$(BuildRevision) == ''">-</BuildRevision>
-    <BuildVersion Condition="$(BuildVersion) == ''">0.0.1000.0</BuildVersion> <!-- build number 1000 denotes a local build -->
-    <BuildOutputFolder>bin/hdkn-$(BuildVersion)</BuildOutputFolder>
+    <BuildVersion Condition="$(BuildVersion) == ''">$([System.IO.File]::ReadAllText("VERSION"))</BuildVersion>
+    <BuildType Condition="$(BuildType) == ''">Local</BuildType>
   </PropertyGroup>
-  
-  <Target Name="Clean">
+
+  <Target Name="SetupVersion" DependsOnTargets="SetupVersion_$(BuildType)">
+    <PropertyGroup>
+      <BuildOutputFolder>bin/hdkn-$(BuildVersion)</BuildOutputFolder>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="SetupVersion_Local">
+    <PropertyGroup>
+      <BuildVersion>$(BuildVersion).1000</BuildVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="SetupVersion_Nightly">
+    <PropertyGroup>
+      <BuildVersion>$(BuildVersion).2000</BuildVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="SetupVersion_RC">
+    <PropertyGroup>
+      <BuildVersion>$(BuildVersion).3000</BuildVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="Clean" DependsOnTargets="SetupVersion">
     <Delete Files="bin\*.*" />
     <RemoveDir Directories="bin" />
 
