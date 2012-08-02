@@ -52,13 +52,11 @@
       <LibFiles Include="lib/System.Data.SQLite.1.0.81.0/lib/net40/*.dll" />
     </ItemGroup>
 
-    <ItemGroup>
-      <UiFiles Include="src/WebUI/**/*.*" />
-    </ItemGroup>
-
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildOutputFolder)" />
     <Copy SourceFiles="@(LibFiles)" DestinationFolder="$(BuildOutputFolder)" />
-    <Copy SourceFiles="@(UiFiles)" DestinationFiles="@(UiFiles->'$(BuildOutputFolder)\WebUI\%(RecursiveDir)%(Filename)%(Extension)')" />
+    
+    <!-- zip webui -->
+    <Exec Command="tools\7zip-9.20\7za.exe a bin\hdkn-$(BuildVersion)\webui.zip .\src\WebUI\*" />
   </Target>
 
   <Target Name="CreateZip" DependsOnTargets="CopyBinaries">
@@ -66,7 +64,9 @@
   </Target>
 
   <Target Name="CreateMsi" DependsOnTargets="CopyBinaries">
-    
+    <Exec Command="tools\wix-3.6rc\candle.exe -dBuildVersion=$(BuildVersion) -dBinDir=bin/hdkn-$(BuildVersion) -out src\Installer\Hadouken.wxobj src\Installer\Hadouken.wxs" />
+
+    <Exec Command="tools\wix-3.6rc\light.exe -pdbout src\Installer\Hadouken.wixpdb -out bin\hdkn-$(BuildVersion).msi src\Installer\Hadouken.wxobj" />
   </Target>
   
   <Target Name="Build" DependsOnTargets="CreateZip; CreateMsi">

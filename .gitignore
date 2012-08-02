@@ -14,4 +14,5 @@ src/Shared/CommonAssemblyInfo.cs
 *.sln.docstates
 
 #Wix
-*.wixobj
+*.wxobj
+*.wixpdb
