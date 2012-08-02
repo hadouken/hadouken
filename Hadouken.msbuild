@@ -28,13 +28,13 @@
 
   <Target Name="SetupVersion_Nightly">
     <PropertyGroup>
-      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(2000, $(BuildNumber))</BuildVersion>
+      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(2000, $(BuildNumber)))</BuildVersion>
     </PropertyGroup>
   </Target>
 
   <Target Name="SetupVersion_RC">
     <PropertyGroup>
-      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(3000, $(BuildNumber))</BuildVersion>
+      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(3000, $(BuildNumber)))</BuildVersion>
     </PropertyGroup>
   </Target>
 
