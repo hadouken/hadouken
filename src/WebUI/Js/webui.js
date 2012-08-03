@@ -477,22 +477,47 @@ var WebUI =
             var t = this.torrents[this.detailsId];
             
             $("#dl").text(Converter.toFileSize(t.DownloadedBytes,2));
+            $("#ul").text(Converter.toFileSize(t.UploadedBytes,2));
+            
+            var ratio = (t.UploadedBytes == 0 ? -1 : t.UploadedBytes / t.Size);
+            $("#ra").html( (ratio ==- 1) ? "&#8734;" : Converter.round(ratio,3));
+            $("#us").text(Converter.toSpeed(t.UploadSpeed));
+            $("#ds").text(Converter.toSpeed(t.DownloadSpeed));
+            $("#rm").html((t.ETA ==- 1) ? "&#8734;" : Converter.toTime(t.ETA));
+            $("#se").text(t.Seeders_Actual + " of " + t.Seeders_All + " connected");
+            $("#pe").text(t.Peers_Actual + " of " + t.Peers_All + " connected");
             /*
-            $("#ul").text(theConverter.bytes(d.uploaded,2));
-            $("#ra").html( (d.ratio ==- 1) ? "&#8734;" : theConverter.round(d.ratio/1000,3));
-            $("#us").text(theConverter.speed(d.ul));
-            $("#ds").text(theConverter.speed(d.dl));
-            $("#rm").html((d.eta ==- 1) ? "&#8734;" : theConverter.time(d.eta));
-            $("#se").text(d.seeds_actual + " " + theUILang.of + " " + d.seeds_all + " " + theUILang.connected);
-            $("#pe").text(d.peers_actual + " " + theUILang.of + " " + d.peers_all + " " + theUILang.connected);
             $("#et").text(theConverter.time(Math.floor((new Date().getTime()-theWebUI.deltaTime)/1000-iv(d.state_changed)),true));
             $("#wa").text(theConverter.bytes(d.skip_total,2));
-            $("#bf").text(d.base_path);
-            $("#co").text(theConverter.date(iv(d.created)+theWebUI.deltaTime/1000));
-            $("#tu").text(  $type(this.trackers[this.dID]) && $type(this.trackers[this.dID][d.tracker_focus]) ? this.trackers[this.dID][d.tracker_focus].name : '');
-            $("#hs").text(this.dID.substring(0,40));
-            $("#ts").text(d.msg);
             */
+            $("#bf").text(t.SavePath);
+            $("#co").text(Converter.toDate(iv(t.CreatedOn)));
+            /*
+            $("#tu").text(  $type(this.trackers[this.dID]) && $type(this.trackers[this.dID][d.tracker_focus]) ? this.trackers[this.dID][d.tracker_focus].name : '');
+            */
+            $("#hs").text(this.detailsId.substring(0,40));
+            //$("#ts").text(t.Comment); tracker status
+            
+            var url = $.trim(t.Comment);
+            if(!url.match(/<a href/i))
+            {
+                var start = url.indexOf("http://");
+                if(start<0)
+                    start = url.indexOf("https://");
+                if(start>=0)
+                {
+                    var end = url.indexOf(" ",start);
+                    if(end<0)
+                        end = url.length;
+                        
+                    var prefix = url.substring(0,start);
+                    var postfix = url.substring(end);
+                    url = url.substring(start,end);
+                    url = prefix+"<a href='"+url+"' target=_blank>"+url+"</a>"+postfix;
+                }
+            }
+            $("#cmt").html(url);
+
         }
     },
     
@@ -1302,8 +1327,7 @@ var WebUI =
         table.Sort();
         
         this.setInterval();
-        
-        // this.updateDetails();
+        this.updateDetails();
     },
     
     getTable: function(prefix)
