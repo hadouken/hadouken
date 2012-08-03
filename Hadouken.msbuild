@@ -3,13 +3,8 @@
   
   <PropertyGroup>
     <BuildConfiguration Condition="$(BuildConfiguration) == ''">Debug</BuildConfiguration>
-
-    <BuildNumber Condition="$(BUILD_NUMBER) == ''">0</BuildNumber>
-    <BuildNumber Condition="$(BUILD_NUMBER) != ''">$(BUILD_NUMBER)</BuildNumber>
-
-    <BuildRevision Condition="$(GIT_COMMIT) == ''">-</BuildRevision>
-    <BuildRevision Condition="$(GIT_COMMIT) != ''">$(GIT_COMMIT)</BuildRevision>
-
+    <BuildNumber Condition="$(BuildNumber) == ''">0</BuildNumber>
+    <BuildRevision Condition="$(BuildRevision) == ''">-</BuildRevision>
     <BuildVersion Condition="$(BuildVersion) == ''">$([System.IO.File]::ReadAllText("VERSION"))</BuildVersion>
     <BuildType Condition="$(BuildType) == ''">Local</BuildType>
   </PropertyGroup>
@@ -18,11 +13,13 @@
     <PropertyGroup>
       <BuildOutputFolder>bin/hdkn-$(BuildVersion)</BuildOutputFolder>
     </PropertyGroup>
+
+    <Message Text="##teamcity[buildNumber $(BuildVersion)]" />
   </Target>
 
   <Target Name="SetupVersion_Local">
     <PropertyGroup>
-      <BuildVersion>$(BuildVersion).1000</BuildVersion>
+      <BuildVersion>$(BuildVersion).$([MSBuild]::Add(1000, $([System.DateTime]::Now.DayOfYear)))</BuildVersion>
     </PropertyGroup>
   </Target>
 
