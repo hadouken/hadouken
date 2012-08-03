@@ -14,7 +14,7 @@
       <BuildOutputFolder>bin/hdkn-$(BuildVersion)</BuildOutputFolder>
     </PropertyGroup>
 
-    <Message Text="##teamcity[buildNumber $(BuildVersion)]" />
+    <Message Text="##teamcity[buildNumber '$(BuildVersion)']" />
   </Target>
 
   <Target Name="SetupVersion_Local">
