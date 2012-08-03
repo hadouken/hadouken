@@ -100,7 +100,9 @@
     <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\PluginAttribute.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="IComponent.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />
   </ItemGroup>
