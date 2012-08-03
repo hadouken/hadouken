@@ -58,6 +58,14 @@ var Formatter =
                     case "Length": // size
                         arr[i] = Converter.toFileSize(arr[i]);
                         break;
+                        
+                    case "Progress":
+                        arr[i] = arr[i] + "%";
+                        break;
+                        
+                    case "Priority":
+                        arr[i] = filePriorityToStr(arr[i]);
+                        break;
                 }
             }
         }
@@ -65,3 +73,30 @@ var Formatter =
         return arr;
     }
 };
+
+function filePriorityToStr(pr)
+{
+    switch(pr)
+    {
+        case 0:
+            return "Skip";
+            
+        case 1:
+            return "Lowest";
+            
+        case 2:
+            return "Low";
+            
+        case 4:
+            return "Normal";
+            
+        case 8:
+            return "High";
+            
+        case 16:
+            return "Highest";
+            
+        case 32:
+            return "Immediate";
+    }
+}

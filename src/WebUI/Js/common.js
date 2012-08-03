@@ -482,6 +482,7 @@ function cloneObject( srcObj )
                         break;
                 }
         }
+        
         return newObject;
 }
 
@@ -520,27 +521,31 @@ rDirectory.prototype.addFile = function(aData,no)
                 if(!this.dirs[file.path])
                 {
                         this.dirs[file.path] = {};
-                        var up = splitName(file.path).path;
-                        this.dirs[file.path]["_d_"+up] = { data: { name: "..", size: null, done: null, percent: null, priority: -2, prioritize: -2 }, icon: "Icon_Dir", link: up };
+                        var up = splitName(file.path).Path;
+                        this.dirs[file.path]["_d_"+up] = { data: { Path: "..", Length: null, BytesDownloaded: null, Progress: null, Priority: 0 }, icon: "Icon_Dir", link: up };
                 }
                 if(!fileAdded)
                 {
                         var sId = "_f_"+no;
                         var data = cloneObject( aData );
-                        data.name = file.name;
+                        data.Path = file.name;
                         if(this.dirs[file.path][sId])
-                                this.dirs[file.path][sId].data = data;
+                        {
+                            this.dirs[file.path][sId].data = data;
+                        }
                         else
+                        {
                             var icon = getFileIcon(name);
-                            
-                                this.dirs[file.path][sId] = { "data": data, icon: icon, link: null };
+                            this.dirs[file.path][sId] = { "data": data, "icon": icon, link: null };
+                        }
+                        
                         fileAdded = true;
                 }
                 else
                 {
                         var sId = "_d_"+name;
                         if(!this.dirs[file.path][sId])
-                                this.dirs[file.path][sId] = { data: { name: file.name, size: 0, done: 0, percent: 0.0, priority: -1, prioritize: -1 }, icon: "Icon_Dir", link: name };
+                                this.dirs[file.path][sId] = { data: { Path: file.name, Length: 0, BytesDownloaded: 0, Progress: 0.0, Priority: 0 }, icon: "Icon_Dir", link: name };
                 }
                 name = file.path;
         } 
@@ -558,47 +563,10 @@ rDirectory.prototype.addFile = function(aData,no)
         }
 }
 
-rDirectory.prototype.updateDirs = function(name)
-{
-        var dir = this.dirs[name];
-        var allStat = { size: 0, done: 0, priority: -2, prioritize: -2 };
-        var stat;
-        for(var i in dir) 
-        {
-                if(dir[i].data.name!="..")
-                {
-                        if(dir[i].link!=null)
-                        {
-                                stat = this.updateDirs(dir[i].link)
-                                dir[i].data.size = stat.size;
-                                dir[i].data.done = stat.done;
-                                dir[i].data.percent = ((dir[i].data.size > 0) ? theConverter.round((dir[i].data.done/dir[i].data.size)*100,1): "100.0");
-                                dir[i].data.priority = stat.priority;
-                                dir[i].data.prioritize = stat.prioritize;
-                        }
-                        else
-                                stat = dir[i].data;
-                        allStat.size+=stat.size;
-                        allStat.done+=stat.done;
-                        if(allStat.priority==-2)
-                                allStat.priority = stat.priority;
-                        else
-                                if(allStat.priority!=stat.priority) 
-                                        allStat.priority = -1;
-                        if(allStat.prioritize==-2)
-                                allStat.prioritize = stat.prioritize;
-                        else
-                                if(allStat.prioritize!=stat.prioritize) 
-                                        allStat.prioritize = -1;
-                }
-        }
-        return(allStat);
-}
-
 rDirectory.prototype.getEntry = function(k)
 {
         var entry = this.dirs[this.current][k];
-        return((entry.data.name=="..") ? null : entry.data);
+        return((entry.data.Path=="..") ? null : entry.data);
 }
 
 rDirectory.prototype.isDirectory = function(k)
@@ -610,7 +578,7 @@ rDirectory.prototype.isDirectory = function(k)
 rDirectory.prototype.getFilesIds = function(arr,current,k,prt,property)
 {
         var entry = this.dirs[current][k];
-        if(entry.data.name!="..")
+        if(entry.data.Path!="..")
         {
                 if(entry.link!=null)
                 {
@@ -625,7 +593,7 @@ rDirectory.prototype.getFilesIds = function(arr,current,k,prt,property)
 
 rDirectory.prototype.getDirectory = function()
 {
-        this.updateDirs(this.current);
+        //this.updateDirs(this.current);
         return(this.dirs[this.current]);
 }
 

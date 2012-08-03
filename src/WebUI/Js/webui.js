@@ -361,6 +361,16 @@ var WebUI =
         }
     },
     
+    updateFiles: function(hash) 
+    {
+        if(this.detailsId == hash)
+        {
+            this.getFiles(hash, true);
+            this.updateDetails();
+        }
+    },
+
+    
     redrawFiles: function(hash)
     {
         if(this.detailsId == hash)
@@ -371,6 +381,7 @@ var WebUI =
             {
                 var sId = hash + "_f_" + i;
                 var file = this.files[hash][i];
+                
                 file.Progress = (file.Length > 0) ? Converter.round((file.BytesDownloaded/file.Length)*100,1): "100.0";
                 
                 if(this.settings["webui.files.view"])
@@ -401,7 +412,7 @@ var WebUI =
                 }
             }
             
-            if(!this.settings["webui.fls.view"] && this.dirs[hash])
+            if(!this.settings["webui.files.view"] && this.dirs[hash])
             {
                 var dir = this.dirs[hash].getDirectory();
                 
@@ -540,15 +551,15 @@ var WebUI =
         switch(action)
         {
             case "start":
-                ret = (state == "Stopped" || state == "Paused");
+                ret = (state == TorrentState.stopped || state == TorrentState.paused);
                 break;
             
             case "stop":
-                ret = (state == "Downloading" || state == "Paused" || state == "Seeding");
+                ret = (state == TorrentState.downloading || state == TorrentState.stopped || state == TorrentState.seeding);
                 break;
                 
             case "pause":
-                ret = (state == "Downloading" || state == "Seeding");
+                ret = (state == TorrentState.downloading || state == TorrentState.seeding);
                 break;
                 
             case "remlabel":
@@ -671,6 +682,18 @@ var WebUI =
                 }
                 
                 table.setIcon(hash, statusInfo[0]);
+                
+                if(oldTorrent.DownloadedBytes != torrent.DownloadedBytes)
+                {
+                    if(WebUI.detailsId == hash)
+                    {
+                        WebUI.updateFiles(hash);
+                    }
+                    else
+                    {
+                        delete WebUI.files[hash];
+                    }
+                }
                 
                 for( var prop in torrent)
                 {
