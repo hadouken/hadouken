@@ -51,9 +51,26 @@
       </Directory>
     </Directory>
 
-    <Feature Id="Complete" Level="1">
+    <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="The full monty. The works." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
       <ComponentRef Id="Hdkn" />
       <ComponentRef Id="HdknImpl" />
     </Feature>
+    
+    <UI Id="HdknUI">
+      <UIRef Id="WixUI_InstallDir" />
+      <UIRef Id="WixUI_ErrorProgressText" />
+
+      <DialogRef Id="HdknSettingsDlg" />
+
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="HdknSettingsDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="HdknSettingsDlg" Order="1">NOT Installed</Publish>
+    </UI>
+    
+    <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="src/Media/HdknSetupDialog.bmp" />
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    
+    <Property Id="HDKN_WEBUI_PORT" Value="8080" />
   </Product>
 </Wix>

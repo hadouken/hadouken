@@ -91,9 +91,9 @@
   </Target>
 
   <Target Name="CreateMsi" DependsOnTargets="CopyBinaries">
-    <Exec Command="tools\wix-3.6rc\candle.exe -dBuildVersion=$(BuildVersion) -dBinDir=bin/hdkn-$(BuildVersion) -out src\Installer\Hadouken.wxobj src\Installer\Hadouken.wxs" />
+    <Exec Command="tools\wix-3.6rc\candle.exe -dBuildVersion=$(BuildVersion) -dBinDir=bin/hdkn-$(BuildVersion) -out src\Installer\ src\Installer\Hadouken.wxs src\Installer\SettingsDialog.wxs" />
 
-    <Exec Command="tools\wix-3.6rc\light.exe -sval -pdbout src\Installer\Hadouken.wixpdb -out bin\hdkn-$(BuildVersion).msi src\Installer\Hadouken.wxobj" />
+    <Exec Command="tools\wix-3.6rc\light.exe -ext WixUIExtension -sval -pdbout src\Installer\Hadouken.wixpdb -out bin\hdkn-$(BuildVersion).msi src\Installer\Hadouken.wixobj src\Installer\SettingsDialog.wixobj" />
   </Target>
   
   <Target Name="Build" DependsOnTargets="CreateZip; CreateMsi">

@@ -15,4 +15,5 @@ src/Shared/CommonAssemblyInfo.cs
 
 #Wix
 *.wxobj
+*.wixobj
 *.wixpdb
