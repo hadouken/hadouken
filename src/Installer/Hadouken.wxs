@@ -70,7 +70,8 @@
     <WixVariable Id="WixUIDialogBmp" Value="src/Media/HdknSetupDialog.bmp" />
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
-    
+
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
+    <Property Id="HDKN_SRV_ENABLE" Value="1" />
   </Product>
 </Wix>
