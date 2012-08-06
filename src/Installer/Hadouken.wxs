@@ -3,7 +3,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product
     Name="Hadouken"
-    Manufacturer="Hadouken"
+    Manufacturer="Viktor Elofsson - vktr.se"
     Version="$(var.BuildVersion)"
     Id="A62F76A5-4422-4B3A-B8AB-EBD1031FDF93"
     UpgradeCode="52A66249-5BE7-4F0B-BE83-7C7B7AED65D1"
@@ -26,12 +26,37 @@
           </Component>
 
           <Component Id="HdknImplBt" Guid="5992CB2D-A2D3-4F52-B1B7-28F34DE75307">
-            <File Id="HdknImplBt" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" />
-            <File Id="HadoukenMessagesDll" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" />
+            <File Id="HdknImplBt" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" KeyPath="yes" />
+          </Component>
 
-            <!-- Web UI -->
-            <File Id="WebUiZip" Name="webui.zip" Source="$(var.BinDir)/webui.zip" />
+          <Component Id="HdknMsg" Guid="1E766B20-B6AA-4751-8164-FE44CE7F4256">
+            <File Id="HdknMsg" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" KeyPath="yes" />
+          </Component>
 
+          <Component Id="HdknCmdLine" Guid="F4620120-41BA-4989-9098-79B3479652AE">
+            <File Id="HdknCmdLine" Name="Hadouken.Hosts.CommandLine.exe" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe" KeyPath="yes" />
+          </Component>
+
+          <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682">
+            <File Id="HdknWinSrv" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
+            <File Id="HdknWinSrvCfg" Name="Hadouken.Hosts.WindowsService.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe.config" />
+
+            <ServiceInstall
+              Id="ServiceInstaller"
+              Type="ownProcess"
+              Vital="yes"
+              Name="Hadouken"
+              DisplayName="Hadouken BitTorrent client"
+              Description="The service for Hadouken BitTorrent client"
+              Start="auto"
+              Account="LocalSystem"
+              Interactive="no"
+              ErrorControl="normal"
+              />
+            <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="Hadouken" Wait="yes" />
+          </Component>
+
+          <Component Id="Libs" Guid="5FC0B06D-AABD-4384-9987-BD732BDFA568">
             <!-- 3rd party libraries -->
             <File Id="CastleCoreDll" Name="Castle.Core.dll" Source="$(var.BinDir)/Castle.Core.dll" />
             <File Id="FluentNHibernateDll" Name="FluentNHibernate.dll" Source="$(var.BinDir)/FluentNHibernate.dll" />
@@ -47,6 +72,13 @@
             <File Id="SystemDataSQLiteDll" Name="System.Data.SQLite.dll" Source="$(var.BinDir)/System.Data.SQLite.dll" />
             <File Id="SystemDataSQLiteLinqDll" Name="System.Data.SQLite.Linq.dll" Source="$(var.BinDir)/System.Data.SQLite.Linq.dll" />
           </Component>
+
+          <Directory Id="WEBUIDIR" Name="WebUI">
+            <Component Id="WebUI" Guid="417127BC-1E56-4DF6-870E-D7F00BBE9758">
+              <!-- Web UI -->
+              <File Id="WebUiZip" Name="webui.zip" Source="$(var.BinDir)/webui.zip" KeyPath="yes" />
+            </Component>
+          </Directory>
         </Directory>
       </Directory>
     </Directory>
@@ -54,6 +86,12 @@
     <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="The full monty. The works." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
       <ComponentRef Id="Hdkn" />
       <ComponentRef Id="HdknImpl" />
+      <ComponentRef Id="HdknImplBt" />
+      <ComponentRef Id="HdknMsg" />
+      <ComponentRef Id="HdknCmdLine" />
+      <ComponentRef Id="HdknWinSrv" />
+      <ComponentRef Id="WebUI" />
+      <ComponentRef Id="Libs" />
     </Feature>
     
     <UI Id="HdknUI">
@@ -73,5 +111,6 @@
 
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
     <Property Id="HDKN_SRV_ENABLE" Value="1" />
+    <Property Id="HDKN_SRV_USER" Value=".\Hadouken" />
   </Product>
 </Wix>

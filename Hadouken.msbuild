@@ -2,7 +2,7 @@
   <Import Project="src/Build/TokenReplace.targets" />
   
   <PropertyGroup>
-    <BuildConfiguration Condition="$(BuildConfiguration) == ''">Debug</BuildConfiguration>
+    <BuildConfiguration Condition="$(BuildConfiguration) == ''">Release</BuildConfiguration>
     <BuildNumber Condition="$(BuildNumber) == ''">0</BuildNumber>
     <BuildRevision Condition="$(BuildRevision) == ''">-</BuildRevision>
     <BuildVersion Condition="$(BuildVersion) == ''">$([System.IO.File]::ReadAllText("VERSION"))</BuildVersion>
@@ -64,6 +64,14 @@
       <BinFiles Include="src/Main/Hadouken.Impl/bin/$(BuildConfiguration)/Hadouken.Impl.dll" />
       <BinFiles Include="src/Main/Hadouken.Impl.BitTorrent/bin/$(BuildConfiguration)/Hadouken.Impl.BitTorrent.dll" />
       <BinFiles Include="src/Main/Hadouken.Messages/bin/$(BuildConfiguration)/Hadouken.Messages.dll" />
+      
+      <!-- hosts -->
+      <BinFiles Include="src/Hosts/Hadouken.Hosts.CommandLine/bin/$(BuildConfiguration)/Hadouken.Hosts.CommandLine.exe" />
+      <BinFiles Include="src/Hosts/Hadouken.Hosts.WindowsService/bin/$(BuildConfiguration)/Hadouken.Hosts.WindowsService.exe" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <CfgFiles Include="src/Config/$(BuildConfiguration)/Hadouken.Hosts.WindowsService.exe.config" />
     </ItemGroup>
 
     <ItemGroup>
@@ -80,6 +88,7 @@
     </ItemGroup>
 
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildOutputFolder)" />
+    <Copy SourceFiles="@(CfgFiles)" DestinationFolder="$(BuildOutputFolder)" />
     <Copy SourceFiles="@(LibFiles)" DestinationFolder="$(BuildOutputFolder)" />
     
     <!-- zip webui -->

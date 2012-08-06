@@ -15,7 +15,7 @@ namespace Hadouken.Configuration
             foreach (string key in ConfigurationManager.AppSettings.AllKeys)
             {
                 if (key.StartsWith("Paths"))
-                {
+                {   
                     CreatePath(ExpandPath(ConfigurationManager.AppSettings[key]));
                 }
             }
@@ -26,14 +26,21 @@ namespace Hadouken.Configuration
             if (String.IsNullOrEmpty(path))
                 return null;
 
-            return Environment.ExpandEnvironmentVariables(Path.GetFullPath(path));
+            return Environment.ExpandEnvironmentVariables(path);
         }
 
         private static void CreatePath(string path)
         {
-            // create it if it doesn't exist
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            try
+            {
+                // create it if it doesn't exist
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(String.Format("CreatePath failed with path {0}", path), e);
+            }
         }
 
         public static string GetPath(string key)

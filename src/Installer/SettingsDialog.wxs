@@ -26,7 +26,7 @@
 
         <!-- Service Enable -->
         <Control Id="WinSrvEnableLabel" Type="Text" X="30" Y="135" Width="40" Height="15" Text="Enable:" />
-        <Control Id="WinSrvEnable" Type="CheckBox" X="80" Y="135" Width="20" Height="15" Indirect="no" Property="HDKN_SRV_ENABLE" CheckBoxValue="1" />
+        <Control Id="WinSrvEnable" Type="CheckBox" X="80" Y="134" Width="20" Height="15" Indirect="no" Property="HDKN_SRV_ENABLE" CheckBoxValue="1" />
         
         <!-- Service Username -->
         <Control Id="WinSrvUserLabel" Type="Text" X="30" Y="155" Width="40" Height="15" Text="Account:" />
@@ -52,7 +52,7 @@
         
         <!-- next -->
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
-          <Publish Event="NewDialog" Value="VerifyReadyDlg">ProductID</Publish>
+          <Publish Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
         </Control>
         
         <!-- cancel -->
