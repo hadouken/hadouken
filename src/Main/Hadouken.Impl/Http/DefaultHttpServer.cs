@@ -79,6 +79,8 @@ namespace Hadouken.Impl.Http
 
             string uiZip = Path.Combine(_webUIPath, "webui.zip");
 
+            _logger.Debug("Checking if webui.zip exists at {0}", uiZip);
+
             if (_fs.FileExists(uiZip))
             {
                 string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());

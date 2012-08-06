@@ -5,6 +5,7 @@ using System.Text;
 using System.Configuration;
 using System.IO;
 using System.Collections.Specialized;
+using System.Reflection;
 
 namespace Hadouken.Configuration
 {
@@ -23,6 +24,8 @@ namespace Hadouken.Configuration
 
         private static string ExpandPath(string path)
         {
+            path = path.Replace("$BaseDir$", Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+
             if (String.IsNullOrEmpty(path))
                 return null;
 
