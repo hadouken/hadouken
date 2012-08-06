@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Product
     Name="Hadouken"
     Manufacturer="Viktor Elofsson - vktr.se"
@@ -41,6 +41,13 @@
             <File Id="HdknWinSrv" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
             <File Id="HdknWinSrvCfg" Name="Hadouken.Hosts.WindowsService.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe.config" />
 
+            <util:XmlFile 
+              Id="ModifyWebUIPort"
+              File="[#HdknWinSrvCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
+              Value="http://localhost:[HDKN_WEBUI_PORT]/" />
+            
             <ServiceInstall
               Id="ServiceInstaller"
               Type="ownProcess"
@@ -53,6 +60,7 @@
               Interactive="no"
               ErrorControl="normal"
               />
+            
             <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="Hadouken" Wait="yes" />
           </Component>
 
