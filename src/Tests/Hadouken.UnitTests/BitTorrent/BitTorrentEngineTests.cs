@@ -10,6 +10,7 @@ using Hadouken.IO;
 using Hadouken.Messaging;
 using Hadouken.Data;
 using Hadouken.Data.Models;
+using Hadouken.Configuration;
 
 namespace Hadouken.UnitTests.BitTorrent
 {
@@ -22,10 +23,11 @@ namespace Hadouken.UnitTests.BitTorrent
             var fs = new Mock<IFileSystem>();
             var bus = new Mock<IMessageBus>();
             var repo = new Mock<IDataRepository>();
+            var kvs = new Mock<IKeyValueStore>();
 
             repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
 
-            var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object);
+            var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
             engine.Load();
 
             var t = engine.AddTorrent(null);
@@ -39,10 +41,11 @@ namespace Hadouken.UnitTests.BitTorrent
             var fs = new Mock<IFileSystem>();
             var bus = new Mock<IMessageBus>();
             var repo = new Mock<IDataRepository>();
+            var kvs = new Mock<IKeyValueStore>();
 
             repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
 
-            var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object);
+            var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
             engine.Load();
 
             var t = engine.AddTorrent(new byte[] { 6, 7, 1, 4, 5, 3, 3 }); // garbage data :)
@@ -56,13 +59,13 @@ namespace Hadouken.UnitTests.BitTorrent
             var fs = new Mock<IFileSystem>();
             var bus = new Mock<IMessageBus>();
             var repo = new Mock<IDataRepository>();
+            var kvs = new Mock<IKeyValueStore>();
 
             repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
 
-
             byte[] torrent = TestHelper.LoadResource("Hadouken.UnitTests.Resources.ubuntu.torrent");
 
-            var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object);
+            var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
             engine.Load();
 
             var manager = engine.AddTorrent(torrent);

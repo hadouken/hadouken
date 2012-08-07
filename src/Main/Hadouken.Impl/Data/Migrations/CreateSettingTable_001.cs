@@ -16,7 +16,8 @@ namespace Hadouken.Impl.Data.Migrations
             Database.AddTable("Setting",
                 new Column("Id", System.Data.DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                 new Column("Key", System.Data.DbType.String, 200),
-                new Column("Value", System.Data.DbType.String, 200)
+                new Column("Value", System.Data.DbType.String, 200),
+                new Column("Type", System.Data.DbType.String, 200)
             );
         }
 

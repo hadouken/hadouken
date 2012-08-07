@@ -17,6 +17,7 @@ using Hadouken.Messaging;
 using System.Collections.ObjectModel;
 using Hadouken.Messages;
 using System.Threading;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -24,6 +25,7 @@ namespace Hadouken.Impl.BitTorrent
     {
         private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private IKeyValueStore _kvs;
         private IDataRepository _data;
         private IFileSystem _fs;
         private IMessageBus _mbus;
@@ -31,8 +33,9 @@ namespace Hadouken.Impl.BitTorrent
         private ClientEngine _clientEngine;
         private Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
-        public MonoTorrentEngine(IFileSystem fs, IMessageBus mbus, IDataRepository data)
+        public MonoTorrentEngine(IFileSystem fs, IMessageBus mbus, IDataRepository data, IKeyValueStore kvs)
         {
+            _kvs = kvs;
             _data = data;
             _fs = fs;
             _mbus = mbus;
@@ -50,8 +53,8 @@ namespace Hadouken.Impl.BitTorrent
         {
             string defaultSavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-            string savePath = _data.GetSetting("bt.savePath", defaultSavePath);
-            int listenPort = Convert.ToInt32(_data.GetSetting("bt.listenPort", "6998"));
+            string savePath = _kvs.Get<string>("bt.savePath", defaultSavePath);
+            int listenPort = _kvs.Get<int>("bt.listenPort", 6998);
 
             _clientEngine = new ClientEngine(new EngineSettings(savePath, listenPort));
         }

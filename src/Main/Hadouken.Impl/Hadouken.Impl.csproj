@@ -70,6 +70,7 @@
       <HintPath>..\..\..\lib\System.Data.SQLite.1.0.81.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -77,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\DefaultKeyValueStore.cs" />
     <Compile Include="Data\DefaultMigratorRunner.cs" />
     <Compile Include="Data\FluentNhibernateDataRepository.cs" />
     <Compile Include="Data\Migrations\CreatePluginInfoTable_001.cs" />

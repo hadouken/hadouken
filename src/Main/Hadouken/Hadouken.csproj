@@ -61,7 +61,7 @@
     <Compile Include="ComponentAttribute.cs" />
     <Compile Include="ComponentLifestyle.cs" />
     <Compile Include="Configuration\HdknConfig.cs" />
-    <Compile Include="Data\DataRepositoryExtensions.cs" />
+    <Compile Include="Configuration\IKeyValueStore.cs" />
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
     <Compile Include="Data\IModel.cs" />

@@ -7,17 +7,18 @@ using Hadouken.Data;
 using Hadouken.Data.Models;
 using Hadouken.Messaging;
 using Hadouken.Messages;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Http.Controllers.Api
 {
     public class ConfigController : Controller
     {
-        private IDataRepository _data;
+        private IKeyValueStore _kvs;
         private IMessageBus _mbus;
 
-        public ConfigController(IDataRepository data, IMessageBus mbus)
+        public ConfigController(IKeyValueStore kvs, IMessageBus mbus)
         {
-            _data = data;
+            _kvs = kvs;
             _mbus = mbus;
         }
 
@@ -29,19 +30,16 @@ namespace Hadouken.Impl.Http.Controllers.Api
             {
                 string[] keys = Context.Request.QueryString["k"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                var settings = _data.List<Setting>(s => keys.Contains(s.Key));
-
-                return Json(settings.ToDictionary(s => s.Key, s => s.Value));
+                return Json(_kvs.Get(s => keys.Contains(s)));
             }
 
             if (!String.IsNullOrEmpty(Context.Request.QueryString["g"]))
             {
                 string group = Context.Request.QueryString["g"];
-                var settings = _data.List<Setting>(s => s.Key.StartsWith(group));
-                return Json(settings.ToDictionary(s => s.Key, s => s.Value));
+                return Json(_kvs.Get(s => s.StartsWith(group)));
             }
 
-            return Json(_data.List<Setting>().ToDictionary(x => x.Key, x => x.Value));
+            return Json(_kvs.Get(s => true));
         }
 
         [HttpPost]
@@ -52,21 +50,9 @@ namespace Hadouken.Impl.Http.Controllers.Api
 
             foreach (var key in dictionary.Keys)
             {
-                string value = dictionary[key].ToString();
+                _kvs.Set(key, dictionary[key]);
 
-                Setting setting = _data.Single<Setting>(x => x.Key == key);
-
-                if (setting == null)
-                {
-                    setting = new Setting() { Key = key };
-                }
-
-                string oldValue = setting.Value;
-
-                setting.Value = value;
-                _data.SaveOrUpdate(setting);
-
-                _mbus.Send<ISettingChanged>(m => { m.Key = setting.Key; m.OldValue = oldValue; m.NewValue = setting.Value; });
+                //_mbus.Send<ISettingChanged>(m => { m.Key = key; m.NewValue = dictionary[key]; });
             }
 
             return Json(true);

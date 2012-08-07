@@ -27,15 +27,15 @@ namespace Hadouken.Impl.Http
         private List<ActionCacheItem> _cache = new List<ActionCacheItem>();
 
         private IFileSystem _fs;
-        private IDataRepository _data;
+        private IKeyValueStore _kvs;
 
         private HttpListener _listener;
         private string _webUIPath;
         
-        public DefaultHttpServer(IDataRepository data, IFileSystem fs)
+        public DefaultHttpServer(IKeyValueStore kvs, IFileSystem fs)
         {
             _fs = fs;
-            _data = data;
+            _kvs = kvs;
             _listener = new HttpListener();
         }
 
@@ -194,8 +194,8 @@ namespace Hadouken.Impl.Http
             {
                 var id = (HttpListenerBasicIdentity)context.User.Identity;
 
-                string usr = _data.GetSetting("http.auth.username", "hdkn");
-                string pwd = _data.GetSetting("http.auth.password", "hdkn");
+                string usr = _kvs.Get<string>("http.auth.username", "hdkn");
+                string pwd = _kvs.Get<string>("http.auth.password", "hdkn");
 
                 return (id.Name == usr && id.Password == pwd);
             }
