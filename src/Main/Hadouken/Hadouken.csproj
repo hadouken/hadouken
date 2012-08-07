@@ -73,6 +73,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHost.cs" />
     <Compile Include="Http\ContentResult.cs" />
+    <Compile Include="Http\EmbeddedContentResult.cs" />
     <Compile Include="Http\HttpPutAttribute.cs" />
     <Compile Include="Http\HttpDeleteAttribute.cs" />
     <Compile Include="Http\HttpGetAttribute.cs" />

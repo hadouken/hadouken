@@ -27,6 +27,16 @@ namespace Hadouken.Http
             return new RedirectResult(url);
         }
 
+        public ActionResult EmbeddedContent(string resourceName)
+        {
+            return EmbeddedContent(resourceName, "text/html");
+        }
+
+        public ActionResult EmbeddedContent(string resourceName, string contentType)
+        {
+            return new EmbeddedContentResult(this.GetType().Assembly, resourceName, contentType);
+        }
+
         public T BindModel<T>()
         {
             using (var reader = new StreamReader(Context.Request.InputStream))
