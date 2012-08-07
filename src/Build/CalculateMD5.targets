@@ -1,0 +1,34 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask
+    TaskName="CalculateMD5"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+
+    <ParameterGroup>
+      <InputFile ParameterType="System.String" Required="true" />
+      <OutputFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.Security.Cryptography" />
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+using(var md5 = new MD5CryptoServiceProvider())
+{
+  var buffer = md5.ComputeHash(File.ReadAllBytes(InputFile));
+  var sb = new StringBuilder();
+  
+  for(int i = 0; i < buffer.Length; i++)
+  {
+    sb.Append(buffer[i].ToString("x2"));
+  }
+  
+  File.WriteAllText(OutputFile, sb.ToString());
+}
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

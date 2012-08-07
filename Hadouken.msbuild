@@ -1,5 +1,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="src/Build/TokenReplace.targets" />
+  <Import Project="src/Build/CalculateMD5.targets" />
   
   <PropertyGroup>
     <BuildConfiguration Condition="$(BuildConfiguration) == ''">Release</BuildConfiguration>
@@ -97,12 +98,14 @@
 
   <Target Name="CreateZip" DependsOnTargets="CopyBinaries">
     <Exec Command="tools\7zip-9.20\7za.exe a bin\hdkn-$(BuildVersion).zip .\$(BuildOutputFolder)\*" />
+    <CalculateMD5 InputFile="bin/hdkn-$(BuildVersion).zip" OutputFile="bin/hdkn-$(BuildVersion).zip.md5" />
   </Target>
 
   <Target Name="CreateMsi" DependsOnTargets="CopyBinaries">
     <Exec Command="tools\wix-3.6rc\candle.exe -ext WixUtilExtension -dBuildVersion=$(BuildVersion) -dBinDir=bin/hdkn-$(BuildVersion) -out src\Installer\ src\Installer\Hadouken.wxs src\Installer\SettingsDialog.wxs" />
-
     <Exec Command="tools\wix-3.6rc\light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src\Installer\Hadouken.wixpdb -out bin\hdkn-$(BuildVersion).msi src\Installer\Hadouken.wixobj src\Installer\SettingsDialog.wixobj" />
+
+    <CalculateMD5 InputFile="bin/hdkn-$(BuildVersion).msi" OutputFile="bin/hdkn-$(BuildVersion).msi.md5" />
   </Target>
   
   <Target Name="Build" DependsOnTargets="CreateZip; CreateMsi">
