@@ -38,11 +38,11 @@ namespace Hadouken.Impl.Config
             return _serializer.Deserialize(key, Type.GetType(setting.Type));
         }
 
-        public IDictionary<string, object> Get(Expression<Func<string, bool>> filter)
+        public IDictionary<string, object> Get(Func<string, bool> filter)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
 
-            var settings = _data.List<Setting>().Where(s => filter.Compile().Invoke(s.Key));
+            var settings = _data.List<Setting>().Where(s => filter.Invoke(s.Key));
 
             foreach (var setting in settings)
             {

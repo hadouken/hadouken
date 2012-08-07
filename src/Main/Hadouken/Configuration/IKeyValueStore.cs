@@ -11,7 +11,7 @@ namespace Hadouken.Configuration
         object Get(string key);
         object Get(string key, object defaultValue);
 
-        IDictionary<string, object> Get(Expression<Func<string, bool>> filter);
+        IDictionary<string, object> Get(Func<string, bool> filter);
 
         T Get<T>(string key);
         T Get<T>(string key, T defaultValue);
