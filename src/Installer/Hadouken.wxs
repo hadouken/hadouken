@@ -47,6 +47,14 @@
               Action="setValue"
               ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
               Value="http://localhost:[HDKN_WEBUI_PORT]/" />
+
+            <util:User
+              Id="GrantLogonAsService"
+              CreateUser="no"
+              LogonAsService="yes"
+              Name="[HDKN_SRV_USER]"
+              UpdateIfExists="yes"
+              />
             
             <ServiceInstall
               Id="ServiceInstaller"
@@ -56,7 +64,8 @@
               DisplayName="Hadouken BitTorrent client"
               Description="The service for Hadouken BitTorrent client"
               Start="auto"
-              Account="LocalSystem"
+              Account="[HDKN_SRV_USER]"
+              Password="[HDKN_SRV_PASS]"
               Interactive="no"
               ErrorControl="normal"
               />
@@ -119,6 +128,8 @@
 
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
     <Property Id="HDKN_SRV_ENABLE" Value="1" />
-    <Property Id="HDKN_SRV_USER" Value=".\Hadouken" />
+    <Property Id="HDKN_SRV_USER" Value="hdkn" />
+
+    <SetProperty Id="HDKN_SRV_USER" Value="$(env.USERDOMAIN)\[LogonUser]" Before="AppSearch" />
   </Product>
 </Wix>
