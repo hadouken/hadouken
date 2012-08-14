@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
+using System.Reflection;
+using System.Configuration;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -10,12 +12,18 @@ namespace Hadouken.Hosts.WindowsService
     {
         public static void Main()
         {
-            // load assemblies into appdomain
-            var impl = AppDomain.CurrentDomain.Load("Hadouken.Impl");
-            var implBitTorrent = AppDomain.CurrentDomain.Load("Hadouken.Impl.BitTorrent");
+            List<Assembly> assemblies = new List<Assembly>();
+
+            foreach (string key in ConfigurationManager.AppSettings.Keys)
+            {
+                if (key.StartsWith("Assembly."))
+                {
+                    assemblies.Add(AppDomain.CurrentDomain.Load(ConfigurationManager.AppSettings[key]));
+                }
+            }
 
             // register base types
-            Kernel.Register(impl, implBitTorrent);
+            Kernel.Register(assemblies.ToArray());
 
             // run the service
             ServiceBase.Run(new ServiceBase[] { new HdknService() });

@@ -5,6 +5,8 @@ using System.Text;
 
 using Hadouken.Hosting;
 using System.IO;
+using System.Reflection;
+using System.Configuration;
 
 namespace Hadouken.Hosts.CommandLine
 {
@@ -12,11 +14,18 @@ namespace Hadouken.Hosts.CommandLine
     {
         public static void Main(string[] args)
         {
-            // load assemblies into appdomain
-            var impl = AppDomain.CurrentDomain.Load("Hadouken.Impl");
-            var implBitTorrent = AppDomain.CurrentDomain.Load("Hadouken.Impl.BitTorrent");
+            List<Assembly> assemblies = new List<Assembly>();
 
-            Kernel.Register(impl, implBitTorrent);
+            foreach (string key in ConfigurationManager.AppSettings.Keys)
+            {
+                if (key.StartsWith("Assembly."))
+                {
+                    assemblies.Add(AppDomain.CurrentDomain.Load(ConfigurationManager.AppSettings[key]));
+                }
+            }
+
+            // register base types
+            Kernel.Register(assemblies.ToArray());
 
             var host = Kernel.Get<IHost>();
             host.Load();
