@@ -10,7 +10,7 @@
     Language="1033"
     Codepage="1252">
 
-    <Package Id="*" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="100" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
+    <Package Id="*" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
 
