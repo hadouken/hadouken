@@ -19,6 +19,8 @@ namespace Hadouken.Impl.Data.Migrations
                 new Column("Value", System.Data.DbType.String, 200),
                 new Column("Type", System.Data.DbType.String, 200)
             );
+
+            Database.Insert("Setting", new string [] { "Key", "Value", "Type" }, new string[] { "webui.cookie", "\"{}\"", "System.String" });
         }
 
         public override void Down()
