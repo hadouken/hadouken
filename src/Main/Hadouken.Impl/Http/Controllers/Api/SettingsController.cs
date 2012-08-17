@@ -26,7 +26,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/settings")]
         public ActionResult Get()
         {
-            IDictionary<string, object> dict = new Dictionary<string, object>();
+            IDictionary<string, object> dict = null;
 
             if (!String.IsNullOrEmpty(Context.Request.QueryString["k"]))
             {
@@ -39,6 +39,9 @@ namespace Hadouken.Impl.Http.Controllers.Api
                 string group = Context.Request.QueryString["g"];
                 dict = _kvs.Get(s => s.StartsWith(group));
             }
+
+            if (dict == null)
+                dict = _kvs.Get(s => true);
 
             return Json(new {
                 settings = (from d in dict
