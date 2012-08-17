@@ -15,6 +15,8 @@ function uiMain()
     setupGlobalEvents();
     setupUserInterface();
     
+    console.log("setup complete. now initing webui");
+    
     WebUI.init();
 }
 
@@ -174,7 +176,7 @@ function resizeUI(hDiv, vDiv)
         var eleTBChildren = eleTB.getElements(".tbbutton");
         var showTBChev = false;
         
-        for(var i = eleTBChildren.length - 1; i >= 0; -i)
+        for(var i = eleTBChildren.length - 1; i >= 0; --i)
         {
             if(eleTBChildren[i].getPosition().y > tbh)
             {
@@ -358,7 +360,7 @@ function resizeUI(hDiv, vDiv)
     
     // store new divider positions
     if(hDiv && showCat && manualH) config.hSplit = hDiv;
-    if(vDiv && shotDet && manualV) config.vSplit = (wh - vDiv);
+    if(vDiv && showDet && manualV) config.vSplit = (wh - vDiv);
     
     // resize torrent list
     WebUI.trtTable.resizeTo(trtw, trth);
@@ -516,6 +518,7 @@ function setupDividers()
 
 function setupNonGuest()
 {
+    __resizeUI_ready__ = true;
 }
 
 function setupToolbar()
@@ -737,6 +740,8 @@ function loadLangStrings(reload, sTableLoad, newLang)
         
         return;
     }
+    
+    console.log("loading lang '" + newLang + "'");
     
     loadGlobalStrings();
     loadCategoryStrings();

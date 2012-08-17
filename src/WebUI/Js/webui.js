@@ -41,18 +41,18 @@ var WebUI =
     },
     "defConfig":
     {
-        "showDetails": true,
-        "showDetailsIcons": true,
-        "showCategories": true,
-        "showToolbar": true,
-        "showStatusBar": true,
-        "showSpeedGraph": true,
-        "useSysFont": true,
-        "updateInterval": 3000,
-        "maxRows": 0,
-        "lang": "en",
-        "hSplit": -1,
-        "vSplit": -1,
+        	"showDetails": true,
+            "showDetailsIcons": true,
+            "showCategories": true,
+            "showToolbar": true,
+            "showStatusBar": true,
+            "showSpeedGraph": true,
+            "useSysFont": true,
+            "updateInterval": 3000,
+            "maxRows": 0,
+            "lang": "en",
+            "hSplit": -1,
+            "vSplit": -1,
         "torrentTable":
         {
             "colMask": 0x0000, // automatically calculated based on this.trtColDefs
@@ -60,8 +60,16 @@ var WebUI =
             "colWidth": [], // automatically calculated based on this.trtColDefs
             "reverse": false,
             "sIndex": -1
+        },
+        "activeSettingsPane": "",
+        "activeTorGroups":
+        {
+            "cat": {"cat_all": 1},
+            "lbl": {}
         }
     },
+    "torrentID": "",
+    "propID": "",
     
     //"spdGraph": new SpeedGraph(),
     
@@ -90,6 +98,13 @@ var WebUI =
         , ["completed", 150, TYPE_NUMBER, true, false, ALIGN_LEFT]
         , ["url", 250, TYPE_STRING, true]
     ],
+    
+    "trtColDoneIdx": -1, // automatically calculated based on this.trtColDefs
+    "trtColStatusIdx": -1, // automatically calculated based on this.trtColDefs
+    "flsColPrioIdx": -1, // automatically calculated based on this.flsColDefs
+    "updateTimeout": null,
+    "totalDL": 0,
+    "totalUL": 0,
     
     "init": function()
     {
@@ -140,30 +155,51 @@ var WebUI =
     
     "trtSelect": function(ev, id)
     {
+        console.log("trtSelect");
     },
     
     "trtDblClick": function(id)
     {
+        console.log("trtDblClick");
     },
     
     "trtColReset": function()
     {
+        console.log("trtColReset");
     },
     
     "trtSort": function(index, reverse)
     {
+        console.log("trtSort");
     },
     
     "trtColMove": function()
     {
+        console.log("trtColMove");
     },
     
     "trtColResize": function()
     {
+        console.log("trtColResize");
     },
     
-    "trtColToggle": function()
+    "trtColToggle": function(index, enable, nosave)
     {
+        var num = 1 << index;
+        
+        if(enable)
+        {
+            this.config.torrentTable.colMask |= num;
+        }
+        else
+        {
+            this.config.torrentTable.colMask &= ~num;
+        }
+        
+        if(!nosave && Browser.opera)
+        {
+            this.saveConfig(true);
+        }
     },
     
     "hideMsg": function()
@@ -678,8 +714,6 @@ var WebUI =
                 this.config.lang = (this.defConfig.lang || "en");
             }
         }
-        
-        if(window.hdknweb) return;
         
         loadLangStrings({
             "lang": this.config.lang,
