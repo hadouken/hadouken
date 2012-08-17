@@ -779,7 +779,7 @@ function loadGlobalStrings()
 
 function loadCategoryStrings()
 {
-    _loadStrings("text" [
+    _loadStrings("text", [
         "OV_CAT_ALL",
         "OV_CAT_DL",
         "OV_CAT_COMPL",
