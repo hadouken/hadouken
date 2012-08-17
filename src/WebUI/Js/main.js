@@ -623,7 +623,7 @@ function setupDialogManager()
         
         DialogManager.add(k, isModal,
         {
-            "Add": function() { WebUI.getDirectoryList(); },
+            "Add": function() { /* WebUI.getDirectoryList(); */ },
             "AddURL": function() { WebUI.getDirectoryList(); },
             "Settings": function() { WebUI.stpanes.onChange(); }
         }[k]);
