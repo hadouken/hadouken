@@ -626,7 +626,7 @@ function setupDialogManager()
             "Add": function() { WebUI.getDirectoryList(); },
             "AddURL": function() { WebUI.getDirectoryList(); },
             "Settings": function() { WebUI.stpanes.onChange(); }
-        });
+        }[k]);
     });
 }
 

@@ -991,6 +991,7 @@ var WebUI =
     
     "showAddTorrent": function()
     {
+        DialogManager.show("Add");
     },
     
     "showSettings": function()
@@ -999,10 +1000,12 @@ var WebUI =
     
     "showAddUrl": function()
     {
+        DialogManager.show("AddURL");
     },
     
     "showAbout": function()
     {
+        DialogManager.show("About");
     },
     
     "catListClick": function(ev, k)
