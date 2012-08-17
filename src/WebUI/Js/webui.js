@@ -20,7 +20,12 @@ var WebUI =
     },
     
     "labels": {},
-    
+    "torGroups": {},
+    "defTorGroup":
+    {
+        "cat": {},
+        "lbl": {}
+    },
     "limits":
     {
         "reqRetryDelayBase": 2, // seconds
@@ -130,6 +135,39 @@ var WebUI =
                 this.hideMsg();
             }).bind(this));
         }).bind(this));
+    },
+    
+    "trtDataToRow": function(data)
+    {
+        return this.trtColDefs.map(function(item)
+        {
+            switch(item[0])
+            {
+                case "name":
+                    return data[CONST.TORRENT_NAME];
+                    
+                case "order":
+                    return 0;
+                    
+                case "size":
+                    return data[CONST.TORRENT_SIZE];
+                    
+                case "remaining":
+                    return -1;
+                    
+                case "done":
+                    return data[CONST.TORRENT_PROGRESS];
+                    
+                case "status":
+                    return data[CONST.TORRENT_STATE];
+                    
+                case "seeds":
+                	return data[CONST.TORRENT_SEEDS_CONNECTED] + " (" + data[CONST.TORRENT_SEEDS_SWARM] + ")";
+                    
+                case "peers":
+                    return data[CONST.TORRENT_PEERS_CONNECTED] + " (" + data[CONST.TORRENT_PEERS_SWARM] + ")";
+            }
+        }, this);
     },
     
     "trtFormatRow": function(values, index)
@@ -333,6 +371,43 @@ var WebUI =
         }).bind(this));
     },
     
+    "getStatusInfo": function(torrent)
+    {
+        var res = ["", ""];
+        var state = torrent.State;
+        
+        if(state == CONST.STATE_STOPPED && torrent.Complete)
+        {
+            res = ["Status_Complete", L_("OV_FL_FINISHED")];
+        }
+        else if((state == CONST.STATE_STOPPED || state == CONST.STATE_STOPPING) && !torrent.Complete)
+        {
+            res = ["Status_Incomplete", L_("OV_FL_STOPPED")];
+        }
+        else if(state == CONST.STATE_PAUSED)
+        {
+            res = ["Status_Paused", L_("OV_FL_PAUSED")];
+        }
+        else if(state == CONST.STATE_DOWNLOADING)
+        {
+            res = torrent.Complete ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
+        }
+        else if(state == CONST.STATE_SEEDING)
+        {
+            res = ["Status_Up", L_("OV_FL_SEEDING")];
+        }
+        else if(state == CONST.STATE_HASHING)
+        {
+            res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (progress).toFixedNR(1))];
+        }
+        else if(state == CONST.STATE_ERROR)
+        {
+            res = ["Status_Error", L_("OV_FL_ERROR").replace(/%s/, "??")];
+        }
+        
+        return res;
+    },
+    
     "loadList": function(json)
     {
         function extractLists(fullListName, changedListName, removedListName, key, exList)
@@ -407,9 +482,9 @@ var WebUI =
                     this.totalUL += item[CONST.TORRENT_UPSPEED];
                     
                     var hash = item[CONST.TORRENT_HASH];
-                    var statinfo = this.getStatusInfo(item[CONST.TORRENT_STATUS], item[CONST.TORRENT_PROGRESS]);
+                    var statinfo = this.getStatusInfo(item);
                     
-                    this.torGroups[hash] = this.getTorGroups(hash);
+                    this.torGroups[hash] = this.getTorGroups(item);
                     
                     var row = this.trtDataToRow(item);
                     var ret = false;
@@ -726,6 +801,149 @@ var WebUI =
         });
     },
     
+    "torrentIsVisible": function(hash)
+    {
+        var group = this.torGroups[hash];
+        var actCat = this.config.activeTorGroups.cat;
+        var actLbl = this.config.activeTorGroups.lbl;
+        
+        var visible = true;
+        
+        // Category: Downloading/Completed
+        if (visible && (actCat["cat_dls"] || actCat["cat_com"]))
+        {
+            visible = visible && ((actCat["cat_dls"] && group.cat["cat_dls"]) || (actCat["cat_com"] && group.cat["cat_com"]));
+        }
+
+        // Category: Active/Inactive
+        if (visible && (actCat["cat_act"] || actCat["cat_iac"]))
+        {
+            visible = visible && ((actCat["cat_act"] && group.cat["cat_act"]) || (actCat["cat_iac"] && group.cat["cat_iac"]));
+        }
+
+        // Labels
+        if (visible && (actCat["cat_nlb"] || Object.some(actLbl, Function.from(true))))
+        {
+            visible = visible && ((actCat["cat_nlb"] && group.cat["cat_nlb"]) || Object.some(actLbl, function(_, lbl) { return group.lbl[lbl]; }));
+        }
+
+        return !!visible;
+    },
+    
+    "getTorGroups": function(tor)
+    {
+        var groups = Object.merge({}, this.defTorGroup);
+        
+        // all
+        groups.cat["cat_all"] = 1;
+        
+        // labels
+        var lbls = Array.from(tor[CONST.TORRENT_LABEL] || []);
+        
+        if(lbls.length <= 0)
+        {
+            groups.cat["cat_nlb"] = 1;
+        }
+        else
+        {
+            lbls.each(function(lbl)
+            {
+                groups.lbl["lbl_" + encodeID(lbl)] = 1;
+            });
+        }
+        
+        // dl / complete
+        
+        if(tor[CONST.TORRENT_COMPLETE])
+        {
+            groups.cat["cat_com"] = 1;
+        }
+        else
+        {
+            groups.cat["cat_dls"] = 1;
+        }
+        
+        // active / inactive
+        
+        if((tor[CONST.TORRENT_DOWNSPEED] > (this.settings["queue.slow_dl_threshold"] || 103)) ||
+           (tor[CONST.TORRENT_UPSPEED] > (this.settings["queue.slow_ul_threshold"] || 103)))
+        {
+            groups.cat["cat_act"] = 1;
+        }
+        else
+        {
+            groups.cat["cat_iac"] = 1;
+        }
+        
+        // update group counts
+        // TODO: Move this elsewhere!
+        (function(groups, oldGroups) {
+            if (!oldGroups)
+            {
+                Object.each(groups.cat, function(_, cat)
+                {
+                    ++this.categories[cat];
+                }, this);
+            }
+            else
+            {
+                // Labels
+                if (groups.cat["cat_nlb"])
+                {
+                    if (!oldGroups.cat["cat_nlb"])
+                    {
+                        ++this.categories["cat_nlb"];
+                    }
+                }
+                else
+                {
+                    if (oldGroups.cat["cat_nlb"])
+                    {
+                        --this.categories["cat_nlb"];
+                    }
+                }
+
+                // Categories: Downloading/Completed
+                if (groups.cat["cat_dls"])
+                {
+                    if (oldGroups.cat["cat_com"])
+                    {
+                        --this.categories["cat_com"];
+                        ++this.categories["cat_dls"];
+                    }
+                }
+                else
+                {
+                    if (oldGroups.cat["cat_dls"]) 
+                    {
+                        --this.categories["cat_dls"];
+                        ++this.categories["cat_com"];
+                    }
+                }
+
+                // Categories: Active/Inactive
+                if (groups.cat["cat_act"])
+                {
+                    if (oldGroups.cat["cat_iac"])
+                    {
+                        --this.categories["cat_iac"];
+                        ++this.categories["cat_act"];
+                    }
+                }
+                else
+                {
+                    if (oldGroups.cat["cat_act"])
+                    {
+                        --this.categories["cat_act"];
+                        ++this.categories["cat_iac"];
+                    }
+                }
+            }
+        }).bind(this)(groups, this.torGroups[tor[CONST.TORRENT_HASH]]);
+        
+        return groups;
+    },
+    
     "refreshSelectedTorGroups": function()
     {
         var deltaGroups;
@@ -809,6 +1027,7 @@ var WebUI =
         
         // update torrent jb list
         var activeChanged = false;
+        
         for(var hash in this.torrents)
         {
             var changed = (!!this.trtTable.rowData[hash].hidden === !!this.torrentIsVisible(hash));
@@ -945,6 +1164,7 @@ var WebUI =
     
     "saveConfig": function(f)
     {
+        console.log("saveconfig");
     },
     
     "showDetails": function(id)
