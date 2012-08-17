@@ -1,0 +1,30 @@
+<div id="dlgAdd" class="dlg-window">
+<a href="#" class="dlg-close"></a>
+<div id="dlgAdd-head" class="dlg-head"></div>
+<form id="dlgAdd-form" action="./?action=add-file" method="post" enctype="multipart/form-data">
+<div class="dlg-body">
+<div class="line-cont">
+<input type="file" id="dlgAdd-file" name="torrent_file" multiple="multiple" class="fbox flr" />
+<label for="dlgAdd-file">Torrent file:</label>
+</div>
+
+<fieldset><!-- TODO: Localize -->
+<legend>Options</legend>
+<div id="dlgAdd-basePathDiv" class="line-cont">
+<select id="dlgAdd-basePath" class="tbox flr">
+<option value="0">Default download directory</option>
+</select>
+<label for="dlgAdd-basePath">Path:</label>
+</div>
+<div class="line-cont">
+<input type="text" id="dlgAdd-subPath" class="tbox flr" />
+<label for="dlgAdd-subPath">Sub-path:</label>
+</div>
+</fieldset>
+</div>
+<div class="dlg-foot">
+<input type="submit" id="ADD_FILE_OK" class="btn" />
+<input type="button" id="ADD_FILE_CANCEL" class="btn" />
+</div>
+</form>
+</div>

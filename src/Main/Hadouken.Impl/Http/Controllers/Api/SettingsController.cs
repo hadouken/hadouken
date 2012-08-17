@@ -11,40 +11,49 @@ using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Http.Controllers.Api
 {
-    public class ConfigController : Controller
+    public class SettingsController : Controller
     {
         private IKeyValueStore _kvs;
         private IMessageBus _mbus;
 
-        public ConfigController(IKeyValueStore kvs, IMessageBus mbus)
+        public SettingsController(IKeyValueStore kvs, IMessageBus mbus)
         {
             _kvs = kvs;
             _mbus = mbus;
         }
 
         [HttpGet]
-        [Route("/api/config")]
-        public ActionResult GetConfig()
+        [Route("/api/settings")]
+        public ActionResult Get()
         {
+            IDictionary<string, object> dict = new Dictionary<string, object>();
+
             if (!String.IsNullOrEmpty(Context.Request.QueryString["k"]))
             {
                 string[] keys = Context.Request.QueryString["k"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
-                return Json(_kvs.Get(s => keys.Contains(s)));
+                dict = _kvs.Get(s => keys.Contains(s));
             }
 
             if (!String.IsNullOrEmpty(Context.Request.QueryString["g"]))
             {
                 string group = Context.Request.QueryString["g"];
-                return Json(_kvs.Get(s => s.StartsWith(group)));
+                dict = _kvs.Get(s => s.StartsWith(group));
             }
 
-            return Json(_kvs.Get(s => true));
+            return Json(new {
+                settings = (from d in dict
+                            select new {
+                                name = d.Key,
+                                type = "",
+                                value = d.Value,
+                                param = ""
+                            })
+            });
         }
 
         [HttpPost]
-        [Route("/api/config")]
-        public ActionResult ChangeConfig()
+        [Route("/api/settings")]
+        public ActionResult Change()
         {
             var dictionary = BindModel<Dictionary<string, object>>();
 

@@ -21,7 +21,7 @@ namespace Hadouken.Impl.Http.Controllers.Api
         [Route("/api/torrents")]
         public ActionResult List()
         {
-            var torrents = _torrentEngine.Managers.Values.ToDictionary(s => s.InfoHash, s =>
+            var torrents = _torrentEngine.Managers.Values.Select(s =>
             {
                 var peersAll = s.Trackers.Sum(t => t.Incomplete);
                 var peersActual = s.Peers.Count(p => !p.IsSeeder);
