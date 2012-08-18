@@ -700,10 +700,10 @@ var WebUI =
             
             var cookie = this.config;
             
-            newcookie = newcookie || {};
-            safecopy(cookie, newcookie);
+            newCookie = newCookie || {};
+            safeCopy(cookie, newCookie);
             
-            cookie.activeTorGroups = newcookie.activeTorGroups || this.defConfig.activeTorGroups || {};
+            cookie.activeTorGroups = newCookie.activeTorGroups || this.defConfig.activeTorGroups || {};
             
             if(cookie.activeSettingsPane)
             {
