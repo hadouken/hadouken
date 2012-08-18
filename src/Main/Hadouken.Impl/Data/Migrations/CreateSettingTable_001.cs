@@ -21,6 +21,10 @@ namespace Hadouken.Impl.Data.Migrations
             );
 
             Database.Insert("Setting", new string [] { "Key", "Value", "Type" }, new string[] { "webui.cookie", "\"{}\"", "System.String" });
+
+            // default gui settings
+            Database.Insert("Setting", new string[] { "Key", "Value", "Type" }, new string[] { "gui.tall_category_list", "true", "System.String" });
+
         }
 
         public override void Down()
