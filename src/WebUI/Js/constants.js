@@ -249,17 +249,17 @@ var CONST = {
 	//----------------------------------------
 	// SETTING DATA CONSTANTS
 	//----------------------------------------
-	, "SETTING_NAME": 0
-	, "SETTING_TYPE": 1
-	, "SETTING_VALUE": 2
-	, "SETTING_PARAMS": 3
+	, "SETTING_NAME": "name"
+	, "SETTING_TYPE": "type"
+	, "SETTING_VALUE": "value"
+	, "SETTING_PARAMS": "param"
 
 	//----------------------------------------
 	// SETTING TYPE CONSTANTS
 	//----------------------------------------
-	, "SETTINGTYPE_INTEGER": 0
-	, "SETTINGTYPE_BOOLEAN": 1
-	, "SETTINGTYPE_STRING": 2
+	, "SETTINGTYPE_INTEGER": "System.Int32"
+	, "SETTINGTYPE_BOOLEAN": "System.Boolean"
+	, "SETTINGTYPE_STRING": "System.String"
 
 	//----------------------------------------
 	// SETTING PARAM CONSTANTS
