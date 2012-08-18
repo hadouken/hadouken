@@ -718,6 +718,72 @@ function setupStatusbar()
 {
 }
 
+function _link(obj, defstate, list, ignoreLabels, reverse)
+{
+    ignoreLabels = ignoreLabels || [];
+    var disabled = true, tag = obj.get("tag");
+    if (tag == "input")
+    {
+        if (obj.type == "checkbox" || obj.type == "radio")
+            disabled = !obj.checked || obj.disabled;
+        
+        if (reverse)
+            disabled = !disabled;
+    }
+    else if (tag == "select")
+    {
+        disabled = (obj.get("value") == defstate);
+    }
+    else 
+    {
+        return;
+    }
+    
+    var element;
+    for (var i = 0, j = list.length; i < j; i++)
+    {
+        if (!(element = $(list[i]))) continue;
+    
+        if (element.type != "checkbox")
+            element[(disabled ? "add" : "remove") + "Class"]("disabled");
+    
+        element.disabled = disabled;
+        element.fireEvent(((tag == "input") && Browser.ie) ? "click" : "change");
+        
+        if (ignoreLabels.contains(list[i])) continue;
+        
+        var label = element.getPrevious();
+        
+        if (!label || (label.get("tag") != "label"))
+        {
+            label = element.getNext();
+            
+            if (!label || (label.get("tag") != "label")) continue;
+        }
+        
+        label[(disabled ? "add" : "remove") + "Class"]("disabled");
+    }
+}
+
+function _unhideSetting(obj)
+{
+    Array.from(obj).each(function(ele)
+    {
+        ele = $(ele);
+        if (!ele) return;
+
+        ele = ele.getParent();
+        while (ele && !ele.hasClass("settings-pane") && ele.getStyle("display") === "none")
+        {
+            ele.show();
+            ele = ele.getParent();
+        }
+
+        if (ele.hasClass("settings-pane"))
+            ele.fireEvent("show");
+    }, this);
+}
+
 function loadLangStrings(reload, sTableLoad, newLang)
 {
     if(reload)
