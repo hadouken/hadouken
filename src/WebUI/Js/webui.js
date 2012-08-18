@@ -173,8 +173,14 @@ var WebUI =
                 case "downloaded":
                     return data[CONST.TORRENT_DOWNLOADED];
                     
+                case "downspeed":
+                    return data[CONST.TORRENT_DOWNSPEED];
+                    
                 case "uploaded":
                     return data[CONST.TORRENT_UPLOADED];
+                    
+                case "upspeed":
+                    return data[CONST.TORRENT_UPSPEED];
                     
                 case "ratio":
                     var dl = data[CONST.TORRENT_DOWNLOADED];
@@ -278,12 +284,132 @@ var WebUI =
     
     "trtSelect": function(ev, id)
     {
-        console.log("trtSelect");
+        this.updateToolbar();
+        
+        var selHash = this.trtTable.selectedRows;
+        
+        if(selHash.length === 0)
+        {
+            this.torrentID = "";
+            this.clearDetails();
+            return;
+        }
+        
+        this.torrentID = id;
+        
+        if(this.config.showDetails)
+        {
+            this.showDetails(id);
+        }
+        
+        if(ev.isRightClick())
+        {
+            this.showTrtMenu.delay(0, this, [ev, id]);
+        }
     },
     
     "trtDblClick": function(id)
     {
         console.log("trtDblClick");
+    },
+    
+    "showTrtMenu": function(ev, id)
+    {
+        if(!ev.isRightClick()) return;
+        
+        var menuItems = [];
+        
+        // label selection
+        var labelIndex = CONST.TORRENT_LABEL;
+        var labelSubMenu = [[L_("OV_NEW_LABEL"), this.newLabel.bind(this)]];
+        
+        if(!this.trtTable.selectedRows.every(function(item) { return (this.torrents[item][labelIndex] == ""); }, this))
+        {
+            labelSubMenu.push([L_("OV_REMOVE_LABEL"), this.setLabel.bind(this, "")]);
+        }
+        
+        if(Object.getLength(this.labels) > 0)
+        {
+            labelSubMenu.push([CMENU_SEP]);
+            
+            $each(this.labels, function(_, label)
+            {
+                // check if every selected row has the given label, if so mark it as selected
+                
+                if (this.trtTable.selectedRows.every(function(item) { return (this.torrents[item][labelIndex] == label); }, this))
+                {
+                    labelSubMenu.push([CMENU_SEL, label]);
+                }
+                else
+                {
+                    labelSubMenu.push([label, this.setLabel.bind(this, label)]);
+                }
+            }, this);
+        }
+        
+        // build menu
+        var menuItemsMap =
+        {
+              "start" : [L_("ML_START"), this.start.bind(this)]
+            , "pause" : [L_("ML_PAUSE"), this.pause.bind(this)]
+            , "stop" : [L_("ML_STOP"), this.stop.bind(this)]
+            , "queueup" : [L_("ML_QUEUEUP"), (function(ev) { this.queueup(ev.shift); }).bind(this)]
+            , "queuedown" : [L_("ML_QUEUEDOWN"), (function(ev) { this.queuedown(ev.shift); }).bind(this)]
+            , "label" : [CMENU_CHILD, L_("ML_LABEL"), labelSubMenu]
+            , "remove" : [L_("ML_REMOVE"), this.remove.bind(this, CONST.TOR_REMOVE)]
+            , "removeand" : [CMENU_CHILD, L_("ML_REMOVE_AND"),
+              [
+                  [L_("ML_DELETE_TORRENT"), this.remove.bind(this, CONST.TOR_REMOVE_TORRENT)]
+                , [L_("ML_DELETE_DATATORRENT"), this.remove.bind(this, CONST.TOR_REMOVE_DATATORRENT)]
+                , [L_("ML_DELETE_DATA"), this.remove.bind(this, CONST.TOR_REMOVE_DATA)]
+              ]]
+            , "recheck" : [L_("ML_FORCE_RECHECK"), this.recheck.bind(this)]
+            , "copymagnet" : [L_("ML_COPY_MAGNETURI"), this.torShowMagnetCopy.bind(this)]
+            , "copy" : [L_("MENU_COPY"), this.torShowCopy.bind(this)]
+            , "properties" : [L_("ML_PROPERTIES"), this.showProperties.bind(this)]
+        };
+        
+        // disable actions
+        
+        var disabled = this.getDisabledActions();
+
+        Object.each(disabled, function(disabled, name)
+        {
+            var item = menuItemsMap[name];
+            if (!item) return;
+
+            if (disabled)
+            {
+                delete item[1];
+            }
+        });
+        
+        // create menu array
+        menuItems = menuItems.concat([
+              menuItemsMap["start"]
+            , menuItemsMap["pause"]
+            , menuItemsMap["stop"]
+            , [CMENU_SEP]
+            , menuItemsMap["queueup"]
+            , menuItemsMap["queuedown"]
+            , menuItemsMap["label"]
+            , [CMENU_SEP]
+            , menuItemsMap["remove"]
+            , menuItemsMap["removeand"]
+            , [CMENU_SEP]
+            , menuItemsMap["recheck"]
+            , [CMENU_SEP]
+            , menuItemsMap["copymagnet"]
+            , menuItemsMap["copy"]
+            , [CMENU_SEP]
+            , menuItemsMap["properties"]
+        ]);
+
+        // draw menu
+
+        ContextMenu.clear();
+        ContextMenu.add.apply(ContextMenu, menuItems);
+        ContextMenu.show(ev.page);
     },
     
     "trtColReset": function()
@@ -1284,10 +1410,31 @@ var WebUI =
     
     "updateDetails": function(id)
     {
+        if(!id) return;
+        
+        var d = this.torrents[id];
+        
+        $("dl").set("html", d[CONST.TORRENT_DOWNLOADED].toFileSize());
+        $("ul").set("html", d[CONST.TORRENT_UPLOADED].toFileSize());
+        
+        var dl = d[CONST.TORRENT_DOWNLOADED];
+        var ul = d[CONST.TORRENT_UPLOADED];
+        $("ra").set("html", (dl == 0) ? (0).toFixedNR(3) : (ul / dl).toFixedNR(3));
+        
+        $("us").set("html", d[CONST.TORRENT_UPSPEED].toFileSize() + g_perSec);
+        $("ds").set("html", d[CONST.TORRENT_DOWNSPEED].toFileSize() + g_perSec);
+        $("rm").set("html", (d[CONST.TORRENT_ETA] == 0) ? "" : (d[CONST.TORRENT_ETA] <= -1) ? "\u221E" : d[CONST.TORRENT_ETA].toTimeDelta());
+        $("se").set("html", L_("GN_XCONN").replace(/%d/, d[CONST.TORRENT_SEEDS_CONNECTED]).replace(/%d/, d[CONST.TORRENT_SEEDS_SWARM]).replace(/%d/, "\u00BF?"));
+        $("pe").set("html", L_("GN_XCONN").replace(/%d/, d[CONST.TORRENT_PEERS_CONNECTED]).replace(/%d/, d[CONST.TORRENT_PEERS_SWARM]).replace(/%d/, "\u00BF?"));
+        $("sa").set("html", d[CONST.TORRENT_SAVE_PATH] || "");
+        $("hs").set("html", id);
     },
     
     "clearDetails": function()
     {
+        ["rm", "dl", "ul", "ra", "us", "ds", "se", "pe", "sa", "hs"].each(function(id) {
+            $(id).set("html", "");
+        });
     },
     
     "showAddTorrent": function()
@@ -1309,8 +1456,91 @@ var WebUI =
         DialogManager.show("About");
     },
     
-    "catListClick": function(ev, k)
+    "catListClick": function(ev, listId)
     {
+        var element = ev.target;
+        
+        while(element && element.id !== listId && element.tagName.toLowerCase() !== "li")
+        {
+            element = element.getParent();
+        }
+        
+        if(!element || !element.id || element.tagName.toLowerCase() !== "li") return;
+        
+        var eleId = element.id;
+        
+        if(eleId === "cat_nlb")
+        {
+            listId = "mainCatList-categories";
+        }
+        
+        var activeGroupCount = (Object.getLength(this.config.activeTorGroups.cat) + Object.getLength(this.config.activeTorGroups.lbl));
+        
+        var prevSelected = activeGroupCount > 1 && Object.some(this.config.activeTorGroups, function(type)
+        {
+            return (eleId in type);
+        });
+        
+        if((Browser.Platform.mac && ev.meta) || (!Browser.Platform.mac && ev.control))
+        {
+            if(ev.isRightClick())
+            {
+                prevSelected = false;
+            }
+        }
+        else
+        {
+            if(!(ev.isRightClick() && prevSelected))
+            {
+                this.config.activeTorGroups = {};
+                
+                Object.each(this.defConfig.activeTorGroups, function(_, type)
+                {
+                    this.config.activeTorGroups[type] = {};
+                }, this);
+            }
+            
+            prevSelected = false;
+        }
+        
+        var trtTableUpdate = (function()
+        {
+            this.refreshSelectedTorGroups();
+            
+            if(ev.isRightClick())
+            {
+                this.trtTable.fillSelection();
+                this.trtTable.fireEvent("onSelect", ev);
+            }
+        }).bind(this);
+        
+        switch(listId)
+        {
+            case "mainCatList-categories":
+                if(prevSelected)
+                {
+                    delete this.config.activeTorGroups.cat[eleId];
+                }
+                else
+                {
+                    this.config.activeTorGroups.cat[eleId] = 1;
+                }
+                
+                trtTableUpdate();
+                
+                break;
+                
+            case "mainCatList-labels":
+                if(prevSelected)
+                {
+                    delete this.config.activeTorGroups.lbl[eleId];
+                }
+                else
+                {
+                    this.config.activeTorGroups.lbl[eleId] = 1;
+                }
+                break;
+        }
     },
     
     "detPanelTabChange": function(id)
