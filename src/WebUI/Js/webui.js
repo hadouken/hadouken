@@ -712,17 +712,14 @@ var WebUI =
             
             // set up listviews
             
-            if(window.hdknweb === undefined)
-            {
-                this.trtTable.setConfig({
-                    "colSort": [ cookie.torrentTable.sIndex, cookie.torrentTable.reverse ],
-                    "colMask": cookie.torrentTable.colMask,
-                    "colOrder": cookie.torrentTable.colOrder,
-                    "colWidth": cookie.torrentTable.colWidth
-                });
-                
-                this.tableSetMaxRows(cookie.maxRows);
-            }
+            this.trtTable.setConfig({
+                "colSort": [ cookie.torrentTable.sIndex, cookie.torrentTable.reverse ],
+                "colMask": cookie.torrentTable.colMask,
+                "colOrder": cookie.torrentTable.colOrder,
+                "colWidth": cookie.torrentTable.colWidth
+            });
+            
+            this.tableSetMaxRows(cookie.maxRows);
             
             resizeUI();
         }).bind(this);
