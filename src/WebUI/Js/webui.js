@@ -1274,6 +1274,31 @@ var WebUI =
         if(Browser.opera) this.saveConfig(true);
     },
     
+    "tableSetMaxRows": function(max)
+    {
+        var virtRows = this.limits.maxVirtTableRows;
+        
+        var mode = MODE_PAGE;
+        max = max || 0;
+        
+        if(max <= 0)
+        {
+            mode = MODE_VIRTUAL;
+            max = 0;
+        }
+        else if(max < this.limits.minTableRows)
+        {
+            max = this.limits.minTableRows;
+        }
+        
+        this.config.maxRows = max;
+        
+        this.trtTable.setConfig({ "rowMaxCount": max || virtRows, "rowMode": mode });
+        
+        // do same for file and peers table
+        // and advanced settings
+    },
+    
     "updateStatusBar": function()
     {
     },
