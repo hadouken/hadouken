@@ -29,6 +29,8 @@ namespace Hadouken.Impl.BitTorrent
 
         private long _dlBytes;
         private long _ulBytes;
+        private DateTime _startTime;
+        private DateTime? _completedTime;
 
         private double _progress;
 
@@ -47,6 +49,7 @@ namespace Hadouken.Impl.BitTorrent
 
             _fileSystem = fileSystem;
             _mbus = mbus;
+            _startTime = DateTime.Now;
         }
 
         internal TorrentManager Manager { get { return _manager; } }
@@ -108,6 +111,9 @@ namespace Hadouken.Impl.BitTorrent
 
             if (e.OldState == MonoTorrent.Common.TorrentState.Downloading && e.NewState == MonoTorrent.Common.TorrentState.Seeding)
             {
+                if (_completedTime == null)
+                    _completedTime = DateTime.Now;
+
                 _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this);
             }
         }
@@ -215,12 +221,14 @@ namespace Hadouken.Impl.BitTorrent
 
         public DateTime StartTime
         {
-            get { return _manager.StartTime; }
+            get { return _startTime; }
+            internal set { _startTime = value; }
         }
 
         public DateTime? CompletedTime
         {
-            get { return null; }
+            get { return _completedTime; }
+            internal set { _completedTime = value; }
         }
 
         public TorrentState State
