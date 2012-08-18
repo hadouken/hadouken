@@ -159,13 +159,28 @@ var WebUI =
                     return data[CONST.TORRENT_PROGRESS];
                     
                 case "status":
-                    return data[CONST.TORRENT_STATE];
+                    return [data[CONST.TORRENT_STATUS], ""];
                     
                 case "seeds":
                 	return data[CONST.TORRENT_SEEDS_CONNECTED] + " (" + data[CONST.TORRENT_SEEDS_SWARM] + ")";
                     
                 case "peers":
                     return data[CONST.TORRENT_PEERS_CONNECTED] + " (" + data[CONST.TORRENT_PEERS_SWARM] + ")";
+                    
+                case "eta":
+                    return data[CONST.TORRENT_ETA];
+                    
+                case "downloaded":
+                    return data[CONST.TORRENT_DOWNLOADED];
+                    
+                case "uploaded":
+                    return data[CONST.TORRENT_UPLOADED];
+                    
+                case "ratio":
+                    var dl = data[CONST.TORRENT_DOWNLOADED];
+                    var ul = data[CONST.TORRENT_UPLOADED];
+                    
+                    return (dl == 0 ? 0 : (ul / dl));
             }
         }, this);
     },
@@ -173,6 +188,76 @@ var WebUI =
     "trtFormatRow": function(values, index)
     {
         var useidx = $chk(index);
+        var len = (useidx ? (index + 1) : values.length);
+        
+        var doneIdx = this.trtColDoneIdx, statIdx = this.trtColStatusIdx;
+        
+        if(!useidx || index == statIdx)
+        {
+            var statInfo = this.getStatusInfo(values[statIdx][0], values[doneIdx], false);
+            values[statIdx] = (statInfo[0] === "Status_Error" ? values[statIdx][1] || statInfo[1] : statInfo[1]);
+        }
+        
+        for(var i = (index || 0); i < len; i++)
+        {
+            switch(this.trtColDefs[i][0])
+            {
+                	case "label":
+                    case "name":
+                    case "peers":
+                    case "seeds":
+                    case "status":
+                    case "url":
+                        break;
+                        
+                    case "added":
+                    case "completed":
+                        values[i] = (values[i] > 0) ? new Date(values[i]).toISOString() : "";
+                        break;
+                        
+                    case "availability":
+                        values[i] = (values[i] / 65536).toFixedNR(3);
+                        break;
+                    
+                    case "done":
+                        values[i] = (values[i]).toFixedNR(1) + "%";
+                        break;
+                        
+                    case "downloaded":
+                    case "uploaded":
+                        values[i] = values[i].toFileSize();
+                        break;
+                        
+                    case "downspeed":
+                    case "upspeed":
+                        values[i] = (values[i] >= 103) ? (values[i].toFileSize() + g_perSec) : "";
+                        break;
+                        
+                    case "eta":
+                        values[i] = (values[i] == 0) ? "" : (values[i] == -1) ? "\u221E" : values[i].toTimeDelta();
+                        break;
+                        
+                    case "ratio":
+                        values[i] = (values[i] == -1) ? "\u221E" : (values[i] / 1000).toFixedNR(3);
+                        break;
+                        
+                    case "order":
+                        values[i] = (values[i] <= -1) ? "*" : values[i];
+                        break;
+                        
+                    case "remaining":
+                        values[i] = (values[i] >= 103) ? values[i].toFileSize(2) : "";
+                        break;
+                        
+                    case "seeds_peers":
+                        values[i] = ($chk(values[i]) && (values[i] != Number.MAX_VALUE)) ? values[i].toFixedNR(3) : "\u221E";
+                        break;
+                        
+                    case "size":
+                        values[i] = values[i].toFileSize(2);
+                        break;
+            }
+        }
         
         if(useidx)
         {
@@ -371,16 +456,15 @@ var WebUI =
         }).bind(this));
     },
     
-    "getStatusInfo": function(torrent)
+    "getStatusInfo": function(state, progress, complete)
     {
         var res = ["", ""];
-        var state = torrent.State;
         
-        if(state == CONST.STATE_STOPPED && torrent.Complete)
+        if(state == CONST.STATE_STOPPED && complete)
         {
             res = ["Status_Complete", L_("OV_FL_FINISHED")];
         }
-        else if((state == CONST.STATE_STOPPED || state == CONST.STATE_STOPPING) && !torrent.Complete)
+        else if((state == CONST.STATE_STOPPED || state == CONST.STATE_STOPPING) && !complete)
         {
             res = ["Status_Incomplete", L_("OV_FL_STOPPED")];
         }
@@ -390,7 +474,7 @@ var WebUI =
         }
         else if(state == CONST.STATE_DOWNLOADING)
         {
-            res = torrent.Complete ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
+            res = complete ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
         }
         else if(state == CONST.STATE_SEEDING)
         {
@@ -482,7 +566,7 @@ var WebUI =
                     this.totalUL += item[CONST.TORRENT_UPSPEED];
                     
                     var hash = item[CONST.TORRENT_HASH];
-                    var statinfo = this.getStatusInfo(item);
+                    var statinfo = this.getStatusInfo(item.State, item.Progress, item.Complete);
                     
                     this.torGroups[hash] = this.getTorGroups(item);
                     
