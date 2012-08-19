@@ -7,7 +7,7 @@ namespace Hadouken.Http
 {
     public static class IHttpHandlerExtensions
     {
-        public static ActionResult View(this Controller handler, string viewName)
+        public static ActionResult View(this ApiAction handler, string viewName)
         {
             return new ViewResult(viewName);
         }

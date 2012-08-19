@@ -86,10 +86,7 @@
     <Compile Include="Data\Migrations\CreateTorrentInfoTable_001.cs" />
     <Compile Include="Hosting\DefaultHost.cs" />
     <Compile Include="Http\ActionCacheItem.cs" />
-    <Compile Include="Http\Controllers\Api\SettingsController.cs" />
-    <Compile Include="Http\Controllers\Api\PluginsController.cs" />
-    <Compile Include="Http\Controllers\Api\SystemController.cs" />
-    <Compile Include="Http\Controllers\Api\TorrentsController.cs" />
+    <Compile Include="Http\Api\GetTorrents.cs" />
     <Compile Include="Http\DefaultHttpServer.cs" />
     <Compile Include="Http\FormData.cs" />
     <Compile Include="Http\HttpContext.cs" />

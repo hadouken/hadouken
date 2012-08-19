@@ -72,7 +72,6 @@
   <ItemGroup>
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
     <Compile Include="Data\DataRepositoryTests.cs" />
-    <Compile Include="Http\Controllers\TorrentsControllerTests.cs" />
     <Compile Include="Http\HttpServerTests.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

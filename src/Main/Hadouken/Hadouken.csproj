@@ -72,6 +72,7 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHost.cs" />
+    <Compile Include="Http\ApiActionAttribute.cs" />
     <Compile Include="Http\ContentResult.cs" />
     <Compile Include="Http\EmbeddedContentResult.cs" />
     <Compile Include="Http\HttpPutAttribute.cs" />
@@ -79,10 +80,10 @@
     <Compile Include="Http\HttpGetAttribute.cs" />
     <Compile Include="Http\HttpMethodAttribute.cs" />
     <Compile Include="Http\ActionResult.cs" />
-    <Compile Include="Http\Controller.cs" />
+    <Compile Include="Http\ApiAction.cs" />
     <Compile Include="Http\HttpPostAttribute.cs" />
+    <Compile Include="Http\IApiAction.cs" />
     <Compile Include="Http\IHttpPostedFile.cs" />
-    <Compile Include="Http\IController.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpHandlerExtensions.cs" />
     <Compile Include="Http\IHttpRequest.cs" />

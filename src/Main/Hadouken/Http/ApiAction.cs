@@ -8,7 +8,7 @@ using System.Web.Script.Serialization;
 
 namespace Hadouken.Http
 {
-    public abstract class Controller : IController
+    public abstract class ApiAction : IApiAction
     {
         public IHttpContext Context { get; set; }
 
@@ -47,5 +47,7 @@ namespace Hadouken.Http
                 return ser.Deserialize<T>(data);
             }
         }
+
+        public abstract ActionResult Execute(IHttpContext context);
     }
 }
