@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Hadouken.Http;
 using Hadouken.BitTorrent;
+using System.IO;
 
 namespace Hadouken.Impl.Http.Api
 {
@@ -52,7 +53,7 @@ namespace Hadouken.Impl.Http.Api
                                t.StartTime.ToUnixTime(),
                                (t.CompletedTime.HasValue ? t.CompletedTime.Value.ToUnixTime() : -1),
                                "", // app update url
-                               t.SavePath,
+                               Path.Combine(t.SavePath, t.Torrent.Name),
                                t.Complete
                            })
             });
