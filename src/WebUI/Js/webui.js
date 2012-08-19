@@ -603,6 +603,16 @@ var WebUI =
         this.perform("stop");
     },
     
+    "remove": function()
+    {
+        console.log("implement me");
+    },
+    
+    "recheck": function()
+    {
+        console.log("implement me");
+    },
+    
     "update": function(listcb)
     {
         if(window.hdknweb !== undefined) return;
@@ -925,6 +935,16 @@ var WebUI =
             
             this.refreshSelectedTorGroups();
         }
+    },
+    
+    "setLabel": function(lbl)
+    {
+        console.log("implement me");
+    },
+    
+    "newLabel": function()
+    {
+        console.log("implement me");
     },
     
     "updateLabels": function()
