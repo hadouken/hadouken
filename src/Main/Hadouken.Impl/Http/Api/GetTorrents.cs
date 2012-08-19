@@ -33,7 +33,27 @@ namespace Hadouken.Impl.Http.Api
                                (int)t.Progress * 10,
                                t.DownloadedBytes,
                                t.UploadedBytes,
-                               (t.DownloadedBytes == 0 ? 0 : (int)((t.UploadedBytes / t.DownloadedBytes) * 10))
+                               (t.DownloadedBytes == 0 ? 0 : (int)((t.UploadedBytes / t.DownloadedBytes) * 10)),
+                               t.UploadSpeed,
+                               t.DownloadSpeed,
+                               t.ETA.TotalSeconds,
+                               t.Label,
+                               t.Peers.Where(p => !p.IsSeeder),
+                               t.Trackers.Sum(tr => tr.Incomplete),
+                               t.Peers.Where(p => p.IsSeeder),
+                               t.Trackers.Sum(tr => tr.Complete),
+                               -1, // availability
+                               -1, // queue position
+                               t.RemainingBytes,
+                               "", // download url
+                               "", // rss feed url
+                               (t.State == TorrentState.Error ? "Error: --" : ""),
+                               -1, // stream id
+                               t.StartTime.ToUnixTime(),
+                               (t.CompletedTime.HasValue ? t.CompletedTime.Value.ToUnixTime() : -1),
+                               "", // app update url
+                               t.SavePath,
+                               t.Complete
                            })
             });
         }
