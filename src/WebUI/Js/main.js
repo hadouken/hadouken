@@ -481,6 +481,13 @@ function setupDetailInfoPaneUI()
     });
     
     // more tabs
+    
+    // setup logger tab
+    Logger.init("mainInfoPane-loggerTab");
+    $("mainInfoPane-loggerTab").addEvent("mousedown", function(ev)
+    {
+        ev.target.store("mousewhitelist", true);
+    });
 }
 
 function setupDividers()
