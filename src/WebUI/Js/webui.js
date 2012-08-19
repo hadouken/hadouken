@@ -125,8 +125,6 @@ var WebUI =
         // default col mask
         this.trtColDefs.each(function(item, index) { this.trtColToggle(index, item[3], true); }, this);
         
-        if(window.hdknweb) return;
-        
         this.getSettings((function()
         {
             this.update.delay(0, this, (function()
@@ -135,6 +133,8 @@ var WebUI =
                 this.hideMsg();
             }).bind(this));
         }).bind(this));
+        
+        log("WebUI initialized.");
     },
     
     "trtDataToRow": function(data)
@@ -147,19 +147,19 @@ var WebUI =
                     return data[CONST.TORRENT_NAME];
                     
                 case "order":
-                    return 0;
+                    return data[CONST.TORRENT_QUEUE_POSITION];
                     
                 case "size":
                     return data[CONST.TORRENT_SIZE];
                     
                 case "remaining":
-                    return -1;
+                    return data[CONST.TORRENT_REMAINING];
                     
                 case "done":
                     return data[CONST.TORRENT_PROGRESS];
                     
                 case "status":
-                    return [data[CONST.TORRENT_STATUS], ""];
+                    return [data[CONST.TORRENT_STATUS], data[CONST.TORRENT_STATUS_MESSAGE]];
                     
                 case "seeds":
                 	return data[CONST.TORRENT_SEEDS_CONNECTED] + " (" + data[CONST.TORRENT_SEEDS_SWARM] + ")";
@@ -183,10 +183,7 @@ var WebUI =
                     return data[CONST.TORRENT_UPSPEED];
                     
                 case "ratio":
-                    var dl = data[CONST.TORRENT_DOWNLOADED];
-                    var ul = data[CONST.TORRENT_UPLOADED];
-                    
-                    return (dl == 0 ? 0 : (ul / dl));
+                    return data[CONST.TORRENT_RATIO];
             }
         }, this);
     },
@@ -226,7 +223,7 @@ var WebUI =
                         break;
                     
                     case "done":
-                        values[i] = (values[i]).toFixedNR(1) + "%";
+                        values[i] = (values[i] / 10).toFixedNR(1) + "%";
                         break;
                         
                     case "downloaded":
@@ -473,7 +470,7 @@ var WebUI =
         clearInterval(this.updateTimeout);
     },
     
-    "request": function(method, url, fn, async, fails)
+    "request": function(method, url, data, fn, async, fails)
     {
         if(typeOf(fails) != "array") fails = [0];
         
@@ -493,6 +490,12 @@ var WebUI =
                     "url": url,
                     "method": method,
                     "async": typeof(async) === "undefined" || !!async,
+                    "data": (data != null ? JSON.encode(data) : null),
+                    "urlEncoded": false,
+                    "onRequest": function()
+                    {
+                        // show ajax spinner
+                    },
                     "onFailure": function()
                     {
                         self.endPeriodicUpdate();
@@ -517,7 +520,7 @@ var WebUI =
                             return;
                         }
                         
-                        self.request.delay(delay * 1000, self, [ url, function(json)
+                        self.request.delay(delay * 1000, self, [ method, url, data, function(json)
                         {
                             if(fails[0])
                             {
@@ -530,7 +533,7 @@ var WebUI =
                         }, async, fails ]);
                     },
                     "onSuccess": (fn) ? fn.bind(self) : Function.from()
-                }).send();
+                }).setHeader("Content-Type", "application/json").send();
             }
             catch(e)
             {
@@ -539,6 +542,65 @@ var WebUI =
         };
         
         req();
+    },
+    
+    "perform": function(action)
+    {
+        var all = false;
+        
+        var hashes = this.getHashes(action, all);
+        
+        if(hashes.length == 0) return;
+        
+        if(action.test(/^remove/) && hashes.contains(this.torrentID))
+        {
+            this.torrentID = "";
+            this.clearDetails();
+        }
+        
+        this.request("post", "/api?action=" + action, hashes, (function()
+        {
+            this.update();
+        }).bind(this));
+    },
+    
+    "getHashes": function(act, all)
+    {
+        var hashes = [];
+        var list = (all ? Object.keys(this.torrents) : this.trtTable.selectedRows);
+        var len = list.length;
+        
+        while(len--)
+        {
+            var key = list[len];
+            var stat = this.torrents[key][CONST.TORRENT_STATUS];
+            
+            switch(act)
+            {
+                case "start":
+                    if ((stat == CONST.STATE_DOWNLOADING || stat == CONST.STATE_SEEDING || stat == CONST.STATE_HASHING)) continue;
+                    break;
+            }
+            
+            hashes.push(key);
+        }
+        
+        return hashes;
+    },
+    
+    "start": function()
+    {
+        this.perform("start");
+    },
+    
+    "pause": function()
+    {
+        this.perform("pause");
+    },
+    
+    "stop": function()
+    {
+        this.perform("stop");
     },
     
     "update": function(listcb)
@@ -575,7 +637,7 @@ var WebUI =
     {
         this.endPeriodicUpdate();
         
-        this.request("get", "/api?action=gettorrents", (function(json)
+        this.request("get", "/api?action=gettorrents", null, (function(json)
         {
             this.loadList(json);
             if(fn) fn(json);
@@ -880,7 +942,7 @@ var WebUI =
             this.addSettings(json, fn);
         }).bind(this);
         
-        this.request("get", "/api?action=getsettings", act);
+        this.request("get", "/api?action=getsettings", null, act);
     },
     
     "addSettings": function(json, fn)
@@ -1628,6 +1690,45 @@ var WebUI =
             "pause": 1,
             "remove": 1
         };
+        
+        var selHash = this.trtTable.selectedRows;
+        
+        if(selHash.length > 0)
+        {
+            selHash.each(function(hash)
+            {
+                var tor = this.torrents[hash];
+                var state = tor[CONST.TORRENT_STATUS];
+                
+                switch(state)
+                {
+                    case CONST.STATE_STOPPED:
+                    case CONST.STATE_STOPPING:
+                        disabled.start = 0;
+                        break;
+                        
+                    case CONST.STATE_PAUSED:
+                        disabled.start = disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_DOWNLOADING:
+                    case CONST.STATE_SEEDING:
+                        disabled.stop = disabled.pause = 0;
+                        break;
+                        
+                    case CONST.STATE_HASHING:
+                        disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_ERROR:
+                        disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_METADATA:
+                        break;
+                }
+            }, this);
+        }
         
         return disabled;
     }
