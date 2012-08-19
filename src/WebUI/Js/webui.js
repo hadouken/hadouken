@@ -692,7 +692,7 @@ var WebUI =
                     this.totalUL += item[CONST.TORRENT_UPSPEED];
                     
                     var hash = item[CONST.TORRENT_HASH];
-                    var statinfo = this.getStatusInfo(item.State, item.Progress, item.Complete);
+                    var statinfo = this.getStatusInfo(item[CONST.TORRENT_STATUS], item[CONST.TORRENT_PROGRESS], item[CONST.TORRENT_COMPLETE]);
                     
                     this.torGroups[hash] = this.getTorGroups(item);
                     
