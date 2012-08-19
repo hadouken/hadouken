@@ -21,7 +21,7 @@ namespace Hadouken.Impl.Http.Api
             _data = data;
         }
 
-        public override ActionResult Execute(IHttpContext context)
+        public override ActionResult Execute()
         {
             return Json(
                 new

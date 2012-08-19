@@ -18,11 +18,11 @@ namespace Hadouken.Impl.Http.Api
             _torrentEngine = torrentEngine;
         }
 
-        public override ActionResult Execute(IHttpContext context)
+        public override ActionResult Execute()
         {
             List<string> hashes = new List<string>();
 
-            foreach (var file in context.Request.Files)
+            foreach (var file in Context.Request.Files)
             {
                 using (var ms = new MemoryStream())
                 {

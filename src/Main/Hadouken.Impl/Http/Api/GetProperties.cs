@@ -9,7 +9,7 @@ namespace Hadouken.Impl.Http.Api
     [ApiAction("getprops")]
     public class GetProperties : ApiAction
     {
-        public override ActionResult Execute(IHttpContext context)
+        public override ActionResult Execute()
         {
             throw new NotImplementedException();
         }

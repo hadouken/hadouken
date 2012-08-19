@@ -17,7 +17,7 @@ namespace Hadouken.Impl.Http.Api
             _torrentEngine = torrentEngine;
         }
 
-        public override ActionResult Execute(IHttpContext context)
+        public override ActionResult Execute()
         {
             return Json(new
             {
@@ -38,9 +38,9 @@ namespace Hadouken.Impl.Http.Api
                                t.DownloadSpeed,
                                t.ETA.TotalSeconds,
                                t.Label,
-                               t.Peers.Where(p => !p.IsSeeder),
+                               t.Peers.Where(p => !p.IsSeeder).Count(),
                                t.Trackers.Sum(tr => tr.Incomplete),
-                               t.Peers.Where(p => p.IsSeeder),
+                               t.Peers.Where(p => p.IsSeeder).Count(),
                                t.Trackers.Sum(tr => tr.Complete),
                                -1, // availability
                                -1, // queue position

@@ -10,8 +10,6 @@ namespace Hadouken.Http
 {
     public abstract class ApiAction : IApiAction
     {
-        public IHttpContext Context { get; set; }
-
         public ActionResult View(string name)
         {
             return new ViewResult(name);
@@ -48,6 +46,8 @@ namespace Hadouken.Http
             }
         }
 
-        public abstract ActionResult Execute(IHttpContext context);
+        public virtual IHttpContext Context { get; set; }
+
+        public abstract ActionResult Execute();
     }
 }

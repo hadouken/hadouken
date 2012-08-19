@@ -17,9 +17,9 @@ namespace Hadouken.Impl.Http.Api
             _torrentEngine = torrentEngine;
         }
 
-        public override ActionResult Execute(IHttpContext context)
+        public override ActionResult Execute()
         {
-            string hash = context.Request.QueryString["hash"];
+            string hash = Context.Request.QueryString["hash"];
 
             if (!String.IsNullOrEmpty(hash) && _torrentEngine.Managers.ContainsKey(hash))
             {

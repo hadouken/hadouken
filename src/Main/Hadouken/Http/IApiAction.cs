@@ -8,6 +8,8 @@ namespace Hadouken.Http
     [Component(ComponentLifestyle.Transient)]
     public interface IApiAction : IComponent
     {
-        ActionResult Execute(IHttpContext context);
+        IHttpContext Context { get; set; }
+
+        ActionResult Execute();
     }
 }
