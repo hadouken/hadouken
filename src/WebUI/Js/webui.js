@@ -575,7 +575,7 @@ var WebUI =
     {
         this.endPeriodicUpdate();
         
-        this.request("get", "/api/torrents", (function(json)
+        this.request("get", "/api?action=gettorrents", (function(json)
         {
             this.loadList(json);
             if(fn) fn(json);
@@ -880,7 +880,7 @@ var WebUI =
             this.addSettings(json, fn);
         }).bind(this);
         
-        this.request("get", "/api/settings", act);
+        this.request("get", "/api?action=getsettings", act);
     },
     
     "addSettings": function(json, fn)
@@ -945,6 +945,8 @@ var WebUI =
             // handle cookie
             if(key === "webui.cookie")
             {
+                console.log("loading webui.cookie");
+                
                 loadCookie(JSON.decode(val, true));
             }
                 
@@ -952,7 +954,6 @@ var WebUI =
             switch(typ)
             {
                 case CONST.SETTINGTYPE_INTEGER: val = val.toInt(); break;
-                case CONST.SETTINGTYPE_BOOLEAN: val = (val === "true"); break;
             }
             
             // handle special settings

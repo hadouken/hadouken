@@ -13,22 +13,22 @@ var CONST = {
 	// TORRENT DATA CONSTANTS
 	//----------------------------------------
 
-	, "TORRENT_HASH": "InfoHash"
-	, "TORRENT_STATUS": "State"
-	, "TORRENT_NAME": "Name"
-	, "TORRENT_SIZE": "Size"
-	, "TORRENT_PROGRESS": "Progress"
-	, "TORRENT_DOWNLOADED": "DownloadedBytes"
-	, "TORRENT_UPLOADED": "UploadedBytes"
-	, "TORRENT_RATIO": "Ratio"
-	, "TORRENT_UPSPEED": "UploadSpeed"
-	, "TORRENT_DOWNSPEED": "DownloadSpeed"
-	, "TORRENT_ETA": "ETA"
-	, "TORRENT_LABEL": "Label"
-	, "TORRENT_PEERS_CONNECTED": "Peers_Actual"
-	, "TORRENT_PEERS_SWARM": "Peers_All"
-	, "TORRENT_SEEDS_CONNECTED": "Seeders_Actual"
-	, "TORRENT_SEEDS_SWARM": "Seeders_All"
+	, "TORRENT_HASH": 0
+	, "TORRENT_STATUS": 1
+	, "TORRENT_NAME": 2
+	, "TORRENT_SIZE": 3
+	, "TORRENT_PROGRESS": 4
+	, "TORRENT_DOWNLOADED": 5
+	, "TORRENT_UPLOADED": 6
+	, "TORRENT_RATIO": 7
+	, "TORRENT_UPSPEED": 8
+	, "TORRENT_DOWNSPEED": 9
+	, "TORRENT_ETA": 10
+	, "TORRENT_LABEL": 11
+	, "TORRENT_PEERS_CONNECTED": 12
+	, "TORRENT_PEERS_SWARM": 13
+	, "TORRENT_SEEDS_CONNECTED": 14
+	, "TORRENT_SEEDS_SWARM": 15
 	, "TORRENT_AVAILABILITY": 16
 	, "TORRENT_QUEUE_POSITION": 17
 	, "TORRENT_REMAINING": 18
@@ -39,8 +39,8 @@ var CONST = {
 	, "TORRENT_DATE_ADDED": 23
 	, "TORRENT_DATE_COMPLETED": 24
 	, "TORRENT_APP_UPDATE_URL": 25
-	, "TORRENT_SAVE_PATH": "SavePath"
-    , "TORRENT_COMPLETE": "Complete"
+	, "TORRENT_SAVE_PATH": 26
+    , "TORRENT_COMPLETE": 27
 
 	//----------------------------------------
 	// TORRENT STATUS CONSTANTS
@@ -249,17 +249,17 @@ var CONST = {
 	//----------------------------------------
 	// SETTING DATA CONSTANTS
 	//----------------------------------------
-	, "SETTING_NAME": "name"
-	, "SETTING_TYPE": "type"
-	, "SETTING_VALUE": "value"
-	, "SETTING_PARAMS": "param"
+	, "SETTING_NAME": 0
+	, "SETTING_TYPE": 1
+	, "SETTING_VALUE": 2
+	, "SETTING_PARAMS": 3
 
 	//----------------------------------------
 	// SETTING TYPE CONSTANTS
 	//----------------------------------------
-	, "SETTINGTYPE_INTEGER": "System.Int32"
-	, "SETTINGTYPE_BOOLEAN": "System.Boolean"
-	, "SETTINGTYPE_STRING": "System.String"
+	, "SETTINGTYPE_INTEGER": 0
+	, "SETTINGTYPE_BOOLEAN": 1
+	, "SETTINGTYPE_STRING": 2
 
 	//----------------------------------------
 	// SETTING PARAM CONSTANTS
