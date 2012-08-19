@@ -111,7 +111,7 @@ namespace Hadouken.Impl.Http
                         var httpContext = new HttpContext(context);
                         string url = httpContext.Request.Url.AbsolutePath;
 
-                        var result = ((url == "/api" && httpContext.Request.QueryString["action"] != null) ? FindAndExecuteAction(httpContext) : CheckFileSystem(httpContext));
+                        var result = (((url == "/api" || url == "/api/") && httpContext.Request.QueryString["action"] != null) ? FindAndExecuteAction(httpContext) : CheckFileSystem(httpContext));
 
                         if (result != null)
                         {
