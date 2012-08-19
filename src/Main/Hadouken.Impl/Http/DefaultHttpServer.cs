@@ -206,10 +206,43 @@ namespace Hadouken.Impl.Http
 
             if (action != null)
             {
-                return action.Execute(context);
+                try
+                {
+                    action.Context = context;
+                    return action.Execute();
+                }
+                catch (Exception e)
+                {
+                    return Error_500(String.Format("Could not execute action '{0}'.", actionName), context, e);
+                }
             }
 
             return null;
         }
+
+        private ActionResult Error_500(string message, IHttpContext context, Exception e)
+        {
+            string html = "<html><head><title>Internal Server Error</title></head><body>";
+
+            html += "<h1>Internal Server Error</h1>";
+            html += "<p>An error occured when processing url <pre>" + context.Request.Url.PathAndQuery + "</pre></p>";
+
+            html += "<h2>Stack Trace</h2>";
+            html += "<p><pre>" + e.StackTrace.Replace(Environment.NewLine, "<br />") + "</pre></p>";
+
+            html += "</body></html>";
+
+            return new ErrorResult() { Content = Encoding.UTF8.GetBytes(html), ContentType = "text/html" };
+        }
     }
+
+    class ErrorResult : ContentResult
+    {
+        public override void Execute(IHttpContext context)
+        {
+            context.Response.StatusCode = 500;
+            base.Execute(context);
+        }
+    }
+
 }
