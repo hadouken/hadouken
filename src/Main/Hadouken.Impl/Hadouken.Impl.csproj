@@ -91,6 +91,7 @@
     <Compile Include="Http\Api\GetSettings.cs" />
     <Compile Include="Http\Api\GetTorrentFiles.cs" />
     <Compile Include="Http\Api\GetTorrents.cs" />
+    <Compile Include="Http\Api\StartTorrent.cs" />
     <Compile Include="Http\DefaultHttpServer.cs" />
     <Compile Include="Http\FormData.cs" />
     <Compile Include="Http\HttpContext.cs" />
