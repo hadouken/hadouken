@@ -267,6 +267,21 @@ namespace Hadouken.Impl.BitTorrent
             internal set { _dlBytes = value; }
         }
 
+        public long RemainingBytes
+        {
+            get { return CalculateRemaning(); }
+        }
+
+        private long CalculateRemaning()
+        {
+            var files = _manager.Torrent.Files;
+
+            var total = files.Where(f => f.Priority != MonoTorrent.Common.Priority.DoNotDownload).Sum(f => f.Length);
+            var dled = files.Where(f => f.Priority != MonoTorrent.Common.Priority.DoNotDownload).Sum(f => f.BytesDownloaded);
+
+            return total - dled;
+        }
+
         public long UploadedBytes
         {
             get { return _manager.Monitor.DataBytesUploaded + _ulBytes; }

@@ -33,6 +33,7 @@ namespace Hadouken.BitTorrent
         long UploadedBytes { get; }
         long DownloadSpeed { get; }
         long UploadSpeed { get; }
+        long RemainingBytes { get; }
         
         ITorrent Torrent { get; }
         byte[] TorrentData { get; }
