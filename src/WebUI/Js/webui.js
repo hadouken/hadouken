@@ -409,6 +409,32 @@ var WebUI =
         ContextMenu.show(ev.page);
     },
     
+    "torShowCopy": function()
+    {
+        console.log("implement me");
+    },
+    
+    "torShowMagnetCopy": function()
+    {
+        console.log("implement me");
+    },
+    
+    "showCopy": function(title, txt)
+    {
+        DialogManager.popup({
+              title: title
+            , icon: "dlgIcon-Copy"
+            , width: "35em"
+            , input: txt
+            , buttons: [{ text: L_("DLG_BTN_CLOSE") }]
+        });
+    },
+    
+    "showProperties": function(k)
+    {
+        console.log("implement me");
+    },
+    
     "trtColReset": function()
     {
         console.log("trtColReset");

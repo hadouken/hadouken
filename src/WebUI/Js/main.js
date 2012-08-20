@@ -28,7 +28,7 @@ function setupGlobalEvents()
     if(__executed_setupGlobalEvents__) return;
     __executed_setupGlobalEvents__ = true;
     
-    // ContextMenu.init("ContextMenu");
+    ContextMenu.init("ContextMenu");
     
     setupWindowEvents();
     setupDocumentEvents();
@@ -85,7 +85,7 @@ function setupMouseEvents()
     document.addStopEvents({
         "mousedown": function(ev)
         {
-            //ContextMenu.hide();
+            ContextMenu.hide();
             return mouseWhitelistWrap(ev);
         },
         "contextmenu": mouseWhitelist,
