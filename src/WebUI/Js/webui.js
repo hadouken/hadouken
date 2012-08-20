@@ -681,7 +681,6 @@ var WebUI =
         else if(state == CONST.STATE_HASHING)
         {
             res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (progress / 10).toFixedNR(1))];
-            res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (progress).toFixedNR(1))];
         }
         else if(state == CONST.STATE_ERROR)
         {
