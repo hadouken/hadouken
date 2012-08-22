@@ -87,6 +87,9 @@
     <Compile Include="Hosting\DefaultHost.cs" />
     <Compile Include="Http\ActionCacheItem.cs" />
     <Compile Include="Http\Api\AddFile.cs" />
+    <Compile Include="Http\Api\RemoveTorrent.cs" />
+    <Compile Include="Http\Api\PauseTorrent.cs" />
+    <Compile Include="Http\Api\StopTorrent.cs" />
     <Compile Include="Http\Api\GetProperties.cs" />
     <Compile Include="Http\Api\GetSettings.cs" />
     <Compile Include="Http\Api\GetTorrentFiles.cs" />
