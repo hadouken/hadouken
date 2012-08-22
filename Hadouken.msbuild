@@ -95,6 +95,10 @@
     <!-- zip webui -->
     <Exec Command="tools\7zip-9.20\7za.exe a bin\hdkn-$(BuildVersion)\webui.zip .\src\WebUI\*" />
   </Target>
+  
+  <Target Name="CreateDocs">
+    <Exec Command="sphinx-build -a -b html -E src\Docs bin\docs" />
+  </Target>
 
   <Target Name="CreateZip" DependsOnTargets="CopyBinaries">
     <Exec Command="tools\7zip-9.20\7za.exe a bin\hdkn-$(BuildVersion).zip .\$(BuildOutputFolder)\*" />
@@ -108,7 +112,7 @@
     <CalculateMD5 InputFile="bin/hdkn-$(BuildVersion).msi" OutputFile="bin/hdkn-$(BuildVersion).msi.md5" />
   </Target>
   
-  <Target Name="Build" DependsOnTargets="CreateZip; CreateMsi">
+  <Target Name="Build" DependsOnTargets="CreateDocs; CreateZip; CreateMsi">
     <Message Text="All built." />
   </Target>
 </Project>

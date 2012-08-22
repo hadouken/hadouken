@@ -13,6 +13,8 @@ src/Shared/CommonAssemblyInfo.cs
 *.user
 *.sln.docstates
 
+*.pyc
+
 #Wix
 *.wxobj
 *.wixobj
