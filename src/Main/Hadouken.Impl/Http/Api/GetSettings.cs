@@ -55,7 +55,7 @@ namespace Hadouken.Impl.Http.Api
                     return 2;
 
                 default: // unknown (to webui)
-                    throw new NotImplementedException(String.Format("Unknown Web UI type {0}", clrType));
+                    return -1;
             }
         }
     }
