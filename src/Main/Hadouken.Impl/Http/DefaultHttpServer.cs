@@ -43,7 +43,7 @@ namespace Hadouken.Impl.Http
         {
             UnzipWebUI();
 
-            var binding = ConfigurationManager.AppSettings["WebUI.Url"];
+            var binding = HdknConfig.ConfigManager["WebUI.Url"];
 
             _listener.Prefixes.Add(binding);
             _listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
