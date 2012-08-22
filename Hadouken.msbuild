@@ -101,7 +101,11 @@
   </Target>
   
   <Target Name="CreateDocs">
-    <Exec Command="sphinx-build -a -b html -E src\Docs bin\docs" />
+    <Exec Command="sphinx-build" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="SphinxErrorCode" />
+    </Exec>
+    
+    <Exec Command="sphinx-build -a -b html -E src\Docs bin\docs" Condition="'$(SphinxErrorCode)' == '1'" />
   </Target>
 
   <Target Name="CreateZip" DependsOnTargets="CopyBinaries">
