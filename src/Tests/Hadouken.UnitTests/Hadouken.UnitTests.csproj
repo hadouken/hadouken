@@ -72,13 +72,18 @@
   <ItemGroup>
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
     <Compile Include="Data\DataRepositoryTests.cs" />
+    <Compile Include="Http\Api\AddFileTests.cs" />
+    <Compile Include="Http\HttpContextHelper.cs" />
     <Compile Include="Http\HttpServerTests.cs" />
+    <Compile Include="MemoryConfigManager.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Hadouken.UnitTests.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\ubuntu.torrent" />
   </ItemGroup>

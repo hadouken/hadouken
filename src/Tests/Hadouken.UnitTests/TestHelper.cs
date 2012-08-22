@@ -9,14 +9,14 @@ namespace Hadouken.UnitTests
 {
     public static class TestHelper
     {
-        public static byte[] LoadResource(string resourceName)
+        public static MemoryStream LoadResource(string resourceName)
         {
+            var ms = new MemoryStream();
+
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-            using(var ms = new MemoryStream())
             {
                 stream.CopyTo(ms);
-
-                return ms.ToArray();
+                return ms;
             }
         }
     }

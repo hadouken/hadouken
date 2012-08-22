@@ -8,6 +8,7 @@ using Moq;
 using Hadouken.Messaging;
 using Hadouken.Data.Models;
 using System.IO;
+using Hadouken.Configuration;
 
 namespace Hadouken.UnitTests.Data
 {
@@ -19,6 +20,8 @@ namespace Hadouken.UnitTests.Data
         [TestFixtureSetUp]
         public void Setup()
         {
+            HdknConfig.ConfigManager = new MemoryConfigManager();
+
             if (File.Exists("test.db"))
                 File.Delete("test.db");
 
@@ -32,26 +35,22 @@ namespace Hadouken.UnitTests.Data
         public void Can_CRUD_records()
         {
             var mbus = new Mock<IMessageBus>();
-
-            // can save
             var repo = new FluentNhibernateDataRepository(mbus.Object);
+
+            // Saving
             repo.Save(new Setting() { Key = "test", Value = "test" });
+            Assert.IsTrue(repo.List<Setting>(st => st.Key == "test").Count == 1);
 
-            Assert.IsTrue(repo.List<Setting>().Count == 1);
-
-            // can update
+            // Updating
             var s = repo.Single<Setting>(q => q.Key == "test");
             s.Key = "test2";
 
             repo.Update(s);
-
             Assert.IsTrue(repo.Single<Setting>(s.Id).Key == "test2");
 
-            // can delete
-
+            // Deleting
             repo.Delete(s);
-
-            Assert.IsTrue(repo.List<Setting>().Count == 0);
+            Assert.IsTrue(repo.List<Setting>(st => st.Key == "test").Count == 0);
         }
     }
 }
