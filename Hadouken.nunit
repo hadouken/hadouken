@@ -1,0 +1,7 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Default" processModel="Default" domainUsage="Default" />
+  
+  <Config name="Default" binpathtype="None" runtimeFramework="net-4.0.21006">
+    <assembly path="src/Tests/Hadouken.UnitTests/bin/Debug/Hadouken.UnitTests.dll" />
+  </Config>
+</NUnitProject>
