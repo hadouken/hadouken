@@ -43,7 +43,7 @@ namespace Hadouken.Impl.Http
         {
             UnzipWebUI();
 
-            var binding = ConfigurationManager.AppSettings["WebUI.Url"];
+            var binding = HdknConfig.ConfigManager["WebUI.Url"];
 
             _listener.Prefixes.Add(binding);
             _listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
@@ -109,8 +109,9 @@ namespace Hadouken.Impl.Http
                     if (IsAuthenticatedUser(context))
                     {
                         var httpContext = new HttpContext(context);
+                        string url = httpContext.Request.Url.AbsolutePath;
 
-                        ActionResult result = FindAndExecuteController(httpContext);
+                        var result = (((url == "/api" || url == "/api/") && httpContext.Request.QueryString["action"] != null) ? FindAndExecuteAction(httpContext) : CheckFileSystem(httpContext));
 
                         if (result != null)
                         {
@@ -118,18 +119,8 @@ namespace Hadouken.Impl.Http
                         }
                         else
                         {
-                            // check file system
-                            result = CheckFileSystem(httpContext);
-
-                            if (result != null)
-                            {
-                                result.Execute(httpContext);
-                            }
-                            else
-                            {
-                                context.Response.StatusCode = 404;
-                                context.Response.StatusDescription = "404 - File not found";
-                            }
+                            context.Response.StatusCode = 404;
+                            context.Response.StatusDescription = "404 - File not found";
                         }
                     }
                     else
@@ -203,67 +194,55 @@ namespace Hadouken.Impl.Http
             return false;
         }
 
-        private ActionResult FindAndExecuteController(IHttpContext context)
+        private ActionResult FindAndExecuteAction(IHttpContext context)
         {
-            var cacheItem = _cache.Where(c => c.Path == context.Request.Url.AbsolutePath && c.Method == context.Request.HttpMethod).SingleOrDefault();
+            string actionName = context.Request.QueryString["action"];
+            var actions = Kernel.GetAll<IApiAction>();
 
-            if (cacheItem != null)
+            var action = (from a in actions
+                          let attr = a.GetType().GetAttribute<ApiActionAttribute>()
+                          where attr != null && attr.Name == actionName
+                          select a).SingleOrDefault();
+
+            if (action != null)
             {
-                IController instance = (IController)Kernel.Get(cacheItem.Controller);
-                instance.Context = context;
-
-                return InvokeAction(context, instance, cacheItem.Action);
-            }
-            else
-            {
-                var handlers = Kernel.GetAll<IController>();
-
-                foreach (var instance in handlers)
+                try
                 {
-                    instance.Context = context;
-
-                    var method = (from mi in instance.GetType().GetMethods()
-                                  where mi.HasAttribute<RouteAttribute>()
-                                  where mi.HasAttribute<HttpMethodAttribute>()
-                                  let methodAttribute = mi.GetAttribute<HttpMethodAttribute>()
-                                  let routeAttribute = mi.GetAttribute<RouteAttribute>()
-                                  where Regex.IsMatch(context.Request.Url.AbsolutePath, "^" + routeAttribute.Route + "$", RegexOptions.IgnoreCase | RegexOptions.Singleline) && methodAttribute.Method == context.Request.HttpMethod
-                                  select mi).FirstOrDefault();
-
-                    if (method != null)
-                    {
-                        _cache.Add(new ActionCacheItem() { Action = method, Controller = instance.GetType(), Method = context.Request.HttpMethod, Path = context.Request.Url.AbsolutePath });
-                        return InvokeAction(context, instance, method);
-                    }
+                    action.Context = context;
+                    return action.Execute();
+                }
+                catch (Exception e)
+                {
+                    return Error_500(String.Format("Could not execute action '{0}'.", actionName), context, e);
                 }
             }
 
             return null;
         }
 
-        private ActionResult InvokeAction(IHttpContext context, IController controller, MethodInfo method)
+        private ActionResult Error_500(string message, IHttpContext context, Exception e)
         {
-            var regex = new Regex("^" + method.GetAttribute<RouteAttribute>().Route + "$", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
+            string html = "<html><head><title>Internal Server Error</title></head><body>";
 
-            // get parameters from regex
-            Match match = regex.Match(context.Request.Url.AbsolutePath);
+            html += "<h1>Internal Server Error</h1>";
+            html += "<p>An error occured when processing url <pre>" + context.Request.Url.PathAndQuery + "</pre></p>";
 
-            if (match.Groups.Count == 1)
-            {
-                return method.Invoke(controller, null) as ActionResult;
-            }
-            else
-            {
-                ParameterInfo[] parameters = method.GetParameters();
+            html += "<h2>Stack Trace</h2>";
+            html += "<p><pre>" + e.StackTrace.Replace(Environment.NewLine, "<br />") + "</pre></p>";
 
-                object[] methodParams = (from parameter in parameters
-                                         let type = parameter.ParameterType
-                                         let value = match.Groups[parameter.Name].Value
-                                         let param = Convert.ChangeType(value, type)
-                                         select param).ToArray();
+            html += "</body></html>";
 
-                return method.Invoke(controller, methodParams) as ActionResult;
-            }
+            return new ErrorResult() { Content = Encoding.UTF8.GetBytes(html), ContentType = "text/html" };
         }
     }
+
+    class ErrorResult : ContentResult
+    {
+        public override void Execute(IHttpContext context)
+        {
+            context.Response.StatusCode = 500;
+            base.Execute(context);
+        }
+    }
+
 }

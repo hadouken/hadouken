@@ -17,6 +17,12 @@ namespace Hadouken.UnitTests.Http
     [TestFixture]
     public class HttpServerTests
     {
+        [TestFixtureSetUp]
+        public void Setup()
+        {
+            HdknConfig.ConfigManager = new MemoryConfigManager();
+        }
+
         [Test]
         public void Can_start_and_stop_HTTP_server()
         {
@@ -25,17 +31,7 @@ namespace Hadouken.UnitTests.Http
 
             var server = new DefaultHttpServer(kvs.Object, fs.Object);
             server.Start();
-
-            // try to connect
-
             server.Stop();
-        }
-
-        public void SetBasicAuthHeader(WebRequest request, String userName, String userPassword)
-        {
-            string authInfo = userName + ":" + userPassword;
-            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
-            request.Headers["Authorization"] = "Basic " + authInfo;
         }
     }
 }

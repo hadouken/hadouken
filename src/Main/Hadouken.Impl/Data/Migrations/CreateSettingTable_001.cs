@@ -17,8 +17,15 @@ namespace Hadouken.Impl.Data.Migrations
                 new Column("Id", System.Data.DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                 new Column("Key", System.Data.DbType.String, 200),
                 new Column("Value", System.Data.DbType.String, 200),
-                new Column("Type", System.Data.DbType.String, 200)
+                new Column("Type", System.Data.DbType.String, 200),
+                new Column("Permissions", System.Data.DbType.Int32)
             );
+
+            Database.Insert("Setting", new string [] { "Key", "Value", "Type" }, new string[] { "webui.cookie", "\"{}\"", "System.String" });
+
+            // default gui settings
+            Database.Insert("Setting", new string[] { "Key", "Value", "Type" }, new string[] { "gui.tall_category_list", "true", "System.Boolean" });
+
         }
 
         public override void Down()

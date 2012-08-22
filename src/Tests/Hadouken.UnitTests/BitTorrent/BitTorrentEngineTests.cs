@@ -63,12 +63,12 @@ namespace Hadouken.UnitTests.BitTorrent
 
             repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
 
-            byte[] torrent = TestHelper.LoadResource("Hadouken.UnitTests.Resources.ubuntu.torrent");
+            byte[] torrent = TestHelper.LoadResource("Hadouken.UnitTests.Resources.ubuntu.torrent").ToArray();
 
             var engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
             engine.Load();
 
-            var manager = engine.AddTorrent(torrent);
+            var manager = engine.AddTorrent(torrent, "/temp");
 
             Assert.IsNotNull(manager);
             Assert.IsTrue(engine.Managers.ContainsKey(manager.InfoHash));

@@ -18,5 +18,7 @@ namespace Hadouken.Data.Models
         public virtual TorrentState State { get; set; }
         public virtual string SavePath { get; set; }
         public virtual string Label { get; set; }
+        public virtual DateTime StartTime { get; set; }
+        public virtual DateTime? CompletedTime { get; set; }
     }
 }

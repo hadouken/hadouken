@@ -60,7 +60,9 @@
     <Compile Include="BitTorrent\TrackerState.cs" />
     <Compile Include="ComponentAttribute.cs" />
     <Compile Include="ComponentLifestyle.cs" />
+    <Compile Include="Configuration\AppSettingsManager.cs" />
     <Compile Include="Configuration\HdknConfig.cs" />
+    <Compile Include="Configuration\IConfigManager.cs" />
     <Compile Include="Configuration\IKeyValueStore.cs" />
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHost.cs" />
+    <Compile Include="Http\ApiActionAttribute.cs" />
     <Compile Include="Http\ContentResult.cs" />
     <Compile Include="Http\EmbeddedContentResult.cs" />
     <Compile Include="Http\HttpPutAttribute.cs" />
@@ -79,10 +82,10 @@
     <Compile Include="Http\HttpGetAttribute.cs" />
     <Compile Include="Http\HttpMethodAttribute.cs" />
     <Compile Include="Http\ActionResult.cs" />
-    <Compile Include="Http\Controller.cs" />
+    <Compile Include="Http\ApiAction.cs" />
     <Compile Include="Http\HttpPostAttribute.cs" />
+    <Compile Include="Http\IApiAction.cs" />
     <Compile Include="Http\IHttpPostedFile.cs" />
-    <Compile Include="Http\IController.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpHandlerExtensions.cs" />
     <Compile Include="Http\IHttpRequest.cs" />

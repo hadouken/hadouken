@@ -1,1442 +1,1785 @@
+(function(jQuery)
+{
+
 var WebUI = 
 {
-    tables:
+    "torrents": {},
+    "peerlist": {},
+    "filelist": {},
+    "settings": {},
+    "props": {},
+    
+    "categories":
     {
-        torrents:
+        "cat_all": 0,
+        "cat_dls": 0,
+        "cat_com": 0,
+        "cat_act": 0,
+        "cat_iac": 0,
+        "cat_nlb": 0,
+    },
+    
+    "labels": {},
+    "torGroups": {},
+    "defTorGroup":
+    {
+        "cat": {},
+        "lbl": {}
+    },
+    "limits":
+    {
+        "reqRetryDelayBase": 2, // seconds
+        "reqRetryMaxAttempts": 5,
+        "minTableRows": 5,
+        "maxVirtTableRows": Math.ceil(screen.height / 16) || 100,
+        "minUpdateInterval": 500,
+        "minDirListCache": 30, // seconds
+        "minFileListCache": 60, // seconds
+        "minPeerListCache": 5, // seconds
+        "minXferHistCache": 60, // seconds
+        "defHSplit": 140,
+        "defVSplit": 225,
+        "minHSplit": 25,
+        "minVSplit": 150,
+        "minTrtH": 100,
+        "minTrtW": 150
+    },
+    "defConfig":
+    {
+        	"showDetails": true,
+            "showDetailsIcons": true,
+            "showCategories": true,
+            "showToolbar": true,
+            "showStatusBar": true,
+            "showSpeedGraph": true,
+            "useSysFont": true,
+            "updateInterval": 3000,
+            "maxRows": 0,
+            "lang": "en",
+            "hSplit": -1,
+            "vSplit": -1,
+        "torrentTable":
         {
-            obj: new dxSTable(),
-            columns:
-            [
-                { text: "Name",                 width: "200px",         id: "Name",              type: TYPE_STRING },
-                { text: "Status",               width: "100px",         id: "Status",             type: TYPE_STRING },
-                { text: "Size",                 width: "60px",          id: "Size",              type: TYPE_NUMBER },
-                { text: "Progress",             width: "100px",         id: "Progress",          type: TYPE_PROGRESS },
-                { text: "Downloaded",           width: "100px",         id: "DownloadedBytes",   type: TYPE_NUMBER },
-                { text: "Uploaded",             width: "100px",         id: "UploadedBytes",     type: TYPE_NUMBER },
-                { text: "Ratio",                width: "60px",          id: "Ratio",             type: TYPE_NUMBER },
-                { text: "DL Speed",             width: "60px",          id: "DownloadSpeed",     type: TYPE_NUMBER },
-                { text: "UL Speed",             width: "60px",          id: "UploadSpeed",       type: TYPE_NUMBER },
-                { text: "ETA",                  width: "60px",          id: "ETA",               type: TYPE_NUMBER },
-                { text: "Label",                width: "60px",          id: "Label",             type: TYPE_STRING },
-                { text: "Peers",                width: "60px",          id: "Peers_Info",        type: TYPE_NUMBER },
-                { text: "Seeds",                width: "60px",          id: "Seeders_Info",      type: TYPE_NUMBER },
-                { text: "Created on",           width: "100px",         id: "CreatedOn",         type: TYPE_NUMBER }
-            ],
-            container: "torrents",
-            format: Formatter.torrents,
-            ondelete: function() { WebUI.remove(); },
-            onselect: function(e, id) { WebUI.selectTorrent(e, id); },
-            ondblclick: function(obj) { WebUI.showTorrentDetails(obj.id); return false; }
+            "colMask": 0x0000, // automatically calculated based on this.trtColDefs
+            "colOrder": [], // automatically calculated based on this.trtColDefs
+            "colWidth": [], // automatically calculated based on this.trtColDefs
+            "reverse": false,
+            "sIndex": -1
         },
-        
-        files:
+        "activeSettingsPane": "",
+        "activeTorGroups":
         {
-            obj: new dxSTable(),
-            columns:
-            [
-                { text: "Name",                 width: "200px",         id: "Path",             type: TYPE_STRING },
-                { text: "Size",                 width: "60px",          id: "Length",             type: TYPE_NUMBER, align: ALIGN_RIGHT },
-                { text: "Progress",             width: "100px",         id: "Progress",         type: TYPE_PROGRESS },
-                { text: "Priority",             width: "80px",          id: "Priority",         type: TYPE_STRING }
-            ],
-            container: "torrent_files",
-            format: Formatter.files,
-            onselect: function(e, id) { WebUI.selectFile(e, id); },
-            ondblclick: function(obj)
-            {
-            }
+            "cat": {"cat_all": 1},
+            "lbl": {}
         }
     },
+    "torrentID": "",
+    "propID": "",
     
-    sysInfo:
-    {
-        version: "-"
-    },
+    //"spdGraph": new SpeedGraph(),
     
-    configured: false,
-    firstLoad: true,
-    settings:
-    {
-        "webui.files.view":               0, 
-        "webui.show_cats":              1, 
-        "webui.show_dets":              1, 
-        "webui.needmessage":            1, 
-        "webui.reqtimeout":             30000,
-        "webui.confirm_when_deleting":  1,
-        "webui.alternate_color":        0,
-        "webui.update_interval":        3000,
-        "webui.hsplit":                 0.88,
-        "webui.vsplit":                 0.5,
-        "webui.effects":                0,
-        "webui.fullrows":               0,
-        "webui.no_delaying_draw":       1,
-        "webui.search":                 -1,
-        "webui.speedlistdl":            "100,150,200,250,300,350,400,450,500,750,1000,1250",
-        "webui.speedlistul":            "100,150,200,250,300,350,400,450,500,750,1000,1250",
-        "webui.ignore_timeouts":        0,
-        "webui.retry_on_error":         120,
-        "webui.closed_panels":          {},
-        "webui.timeformat":             0,
-        "webui.dateformat":             0,
-        "webui.log_autoswitch":         1
-    },
-    updateTimer: null,
-    interval: 1500,
-    timer: new Timer(),
-    activeView: null,
-    detailsId: null,
+    "trtTable": new STable(),
+    "trtColDefs":
+    [
+        //[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
+          ["name", 220, TYPE_STRING]
+        , ["order", 35, TYPE_NUM_ORDER]
+        , ["size", 75, TYPE_NUMBER]
+        , ["remaining", 90, TYPE_NUMBER, true]
+        , ["done", 60, TYPE_NUM_PROGRESS]
+        , ["status", 100, TYPE_CUSTOM]
+        , ["seeds", 60, TYPE_NUMBER]
+        , ["peers", 60, TYPE_NUMBER]
+        , ["seeds_peers", 80, TYPE_NUMBER, true]
+        , ["downspeed", 80, TYPE_NUMBER]
+        , ["upspeed", 80, TYPE_NUMBER]
+        , ["eta", 60, TYPE_NUM_ORDER]
+        , ["uploaded", 75, TYPE_NUMBER, true]
+        , ["downloaded", 75, TYPE_NUMBER, true]
+        , ["ratio", 50, TYPE_NUMBER]
+        , ["availability", 50, TYPE_NUMBER]
+        , ["label", 80, TYPE_STRING, true]
+        , ["added", 150, TYPE_NUMBER, true, false, ALIGN_LEFT]
+        , ["completed", 150, TYPE_NUMBER, true, false, ALIGN_LEFT]
+        , ["url", 250, TYPE_STRING, true]
+    ],
     
-    torrents: {},
-    files: {},
-    dirs: {},
-    labels:
-    {
-        "-_-_-all-_-_-": 0,
-        "-_-_-dls-_-_-": 0,
-        "-_-_-com-_-_-": 0,
-        "-_-_-act-_-_-": 0,
-        "-_-_-iac-_-_-": 0,
-        "-_-_-nlb-_-_-": 0,
-        "-_-_-err-_-_-": 0
-    },
-    cLabels: {},
-    actLbl: "-_-_-all-_-_-",
-    tegs: {},
+    "trtColDoneIdx": -1, // automatically calculated based on this.trtColDefs
+    "trtColStatusIdx": -1, // automatically calculated based on this.trtColDefs
+    "flsColPrioIdx": -1, // automatically calculated based on this.flsColDefs
+    "updateTimeout": null,
+    "totalDL": 0,
+    "totalUL": 0,
     
-    init: function()
+    "init": function()
     {
-        this.getSystemInfo();
-        this.getPlugins();        
-        this.getUISettings();
+        this.config = Object.merge({}, this.defConfig);
+        this.config.lang = "";
         
-        if(!this.configured)
-        {
-            this.config({});
-        }
+        this.trtColDoneIdx = this.trtColDefs.map(function(item) { return item[0] == "done"; }).indexOf(true);
+        this.trtColStatusIdx = this.trtColDefs.map(function(item) { return item[0] == "status"; }).indexOf(true);
         
-        this.assignEvents();
-        this.resize();
-        this.update();
-    },
-    
-    getSystemInfo: function()
-    {
-        Network.getJson("/api/system", function(data)
-        {
-            WebUI.sysInfo.version = data.version;
-        }, false);
+        // file prio
+        //this.flsColPrioIdx = this.flsColDefs.map(function(item) { return item[0] == "prio"; }).indexOf(true);
         
-        document.title = "Hadouken " + this.sysInfo.version;
-    },
-    
-    getPlugins: function()
-    {
-        Network.getJson("/api/plugins", function(data)
+        // default col mask
+        this.trtColDefs.each(function(item, index) { this.trtColToggle(index, item[3], true); }, this);
+        
+        this.getSettings((function()
         {
-            for(var i in data)
+            this.update.delay(0, this, (function()
             {
-                $.getScript("/plugins/" + data[i] + "/boot.js");
-            }
-        }, false);
-    },
+                this.refreshSelectedTorGroups();
+                this.hideMsg();
+            }).bind(this));
+        }).bind(this));
         
-    assignEvents: function()
-    {
-        window.onresize = WebUI.resize;
-        
-        $(document).bind("dragstart",function(e) { return(false); } );
-        $(document).bind("selectstart",function(e) { return(e.fromTextCtrl); });
+        log("WebUI initialized.");
     },
     
-    config: function(data)
+    "trtDataToRow": function(data)
     {
-        this.addSettings(data);
-        
-        $.each(this.tables, function(ndx, table)
+        return this.trtColDefs.map(function(item)
         {
-            // array with column widths
-            var width = WebUI.settings["webui." + ndx +".colwidth"];
-            
-            // array deciding if columns are enabled or disabled
-            var enabled = WebUI.settings["webui." + ndx + ".colenabled"];
-            
-            $.each(table.columns, function(i, column)
+            switch(item[0])
             {
-                if(width && i < width.length && width[i] > 4)
-                {
-                    column.width = width[i];
-                }
-                
-                if(enabled && i < enabled.length)
-                {
-                    column.enabled = enabled[i];
-                }
-            });
-            
-            // callbacks
-            table.obj.format = table.format;
-            table.obj.onresize = WebUI.save;
-            table.obj.onmove = WebUI.save;
-            table.obj.ondblclick = table.ondblclick;
-            table.obj.onselect = table.onselect;
-            table.obj.ondelete = table.ondelete;
-            
-            // config
-            table.obj.colorEvenRows = WebUI.settings["webui.alternate_color"];
-            table.obj.maxRows = WebUI.settings["webui.fullrows"];
-            table.obj.noDelayingDraw = WebUI.settings["webui.no_delaying_draw"];
-            
-            if($type(WebUI.settings["webui." + ndx + ".sindex"]))
-                table.obj.sIndex = WebUI.settings["webui." + ndx + ".sindex"];
-                
-            if($type(WebUI.settings["webui." + ndx + ".rev"]))
-                table.obj.reverse = WebUI.settings["webui." + ndx + ".rev"];
-            
-            if($type(WebUI.settings["webui." + ndx + ".sindex2"]))
-                table.obj.secIndex = WebUI.settings["webui." + ndx + ".sindex2"];
-                
-            if($type(WebUI.settings["webui." + ndx + ".rev2"]))
-                table.obj.secRev = WebUI.settings["webui." + ndx + ".rev2"];
-                
-            if($type(WebUI.settings["webui." + ndx + ".colorder"]))
-                table.obj.colOrder = WebUI.settings["webui." + ndx + ".colorder"];
-                
-            table.obj.onsort = function()
-            {
-                if((this.sIndex   != WebUI.settings["webui." + this.prefix + ".sindex"]) ||
-                   (this.reverse  != WebUI.settings["webui." + this.prefix + ".rev"]) ||
-                   (this.secIndex != WebUI.settings["webui." + this.prefix + ".sindex2"]) ||
-                   (this.secRev   != WebUI.settings["webui." + this.prefix + ".rev2"]))
-                {
-                    WebUI.save();
-                }
-            }
-        });
-        
-        // do something with to each table perhaps...
-        
-        var table = this.getTable("files");
-        table.oldFilesSortAlphaNumeric = table.sortAlphaNumeric;
-        table.sortAlphaNumeric = function(x, y)
-        {
-        }
-        
-        $.each(this.tables, function(ndx,table)
-        {
-            table.obj.create($$(table.container), table.columns, ndx);
-        });
-
-        
-        this.configured = true;
-    },
-    
-    addSettings: function(data)
-    {
-        $.each(data, function(key, value)
-        {
-            switch(value)
-            {
-                case "true":
-                case "auto":
-                case "on":
-                    data[key] = 1;
-                    break;
+                case "name":
+                    return data[CONST.TORRENT_NAME];
                     
-                case "false":
-                    data[key] = 0;
-                    break;
+                case "order":
+                    return data[CONST.TORRENT_QUEUE_POSITION];
+                    
+                case "size":
+                    return data[CONST.TORRENT_SIZE];
+                    
+                case "remaining":
+                    return data[CONST.TORRENT_REMAINING];
+                    
+                case "done":
+                    return data[CONST.TORRENT_PROGRESS];
+                    
+                case "status":
+                    return [data[CONST.TORRENT_STATUS], data[CONST.TORRENT_STATUS_MESSAGE]];
+                    
+                case "seeds":
+                	return data[CONST.TORRENT_SEEDS_CONNECTED] + " (" + data[CONST.TORRENT_SEEDS_SWARM] + ")";
+                    
+                case "peers":
+                    return data[CONST.TORRENT_PEERS_CONNECTED] + " (" + data[CONST.TORRENT_PEERS_SWARM] + ")";
+                    
+                case "eta":
+                    return data[CONST.TORRENT_ETA];
+                    
+                case "downloaded":
+                    return data[CONST.TORRENT_DOWNLOADED];
+                    
+                case "downspeed":
+                    return data[CONST.TORRENT_DOWNSPEED];
+                    
+                case "uploaded":
+                    return data[CONST.TORRENT_UPLOADED];
+                    
+                case "upspeed":
+                    return data[CONST.TORRENT_UPSPEED];
+                    
+                case "ratio":
+                    return data[CONST.TORRENT_RATIO];
             }
-            
-            data[key] = JSON.parse(data[key]);
-        });
+        }, this);
+    },
+    
+    "trtFormatRow": function(values, index)
+    {
+        var useidx = $chk(index);
+        var len = (useidx ? (index + 1) : values.length);
         
-        $.extend(this.settings, data);
+        var doneIdx = this.trtColDoneIdx, statIdx = this.trtColStatusIdx;
         
-        this.loadSettings();
-    },
-    
-    loadSettings: function()
-    {
-        
-    },
-    
-    getUISettings: function()
-    {
-        Network.getJson("/api/config?g=webui.", [ this.config, this ], false);
-    },
-    
-    start: function()
-    {
-        this.performAction("start", { "action": "start" });
-    },
-    
-    stop: function()
-    {
-        this.performAction("stop", { "action": "stop" });
-    },
-    
-    pause: function()
-    {
-        this.performAction("pause", { "action": "pause" });
-    },
-    
-    remove: function()
-    {
-        this.performAction("remove", { "action": "remove" });
-        this.detailsId = "";
-        this.clearDetails();
-    },
-    
-    selectTorrent: function(e, id)
-    {
-        var table = this.getTable("torrents");
-        var hash = table.getFirstSelected();
-        
-        if((table.selCount == 1) && hash)
+        if(!useidx || index == statIdx)
         {
-            // show etails
-            WebUI.showDetails(hash, true);
-        }
-        else
-        {
-            WebUI.detailsId = "";
-            WebUI.clearDetails();
+            var statInfo = this.getStatusInfo(values[statIdx][0], values[doneIdx], false);
+            values[statIdx] = (statInfo[0] === "Status_Error" ? values[statIdx][1] || statInfo[1] : statInfo[1]);
         }
         
-        if(e.which == 3)
+        for(var i = (index || 0); i < len; i++)
         {
-            WebUI.createMenu(e, id);
-            ContextMenu.show(e.clientX, e.clientY);
-        }
-    },
-    
-    showDetails: function(hash, noSwitch)
-    {
-        if(!noSwitch)
-        {
-            Tabs.show("general");
-        }
-        
-        this.detailsId = hash;
-        
-        this.getFiles(hash);
-        //this.getTrackers(hash);
-        this.updateDetails();
-    },
-    
-    getFiles: function(hash, isUpdate)
-    {
-        var table = this.getTable("files");
-        
-        if(!isUpdate)
-        {
-            table.dBody.scrollTop = 0;
-            $(table.tpad).height(0);
-            $(table.bpad).height(0);
-            table.clearRows();
-        }
-        
-        if($type(this.files[hash]) && !isUpdate)
-        {
-            this.redrawFiles(hash);
-        }
-        else
-        {
-            if(!$type(this.files[hash]))
+            switch(this.trtColDefs[i][0])
             {
-                this.files[hash] = [];
-            }
-            
-            Network.getJson("/api/torrents/" + hash + "/files", [ this.addFiles, this ]);
-        }
-    },
-    
-    addFiles: function(data)
-    {
-        $.extend(this.files, data);
-        
-        for(var hash in data)
-        {
-            this.redrawFiles(hash);
-        }
-    },
-    
-    updateFiles: function(hash) 
-    {
-        if(this.detailsId == hash)
-        {
-            this.getFiles(hash, true);
-            this.updateDetails();
-        }
-    },
-
-    
-    redrawFiles: function(hash)
-    {
-        if(this.detailsId == hash)
-        {
-            var table = this.getTable("files");
-            
-            for(var i in this.files[hash])
-            {
-                var sId = hash + "_f_" + i;
-                var file = this.files[hash][i];
-                
-                file.Progress = (file.Length > 0) ? Converter.round((file.BytesDownloaded/file.Length)*100,1): "100.0";
-                
-                if(this.settings["webui.files.view"])
-                {
-                    if(!$type(table.rowdata(sId)))
-                    {
-                        table.addRowById(file, sId, file.icon, file.attr);
-                    }
-                    else
-                    {
-                        for(var j in file)
-                        {
-                            table.setValueById(sId, j, file[j]);
-                        }
+                	case "label":
+                    case "name":
+                    case "peers":
+                    case "seeds":
+                    case "status":
+                    case "url":
+                        break;
                         
-                        table.setIcon(sId, file.icon);
-                        table.setAttr(sId, file.attr);
-                    }
-                }
-                else
-                {
-                    if(!$type(this.dirs[hash]))
-                    {
-                        this.dirs[hash] = new rDirectory();
-                    }
-                    
-                    this.dirs[hash].addFile(file, i);
-                }
-            }
-            
-            if(!this.settings["webui.files.view"] && this.dirs[hash])
-            {
-                var dir = this.dirs[hash].getDirectory();
-                
-                for(var i in dir)
-                {
-                    var entry = dir[i];
-                    
-                    if(entry.link != null)
-                    {
-                        if(!$type(table.rowdata[i]))
-                        {
-                            table.addRowById(entry.data, i, entry.icon, { link: entry.link });
-                        }
-                        else
-                        {
-                            for(var j in entry.data)
-                            {
-                                table.setValueById(i, j, entry.data[j]);
-                            }
-                        }
-                    }
-                }
-                
-                for(var i in dir)
-                {
-                    var entry = dir[i];
-                    
-                    if(entry.link == null)
-                    {
-                        if(!$type(table.rowdata[i]))
-                        {
-                            table.addRowById(entry.data, i, entry.icon, { link: null });
-                        }
-                        else
-                        {
-                            for(var j in entry.data)
-                            {
-                                table.setValueById(i, j, entry.data[j]);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            table.Sort();
-        }
-    },
-    
-    clearDetails: function()
-    {
-        $(".det").text("");
-        
-        this.getTable("files").clearRows();
-        // clear tracker table
-        // clear peers
-    },
-    
-    updateDetails: function()
-    {
-        if((this.detailsId != "") && this.torrents[this.detailsId])
-        {
-            var t = this.torrents[this.detailsId];
-            
-            $("#dl").text(Converter.toFileSize(t.DownloadedBytes,2));
-            $("#ul").text(Converter.toFileSize(t.UploadedBytes,2));
-            
-            var ratio = (t.UploadedBytes == 0 ? -1 : t.UploadedBytes / t.Size);
-            $("#ra").html( (ratio ==- 1) ? "&#8734;" : Converter.round(ratio,3));
-            $("#us").text(Converter.toSpeed(t.UploadSpeed));
-            $("#ds").text(Converter.toSpeed(t.DownloadSpeed));
-            $("#rm").html((t.ETA ==- 1) ? "&#8734;" : Converter.toTime(t.ETA));
-            $("#se").text(t.Seeders_Actual + " of " + t.Seeders_All + " connected");
-            $("#pe").text(t.Peers_Actual + " of " + t.Peers_All + " connected");
-            /*
-            $("#et").text(theConverter.time(Math.floor((new Date().getTime()-theWebUI.deltaTime)/1000-iv(d.state_changed)),true));
-            $("#wa").text(theConverter.bytes(d.skip_total,2));
-            */
-            $("#bf").text(t.SavePath);
-            $("#co").text(Converter.toDate(iv(t.CreatedOn)));
-            /*
-            $("#tu").text(  $type(this.trackers[this.dID]) && $type(this.trackers[this.dID][d.tracker_focus]) ? this.trackers[this.dID][d.tracker_focus].name : '');
-            */
-            $("#hs").text(this.detailsId.substring(0,40));
-            //$("#ts").text(t.Comment); tracker status
-            
-            var url = $.trim(t.Comment);
-            if(!url.match(/<a href/i))
-            {
-                var start = url.indexOf("http://");
-                if(start<0)
-                    start = url.indexOf("https://");
-                if(start>=0)
-                {
-                    var end = url.indexOf(" ",start);
-                    if(end<0)
-                        end = url.length;
+                    case "added":
+                    case "completed":
+                        values[i] = (values[i] > 0) ? new Date(values[i]).toISOString() : "";
+                        break;
                         
-                    var prefix = url.substring(0,start);
-                    var postfix = url.substring(end);
-                    url = url.substring(start,end);
-                    url = prefix+"<a href='"+url+"' target=_blank>"+url+"</a>"+postfix;
-                }
+                    case "availability":
+                        values[i] = (values[i] / 65536).toFixedNR(3);
+                        break;
+                    
+                    case "done":
+                        values[i] = (values[i] / 10).toFixedNR(1) + "%";
+                        break;
+                        
+                    case "downloaded":
+                    case "uploaded":
+                        values[i] = values[i].toFileSize();
+                        break;
+                        
+                    case "downspeed":
+                    case "upspeed":
+                        values[i] = (values[i] >= 103) ? (values[i].toFileSize() + g_perSec) : "";
+                        break;
+                        
+                    case "eta":
+                        values[i] = (values[i] == 0) ? "" : (values[i] == -1) ? "\u221E" : values[i].toTimeDelta();
+                        break;
+                        
+                    case "ratio":
+                        values[i] = (values[i] == -1) ? "\u221E" : (values[i] / 1000).toFixedNR(3);
+                        break;
+                        
+                    case "order":
+                        values[i] = (values[i] <= -1) ? "*" : values[i];
+                        break;
+                        
+                    case "remaining":
+                        values[i] = (values[i] >= 103) ? values[i].toFileSize(2) : "";
+                        break;
+                        
+                    case "seeds_peers":
+                        values[i] = ($chk(values[i]) && (values[i] != Number.MAX_VALUE)) ? values[i].toFixedNR(3) : "\u221E";
+                        break;
+                        
+                    case "size":
+                        values[i] = values[i].toFileSize(2);
+                        break;
             }
-            $("#cmt").html(url);
-
         }
-    },
-    
-    createMenu: function(e, id)
-    {
-        ContextMenu.clear();
         
-        var table = this.getTable("torrents");
-        
-        if(table.selCount > 1)
+        if(useidx)
         {
-            ContextMenu.add([ "Start", "WebUI.start()" ]);
-            ContextMenu.add([ "Pause", "WebUI.pause()" ]);
-            ContextMenu.add([ "Stop", "WebUI.stop()" ]);
+            return values[index];
         }
         else
         {
-            ContextMenu.add(["Start", this.isTorrentCommandEnabled("start",id) ? "WebUI.start()" : null]);
-            ContextMenu.add(["Pause", this.isTorrentCommandEnabled("pause",id) ? "WebUI.pause()" : null]);
-            ContextMenu.add(["Stop", this.isTorrentCommandEnabled("stop",id) ? "WebUI.stop()" : null]);
+            return values;
         }
-        
-        ContextMenu.add([CMENU_SEP]);
-        
-        var _labels = [];
-        
-        for(var lbl in this.cLabels)
-        {
-            if((table.selCount == 1) && (this.torrents[id].Label == lbl))
-            {
-                _labels.push([CMENU_SEL, lbl + " "]);
-            }
-            else
-            {
-                _labels.push([ lbl + " ", (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel", id) ? "WebUI.setLabel('" + addslashes(lbl) + "')" : null ]);
-            }
-        }
-        
-        if(_labels.length > 0)
-        {
-            _labels.push([CMENU_SEP]);
-        }
-        
-        _labels.push(["New label", (table.selCount > 1) || this.isTorrentCommandEnabled("setlabel", id) ? "WebUI.newLabel()" : null ]);
-        _labels.push(["Remove label", (table.selCount > 1) || this.isTorrentCommandEnabled("remlabel", id) ? "WebUI.removeLabel()" : null ]);
-        
-        ContextMenu.add([CMENU_CHILD, "Labels", _labels]);
-        
     },
     
-    isTorrentCommandEnabled: function(action, hash)
+    "trtSortCustom": function(col, dataX, dataY)
     {
-        var ret = true;
-        var state = this.torrents[hash].State;
-        
-        switch(action)
-        {
-            case "start":
-                ret = (state == TorrentState.stopped || state == TorrentState.paused);
-                break;
-            
-            case "stop":
-                ret = (state == TorrentState.downloading || state == TorrentState.stopped || state == TorrentState.seeding);
-                break;
-                
-            case "pause":
-                ret = (state == TorrentState.downloading || state == TorrentState.seeding);
-                break;
-                
-            case "remlabel":
-                ret = (!this.torrents[hash].Label == null || !this.torrents[hash].Label == "");
-                break;
-        }
+        var ret = 0;
         
         return ret;
     },
     
-    // return selected torrent hashes which can perform the action
-    getHashes: function(action)
+    "trtSelect": function(ev, id)
     {
-        var h = "";
-        var res = [];
+        this.updateToolbar();
         
-        var table = this.getTable("torrents");
-        var selectedRows = table.rowSel;
+        var selHash = this.trtTable.selectedRows;
         
-        for(var k in selectedRows)
+        if(selHash.length === 0)
         {
-            if((selectedRows[k] == true) && this.isTorrentCommandEnabled(action, k))
+            this.torrentID = "";
+            this.clearDetails();
+            return;
+        }
+        
+        this.torrentID = id;
+        
+        if(this.config.showDetails)
+        {
+            this.showDetails(id);
+        }
+        
+        if(ev.isRightClick())
+        {
+            this.showTrtMenu.delay(0, this, [ev, id]);
+        }
+    },
+    
+    "trtDblClick": function(id)
+    {
+        console.log("trtDblClick");
+    },
+    
+    "showTrtMenu": function(ev, id)
+    {
+        if(!ev.isRightClick()) return;
+        
+        var menuItems = [];
+        
+        // label selection
+        var labelIndex = CONST.TORRENT_LABEL;
+        var labelSubMenu = [[L_("OV_NEW_LABEL"), this.newLabel.bind(this)]];
+        
+        if(!this.trtTable.selectedRows.every(function(item) { return (this.torrents[item][labelIndex] == ""); }, this))
+        {
+            labelSubMenu.push([L_("OV_REMOVE_LABEL"), this.setLabel.bind(this, "")]);
+        }
+        
+        if(Object.getLength(this.labels) > 0)
+        {
+            labelSubMenu.push([CMENU_SEP]);
+            
+            $each(this.labels, function(_, label)
             {
-                res.push(k);
+                // check if every selected row has the given label, if so mark it as selected
+                
+                if (this.trtTable.selectedRows.every(function(item) { return (this.torrents[item][labelIndex] == label); }, this))
+                {
+                    labelSubMenu.push([CMENU_SEL, label]);
+                }
+                else
+                {
+                    labelSubMenu.push([label, this.setLabel.bind(this, label)]);
+                }
+            }, this);
+        }
+        
+        // build menu
+        var menuItemsMap =
+        {
+              "start" : [L_("ML_START"), this.start.bind(this)]
+            , "pause" : [L_("ML_PAUSE"), this.pause.bind(this)]
+            , "stop" : [L_("ML_STOP"), this.stop.bind(this)]
+            , "queueup" : [L_("ML_QUEUEUP"), (function(ev) { this.queueup(ev.shift); }).bind(this)]
+            , "queuedown" : [L_("ML_QUEUEDOWN"), (function(ev) { this.queuedown(ev.shift); }).bind(this)]
+            , "label" : [CMENU_CHILD, L_("ML_LABEL"), labelSubMenu]
+            , "remove" : [L_("ML_REMOVE"), this.remove.bind(this, CONST.TOR_REMOVE)]
+            , "removeand" : [CMENU_CHILD, L_("ML_REMOVE_AND"),
+              [
+                  [L_("ML_DELETE_TORRENT"), this.remove.bind(this, CONST.TOR_REMOVE_TORRENT)]
+                , [L_("ML_DELETE_DATATORRENT"), this.remove.bind(this, CONST.TOR_REMOVE_DATATORRENT)]
+                , [L_("ML_DELETE_DATA"), this.remove.bind(this, CONST.TOR_REMOVE_DATA)]
+              ]]
+            , "recheck" : [L_("ML_FORCE_RECHECK"), this.recheck.bind(this)]
+            , "copymagnet" : [L_("ML_COPY_MAGNETURI"), this.torShowMagnetCopy.bind(this)]
+            , "copy" : [L_("MENU_COPY"), this.torShowCopy.bind(this)]
+            , "properties" : [L_("ML_PROPERTIES"), this.showProperties.bind(this)]
+        };
+        
+        // disable actions
+        
+        var disabled = this.getDisabledActions();
+
+        Object.each(disabled, function(disabled, name)
+        {
+            var item = menuItemsMap[name];
+            if (!item) return;
+
+            if (disabled)
+            {
+                delete item[1];
             }
+        });
+        
+        // create menu array
+        menuItems = menuItems.concat([
+              menuItemsMap["start"]
+            , menuItemsMap["pause"]
+            , menuItemsMap["stop"]
+            , [CMENU_SEP]
+            , menuItemsMap["queueup"]
+            , menuItemsMap["queuedown"]
+            , menuItemsMap["label"]
+            , [CMENU_SEP]
+            , menuItemsMap["remove"]
+            , menuItemsMap["removeand"]
+            , [CMENU_SEP]
+            , menuItemsMap["recheck"]
+            , [CMENU_SEP]
+            , menuItemsMap["copymagnet"]
+            , menuItemsMap["copy"]
+            , [CMENU_SEP]
+            , menuItemsMap["properties"]
+        ]);
+
+        // draw menu
+
+        ContextMenu.clear();
+        ContextMenu.add.apply(ContextMenu, menuItems);
+        ContextMenu.show(ev.page);
+    },
+    
+    "torShowCopy": function()
+    {
+        console.log("implement me");
+    },
+    
+    "torShowMagnetCopy": function()
+    {
+        console.log("implement me");
+    },
+    
+    "showCopy": function(title, txt)
+    {
+        DialogManager.popup({
+              title: title
+            , icon: "dlgIcon-Copy"
+            , width: "35em"
+            , input: txt
+            , buttons: [{ text: L_("DLG_BTN_CLOSE") }]
+        });
+    },
+    
+    "showProperties": function(k)
+    {
+        console.log("implement me");
+    },
+    
+    "trtColReset": function()
+    {
+        console.log("trtColReset");
+    },
+    
+    "trtSort": function(index, reverse)
+    {
+        console.log("trtSort");
+    },
+    
+    "trtColMove": function()
+    {
+        console.log("trtColMove");
+    },
+    
+    "trtColResize": function()
+    {
+        console.log("trtColResize");
+    },
+    
+    "trtColToggle": function(index, enable, nosave)
+    {
+        var num = 1 << index;
+        
+        if(enable)
+        {
+            this.config.torrentTable.colMask |= num;
+        }
+        else
+        {
+            this.config.torrentTable.colMask &= ~num;
+        }
+        
+        if(!nosave && Browser.opera)
+        {
+            this.saveConfig(true);
+        }
+    },
+    
+    "hideMsg": function()
+    {
+        $("cover").hide();
+    },
+    
+    "beginPeriodicUpdate": function(delay)
+    {
+        this.endPeriodicUpdate();
+        
+        delay = parseInt(delay, 10);
+        if(isNaN(delay)) delay = this.config.updateInterval;
+        
+        this.config.updateInterval = delay = delay.max(this.limits.minUpdateInterval);
+        this.updateTimeout = this.update.delay(delay, this);
+    },
+    
+    "endPeriodicUpdate": function()
+    {
+        clearTimeout(this.updateTimeout);
+        clearInterval(this.updateTimeout);
+    },
+    
+    "request": function(method, url, data, fn, async, fails)
+    {
+        if(typeOf(fails) != "array") fails = [0];
+        
+        var self = this;
+        var really_async = true;
+        
+        if(really_async !== undefined)
+        {
+            really_async = async;
+        }
+        
+        var req = function()
+        {
+            try
+            {
+                new Request.JSON({
+                    "url": url,
+                    "method": method,
+                    "async": typeof(async) === "undefined" || !!async,
+                    "data": (data != null ? JSON.encode(data) : null),
+                    "urlEncoded": false,
+                    "onRequest": function()
+                    {
+                        // show ajax spinner
+                    },
+                    "onFailure": function()
+                    {
+                        self.endPeriodicUpdate();
+                        
+                        fails[0]++;
+                        
+                        var delay = Math.pow(self.limits.reqRetryDelayBase, fails[0]);
+                        
+                        if(fails[0] <= self.limits.reqRetryMaxAttempts)
+                        {
+                            log("Request failure #" + fails[0] + " (will retry in " + delay + " seconds): " + url);
+                        }
+                        else
+                        {
+                            window.removeEvents("unload");
+                            
+                            self.showMsg(
+                                "<p>Cannot connect to Hadouken</p>" +
+                                '<p>Try <a href="javascript:void(0);" onclick="window.location.reload(true);">reloading</a> the page</p>'
+                            );
+                            
+                            return;
+                        }
+                        
+                        self.request.delay(delay * 1000, self, [ method, url, data, function(json)
+                        {
+                            if(fails[0])
+                            {
+                                fails[0] = 0;
+                                
+                                log("Request retry succeeded: " + url);
+                                if(fn) fn.delay(0, self, json);
+                                self.beginPeriodicUpdate();
+                            }
+                        }, async, fails ]);
+                    },
+                    "onSuccess": (fn) ? fn.bind(self) : Function.from()
+                }).setHeader("Content-Type", "application/json").send();
+            }
+            catch(e)
+            {
+                console.log(e);
+            }
+        };
+        
+        req();
+    },
+    
+    "perform": function(action)
+    {
+        var all = false;
+        
+        var hashes = this.getHashes(action, all);
+        
+        if(hashes.length == 0) return;
+        
+        if(action.test(/^remove/) && hashes.contains(this.torrentID))
+        {
+            this.torrentID = "";
+            this.clearDetails();
+        }
+        
+        this.request("post", "/api?action=" + action, hashes, (function()
+        {
+            this.update();
+        }).bind(this));
+    },
+    
+    "getHashes": function(act, all)
+    {
+        var hashes = [];
+        var list = (all ? Object.keys(this.torrents) : this.trtTable.selectedRows);
+        var len = list.length;
+        
+        while(len--)
+        {
+            var key = list[len];
+            var stat = this.torrents[key][CONST.TORRENT_STATUS];
+            
+            switch(act)
+            {
+                case "start":
+                    if ((stat == CONST.STATE_DOWNLOADING || stat == CONST.STATE_SEEDING || stat == CONST.STATE_HASHING)) continue;
+                    break;
+            }
+            
+            hashes.push(key);
+        }
+        
+        return hashes;
+    },
+    
+    "start": function()
+    {
+        this.perform("start");
+    },
+    
+    "pause": function()
+    {
+        this.perform("pause");
+    },
+    
+    "stop": function()
+    {
+        this.perform("stop");
+    },
+    
+    "remove": function()
+    {
+        console.log("implement me");
+    },
+    
+    "recheck": function()
+    {
+        console.log("implement me");
+    },
+    
+    "update": function(listcb)
+    {
+        if(window.hdknweb !== undefined) return;
+        
+        this.totalDL = 0;
+        this.totalUL = 0;
+        
+        this.getList(null, (function()
+        {
+            // TODO: uncomment when implementing speed graph
+            // this.spdGraph.addData(this.totalUL, this.totalDL);
+            
+            this.showDetails();
+            
+            this.updateTitle();
+            this.updateToolbar();
+            this.updateStatusBar();
+            
+            if(typeof(listcb) === "function") listcb();
+        }).bind(this));
+        
+        if(typeof(DialogManager) !== "undefined")
+        {
+            if(DialogManager.showing.contains("Settings") && ("dlgSettings-TransferCap" == this.stpanes.active))
+            {
+                this.getTransferHistory();
+            }
+        }
+    },
+    
+    "getList": function(url, fn)
+    {
+        this.endPeriodicUpdate();
+        
+        this.request("get", "/api?action=gettorrents", null, (function(json)
+        {
+            this.loadList(json);
+            if(fn) fn(json);
+        }).bind(this));
+    },
+    
+    "getStatusInfo": function(state, progress, complete)
+    {
+        var res = ["", ""];
+        
+        if(state == CONST.STATE_STOPPED && complete)
+        {
+            res = ["Status_Complete", L_("OV_FL_FINISHED")];
+        }
+        else if((state == CONST.STATE_STOPPED || state == CONST.STATE_STOPPING) && !complete)
+        {
+            res = ["Status_Incomplete", L_("OV_FL_STOPPED")];
+        }
+        else if(state == CONST.STATE_PAUSED)
+        {
+            res = ["Status_Paused", L_("OV_FL_PAUSED")];
+        }
+        else if(state == CONST.STATE_DOWNLOADING)
+        {
+            res = complete ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
+        }
+        else if(state == CONST.STATE_SEEDING)
+        {
+            res = ["Status_Up", L_("OV_FL_SEEDING")];
+        }
+        else if(state == CONST.STATE_HASHING)
+        {
+            res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (progress / 10).toFixedNR(1))];
+        }
+        else if(state == CONST.STATE_ERROR)
+        {
+            res = ["Status_Error", L_("OV_FL_ERROR").replace(/%s/, "??")];
         }
         
         return res;
     },
     
-    stop: function()
+    "loadList": function(json)
     {
-        this.performAction("stop", { action: "stop" });
-    },
-    
-    start: function()
-    {
-        this.performAction("start", { action: "start" });
-    },
-    
-    pause: function()
-    {
-        this.performAction("pause", { action: "pause" });
-    },
-    
-    performAction: function(action, dataObj)
-    {
-        var hashes = this.getHashes(action);
-        
-        if(hashes.length > 0)
+        function extractLists(fullListName, changedListName, removedListName, key, exList)
         {
-            var data = {};
+            var extracted = { hasChanged: false };
             
-            for(var h in hashes)
+            if(!has(json, fullListName))
             {
-                data[hashes[h]] = dataObj;
-            }
-            
-            Network.putJson("/api/torrents", data, function(resp)
-            {
-                WebUI.update();
-            });
-        }
-    },
-    
-    showTorrentDetails: function(id)
-    {
-        console.log("show torrent details");
-    },
-    
-    getTorrents: function()
-    {        
-        if(this.updateTimer)
-            window.clearTimeout(this.updateTimer);
-        
-        this.timer.start();
-        
-        if(this.updateTimer)
-            window.clearTimeout(this.updateTimer);
-            
-        Network.getJson("/api/torrents", [ this.addTorrents, this ], true);
-    },
-    
-    addTorrents: function(data)
-    {
-        var table = this.getTable("torrents");
-        var totalUp = 0;
-        var totalDown = 0;
-        var tArray = [];
-        
-        $.each(data.torrents, function(hash, torrent)
-        {
-            totalUp += torrent.UploadedBytes;
-            totalDown += torrent.DownloadedBytes;
-            
-            var statusInfo = WebUI.getStatusIcon(torrent);
-            torrent.Status = statusInfo[1];
-            
-            var label = WebUI.getLabels(hash, torrent);
-            
-            if(!$type(WebUI.torrents[hash]))
-            {
-                WebUI.labels[hash] = label;
-                
-                table.addRowById(torrent, hash, statusInfo[0], {label : label});
-                
-                tArray.push(hash);
-                
-                WebUI.filterByLabel(hash);
-            }
-            else 
-            {
-                var oldTorrent = WebUI.torrents[hash];
-                
-                if(label != WebUI.labels[hash])
+                if(!has(json, changedListName))
                 {
-                    WebUI.labels[hash] = label;
-                    table.setAttr(hash, { label: label });
-                    WebUI.filterByLabel(hash);
-                }
-                
-                table.setIcon(hash, statusInfo[0]);
-                
-                if(oldTorrent.DownloadedBytes != torrent.DownloadedBytes)
-                {
-                    if(WebUI.detailsId == hash)
-                    {
-                        WebUI.updateFiles(hash);
-                    }
-                    else
-                    {
-                        delete WebUI.files[hash];
-                    }
-                }
-                
-                for( var prop in torrent)
-                {
-                    table.setValueById(hash, prop, torrent[prop]);
-                }
-            }
-            
-            torrent._updated = true;
-        });
-        
-        $.extend(this.torrents, data.torrents);
-        
-        // set speed values
-        
-        var wasRemoved = false;
-        
-        this.clearTegs();
-        
-        $.each(this.torrents, function(hash, torrent)
-        {
-            if(!torrent._updated)
-            {
-                delete WebUI.torrents[hash];
-                
-                // decrement labels
-                if(WebUI.labels[hash].indexOf("-_-_-nlb-_-_-") >= -1)
-                    WebUI.labels["-_-_-nlb-_-_-"]--;
-                
-                if(WebUI.labels[hash].indexOf("-_-_-com-_-_-") >= -1)
-                    WebUI.labels["-_-_-com-_-_-"]--;
-                    
-                if(WebUI.labels[hash].indexOf("-_-_-dls-_-_-") >= -1)
-                    WebUI.labels["-_-_-dls-_-_-"]--;
-                    
-                if(WebUI.labels[hash].indexOf("-_-_-act-_-_-") >= -1)
-                    WebUI.labels["-_-_-act-_-_-"]--;
-                    
-                if(WebUI.labels[hash].indexOf("-_-_-iac-_-_-") >= -1)
-                    WebUI.labels["-_-_-err-_-_-"]--;
-                    
-                if(WebUI.labels[hash].indexOf("-_-_-err-_-_-") >= -1)
-                    WebUI.labels["-_-_-err-_-_-"]--;
-                
-                WebUI.labels["-_-_-all-_-_-"]--;
-                
-                delete WebUI.labels[hash];
-                
-                table.removeRow(hash);
-                wasRemoved = true;
-            }
-            else
-            {
-                torrent._updated = false;
-                WebUI.updateTegs(torrent);
-            }
-        });
-        
-        this.loadLabels(data.labels);
-        this.updateLabels(wasRemoved);
-        
-        this.loadTorrents();
-    },
-    
-    setTeg: function(str)
-    {
-        str = $.trim(str);
-        
-        if(str != "")
-        {
-            for(var id in this.tegs)
-            {
-                
-            }
-        }
-    },
-    
-    clearTegs: function()
-    {
-        for(var id in this.tegs)
-        {
-            this.tegs[id].cnt = 0;
-        }
-    },
-    
-    updateTeg: function(id)
-    {
-        var teg = this.tegs[id];
-        var str = teg.val.toLowerCase();
-        
-        $.each(this.torrents, function(hash, torrent)
-        {
-            if(torrent.Name.ToLowerCase().indexOf(str) >= -1)
-            {
-                teg.cnt++;
-            }
-        });
-        
-        var counter = $("#" + id + "-c");
-        
-        if(counter.text() != teg.cnt)
-        {
-            counter.text(teg.cnt);
-            $("#" + id).attr("title", teg.val + " (" + teg.cnt + ")");
-        }
-    },
-    
-    updateTegs: function(torrent)
-    {
-        var str = torrent.Name.toLowerCase();
-        
-        for(var id in this.tegs)
-        {
-            var teg = this.tegs[id];
-            
-            if(str.indexOf(teg.val.toLowerCase()) >= -1)
-            {
-                teg.cnt++;
-            }
-        }
-    },
-    
-    removeTeg: function(id)
-    {
-        delete this.tegs[id];
-        
-        $($$(id)).remove();
-        
-        this.actLbl = "";
-        this.switchLabel($$("-_-_-all-_-_-"));
-    },
-    
-    getStatusIcon: function(torrent)
-    {
-        var state = torrent.State;
-        var progress = iv(torrent.Progress);
-        var complete = torrent.Complete;
-        
-        var icon = "", status = "";
-        
-        if(state == TorrentState.stopped && complete)
-        {
-            icon = "Status_Completed";
-            status = "Completed";
-        }
-        else if(state == TorrentState.stopped)
-        {
-            icon = "Status_Stopped";
-            status = "Stopped";
-        }
-        else if(state == TorrentState.seeding)
-        {
-            icon = "Status_Seeding";
-            status = "Seeding";
-        }
-        else if(state == TorrentState.paused)
-        {
-            icon = "Status_Paused";
-            status = "Paused";
-        }
-        else if(state == TorrentState.downloading)
-        {
-            icon = "Status_Downloading";
-            status = "Downloading";
-        }
-        
-        return [ icon, status ];
-    },
-    
-    labelContextMenu: function(e)
-    {
-        // if right click
-        if(e.which == 3)
-        {
-            var table = WebUI.getTable("torrents");
-            table.clearSelection();
-            
-            WebUI.switchLabel(this);
-            
-            table.fillSelection();
-            
-            var id = table.getFirstSelected();
-            
-            if(id)
-            {
-                WebUI.createMenu(null, id);
-                ContextMenu.show(e.x, e.y);
-            }
-            else
-            {
-                ContextMenu.hide();
-            }
-        }
-        else
-        {
-            WebUI.switchLabel(this);
-        }
-        
-        return false;
-    },
-    
-    loadLabels: function(d)
-    {
-        var p = $("#lbll");
-        var temp = [];
-        var keys = [];
-        
-        for(var lbl in d)
-        {
-            keys.push(lbl);
-        }
-        keys.sort();
-        
-        for(var i = 0; i < keys.length; i++)
-        {
-            var lbl = keys[i];
-            
-            this.labels["-_-_-" + lbl + "-_-_-"] = d[lbl];
-            this.cLabels[lbl] = 1;
-            
-            temp["-_-_-" + lbl + "-_-_-"] = true;
-            
-            if(!$$("-_-_-" + lbl + "-_-_-"))
-            {
-                p.append($("<li>").
-                    attr("id", "-_-_-" + lbl + "-_-_-").
-                    addClass("lbl_" + lbl).
-                    html(escapeHTML(lbl) + "&nbsp;(<span id=\"-_-_-" + lbl + "-_-_-c\">" + d[lbl] + "</span>)").
-                    mouseclick(WebUI.labelContextMenu).addClass("cat"));
-            }
-        }
-        
-        var actDeleted = false;
-        
-        p.children().each(function(ndx, val)
-        {
-            var id = val.id;
-            
-            if(id && !$type(temp[id]))
-            {
-                $(val).remove();
-                
-                delete WebUI.labels[id];
-                delete WebUI.cLabels[id.substr(5, id.length - 10)];
-                
-                if(WebUI.actLabel == id)
-                {
-                    actDeleted = true;
-                }
-            }
-        });
-        
-        if(actDeleted)
-        {
-            this.actLabel = "";
-            this.switchLabel($$("-_-_-all-_-_-"));
-        }
-    },
-    
-    getLabels: function(id, torrent)
-    {
-        if(!$type(this.labels[id]))
-            this.labels[id] = "";
-        
-        var lbl = torrent.Label;
-        
-        if(lbl == "" || lbl == null )
-        {
-            lbl += "-_-_-nlb-_-_-";
-            
-            if(this.labels[id].indexOf("-_-_-nlb-_-_-") == -1)
-            {
-                this.labels["-_-_-nlb-_-_-"]++;
-            }
-        }
-        else
-        {
-            if(this.labels[id].indexOf("-_-_-nlb-_-_-") > -1)
-            {
-                this.labels["-_-_-nlb-_-_-"]--;
-            }
-        }
-        
-        lbl = "-_-_-" + lbl + "-_-_-";
-
-        if(torrent.Progress < 100.0)
-        {
-            lbl += "-_-_-dls-_-_-";
-            
-            if(this.labels[id].indexOf("-_-_-dls-_-_-") == -1)
-            {
-                this.labels["-_-_-dls-_-_-"]++;
-            }
-            
-            if(this.labels[id].indexOf("-_-_-com-_-_-") > -1)
-            {
-                this.labels["-_-_-com-_-_-"]--;
-            }
-        }
-        else
-        {
-            lbl += "-_-_-com-_-_-";
-            
-            if(this.labels[id].indexOf("-_-_-com-_-_-") ==- 1)
-            {
-                this.labels["-_-_-com-_-_-"]++;
-            }
-            
-            if(this.labels[id].indexOf("-_-_-dls-_-_-") >- 1)
-            {
-                this.labels["-_-_-dls-_-_-"]--;
-            }
-        }
-        
-        if((torrent.DownloadSpeed >= 1024) || (torrent.UploadSpeed >= 1024))
-        {
-            lbl += "-_-_-act-_-_-";
-            
-            if(this.labels[id].indexOf("-_-_-act-_-_-") == -1)
-            {
-                this.labels["-_-_-act-_-_-"]++;
-            }
-            
-            if(this.labels[id].indexOf("-_-_-iac-_-_-") > -1)
-            {
-                this.labels["-_-_-iac-_-_-"]--;
-            }
-        }
-        else
-        {
-            lbl += "-_-_-iac-_-_-";
-            
-            if(this.labels[id].indexOf("-_-_-iac-_-_-") == -1)
-            {
-                this.labels["-_-_-iac-_-_-"]++;
-            }
-            
-            if(this.labels[id].indexOf("-_-_-act-_-_-") > -1)
-            {
-                this.labels["-_-_-act-_-_-"]--;
-            }
-        }
-        
-        if(torrent.State == "Error")
-        {
-            lbl += "-_-_-err-_-_-";
-            
-            if(this.labels[id].indexOf("-_-_-err-_-_-") == -1)
-            {
-                this.labels["-_-_-err-_-_-"]++;
-            }
-        }
-        else
-        {
-            if(this.labels[id].indexOf("-_-_-err-_-_-") > -1)
-            {
-                this.labels["-_-_-err-_-_-"]--;
-            }
-        }
-        
-        lbl += "-_-_-all-_-_-";
-        
-        if(this.labels[id] == "")
-        {
-            this.labels["-_-_-all-_-_-"]++;
-        }
-        
-        return lbl;
-    },
-    
-    removeLabel: function()
-    {
-        this.performAction("setlabel", { label: "" });
-    },
-    
-    setLabel: function(lbl)
-    {
-        this.performAction("setlabel", { label: lbl });
-    },
-    
-    newLabel: function()
-    {
-        var table = this.getTable("torrents");
-        var s = "New label";
-        
-        if(table.selCount == 1)
-        {
-            var k = table.getFirstSelected();
-            var lbl = this.torrents[k].Label;
-            
-            if(lbl != "")
-            {
-                s = this.torrents[k].Label;
-            }
-        }
-        
-        $("#txtLabel").val(s);
-        
-        Dialogs.show("dlgLabel");
-    },
-    
-    createLabel: function()
-    {
-        var lbl = $.trim($("#txtLabel").val());
-        lbl = lbl.replace(/\"/g, "'");
-        
-        if(lbl != "")
-        {
-            this.performAction("setlabel", { label: lbl });
-        }
-    },
-    
-    updateLabels: function(wasRemoved)
-    {
-        for(var k in this.labels)
-        {
-            if(k.substr(0,5) == "-_-_-")
-            {
-                $($$(k + "c")).text(this.labels[k]);
-            }
-        }
-        
-        for(var id in this.tegs)
-        {
-            var counter = $("#" + id + "-c");
-            var teg = this.tegs[id];
-            
-            if(counter.text() != teg.cnt)
-            {
-                counter.text(teg.cnt);
-                $("#" + id).attr("title", teg.val + " (" + teg.cnt + ")");
-            }
-        }
-    },
-    
-    switchLabel: function(obj)
-    {
-        if(obj.id != this.actLbl)
-        {
-            if((this.actLbl != "") && $$(this.actLbl))
-            {
-                $($$(this.actLbl)).removeClass("sel");
-            }
-            
-            $(obj).addClass("sel");
-            
-            this.actLbl = obj.id;
-            
-            var table = this.getTable("torrents");
-            table.scrollTo(0);
-            
-            for(var k in this.torrents)
-            {
-                this.filterByLabel(k);
-            }
-            
-            table.clearSelection();
-            
-            if(this.detailsId != "")
-            {
-                this.detailsId = "";
-                this.clearDetails();
-            }
-            
-            table.refreshRows();
-        }
-    },
-    
-    filterByLabel: function(id)
-    {
-        var table = this.getTable("torrents");
-        
-        if($($$(this.actLbl)).hasClass("teg"))
-        {
-            var teg = this.tegs[this.actLbl];
-            
-            if(teg)
-            {
-                if(table.getValueById(id, "Name").toLowerCase().indexOf(teg.val.toLowerCase()) > -1)
-                {
-                    table.unhideRow(id);
+                    extracted[fullListName] = extracted[removedListName] = [];
+                    extracted.hasChanged = false;
                 }
                 else
                 {
-                    table.hideRow(id);
+                    extracted[fullListName] = json[changedListName];
+                    delete json[changedListName];
+                    
+                    extracted[removedListName] = json[removedListName];
+                    delete json[removedListName];
+                    
+                    extracted.hasChanged = ((extracted[fullListName].length + extracted[removedListName].length) > 0);
                 }
-            }
-        }
-        else
-        {
-            if(table.getAttr(id, "label").indexOf(this.actLbl) > -1)
-            {
-                table.unhideRow(id);
             }
             else
             {
-                table.hideRow(id);
-            }
-        }
-    },
-    
-    resize: function()
-    {
-        var ww = $(window).width();
-        var wh = $(window).height();
-        var w = Math.floor(ww * (1 - WebUI.settings["webui.hsplit"])) - 5;
-        var th = ($("#toolbar").is(":visible") ? $("#toolbar").height() : -1)+$("#statusbar").height()+15;
-
-        $("#statusbar").width(ww);
+                extracted.hasChanged = true;
                 
-        WebUI.resizeLeft(w, wh - th);
-        w = ww - w;
-        
-        w -= 11;
-        
-        WebUI.resizeTop(w, Math.floor(wh * (WebUI.settings["webui.show_dets"] ? WebUI.settings["webui.vsplit"] : 1)) - th - 7);
-        
-        if(WebUI.settings["webui.show_dets"])
-        {
-            WebUI.resizeBottom(w, Math.floor(wh * (1 - WebUI.settings["webui.vsplit"])));
-        }
-        
-        $("#HDivider").height(wh - th + 2);
-    },
-    
-    resizeLeft: function(w, h)
-    {
-        if(w !== null)
-        {
-            $("#categories").width(w);
-            $("#VDivider").width = $(window).width() - w - 10;
-        }
-        
-        if(h !== null)
-        {
-            $("#categories").height(h);
-        }
-    },
-    
-    resizeTop: function(w, h)
-    {
-        this.getTable("torrents").resize(w, h); 
-    },
-    
-    resizeBottom: function(w, h)
-    {
-        if(w !== null)
-        {
-            $("#details").width(w);
-            w -= 8;
-        }
-        
-        if(h !== null)
-        {
-            $("#details").height(h);
-            h -= ($("#tabbar").height());
-            
-            $("#tdcont").height(h);
-            h -= 2;
-        }
-        
-        if(WebUI.configured)
-        {
-            // resize other tables and speedgraph
-            this.getTable("files").resize(w,h);
-        }
-    },
-    
-    setHSplitter: function()
-    {
-        var r = 1 - ($("#categories").width() + 5) / $(window).width();
-        r = Math.floor(r * Math.pow(10, 3)) / Math.pow(10, 3);
-        
-        if((WebUI.settings["webui.hsplit"] != r) && (r > 0 && r < 1))
-        {
-            WebUI.settings["webui.hsplit"] = r;
-            WebUI.save();
-        }
-    },
-    
-    setVSplitter: function()
-    {
-        var r = 1 - ($("#details").height() / $(window).height());
-        r = Math.floor(r * Math.pow(10, 3)) / Math.pow(10, 3);
-
-        if((WebUI.settings["webui.vsplit"] != r) && (r > 0) && (r < 1)) 
-        {
-            WebUI.settings["webui.vsplit"] = r;
-            WebUI.save();
-        }
-    },
-    
-    setActiveView: function(id)
-    {
-        this.activeView = id;
-    },
-    
-    update: function()
-    {
-        WebUI.getTorrents();
-    },
-    
-    loadTorrents: function()
-    {
-        var table = this.getTable("torrents");
-        table.refreshRows();        
-        table.Sort();
-        
-        this.setInterval();
-        this.updateDetails();
-    },
-    
-    getTable: function(prefix)
-    {
-        return($type(this.tables[prefix]) ? this.tables[prefix].obj : null);
-    },
-
-    
-    show: function()
-    {
-        if($("#cover").is(":visible"))
-        {
-            $("#cover").hide();
-            WebUI.resize();
-            //theTabs.show("lcont");
-        }
-    },
-    
-    save: function()
-    {
-        if(!WebUI.configured)
-        {
-            return;
-        }
-        
-        $.each(WebUI.tables, function(ndx, table)
-        {
-            var width = [];
-            var enabled = [];
-            
-            for(i = 0; i < table.obj.cols; i++)
-            {
-                width.push(table.obj.getColWidth(i));
-                enabled.push(table.obj.isColumnEnabled(i));
+                var list = extracted[fullListName] = json[fullListName];
+                delete json[fullListName];
+                
+                var removed = extracted[removedListName] = [];
+                
+                var exKeys = {};
+                for(var k in exList)
+                {
+                    exKeys[k] = 1;
+                }
+                
+                for(var i = 0, len = list.length; i < len; i++)
+                {
+                    if(has(exKeys, list[i][key])) delete exKeys[list[i][key]];
+                }
+                
+                for(var k in exKeys)
+                {
+                    removed.push(k);
+                }
             }
             
-            console.log(width);
-            
-            WebUI.settings["webui." + ndx + ".colwidth"] = width;
-            WebUI.settings["webui." + ndx + ".colenabled"] = enabled;
-            WebUI.settings["webui." + ndx +".colorder"] = table.obj.colOrder;
-            WebUI.settings["webui." + ndx +".sindex"] = table.obj.sIndex;
-            WebUI.settings["webui." + ndx +".rev"] = table.obj.reverse;
-            WebUI.settings["webui." + ndx +".sindex2"] = table.obj.secIndex;
-            WebUI.settings["webui." + ndx +".rev2"] = table.obj.secRev;
-        });
+            return extracted;
+        }
         
-        var cfg = {};
-        
-        $.each(WebUI.settings, function(key, value)
+        if(!json.labels)
         {
-            if((/^webui\./).test(key))
-            {
-                cfg[key] = JSON.stringify(value);
-            }
-        });
-        
-        Network.postJson("/api/config", cfg, null, true);
-    },
-    
-    resetInterval: function()
-    {
-        this.timer.stop();
-        
-        if(this.updateTimer)
-            window.clearTimeout(this.updateTimer);
-            
-        this.interval = iv(this.settings["webui.update_interval"]);
-        this.updateTimer = window.setTimeout(this.update, this.interval);
-    },
-    
-    setInterval: function(force)
-    {
-        this.timer.stop();
-        
-        if(this.updateTimer)
-            window.clearTimeout(this.updateTimer);
-            
-        if(this.interval == -1)
-        {
-            this.interval = iv(this.settings["webui.update_interval"]) + this.timer.interval * 4;
+            this.loadLabels(Array.clone([]));
         }
         else
         {
-            this.interval = iv((this.interval + iv(this.settings["webui.update_interval"]) + this.timer.interval * 4) / 2);
+            this.loadLabels(Array.clone(json.labels));
         }
         
-        this.updateTimer = window.setTimeout(this.update, this.interval);
-    },
-    
-    showAddTorrent: function()
-    {
-        Dialogs.toggle("dlgAddTorrent");
-    },
-    
-    showAbout: function()
-    {
-        Dialogs.toggle("dlgAbout");
-    },
-    
-    checkForUpdates: function()
-    {
-        $("#checkUpdates").attr("disabled", true);
-        
-        $.getJSON("http://localhost:13410/updates?jsoncallback=?", function(data)
+        (function(deltaLists)
         {
-            $("#checkUpdates").attr("disabled", false);
+            var sortedColChanged = false;
             
-            $("#upd").text(data.latestVersion);
+            this.trtTable.keepScroll((function()
+            {
+                deltaLists.torrents.each(function(item)
+                {
+                    this.totalDL += item[CONST.TORRENT_DOWNSPEED];
+                    this.totalUL += item[CONST.TORRENT_UPSPEED];
+                    
+                    var hash = item[CONST.TORRENT_HASH];
+                    var statinfo = this.getStatusInfo(item[CONST.TORRENT_STATUS], item[CONST.TORRENT_PROGRESS], item[CONST.TORRENT_COMPLETE]);
+                    
+                    this.torGroups[hash] = this.getTorGroups(item);
+                    
+                    var row = this.trtDataToRow(item);
+                    var ret = false;
+                    var activeChanged = false;
+                    
+                    if(has(this.torrents, hash))
+                    {
+                        // old torrent found, update list
+                        var rdata = this.trtTable.rowData[hash];
+                        activeChanged = (rdata.hidden == this.torrentIsVisible(hash));
+                        
+                        if(activeChanged) rdata.hidden = !rdata.hidden;
+                        
+                        this.trtTable.setIcon(hash, statinfo[0]);
+                        
+                        row.each(function(v, k)
+                        {
+                            if(v != rdata.data[k])
+                            {
+                                ret = this.trtTable.updateCell(hash, k, row) || ret;
+                                
+                                if(this.trtColDefs[k][0] == "done")
+                                {
+                                    ret = this.trtTable.updateCell(hash, this.trtColStatusIdx, row) || ret;
+                                }
+                            }
+                        }, this);
+                        
+                        if(!ret && activeChanged)
+                        {
+                            this.trtTable._insertRow(hash);
+                        }
+                    }
+                    else
+                    {
+                        // new torrent found
+                        this.trtTable.addRow(row, hash, statinfo[0], !this.torrentIsVisible(hash));
+                        ret = true;
+                    }
+                    
+                    this.torrents[hash] = item;
+                    sortedColChanged = sortedColChanged || ret;
+                }, this);
+                
+                this.trtTable.requiresRefresh = sortedColChanged || this.trtTable.requiresRefresh;
+                
+                // handle removed items
+                
+                var clear = false;
+                
+                if(window.hdknweb === undefined)
+                {
+                    deltaLists.torrentm.each(function(key)
+                    {
+                        Object.each(this.torGroups[key].cat, function(_, cat)
+                        {
+                            --this.categories[cat];
+                        }, this);
+                        
+                        delete this.torGroups[key];
+                        delete this.torrents[key];
+                        
+                        this.trtTable.removeRow(key);
+                        
+                        if(this.torrentID == key)
+                        {
+                            clear = true;
+                        }
+                    }, this);
+                }
+                
+                if(clear)
+                {
+                    this.torrentID = "";
+                    this.clearDetails();
+                }
+                
+                // calc max torrent job queue number
+                var queueMax = -1, q = CONST.TORRENT_QUEUE_POSITION;
+                
+                Object.each(this.torrents, function(trtData)
+                {
+                    if(queueMax < trtData[q])
+                    {
+                        queueMax = trtData[q];
+                    }
+                });
+                
+                this.torQueueMax = queueMax;
+            }).bind(this));
+            
+            // finish up
+            
+            this.trtTable.resizePads();
+            
+            this.updateLabels();
+            this.trtTable.refresh();
+        }).bind(this)(extractLists("torrents", "torrentp", "torrentm", CONST.TORRENT_HASH, this.torrents));
+        
+        json = null;
+        
+        this.beginPeriodicUpdate();
+    },
+    
+    "loadLabels": function(labels)
+    {
+        // TODO: remove return
+        return;
+        
+        var labelList = $("mainCatList-labels"), temp = {};
+        
+        labels.each(function(lbl, idx)
+        {
+            var label = lbl[0], labelId = "lbl_" + encodeID(label), count = lbl[1], li = null;
+            
+            if((li = $(labelId)))
+            {
+                li.getElement(".count").set("text", count);
+            }
+            else
+            {
+                labelList.grab(new Element("li", { "id": labelId })
+                    .appendText(label + " (")
+                    .grab(new Element("span", { "class": "count", "text": count }))
+                    .appendText(")")
+                );
+            }
+            
+            if(has(this.labels, label))
+            {
+                delete this.labels[label];
+            }
+            
+            temp[label] = count;
+        }, this);
+        
+        var activeChanged = false;
+        
+        for(var k in this.labels)
+        {
+            var id = "lbl_" + encodeID(k);
+            
+            if(this.config.activeTorGroups.lbl[id])
+            {
+                activeChanged = true;
+            }
+            
+            delete this.config.activeTorGroups.lbl[id];
+            $(id).destroy();
+        }
+        
+        this.labels = temp;
+        
+        if(activeChanged)
+        {
+            var activeGroupCount =
+            (
+                Object.getLength(this.config.activeTorGroups.cat)
+              + Object.getLength(this.config.activeTorGroups.lbl)
+            );
+            
+            if(activeGroupCount <= 0)
+            {
+                this.config.activeTorGroups.cat["cat_all"] = 1;
+            }
+            
+            this.refreshSelectedTorGroups();
+        }
+    },
+    
+    "setLabel": function(lbl)
+    {
+        console.log("implement me");
+    },
+    
+    "newLabel": function()
+    {
+        console.log("implement me");
+    },
+    
+    "updateLabels": function()
+    {
+        ["cat_all", "cat_dls", "cat_com", "cat_act", "cat_iac", "cat_nlb"].each(function(cat)
+        {
+            $(cat + "_c").set("text", this.categories[cat]);
+        }, this);
+    },
+    
+    "getSettings": function(fn)
+    {
+        var act = (function(json)
+        {
+            this.addSettings(json, fn);
+        }).bind(this);
+        
+        this.request("get", "/api?action=getsettings", null, act);
+    },
+    
+    "addSettings": function(json, fn)
+    {
+        var loadCookie = (function(newCookie)
+        {
+            function safeCopy(objOrig, objNew)
+            {
+                $each(objOrig, function(v, k)
+                {
+                    var tOrig = typeOf(objOrig[k])
+                        tNew  = typeOf(objNew[k]);
+                        
+                    if(tOrig === tNew)
+                    {
+                        if(tOrig === "object")
+                        {
+                            safeCopy(objOrig[k], objNew[k]);
+                        }
+                        else
+                        {
+                            objOrig[k] = objNew[k];
+                        }
+                    }
+                });
+            }
+            
+            var cookie = this.config;
+            
+            newCookie = newCookie || {};
+            safeCopy(cookie, newCookie);
+            
+            cookie.activeTorGroups = newCookie.activeTorGroups || this.defConfig.activeTorGroups || {};
+            
+            if(cookie.activeSettingsPane)
+            {
+                this.stpanes.show(cookie.activeSettingsPane.replace(/^tab_/, ""));
+            }
+            
+            // set up listviews
+            
+            this.trtTable.setConfig({
+                "colSort": [ cookie.torrentTable.sIndex, cookie.torrentTable.reverse ],
+                "colMask": cookie.torrentTable.colMask,
+                "colOrder": cookie.torrentTable.colOrder,
+                "colWidth": cookie.torrentTable.colWidth
+            });
+            
+            this.tableSetMaxRows(cookie.maxRows);
+            
+            resizeUI();
+        }).bind(this);
+        var tcmode = 0;
+        
+        for(var i = 0, j = json.settings.length; i < j; i++)
+        {
+            var key = json.settings[i][CONST.SETTING_NAME],
+                typ = json.settings[i][CONST.SETTING_TYPE],
+                val = json.settings[i][CONST.SETTING_VALUE],
+                par = json.settings[i][CONST.SETTING_PARAM] || {};
+                
+            // handle cookie
+            if(key === "webui.cookie")
+            {
+                console.log("loading webui.cookie");
+                
+                loadCookie(JSON.decode(val, true));
+            }
+                
+            // convert types
+            switch(typ)
+            {
+                case CONST.SETTINGTYPE_INTEGER: val = val.toInt(); break;
+            }
+            
+            // handle special settings
+            // none yet
+            
+            if(par.access === CONST.SETTINGPARAM_ACCESS_RO)
+            {
+                var ele = $(key);
+                if(ele) ele.addClass("disabled");
+            }
+            
+            this.settings[key] = val;
+            _unhideSetting(key);
+        }
+        
+        delete json.settings;
+        
+        // load language
+        if(!(this.config.lang in LANG_LIST))
+        {
+            var langList = "";
+            
+            for(var lang in LANG_LIST)
+            {
+                langList += "|" + lang;
+            }
+            
+            var useLang = (navigator.language ? navigator.language : navigator.userLanguage || "").replace("-", "");
+            
+            if((useLang = useLang.match(new RegExp(langList.substr(1), "i"))))
+            {
+                useLang = useLang[0];
+            }
+            
+            if(useLang && (useLang in LANG_LIST))
+            {
+                this.config.lang = useLang;
+            }
+            else
+            {
+                this.config.lang = (this.defConfig.lang || "en");
+            }
+        }
+        
+        loadLangStrings({
+            "lang": this.config.lang,
+            "onload": (function()
+            {
+                this.loadSettings();
+                
+                if(fn) fn();
+            }).bind(this)
         });
+    },
+    
+    "torrentIsVisible": function(hash)
+    {
+        var group = this.torGroups[hash];
+        var actCat = this.config.activeTorGroups.cat;
+        var actLbl = this.config.activeTorGroups.lbl;
+        
+        var visible = true;
+        
+        // Category: Downloading/Completed
+        if (visible && (actCat["cat_dls"] || actCat["cat_com"]))
+        {
+            visible = visible && ((actCat["cat_dls"] && group.cat["cat_dls"]) || (actCat["cat_com"] && group.cat["cat_com"]));
+        }
+
+        // Category: Active/Inactive
+        if (visible && (actCat["cat_act"] || actCat["cat_iac"]))
+        {
+            visible = visible && ((actCat["cat_act"] && group.cat["cat_act"]) || (actCat["cat_iac"] && group.cat["cat_iac"]));
+        }
+
+        // Labels
+        if (visible && (actCat["cat_nlb"] || Object.some(actLbl, Function.from(true))))
+        {
+            visible = visible && ((actCat["cat_nlb"] && group.cat["cat_nlb"]) || Object.some(actLbl, function(_, lbl) { return group.lbl[lbl]; }));
+        }
+
+        return !!visible;
+    },
+    
+    "getTorGroups": function(tor)
+    {
+        var groups = Object.merge({}, this.defTorGroup);
+        
+        // all
+        groups.cat["cat_all"] = 1;
+        
+        // labels
+        var lbls = Array.from(tor[CONST.TORRENT_LABEL] || []);
+        
+        if(lbls.length <= 0)
+        {
+            groups.cat["cat_nlb"] = 1;
+        }
+        else
+        {
+            lbls.each(function(lbl)
+            {
+                groups.lbl["lbl_" + encodeID(lbl)] = 1;
+            });
+        }
+        
+        // dl / complete
+        
+        if(tor[CONST.TORRENT_COMPLETE])
+        {
+            groups.cat["cat_com"] = 1;
+        }
+        else
+        {
+            groups.cat["cat_dls"] = 1;
+        }
+        
+        // active / inactive
+        
+        if((tor[CONST.TORRENT_DOWNSPEED] > (this.settings["queue.slow_dl_threshold"] || 103)) ||
+           (tor[CONST.TORRENT_UPSPEED] > (this.settings["queue.slow_ul_threshold"] || 103)))
+        {
+            groups.cat["cat_act"] = 1;
+        }
+        else
+        {
+            groups.cat["cat_iac"] = 1;
+        }
+        
+        // update group counts
+        // TODO: Move this elsewhere!
+        (function(groups, oldGroups) {
+            if (!oldGroups)
+            {
+                Object.each(groups.cat, function(_, cat)
+                {
+                    ++this.categories[cat];
+                }, this);
+            }
+            else
+            {
+                // Labels
+                if (groups.cat["cat_nlb"])
+                {
+                    if (!oldGroups.cat["cat_nlb"])
+                    {
+                        ++this.categories["cat_nlb"];
+                    }
+                }
+                else
+                {
+                    if (oldGroups.cat["cat_nlb"])
+                    {
+                        --this.categories["cat_nlb"];
+                    }
+                }
+
+                // Categories: Downloading/Completed
+                if (groups.cat["cat_dls"])
+                {
+                    if (oldGroups.cat["cat_com"])
+                    {
+                        --this.categories["cat_com"];
+                        ++this.categories["cat_dls"];
+                    }
+                }
+                else
+                {
+                    if (oldGroups.cat["cat_dls"]) 
+                    {
+                        --this.categories["cat_dls"];
+                        ++this.categories["cat_com"];
+                    }
+                }
+
+                // Categories: Active/Inactive
+                if (groups.cat["cat_act"])
+                {
+                    if (oldGroups.cat["cat_iac"])
+                    {
+                        --this.categories["cat_iac"];
+                        ++this.categories["cat_act"];
+                    }
+                }
+                else
+                {
+                    if (oldGroups.cat["cat_act"])
+                    {
+                        --this.categories["cat_act"];
+                        ++this.categories["cat_iac"];
+                    }
+                }
+            }
+        }).bind(this)(groups, this.torGroups[tor[CONST.TORRENT_HASH]]);
+        
+        return groups;
+    },
+    
+    "refreshSelectedTorGroups": function()
+    {
+        var deltaGroups;
+        
+        var oldGroups = this.__refreshSelectedTorGroups_activeTorGroups__;
+        
+        if(oldGroups)
+        {
+            var curGroups = this.config.activeTorGroups;
+            var changeCount = 0;
+            
+            deltaGroups = {};
+            
+            // copy group type
+            for(var type in oldGroups) { deltaGroups[type] = {}; }
+            for(var type in curGroups) { deltaGroups[type] = {}; }
+            
+            // removed groups
+            for(var type in oldGroups)
+            {
+                for(var group in oldGroups[type])
+                {
+                    if(!(group in curGroups[type]))
+                    {
+                        deltaGroups[type][group] = -1;
+                        ++changeCount;
+                    }
+                }
+            }
+            
+            // added groups
+            for(var type in curGroups)
+            {
+                for(var group in curGroups[type])
+                {
+                    if(!(group in oldGroups[type]))
+                    {
+                        deltaGroups[type][group] = 1;
+                        ++changeCount;
+                    }
+                }
+            }
+            
+            if(!changeCount) return;
+        }
+        
+        this.__refreshSelectedTorGroups_activeTorGroups__ = Object.merge({}, this.config.activeTorGroups);
+        
+        if(!oldGroups)
+        {
+            deltaGroups = this.config.activeTorGroups;
+        }
+        
+        var val, ele;
+        for(var type in deltaGroups)
+        {
+            for(var group in deltaGroups[type])
+            {
+                ele = $(group);
+                if(!ele) continue;
+                
+                val = deltaGroups[type][group];
+                
+                if(val > 0)
+                {
+                    ele.addClass("sel");
+                }
+                else if(val < 0)
+                {
+                    ele.removeClass("sel");
+                }
+            }
+        }
+        
+        // update detail info pane
+        if(this.torrentID != "")
+        {
+            this.torrentID = "";
+            this.clearDetails();
+        }
+        
+        // update torrent jb list
+        var activeChanged = false;
+        
+        for(var hash in this.torrents)
+        {
+            var changed = (!!this.trtTable.rowData[hash].hidden === !!this.torrentIsVisible(hash));
+            
+            if(changed)
+            {
+                activeChanged = true;
+                
+                if(this.trtTable.rowData[hash].hidden)
+                {
+                    this.trtTable.unhideRow(hash);
+                }
+                else
+                {
+                    this.trtTable.hideRow(hash);
+                }
+            }
+        }
+        
+        this.trtTable.clearSelection(activeChanged);
+        this.trtTable.curPage = 0;
+        
+        if(activeChanged)
+        {
+            this.trtTable.requiresRefresh = true;
+            
+            this.trtTable.calcSize();
+            this.trtTable.restoreScroll();
+            this.trtTable.resizePads();
+        }
+    },
+    
+    "loadSettings": function()
+    {
+        this.props.multi =
+        {
+            "trackers": 0,
+            "ulrate": 0,
+            "dlrate": 0,
+            "superseed": 0,
+            "dht": 0,
+            "pex": 0,
+            "seed_override": 0,
+            "seed_ratio": 0,
+            "seed_time": 0,
+            "ulslots": 0
+        };
+        
+        // TODO: implement advanced settings
+        
+        // other settings
+        
+        for(var k in this.settings)
+        {
+            var ele = $(k);
+            if(!ele) continue;
+            
+            var v = this.settings[k];
+            
+            if(ele.type == "checkbox")
+            {
+                ele.checked = !!v;
+            }
+            else
+            {
+                switch(k)
+                {
+                    case "seed_ratio": v /= 10; break;
+                    case "seed_time": v /= 60; break;
+                }
+                
+                ele.set("value", v);
+            }
+            
+            ele.fireEvent("change");
+            
+            if(Browser.ie)
+            {
+                ele.fireEvent("click");
+            }
+        }
+        
+        // webui config
+        [ "useSysFont",
+          "showDetails",
+          "showCategories",
+          "showToolbar",
+          "showStatusBar",
+          "updateInterval",
+          "lang" ].each(function(key)
+        {
+            var ele;
+            if(!(ele = $("webui." + key))) return;
+            
+            var v = this.config[key];
+            
+            if(ele.type == "checkbox")
+            {
+                ele.checked = ((v == 1) || (v == true));
+            }
+            else
+            {
+                ele.set("value", v);
+            }
+        }, this);
+        
+        if(this.config.maxRows < this.limits.minTableRows)
+        {
+            value = (this.config.maxRows <= 0 ? 0 : this.limits.minTableRows);
+        }
+        
+        var elemaxrows = $("webui.maxRows");
+        if(elemaxrows) elemaxrows.set("value", this.config.maxRows);
+        
+        this.toggleSystemFont(this.config.useSysFont);
+        
+        // hide toolbar
+        if(!this.config.showToolbar) $("mainToolbar").hide();
+        
+        // hide category lists
+        if(!this.config.showCategories) $("mainCatList").hide();
+        
+        // hide details
+        if(!this.config.showDetails) $("mainInfoPane").hide();
+        
+        // hide tab icons
+        if(!this.config.showDetailsIcons) $("mainInfoPane-tabs").removeClass("icon");
+        
+        // hide statusbar
+        if(!this.config.showStatusBar) $("mainStatusBar").hide();
+        
+        this.toggleSearchBar();
+    },
+    
+    "saveConfig": function(f)
+    {
+        console.log("saveconfig");
+    },
+    
+    "showDetails": function(id)
+    {
+        var force = (id !== undefined);
+        
+        if(force)
+        {
+            this.torrentID = id;
+        }
+        else
+        {
+            id = this.torrentID;
+        }
+        
+        switch(this.mainTabs.active)
+        {
+            case "mainInfoPane-generalTab":
+                this.updateDetails(id);
+                break;
+                
+            case "mainInfoPane-peersTab":
+                this.getPeers(id, force);
+                break;
+                
+            case "mainInfoPane-filesTab":
+                this.getFiles(id, force);
+                break;
+        }
+    },
+    
+    "updateTitle": function()
+    {
+        // TODO
+    },
+    
+    "updateDetails": function(id)
+    {
+        if(!id) return;
+        
+        var d = this.torrents[id];
+        
+        $("dl").set("html", d[CONST.TORRENT_DOWNLOADED].toFileSize());
+        $("ul").set("html", d[CONST.TORRENT_UPLOADED].toFileSize());
+        
+        var dl = d[CONST.TORRENT_DOWNLOADED];
+        var ul = d[CONST.TORRENT_UPLOADED];
+        $("ra").set("html", (dl == 0) ? (0).toFixedNR(3) : (ul / dl).toFixedNR(3));
+        
+        $("us").set("html", d[CONST.TORRENT_UPSPEED].toFileSize() + g_perSec);
+        $("ds").set("html", d[CONST.TORRENT_DOWNSPEED].toFileSize() + g_perSec);
+        $("rm").set("html", (d[CONST.TORRENT_ETA] == 0) ? "" : (d[CONST.TORRENT_ETA] <= -1) ? "\u221E" : d[CONST.TORRENT_ETA].toTimeDelta());
+        $("se").set("html", L_("GN_XCONN").replace(/%d/, d[CONST.TORRENT_SEEDS_CONNECTED]).replace(/%d/, d[CONST.TORRENT_SEEDS_SWARM]).replace(/%d/, "\u00BF?"));
+        $("pe").set("html", L_("GN_XCONN").replace(/%d/, d[CONST.TORRENT_PEERS_CONNECTED]).replace(/%d/, d[CONST.TORRENT_PEERS_SWARM]).replace(/%d/, "\u00BF?"));
+        $("sa").set("html", d[CONST.TORRENT_SAVE_PATH] || "");
+        $("hs").set("html", id);
+    },
+    
+    "clearDetails": function()
+    {
+        ["rm", "dl", "ul", "ra", "us", "ds", "se", "pe", "sa", "hs"].each(function(id) {
+            $(id).set("html", "");
+        });
+    },
+    
+    "showAddTorrent": function()
+    {
+        DialogManager.show("Add");
+    },
+    
+    "showSettings": function()
+    {
+    },
+    
+    "showAddUrl": function()
+    {
+        DialogManager.show("AddURL");
+    },
+    
+    "showAbout": function()
+    {
+        DialogManager.show("About");
+    },
+    
+    "catListClick": function(ev, listId)
+    {
+        var element = ev.target;
+        
+        while(element && element.id !== listId && element.tagName.toLowerCase() !== "li")
+        {
+            element = element.getParent();
+        }
+        
+        if(!element || !element.id || element.tagName.toLowerCase() !== "li") return;
+        
+        var eleId = element.id;
+        
+        if(eleId === "cat_nlb")
+        {
+            listId = "mainCatList-categories";
+        }
+        
+        var activeGroupCount = (Object.getLength(this.config.activeTorGroups.cat) + Object.getLength(this.config.activeTorGroups.lbl));
+        
+        var prevSelected = activeGroupCount > 1 && Object.some(this.config.activeTorGroups, function(type)
+        {
+            return (eleId in type);
+        });
+        
+        if((Browser.Platform.mac && ev.meta) || (!Browser.Platform.mac && ev.control))
+        {
+            if(ev.isRightClick())
+            {
+                prevSelected = false;
+            }
+        }
+        else
+        {
+            if(!(ev.isRightClick() && prevSelected))
+            {
+                this.config.activeTorGroups = {};
+                
+                Object.each(this.defConfig.activeTorGroups, function(_, type)
+                {
+                    this.config.activeTorGroups[type] = {};
+                }, this);
+            }
+            
+            prevSelected = false;
+        }
+        
+        var trtTableUpdate = (function()
+        {
+            this.refreshSelectedTorGroups();
+            
+            if(ev.isRightClick())
+            {
+                this.trtTable.fillSelection();
+                this.trtTable.fireEvent("onSelect", ev);
+            }
+        }).bind(this);
+        
+        switch(listId)
+        {
+            case "mainCatList-categories":
+                if(prevSelected)
+                {
+                    delete this.config.activeTorGroups.cat[eleId];
+                }
+                else
+                {
+                    this.config.activeTorGroups.cat[eleId] = 1;
+                }
+                
+                trtTableUpdate();
+                
+                break;
+                
+            case "mainCatList-labels":
+                if(prevSelected)
+                {
+                    delete this.config.activeTorGroups.lbl[eleId];
+                }
+                else
+                {
+                    this.config.activeTorGroups.lbl[eleId] = 1;
+                }
+                break;
+        }
+    },
+    
+    "detPanelTabChange": function(id)
+    {
+    },
+    
+    "updateToolbar": function()
+    {
+        var disabled = this.getDisabledActions();
+        
+        Object.each(disabled, function(disabled, name)
+        {
+            var item = $(name);
+            if(!item) return;
+            
+            if(disabled)
+            {
+                item.addClass("disabled");
+            }
+            else
+            {
+                item.removeClass("disabled");
+            }
+        });
+    },
+    
+    "toggleSearchBar": function(show)
+    {
+        show = (show === undefined ? !!(this.settings["search_list"] || "").trim() : !!show);
+        $("mainToolbar-searchbar")[show ? "show" : "hide"]();
+    },
+    
+    "toggleSystemFont": function(use)
+    {
+        use = (use === undefined ? !this.config.useSysFont : !!use);
+        
+        document.body[use ? "removeClass" : "addClass"]("nosysfont");
+        this.config.useSysFont = use;
+        
+        resizeUI();
+        
+        if(Browser.opera) this.saveConfig(true);
+    },
+    
+    "tableSetMaxRows": function(max)
+    {
+        var virtRows = this.limits.maxVirtTableRows;
+        
+        var mode = MODE_PAGE;
+        max = max || 0;
+        
+        if(max <= 0)
+        {
+            mode = MODE_VIRTUAL;
+            max = 0;
+        }
+        else if(max < this.limits.minTableRows)
+        {
+            max = this.limits.minTableRows;
+        }
+        
+        this.config.maxRows = max;
+        
+        this.trtTable.setConfig({ "rowMaxCount": max || virtRows, "rowMode": mode });
+        
+        // do same for file and peers table
+        // and advanced settings
+    },
+    
+    "updateStatusBar": function()
+    {
+    },
+    
+    "settingsPaneChange": function(id)
+    {
+    },
+    
+    "getDisabledActions": function()
+    {
+        var disabled =
+        {
+            "start": 1,
+            "stop": 1,
+            "pause": 1,
+            "remove": 1
+        };
+        
+        var selHash = this.trtTable.selectedRows;
+        
+        if(selHash.length > 0)
+        {
+            selHash.each(function(hash)
+            {
+                var tor = this.torrents[hash];
+                var state = tor[CONST.TORRENT_STATUS];
+                
+                switch(state)
+                {
+                    case CONST.STATE_STOPPED:
+                    case CONST.STATE_STOPPING:
+                        disabled.start = 0;
+                        break;
+                        
+                    case CONST.STATE_PAUSED:
+                        disabled.start = disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_DOWNLOADING:
+                    case CONST.STATE_SEEDING:
+                        disabled.stop = disabled.pause = 0;
+                        break;
+                        
+                    case CONST.STATE_HASHING:
+                        disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_ERROR:
+                        disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_METADATA:
+                        break;
+                }
+            }, this);
+        }
+        
+        return disabled;
     }
-};
+}
+
+window.WebUI = WebUI;
+
+})(window.jQuery);

@@ -77,6 +77,8 @@ namespace Hadouken.Impl.BitTorrent
                     manager.DownloadedBytes = torrentInfo.DownloadedBytes;
                     manager.UploadedBytes = torrentInfo.UploadedBytes;
                     manager.Label = torrentInfo.Label;
+                    manager.StartTime = torrentInfo.StartTime;
+                    manager.CompletedTime = torrentInfo.CompletedTime;
 
                     _logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
 
@@ -162,6 +164,8 @@ namespace Hadouken.Impl.BitTorrent
             info.InfoHash = manager.InfoHash;
             info.Label = manager.Label;
             info.SavePath = manager.SavePath;
+            info.StartTime = manager.StartTime;
+            info.CompletedTime = manager.CompletedTime;
 
             // to prevent nesting directories
             if (manager.Torrent.Files.Length > 1)

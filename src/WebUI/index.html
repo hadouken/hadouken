@@ -2,181 +2,139 @@
 
 <html>
     <head>
-        <meta charset='utf-8' />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         
-        <link rel="icon" type="image/png" href="/img/hdkn.png" />
-        <link rel="stylesheet" type="text/css" media="screen" href="/css/dxstable.css" />
-        <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+        <title></title>
         
-        <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
-        <script type="text/javascript" src="/js/constants.js"></script>
-        <script type="text/javascript" src="/js/common.js"></script>
-        <script type="text/javascript" src="/js/dialogs.js"></script>
-        <script type="text/javascript" src="/js/dnd.js"></script>
-        <script type="text/javascript" src="/js/dxstable.js"></script>
-        <script type="text/javascript" src="/js/network.js"></script>
-        <script type="text/javascript" src="/js/converter.js"></script>
-        <script type="text/javascript" src="/js/formatter.js"></script>
-        <script type="text/javascript" src="/js/contextmenu.js"></script>
-        <script type="text/javascript" src="/js/tabs.js"></script>
-        <script type="text/javascript" src="/js/webui.js"></script>
-        <script type="text/javascript" src="/js/main.js"></script>
+        <link href="./css/stable.css" rel="stylesheet" type="text/css" />
+        <link href="./css/dialogs.css" rel="stylesheet" type="text/css" />
+        <link href="./css/main.css" rel="stylesheet" type="text/css" />
         
-        <title>Hadouken</title>
+        <script type="text/javascript" src="./js/mootools-1.3.1.js"></script>
+        <script type="text/javascript" src="./js/flotr.js"></script>
+        <script type="text/javascript" src="./js/utils.js"></script>
+        <script type="text/javascript" src="./js/constants.js"></script>
+        
+        <script type="text/javascript" src="./lang/_.js"></script>
+        <script type="text/javascript" src="./lang/fallback.js"></script>
+        
+        <script type="text/javascript" src="./js/networkmanager.js"></script>
+        <script type="text/javascript" src="./js/logger.js"></script>
+        <script type="text/javascript" src="./js/speedgraph.js"></script>
+        <script type="text/javascript" src="./js/stable.js"></script>
+        <script type="text/javascript" src="./js/tabs.js"></script>
+        <script type="text/javascript" src="./js/webui.js"></script>
+        <script type="text/javascript" src="./js/contextmenu.js"></script>
+        <script type="text/javascript" src="./js/dialogmanager.js"></script>
+        <script type="text/javascript" src="./js/main.js"></script>
+        
     </head>
-
+    
     <body>
+        <div id="cover">
+            <div id="msgout"><div id="msgmid"><div id="msg">
+                <img src="./img/preloader.gif" alt="Loading..." />
+                Loading Hadouken
+            </div></div></div>
+        </div>
+        
         <div id="modalbg"></div>
-        <div id="dragmask"></div>
-        <div id="dividerDrag"></div>
-
-        <div id="toolbar">
-            <a id="mnu_add" href="#" onclick="WebUI.showAddTorrent(); return false;" title="Add torrent"><div id="add"></div></a>
+        
+        <div id="mainToolbar">
+            <div id="mainToolbar-searchbar">
+                <input type="text" id="query" /><a href="#" id="search"></a><a href="#" id="searchsel"></a>
+            </div>
             
-            <div class="separator"></div>
+            <a href="javascript:void(0);" id="tbchevron">&raquo;</a>
+        
+            <a href="javascript:void(0);" id="add" class="tbbutton inchev"></a>
+            <a href="javascript:void(0);" id="addurl" class="tbbutton inchev"></a>
             
-            <a id="mnu_remove" href="#" onclick="WebUI.remove(); return false;" title="Remove"><div id="remove"></div></a>
+            <div class="separator inchev"></div>
             
-            <div class="separator"></div>
+            <a href="javascript:void(0);" id="remove" class="tbbutton inchev"></a>
             
-            <a id="mnu_start" href="#" onclick="WebUI.start(); return false;" title="Start"><div id="start"></div></a>
+            <div class="separator inchev"></div>
             
-            <a id="mnu_pause" href="#" onclick="WebUI.pause(); return false;" title="Pause"><div id="pause"></div></a>
+            <a href="javascript:void(0);" id="start" class="tbbutton inchev"></a>
+            <a href="javascript:void(0);" id="stop" class="tbbutton inchev"></a>
+            <a href="javascript:void(0);" id="pause" class="tbbutton inchev"></a>
             
-            <a id="mnu_stop" href="#" onclick="WebUI.stop(); return false;" title="Stop"><div id="stop"></div></a>
+            <div class="separator inchev"></div>
             
-            <div class="separator"></div>
-            
-            <a id="mnu_settings" href="#" onclick="WebUI.showSettings(); return false;" title="Settings"><div id="setting"></div></a>
-            
-            <div class="separator"></div>
-            
-            <a id="mnu_about" href="#" onclick="WebUI.showAbout(); return false;" title="About"><div id="about"></div></a>
+            <a href="javascript:void(0);" id="setting" class="tbbutton inchev"></a>
         </div>
         
-        <table id="maincont" cellpadding="0" cellspacing="0" summary="layout table">
-            <tr>
-                <td class="uicell" rowspan="3">
-                    <div id="categories">
-                        <div class="panel" id="state">State</div>
-                        
-                        <ul id="state_content" class="panel_content">
-                            <li id="-_-_-all-_-_-" class="sel cat">All (<span id="-_-_-all-_-_-c">0</span>)</li>
-                            <li id="-_-_-dls-_-_-" class="cat">Downloading (<span id="-_-_-dls-_-_-c">0</span>)</li>
-                            <li id="-_-_-com-_-_-" class="cat">Completed (<span id="-_-_-com-_-_-c">0</span>)</li>
-                            <li id="-_-_-act-_-_-" class="cat">Active (<span id="-_-_-act-_-_-c">0</span>)</li>
-                            <li id="-_-_-iac-_-_-" class="cat">Inactive (<span id="-_-_-iac-_-_-c">0</span>)</li>
-                            <li id="-_-_-err-_-_-" class="cat">Error (<span id="-_-_-err-_-_-c">0</span>)</li>
-                        </ul>
-                        
-                        <div class="panel" id="labels">Labels</div>
-                        
-                        <div id="labels_content" class="panel_content">
-                            <ul>
-                                <li id="-_-_-nlb-_-_-" class="cat">No label (<span id="-_-_-nlb-_-_-c">0</span>)</li>
-                            </ul>
-                            <ul id="lbll">
-                            </ul>
-                        </div>
-                    </div>
-                </td>
-                <td class="uicell" rowspan="3">
-                    <div id="HDivider"></div><div id="dividerDrag"></div>
-                </td>
-                <td class="uicell">
-                    <div id="torrents" class="table_tab"></div>
-                </td>
-            </tr>
-            <tr>
-                <td class="uicell">
-                    <div id="VDivider"></div>
-                </td>
-            </tr>
-            <tr>
-                <td class="uicell">
-                    <div id="details">
-                        <ul id="tabbar" class="tabbar">
-                        </ul>
-                        
-                        <div id="tdcont">
-                            <div id="tab_general_content" class="tab">
-                                <table cellpadding="5" cellspacing="2" width="100%" summary="layout table" id="mainlayout">
-                                    <tr>
-                                            <td colspan="6" class="Header">Transfer</td>
-                                    </tr>
-                                    <tr>
-                                        <td width="6%" nowrap>Elapsed time:</td><td width="11%" nowrap><span id="et" class="det"></span></td>
-                                        <td width="6%" nowrap>Remaining:</td><td width="11%" nowrap><span id="rm" class="det"></span></td>
-                                        <td width="6%" nowrap>Ratio:</td><td width="11%" nowrap><span id="ra" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td width="6%" nowrap>Downloaded:</td><td width="11%" nowrap><span id="dl" class="det"></span></td>
-                                        <td width="6%" nowrap>DL Speed:</td><td width="11%" nowrap><span id="ds" class="det"></span></td>
-                                        <td width="6%" nowrap>Wasted data:</td><td width="11%" nowrap><span id="wa" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Uploaded:</td><td nowrap><span id="ul" class="det"></span></td>
-                                        <td nowrap>UL Speed:</td><td nowrap><span id="us" class="det"></span></td>
-                                        <td nowrap>&nbsp;</td><td nowrap>&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Seeds:</td><td nowrap><span id="se" class="det"></span></td>
-                                        <td nowrap>Peers:</td><td nowrap><span id="pe" class="det"></span></td>
-                                        <td nowrap>&nbsp;</td><td>&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="Header">Tracker</td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>URL:</td>
-                                        <td colspan="5" nowrap><span id="tu" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Status:</td>
-                                        <td colspan="5" nowrap><span id="ts" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="Header">General</td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Save path:</td>
-                                        <td colspan="5" nowrap><span id="bf" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Free disk space:</td>
-                                        <td colspan="5" nowrap><span id="dsk" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Created on:</td>
-                                        <td colspan="5" nowrap><span id="co" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Hash:</td>
-                                        <td colspan="5" nowrap><span id="hs" class="det"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td nowrap>Comment:</td>
-                                        <td colspan="5"><span id="cmt" class="det"></span></td>
-                                    </tr>
-                                </table>
-                            </div>
-                            
-                            <div id="tab_files_content" class="tab">
-                                <div id="torrent_files"></div>
-                            </div>
-                            
-                            <div id="tab_trackers_content" class="tab">
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div id="mainCatList"><div class="fll">
+            <ul id="mainCatList-categories">
+                <li id="cat_all"><span class="icon"></span> <span id="OV_CAT_ALL"></span>&nbsp;(<span id="cat_all_c">0</span>)</li>
+                <li id="cat_dls"><span class="icon"></span> <span id="OV_CAT_DL"></span>&nbsp;(<span id="cat_dls_c">0</span>)</li>
+                <li id="cat_com"><span class="icon"></span> <span id="OV_CAT_COMPL"></span>&nbsp;(<span id="cat_com_c">0</span>)</li>
+                <li id="cat_act"><span class="icon"></span> <span id="OV_CAT_ACTIVE"></span>&nbsp;(<span id="cat_act_c">0</span>)</li>
+                <li id="cat_iac"><span class="icon"></span> <span id="OV_CAT_INACTIVE"></span>&nbsp;(<span id="cat_iac_c">0</span>)</li>
+            </ul>
+            
+            <hr />
+            
+            <ul id="mainCatList-labels">
+                <li id="cat_nlb"><span id="OV_CAT_NOLABEL"></span>&nbsp;(<span id="cat_nlb_c">0</span>)</li>
+            </ul>
+        </div></div>
         
-        <div id="statusbar">
-            <div id="statusbar-menu"></div>
-            <div id="statusbar-upload" class="section">asdfsadf</div>
-            <div id="statusbar-download" class="section">asdfsadf</div>
+        <div id="mainTorList"></div>
+        
+        <div id="mainInfoPane">
+            <ul id="mainInfoPane-tabs" class="folder-tabs icon"></ul>
+            
+            <div id="mainInfoPane-content">
+                <div id="mainInfoPane-generalTab">
+                    	<table cellpadding="5" cellspacing="2">
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="header" id="GN_TRANSFER"></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 34%"><label id="GN_TP_04"></label><span id="rm"></span></td>
+                                    <td style="width: 33%"><label id="GN_TP_01"></label><span id="dl"></span></td>
+                                    <td style="width: 33%"><label id="GN_TP_02"></label><span id="ul"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label id="GN_TP_08"></label><span id="ra"></span></td>
+                                    <td><label id="GN_TP_05"></label><span id="ds"></span></td>
+                                    <td><label id="GN_TP_06"></label><span id="us"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label id="GN_TP_03"></label><span id="se"></span></td>
+                                    <td><label id="GN_TP_07"></label><span id="pe"></span></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="header" id="GN_GENERAL"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"><label id="GN_TP_09"></label><span id="sa"></span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"><label id="GN_TP_10"></label><span id="hs"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                </div>
+                
+                <div id="mainInfoPane-peersTab"></div>
+                <div id="mainInfoPane-filesTab"></div>
+                <div id="mainInfoPane-speedTab"></div>
+                <div id="mainInfoPane-loggerTab"></div>
+            </div>
         </div>
+        
+        <div id="mainStatusBar">
+            <div id="mainStatusBar-menu"></div>
+            <div id="mainStatusBar-upload" class="section"></div>
+            <div id="mainStatusBar-download" class="section"></div>
+        </div>
+        
+        <div id="mainVDivider"></div>
+        <div id="mainHDivider"></div>
     </body>
 </html>

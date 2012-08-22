@@ -22,7 +22,9 @@ namespace Hadouken.Impl.Data.Migrations
                 new Column("UploadedBytes", System.Data.DbType.Int64),
                 new Column("State", System.Data.DbType.String, 50),
                 new Column("SavePath", System.Data.DbType.String),
-                new Column("Label", System.Data.DbType.String)
+                new Column("Label", System.Data.DbType.String),
+                new Column("StartTime", System.Data.DbType.DateTime),
+                new Column("CompletedTime", System.Data.DbType.DateTime)
             );
         }
 
