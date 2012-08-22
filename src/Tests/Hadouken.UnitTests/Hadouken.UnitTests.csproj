@@ -73,8 +73,10 @@
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
     <Compile Include="Data\DataRepositoryTests.cs" />
     <Compile Include="Http\Api\AddFileTests.cs" />
+    <Compile Include="Http\Api\StartTorrentTests.cs" />
     <Compile Include="Http\HttpContextHelper.cs" />
     <Compile Include="Http\HttpServerTests.cs" />
+    <Compile Include="KernelTests.cs" />
     <Compile Include="MemoryConfigManager.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
