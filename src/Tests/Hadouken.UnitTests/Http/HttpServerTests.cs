@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
-using Hadouken.Impl.Http;
-using Moq;
-using Hadouken.Data;
-using Hadouken.IO;
 using System.Net;
 using System.IO;
-using WatiN.Core;
+
 using Hadouken.Configuration;
+using Hadouken.Data;
+using Hadouken.Impl.Http;
+using Hadouken.IO;
+
+using Moq;
+using NUnit.Framework;
 
 namespace Hadouken.UnitTests.Http
 {
