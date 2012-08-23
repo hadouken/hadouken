@@ -14,8 +14,6 @@ namespace Hadouken.Impl.BitTorrent
         private Torrent _torrent;
         private List<HdknTorrentFile> _files = new List<HdknTorrentFile>();
 
-        private byte[] _data;
-
         internal HdknTorrent(Torrent torrent)
         {
             _torrent = torrent;
