@@ -35,7 +35,7 @@ namespace Hadouken.UnitTests.Http.Api
             bte.Setup(b => b.Managers.ContainsKey("abc")).Returns(true);
 
             // Test
-            var act = new StartTorrent(bte.Object);
+            var act = new StopTorrent(bte.Object);
             act.Context = ctx.Object;
             var result = act.Execute();
 
