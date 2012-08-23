@@ -59,7 +59,15 @@
   </Target>
   
   <Target Name="UnitTest" DependsOnTargets="Compile">
-    <Exec Command="tools\nunit-2.6.0.12051\bin\nunit-console-x86.exe /nologo /nodots /framework:net-4.0.21006 /xml:bin\nunit.xml src/Tests/Hadouken.UnitTests/bin/$(BuildConfiguration)/Hadouken.UnitTests.dll" />
+    <PropertyGroup Condition="'$(TEAMCITY_VERSION)' != ''">
+      <NUnitCommand>$(teamcity_dotnet_nunitlauncher) v4.0 x86 NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/$(BuildConfiguration)/Hadouken.UnitTests.dll</NUnitCommand>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(TEAMCITY_VERSION)' == ''">
+      <NUnitCommand>tools\nunit-2.6.0.12051\bin\nunit-console-x86.exe /nologo /nodots /framework:net-4.0.21006 /xml:bin\nunit.xml src/Tests/Hadouken.UnitTests/bin/$(BuildConfiguration)/Hadouken.UnitTests.dll</NUnitCommand>
+    </PropertyGroup>
+    
+    <Exec Command="$(NUnitCommand)" />
   </Target>
 
   <Target Name="CopyBinaries" DependsOnTargets="Compile; UnitTest">
