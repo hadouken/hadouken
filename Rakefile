@@ -20,7 +20,7 @@ end
 
 CLOBBER.include("build/*")
 
-task :default => [ :clobber, :version, :build, :test, :output, :zip ]
+task :default => [ :clobber, :version, :build, :test, :output, :zip_webui, :zip, :msi ]
 
 desc "Build"
 msbuild :build => :version do |msb|
@@ -54,15 +54,30 @@ nunit :test => :build do |nunit|
     nunit.assemblies "src/Tests/Hadouken.UnitTests/bin/Release/Hadouken.UnitTests.dll"
 end
 
-desc "Output binaries"
+desc "Output"
 task :output => :build do
     copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/Release/", "*.{dll,exe}", "build/hdkn-#{BUILD_VERSION}"
     copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/Release/", "*.{dll,exe}", "build/hdkn-#{BUILD_VERSION}"
+    copy_files "src/Config/Release/", "*.{config}", "build/hdkn-#{BUILD_VERSION}"    
 end
 
 desc "Zip"
-zip :zip => :build do |zip|
+zip :zip => :output do |zip|
     zip.directories_to_zip "build/hdkn-#{BUILD_VERSION}"
     zip.output_file = "hdkn-#{BUILD_VERSION}.zip"
     zip.output_path = "#{File.dirname(__FILE__)}/build/"
+end
+
+desc "Zip WebUI"
+zip :zip_webui do |zip|
+    zip.directories_to_zip "src/WebUI"
+    zip.output_file = "webui.zip"
+    zip.output_path = "#{File.dirname(__FILE__)}/build/hdkn-#{BUILD_VERSION}/"
+end
+
+desc "MSI"
+task :msi => :output do
+    puts "Hej"
+    system "tools/wix-3.6rc/candle.exe -ext WixUtilExtension -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/hdkn-#{BUILD_VERSION} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/SettingsDialog.wxs"
+    system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/hdkn-#{BUILD_VERSION}.msi src/Installer/Hadouken.wixobj src/Installer/SettingsDialog.wixobj"
 end
