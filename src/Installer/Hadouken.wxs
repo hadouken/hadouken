@@ -87,7 +87,7 @@
             <File Id="NinjectDll" Name="Ninject.dll" Source="$(var.BinDir)/Ninject.dll" />
             <File Id="NLogDll" Name="NLog.dll" Source="$(var.BinDir)/NLog.dll" />
             <File Id="SystemDataSQLiteDll" Name="System.Data.SQLite.dll" Source="$(var.BinDir)/System.Data.SQLite.dll" />
-            <File Id="SystemDataSQLiteLinqDll" Name="System.Data.SQLite.Linq.dll" Source="$(var.BinDir)/System.Data.SQLite.Linq.dll" />
+            <!--<File Id="SystemDataSQLiteLinqDll" Name="System.Data.SQLite.Linq.dll" Source="$(var.BinDir)/System.Data.SQLite.Linq.dll" />-->
           </Component>
 
           <Directory Id="WEBUIDIR" Name="WebUI">
