@@ -1,26 +1,19 @@
 require "rubygems"
-require "bundler/setup"
+require "bundler"
+Bundler.setup
+$: << './'
 
-require "albacore"
-require "semver"
-require "rake/clean"
+require 'albacore'
+require 'semver'
+require 'aws/s3'
+require 'rake/clean'
 
-def version(str)
-  ver = /v?(\d+)\.(\d+)\.(\d+)\.?(\d+)?/i.match(str).to_a()
-  ver[1,4].map{|s|s.to_i} unless ver == nil or ver.empty?
-end
-
-def copy_files(from_dir, file_pattern, out_dir)
-  puts "copying from #{from_dir} to #{out_dir}, with pattern: #{file_pattern}"
-  FileUtils.mkdir_p out_dir unless FileTest.exists?(out_dir)
-  Dir.glob(File.join(from_dir, file_pattern)){|file|
-    copy(file, out_dir) if File.file?(file)
-  }
-end
+require 'tools/buildscripts/environment'
+require 'tools/buildscripts/utils'
 
 CLOBBER.include("build/*")
 
-task :default => [ :clobber, :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :default => [ :clobber, "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
 
 desc "Build"
 msbuild :build => :version do |msb|
@@ -30,17 +23,20 @@ msbuild :build => :version do |msb|
 end
 
 desc "Versioning"
-assemblyinfo :version do |asm|
-    fv = version SemVer.find.to_s
-    revision = (!fv[3] || fv[3] == 0) ? (ENV['BUILD_NUMBER'] || Time.now.strftime('%j%H')) : fv[3]
-    ENV["BUILD_VERSION"] = BUILD_VERSION = "#{ SemVer.new(fv[0], fv[1], fv[2]).format "%M.%m.%p" }.#{revision}"
-    
+assemblyinfo :version => "env:common" do |asm|
     asm.version = BUILD_VERSION
     asm.file_version = BUILD_VERSION
     
     asm.company_name = "Hadouken"
     asm.product_name = "Hadouken"
     asm.copyright = "2012"
+    asm.namespaces = "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security"
+    
+    asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION}", # disposed as product version in explorer
+        :CLSCompliantAttribute => false,
+        :AssemblyConfiguration => "#{CONFIGURATION}"
+    
+    asm.com_visible = false
     
     asm.output_file = "src/Shared/CommonAssemblyInfo.cs"
 end
@@ -49,9 +45,15 @@ desc "Test"
 nunit :test => :build do |nunit|
     FileUtils.mkdir_p "build/reports" unless FileTest.exists?("build/reports")
     
-    nunit.command = "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe"
-    nunit.options "/framework:v4.0.30319 /xml:build/reports/nunit.xml"
-    nunit.assemblies "src/Tests/Hadouken.UnitTests/bin/Release/Hadouken.UnitTests.dll"
+    if(ENV['TEAMCITY_VERSION'])
+        nunit.command = "#{ENV['teamcity.dotnet.nunitlauncher2.0']}"
+        nunit.options = "v4.0 x86 NUnit-2.6.0"
+    else
+        nunit.command = "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe"
+        nunit.options "/framework:v4.0.30319 /xml:build/reports/nunit.xml"
+    end
+    
+    nunit.assemblies "src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
 end
 
 desc "Output"
@@ -77,7 +79,20 @@ end
 
 desc "MSI"
 task :msi => :output do
-    puts "Hej"
     system "tools/wix-3.6rc/candle.exe -ext WixUtilExtension -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/hdkn-#{BUILD_VERSION} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/SettingsDialog.wxs"
     system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/hdkn-#{BUILD_VERSION}.msi src/Installer/Hadouken.wixobj src/Installer/SettingsDialog.wixobj"
+end
+
+desc "Publish to Amazon S3"
+task :publish do
+    AWS::S3::Base.establish_connection!(
+        :access_key_id     => ENV['S3_ACCESS_KEY'],
+        :secret_access_key => ENV['S3_SECRET_KEY']
+    )
+    
+    Dir.glob('build/*.{msi,zip}') { |file|
+        AWS::S3::S3Object.store(File.basename(file), 
+            open(file), 
+            ENV['S3_BUCKET'])
+    }
 end
