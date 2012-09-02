@@ -56,6 +56,7 @@ task :test => :build do
 end
 
 task :test_teamcity => :build do
+    puts "#{ENV['NUNIT_LAUNCHER']} v4.0 x86 NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
     system "#{ENV['NUNIT_LAUNCHER']} v4.0 x86 NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
 end
 
