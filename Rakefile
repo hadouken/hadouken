@@ -42,18 +42,22 @@ assemblyinfo :version => "env:common" do |asm|
 end
 
 desc "Test"
-nunit :test => :build do |nunit|
+task :test => :build do
     FileUtils.mkdir_p "build/reports" unless FileTest.exists?("build/reports")
     
     if(ENV['TEAMCITY_VERSION'])
-        nunit.command = "#{ENV['teamcity.dotnet.nunitlauncher2.0']}"
-        nunit.options = "v4.0 x86 NUnit-2.6.0"
+        Rake::Task["test_nunit"].invoke
     else
-        nunit.command = "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe"
-        nunit.options "/framework:v4.0.30319 /xml:build/reports/nunit.xml"
+        Rake::Task["test_nunit"].invoke
     end
-    
-    nunit.assemblies "src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
+end
+
+task :test_teamcity => :build do
+    system "#{ENV['teamcity.dotnet.nunitlauncher2.0']} v4.0 x86 NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
+end
+
+task :test_nunit => :build do
+    system "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe /framework:v4.0.30319 /xml:build/reports/nunit.xml src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
 end
 
 desc "Output"
