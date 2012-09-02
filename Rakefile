@@ -17,6 +17,8 @@ task :default => [ :clobber, "env:release", :version, :build, :test, :output, :z
 
 desc "Build"
 msbuild :build => :version do |msb|
+    puts "##teamcity[progressMessage 'Compiling code']"
+    
     msb.properties :configuration => "Release"
     msb.targets :Clean, :Build
     msb.solution = "Hadouken.sln"
@@ -43,10 +45,11 @@ end
 
 desc "Test"
 task :test => :build do
+    puts "##teamcity[progressMessage 'Running unit tests']"
     FileUtils.mkdir_p "build/reports" unless FileTest.exists?("build/reports")
     
     if(ENV['TEAMCITY_VERSION'])
-        Rake::Task["test_nunit"].invoke
+        Rake::Task["test_teamcity"].invoke
     else
         Rake::Task["test_nunit"].invoke
     end
@@ -62,6 +65,8 @@ end
 
 desc "Output"
 task :output => :build do
+    puts "##teamcity[progressMessage 'Outputting binaries']"
+    
     copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/Release/", "*.{dll,exe}", "build/hdkn-#{BUILD_VERSION}"
     copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/Release/", "*.{dll,exe}", "build/hdkn-#{BUILD_VERSION}"
     copy_files "src/Config/Release/", "*.{config}", "build/hdkn-#{BUILD_VERSION}"    
@@ -89,14 +94,18 @@ end
 
 desc "Publish to Amazon S3"
 task :publish do
-    AWS::S3::Base.establish_connection!(
-        :access_key_id     => ENV['S3_ACCESS_KEY'],
-        :secret_access_key => ENV['S3_SECRET_KEY']
-    )
-    
-    Dir.glob('build/*.{msi,zip}') { |file|
-        AWS::S3::S3Object.store(File.basename(file), 
-            open(file), 
-            ENV['S3_BUCKET'])
-    }
+    if(ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET_KEY'] && ENV['S3_BUCKET'])
+        AWS::S3::Base.establish_connection!(
+            :access_key_id     => ENV['S3_ACCESS_KEY'],
+            :secret_access_key => ENV['S3_SECRET_KEY']
+        )
+        
+        Dir.glob('build/*.{msi,zip}') { |file|
+            AWS::S3::S3Object.store(File.basename(file), 
+                open(file), 
+                ENV['S3_BUCKET'])
+        }
+    else
+        fail "Invalid S3 parameters"
+    end
 end
