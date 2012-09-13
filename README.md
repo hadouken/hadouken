@@ -5,4 +5,4 @@ Hadouken is a BitTorrent client written in C# and designed to run as a Windows S
 
 Building from source
 --------------------
-You need Ruby installed to build from source. Install Ruby, then run `gem install bundler`, `bundle install` and lastly `rake` to build.
+You need Ruby installed to build from source. Install Ruby, then run `gem install bundler`, `bundle install` and lastly `rake env:alpha default` to build.
