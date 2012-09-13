@@ -7,11 +7,14 @@ using Hadouken.Http;
 using Hadouken.Data;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
+using NLog;
 
 namespace Hadouken.Impl.Hosting
 {
     public class DefaultHost : IHost
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private IDataRepository _data;
         private IBitTorrentEngine _torrentEngine;
         private IMigrationRunner _migratorRunner;
@@ -27,6 +30,12 @@ namespace Hadouken.Impl.Hosting
             _httpServer = httpServer;
 
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+        }
+
+        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            _logger.FatalException("Unhandled exception.", e.ExceptionObject as Exception);
         }
 
         System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
