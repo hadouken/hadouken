@@ -38,15 +38,8 @@
           </Component>
 
           <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682">
+            <Condition><![CDATA[HDKN_SRV_ENABLE = 1]]></Condition>
             <File Id="HdknWinSrv" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
-            <File Id="HdknWinSrvCfg" Name="Hadouken.Hosts.WindowsService.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe.config" />
-
-            <util:XmlFile 
-              Id="ModifyWebUIPort"
-              File="[#HdknWinSrvCfg]"              
-              Action="setValue"
-              ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
-              Value="http://localhost:[HDKN_WEBUI_PORT]/" />
 
             <util:User
               Id="GrantLogonAsService"
@@ -71,6 +64,36 @@
               />
             
             <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="Hadouken" Wait="yes" />
+          </Component>
+          
+          <Component Id="HdknWinSrvExe" Guid="8D6FD04D-1154-43D4-A3DB-B900E7F9B8DA">
+            <Condition><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
+            <File Id="HdknWinSrvExe" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="HdknWinSrvCfg" Guid="35A045FE-9F58-4C12-869E-A8AFFEDE1F4D">
+            <File Id="HdknWinSrvCfg" Name="Hadouken.Hosts.WindowsService.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe.config" />
+
+            <util:XmlFile 
+              Id="ModifyWebUIPort"
+              File="[#HdknWinSrvCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
+              Value="http://localhost:[HDKN_WEBUI_PORT]/" />
+              
+            <util:XmlFile 
+              Id="ModifyAuthUser"
+              File="[#HdknWinSrvCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='Auth.Username'[\]]/@value"
+              Value="[HDKN_AUTH_USER]" />
+          
+            <util:XmlFile 
+              Id="ModifyAuthPassword"
+              File="[#HdknWinSrvCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='Auth.Password'[\]]/@value"
+              Value="[HDKN_AUTH_PASS]" />
           </Component>
 
           <Component Id="Libs" Guid="5FC0B06D-AABD-4384-9987-BD732BDFA568">
@@ -107,6 +130,8 @@
       <ComponentRef Id="HdknMsg" />
       <ComponentRef Id="HdknCmdLine" />
       <ComponentRef Id="HdknWinSrv" />
+      <ComponentRef Id="HdknWinSrvExe" />
+      <ComponentRef Id="HdknWinSrvCfg" />
       <ComponentRef Id="WebUI" />
       <ComponentRef Id="Libs" />
     </Feature>
@@ -130,6 +155,9 @@
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
     <Property Id="HDKN_SRV_ENABLE" Value="1" />
     <Property Id="HDKN_SRV_USER" Value="hdkn" />
+    
+    <Property Id="HDKN_AUTH_USER" Value="hdkn" />
+    <Property Id="HDKN_AUTH_PASS" Value="hdkn" />
 
     <SetProperty Id="HDKN_SRV_USER" Value="$(env.USERDOMAIN)\[LogonUser]" Before="AppSearch" />
   </Product>
