@@ -115,10 +115,11 @@
       <UIRef Id="WixUI_InstallDir" />
       <UIRef Id="WixUI_ErrorProgressText" />
 
-      <DialogRef Id="HdknSettingsDlg" />
+      <DialogRef Id="WebUIConfigDlg" />
+      <DialogRef Id="WinSrvConfigDlg" />
 
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="HdknSettingsDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="HdknSettingsDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="WebUIConfigDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WinSrvConfigDlg" Order="1">NOT Installed</Publish>
     </UI>
     
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
