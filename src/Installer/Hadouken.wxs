@@ -2,10 +2,10 @@
 
 <Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Product
+    Id="*"
     Name="Hadouken"
     Manufacturer="Viktor Elofsson - vktr.se"
     Version="$(var.BuildVersion)"
-    Id="A62F76A5-4422-4B3A-B8AB-EBD1031FDF93"
     UpgradeCode="52A66249-5BE7-4F0B-BE83-7C7B7AED65D1"
     Language="1033"
     Codepage="1252">
@@ -13,6 +13,8 @@
     <Package Id="*" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
+    
+    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
