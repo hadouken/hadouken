@@ -185,8 +185,8 @@ namespace Hadouken.Impl.Http
             {
                 var id = (HttpListenerBasicIdentity)context.User.Identity;
 
-                string usr = _kvs.Get<string>("http.auth.username", "hdkn");
-                string pwd = _kvs.Get<string>("http.auth.password", "hdkn");
+                string usr = HdknConfig.ConfigManager["Auth.Username"];
+                string pwd = HdknConfig.ConfigManager["Auth.Password"];
 
                 return (id.Name == usr && id.Password == pwd);
             }
