@@ -496,7 +496,7 @@ var WebUI =
         clearInterval(this.updateTimeout);
     },
     
-    "request": function(method, url, data, fn, async, fails)
+    "request": function(method, qs, data, fn, async, fails)
     {
         if(typeOf(fails) != "array") fails = [0];
         
@@ -513,7 +513,7 @@ var WebUI =
             try
             {
                 new Request.JSON({
-                    "url": url,
+                    "url": "/api?" + qs + "&t=" + Date.now(),
                     "method": method,
                     "async": typeof(async) === "undefined" || !!async,
                     "data": (data != null ? JSON.encode(data) : null),
@@ -584,7 +584,7 @@ var WebUI =
             this.clearDetails();
         }
         
-        this.request("post", "/api?action=" + action, hashes, (function()
+        this.request("post", "action=" + action, hashes, (function()
         {
             this.update();
         }).bind(this));
@@ -673,7 +673,7 @@ var WebUI =
     {
         this.endPeriodicUpdate();
         
-        this.request("get", "/api?action=gettorrents", null, (function(json)
+        this.request("get", "action=gettorrents", null, (function(json)
         {
             this.loadList(json);
             if(fn) fn(json);
@@ -988,7 +988,7 @@ var WebUI =
             this.addSettings(json, fn);
         }).bind(this);
         
-        this.request("get", "/api?action=getsettings", null, act);
+        this.request("get", "action=getsettings", null, act);
     },
     
     "addSettings": function(json, fn)
@@ -1544,6 +1544,85 @@ var WebUI =
         ["rm", "dl", "ul", "ra", "us", "ds", "se", "pe", "sa", "hs"].each(function(id) {
             $(id).set("html", "");
         });
+    },
+    
+    "loadPeers": function()
+    {
+        this.prsTable.keepScroll((function()
+        {
+            this.prsTable.clearRows(true);
+            
+            var id = this.torrentID;
+            
+            if(id === this.peerlist._ID_)
+            {
+                this.peerlist.each(function(peer, i)
+                {
+                    var key = id + "_" + peer[CONST.PEER_IP].replace(/[\.:]/g, "_") + "_" + peer[CONST.PEER_PORT]; // TODO: Handle bt.allow_same_ip
+                    this.prsTable.addRow(this.prsDataToRow(peer), key, "country country_" + peer[CONST.PEER_COUNTRY]);
+                }, this);
+            }
+        }).bind(this));
+        
+        this.prsTable.calcSize();
+        this.prsTable.resizePads();
+        this.prsTable.refresh();
+    },
+    
+    "getPeers": function(id, forceload)
+    {
+        if(id === undefined) id = this.torrentID;
+        if(!id) return;
+        
+        var now = Date.now();
+        
+        if(forceload || this.peerlist._ID_ !== id || !this.peerlist._TIME_ || (now - this.peerlist._TIME_) > (this.limits.minPeerListCache * 1000))
+        {
+            this.request("get", "action=getpeers&hash=" + id, null, (function(json)
+            {
+                this.peerlist.empty();
+                
+                var peers = json.peers;
+                if(peers)
+                {
+                    for(var i = 0; i < peers.length; i += 2)
+                    {
+                        if(peers[i] === id)
+                        {
+                            this.peerlist = peers[i + 1];
+                            break;
+                        }
+                    }
+                }
+                
+                this.peerlist._ID_ = id;
+                this.peerlist._TIME_ = now;
+                
+                this.loadPeers();
+            }).bind(this));
+        }
+    },
+    
+    "loadFiles": function()
+    {
+        this.flsTable.keepScroll((function()
+        {
+            this.flsTable.clearRows(true);
+            
+            var id = this.torrentID;
+            
+            if(id === this.filelist._ID_)
+            {
+                this.filelist.each(function(file, i)
+                {
+                    this.flsTable.addRow(this.flsDataToRow(file), id + "_" + i);
+                }, this);
+            }
+        }).bind(this));
+        
+        this.flsTable.calcSize();
+        this.flsTable.resizePads();
+        this.flsTable.refresh();
     },
     
     "showAddTorrent": function()
