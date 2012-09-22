@@ -334,7 +334,7 @@ function resizeUI(hDiv, vDiv)
             $("mainInfoPane-loggerTab").setStyles({ "width": dw - 14, "height": dh - 6 });
             
             // TODO: uncomment when implementing peers and files table
-            // WebUI.prsTable.resizeTo(dw - 10, dh - 2);
+            WebUI.prsTable.resizeTo(dw - 10, dh - 2);
             // WebUI.flsTable.resizeTo(dw - 10, dh - 2);
         }
     }
@@ -480,7 +480,26 @@ function setupDetailInfoPaneUI()
         }
     });
     
+    // peers tab
+    WebUI.prsTable.create("mainInfoPane-peersTab", WebUI.prsColDefs, Object.append({
+        "format": WebUI.prsFormatRow.bind(WebUI),
+        "onColReset": WebUI.prsColReset.bind(WebUI),
+        "onColResize": WebUI.prsColResize.bind(WebUI),
+        "onColMove": WebUI.prsColMove.bind(WebUI),
+        "onColToggle": WebUI.prsColToggle.bind(WebUI),
+        "onSort": WebUI.prsSort.bind(WebUI),
+        "onSelect": WebUI.prsSelect.bind(WebUI)
+    }, WebUI.defConfig.peerTable));
+
+    $("mainInfoPane-peersTab").addEvent("mousedown", function(ev) {
+        if (ev.isRightClick() && ev.target.hasClass("stable-body"))
+        {
+            WebUI.showPeerMenu(ev);
+        }
+    });
+    
     // more tabs
+    
     
     // setup logger tab
     Logger.init("mainInfoPane-loggerTab");
@@ -931,6 +950,36 @@ function loadDetailPaneStrings()
         "GN_TP_09",
         "GN_TP_10"
     ]);
+    
+    // peers tab
+    if (WebUI.prsTable.tb.body)
+    {
+        WebUI.prsTable.refreshRows();
+        WebUI.prsTable.setConfig({
+            "resetText": L_("MENU_RESET"),
+            "colText":
+            {
+                  "ip" : L_("PRS_COL_IP")
+                , "port" : L_("PRS_COL_PORT")
+                , "client" : L_("PRS_COL_CLIENT")
+                , "flags" : L_("PRS_COL_FLAGS")
+                , "pcnt" : L_("PRS_COL_PCNT")
+                , "relevance" : L_("PRS_COL_RELEVANCE")
+                , "downspeed" : L_("PRS_COL_DOWNSPEED")
+                , "upspeed" : L_("PRS_COL_UPSPEED")
+                , "reqs" : L_("PRS_COL_REQS")
+                , "waited" : L_("PRS_COL_WAITED")
+                , "uploaded" : L_("PRS_COL_UPLOADED")
+                , "downloaded" : L_("PRS_COL_DOWNLOADED")
+                , "hasherr" : L_("PRS_COL_HASHERR")
+                , "peerdl" : L_("PRS_COL_PEERDL")
+                , "maxup" : L_("PRS_COL_MAXUP")
+                , "maxdown" : L_("PRS_COL_MAXDOWN")
+                , "queued" : L_("PRS_COL_QUEUED")
+                , "inactive" : L_("PRS_COL_INACTIVE")
+            }
+        });
+    }
     
     // other tabs
 }

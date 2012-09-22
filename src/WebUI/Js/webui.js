@@ -4,10 +4,11 @@
 var WebUI = 
 {
     "torrents": {},
-    "peerlist": {},
-    "filelist": {},
+    "peerlist": [],
+    "filelist": [],
     "settings": {},
     "props": {},
+    "dirlist": [],
     
     "categories":
     {
@@ -66,6 +67,14 @@ var WebUI =
             "reverse": false,
             "sIndex": -1
         },
+        "peerTable":
+        {
+            "colMask": 0x0000, // automatically calculated based on this.prsColDefs
+            "colOrder": [], // automatically calculated based on this.prsColDefs
+            "colWidth": [], // automatically calculated based on this.prsColDefs
+            "reverse": false,
+            "sIndex": -1
+        },
         "activeSettingsPane": "",
         "activeTorGroups":
         {
@@ -79,6 +88,9 @@ var WebUI =
     //"spdGraph": new SpeedGraph(),
     
     "trtTable": new STable(),
+    "prsTable": new STable(),
+    "flsTable": new STable(),
+    
     "trtColDefs":
     [
         //[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
@@ -102,6 +114,39 @@ var WebUI =
         , ["added", 150, TYPE_NUMBER, true, false, ALIGN_LEFT]
         , ["completed", 150, TYPE_NUMBER, true, false, ALIGN_LEFT]
         , ["url", 250, TYPE_STRING, true]
+    ],
+    "prsColDefs":
+    [
+        //[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
+          ["ip", 200, TYPE_STRING] // TODO: See if this should use TYPE_CUSTOM
+        , ["port", 60, TYPE_NUMBER, true]
+        , ["client", 125, TYPE_STRING]
+        , ["flags", 60, TYPE_STRING]
+        , ["pcnt", 80, TYPE_NUM_PROGRESS]
+        , ["relevance", 70, TYPE_NUMBER, true]
+        , ["downspeed", 80, TYPE_NUMBER]
+        , ["upspeed", 80, TYPE_NUMBER]
+        , ["reqs", 40, TYPE_STRING]
+        , ["waited", 60, TYPE_NUMBER, true]
+        , ["uploaded", 70, TYPE_NUMBER]
+        , ["downloaded", 70, TYPE_NUMBER]
+        , ["hasherr", 70, TYPE_NUMBER, true]
+        , ["peerdl", 70, TYPE_NUMBER]
+        , ["maxup", 70, TYPE_NUMBER, true]
+        , ["maxdown", 70, TYPE_NUMBER, true]
+        , ["queued", 70, TYPE_NUMBER, true]
+        , ["inactive", 60, TYPE_NUMBER, true]
+    ],
+    "flsColDefs":
+    [
+        //[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
+          ["name", 300, TYPE_STRING]
+        , ["size", 75, TYPE_NUMBER]
+        , ["done", 75, TYPE_NUMBER]
+        , ["pcnt", 60, TYPE_NUM_PROGRESS]
+        , ["firstpc", 70, TYPE_NUMBER, true]
+        , ["numpcs", 70, TYPE_NUMBER, true]
+        , ["prio", 65, TYPE_NUMBER, false, false, ALIGN_LEFT]
     ],
     
     "trtColDoneIdx": -1, // automatically calculated based on this.trtColDefs
@@ -474,6 +519,216 @@ var WebUI =
         }
     },
     
+    	"prsColMove": function() {
+this.config.peerTable.colOrder = this.prsTable.colOrder;
+this.config.peerTable.sIndex = this.prsTable.sIndex;
+if (Browser.opera)
+this.saveConfig(true);
+},
+
+"prsColReset": function() {
+var config = {
+"colMask": 0
+, "colOrder": this.prsColDefs.map(function(item, idx) { return idx; })
+, "colWidth": this.prsColDefs.map(function(item, idx) { return item[1]; })
+};
+
+this.prsColDefs.each(function(item, idx) { if (!!item[3]) config.colMask |= (1 << idx); });
+
+this.prsTable.setConfig(config);
+Object.append(this.config.peerTable, config);
+if (Browser.opera)
+this.saveConfig(true);
+},
+
+"prsColResize": function() {
+this.config.peerTable.colWidth = this.prsTable.getColumnWidths();
+if (Browser.opera)
+this.saveConfig(true);
+},
+
+"prsColToggle": function(index, enable, nosave) {
+var num = 1 << index;
+if (enable) {
+this.config.peerTable.colMask |= num;
+} else {
+this.config.peerTable.colMask &= ~num;
+}
+if (!nosave && Browser.opera)
+this.saveConfig(true);
+},
+
+"prsDataToRow": function(data) {
+return this.prsColDefs.map(function(item) {
+switch (item[0]) {
+case "ip":
+return (
+((this.settings["resolve_peerips"] && data[CONST.PEER_REVDNS]) || data[CONST.PEER_IP])
++ (data[CONST.PEER_UTP] ? " [uTP]" : "")
+);
+
+case "port":
+return data[CONST.PEER_PORT];
+
+case "client":
+return data[CONST.PEER_CLIENT];
+
+case "flags":
+return data[CONST.PEER_FLAGS];
+
+case "pcnt":
+return data[CONST.PEER_PROGRESS];
+
+case "relevance":
+return data[CONST.PEER_RELEVANCE];
+
+case "downspeed":
+return data[CONST.PEER_DOWNSPEED];
+
+case "upspeed":
+return data[CONST.PEER_UPSPEED];
+
+case "reqs":
+return data[CONST.PEER_REQS_OUT] + "|" + data[CONST.PEER_REQS_IN];
+
+case "waited":
+return data[CONST.PEER_WAITED];
+
+case "uploaded":
+return data[CONST.PEER_UPLOADED];
+
+case "downloaded":
+return data[CONST.PEER_DOWNLOADED];
+
+case "hasherr":
+return data[CONST.PEER_HASHERR];
+
+case "peerdl":
+return data[CONST.PEER_PEERDL];
+
+case "maxup":
+return data[CONST.PEER_MAXUP];
+
+case "maxdown":
+return data[CONST.PEER_MAXDOWN];
+
+case "queued":
+return data[CONST.PEER_QUEUED];
+
+case "inactive":
+return data[CONST.PEER_INACTIVE];
+}
+}, this);
+},
+    
+    "prsFormatRow": function(values, index) {
+        var useidx = $chk(index);
+        var len = (useidx ? (index + 1) : values.length);
+
+        for (var i = (index || 0); i < len; i++)
+        {
+            switch (this.prsColDefs[i][0])
+            {
+                case "ip":
+                case "port":
+                case "client":
+                case "flags":
+                case "reqs":
+                    break;
+
+                case "pcnt":
+                case "relevance":
+                    values[i] = (values[i] / 10).toFixedNR(1) + "%";
+                    break;
+
+                case "uploaded":
+                case "downloaded":
+                case "hasherr":
+                case "queued":
+                    values[i] = (values[i] > 103) ? values[i].toFileSize() : "";
+                    break;
+
+                case "downspeed":
+                case "upspeed":
+                case "peerdl":
+                case "maxup":
+                case "maxdown":
+                    values[i] = (values[i] > 103) ? (values[i].toFileSize() + g_perSec) : "";
+                    break;
+
+                case "waited":
+                case "inactive":
+                    values[i] = (values[i] == 0) ? "" :
+                    (values[i] == -1) ? "\u221E" : values[i].toTimeDelta();
+                    break;
+            }
+        }
+
+        if (useidx)
+            return values[index];
+        else
+            return values;
+    },
+    
+    "toggleResolveIP": function()
+    {
+        this.settings["resolve_peerips"] = !this.settings["resolve_peerips"];
+
+        // TODO: Generalize settings storage requests
+        this.request("action=setsetting&s=resolve_peerips&v=" + (this.settings["resolve_peerips"] ? 1 : 0), (function()
+        {
+            if (this.torrentID != "")
+                this.getPeers(this.torrentID, true);
+        }).bind(this));
+    },
+
+    "prsSelect": function(ev, id)
+    {
+        if (ev.isRightClick())
+            this.showPeerMenu.delay(0, this, ev);
+    },
+
+    "showPeerMenu": function(ev)
+    {
+        if (!ev.isRightClick()) return;
+
+        var menuItems =
+        [
+              [ L_("MP_RESOLVE_IPS"), this.toggleResolveIP.bind(this) ]
+            , [ CMENU_SEP ]
+            , [ L_("MENU_COPY"), this.prsShowCopy.bind(this) ]
+        ];
+
+        // Process menu items
+        // NOTE: Yeah, very nasty code here.
+        if (this.settings["resolve_peerips"])
+        {
+            menuItems[0].splice(0, 0, CMENU_CHECK);
+        }
+
+        //--------------------------------------------------
+        // Draw Menu
+        //--------------------------------------------------
+
+        ContextMenu.clear();
+        ContextMenu.add.apply(ContextMenu, menuItems);
+        ContextMenu.show(ev.page);
+    },
+
+    "prsShowCopy": function()
+    {
+        this.showCopy(L_("MENU_COPY"), this.prsTable.copySelection());
+    },
+
+    "prsSort": function(index, reverse)
+    {
+        this.config.peerTable.sIndex = index;
+        this.config.peerTable.reverse = reverse;
+
+        if (Browser.opera)
+            this.saveConfig(true);
+    },
+    
     "hideMsg": function()
     {
         $("cover").hide();
@@ -532,7 +787,7 @@ var WebUI =
                         
                         if(fails[0] <= self.limits.reqRetryMaxAttempts)
                         {
-                            log("Request failure #" + fails[0] + " (will retry in " + delay + " seconds): " + url);
+                            log("Request failure #" + fails[0] + " (will retry in " + delay + " seconds): " + qs);
                         }
                         else
                         {
@@ -546,13 +801,13 @@ var WebUI =
                             return;
                         }
                         
-                        self.request.delay(delay * 1000, self, [ method, url, data, function(json)
+                        self.request.delay(delay * 1000, self, [ method, qs, data, function(json)
                         {
                             if(fails[0])
                             {
                                 fails[0] = 0;
                                 
-                                log("Request retry succeeded: " + url);
+                                log("Request retry succeeded: " + qs);
                                 if(fn) fn.delay(0, self, json);
                                 self.beginPeriodicUpdate();
                             }
@@ -1037,6 +1292,13 @@ var WebUI =
                 "colWidth": cookie.torrentTable.colWidth
             });
             
+            this.prsTable.setConfig({
+                "colSort": [ cookie.peerTable.sIndex, cookie.peerTable.reverse ],
+                "colMask": cookie.peerTable.colMask,
+                "colOrder": cookie.peerTable.colOrder,
+                "colWidth": cookie.peerTable.colWidth
+            });
+            
             this.tableSetMaxRows(cookie.maxRows);
             
             resizeUI();
@@ -1478,9 +1740,9 @@ var WebUI =
         this.toggleSearchBar();
     },
     
-    "saveConfig": function(f)
+    "saveConfig": function(async, callback)
     {
-        console.log("saveconfig");
+        this.request("post", "action=setsetting", { "webui.cookie": JSON.encode(this.config), callback || null, async || false);
     },
     
     "showDetails": function(id)
@@ -1544,6 +1806,9 @@ var WebUI =
         ["rm", "dl", "ul", "ra", "us", "ds", "se", "pe", "sa", "hs"].each(function(id) {
             $(id).set("html", "");
         });
+        
+        this.prsTable.clearRows();
+        this.flsTable.clearRows();
     },
     
     "loadPeers": function()
@@ -1733,6 +1998,20 @@ var WebUI =
     
     "detPanelTabChange": function(id)
     {
+        if(!(this.config || {}).showDetails) return;
+        if(id === undefined) id = this.mainTabs.active;
+        
+        switch(id)
+        {
+            case "mainInfoPane-peersTab":
+                this.prsTable.calcSize();
+                this.prsTable.restoreScroll();
+                
+                if(this.torrentID == "") return;
+                break;
+        }
+        
+        this.showDetails(this.torrentID);
     },
     
     "updateToolbar": function()
@@ -1793,9 +2072,30 @@ var WebUI =
         this.config.maxRows = max;
         
         this.trtTable.setConfig({ "rowMaxCount": max || virtRows, "rowMode": mode });
-        
+        this.prsTable.setConfig({ "rowMaxCount": max || virtRows, "rowMode": mode});
         // do same for file and peers table
         // and advanced settings
+    },
+    
+    "tableUseAltColor": function(enable)
+    {
+        this.trtTable.setConfig({"rowAlternate": enable});
+        this.prsTable.setConfig({"rowAlternate": enable});
+        this.flsTable.setConfig({"rowAlternate": enable});
+        //this.rssfdTable.setConfig({"rowAlternate": enable});
+        //this.advOptTable.setConfig({"rowAlternate": enable});
+    },
+
+    "tableUseProgressBar": function(enable)
+    {
+        var progFunc = Function.from(enable ? TYPE_NUM_PROGRESS : TYPE_NUMBER);
+        var trtProgCols = this.trtColDefs.filter(function(item) { return item[2] == TYPE_NUM_PROGRESS; }).map(function(item) { return item[0]; });
+        var prsProgCols = this.prsColDefs.filter(function(item) { return item[2] == TYPE_NUM_PROGRESS; }).map(function(item) { return item[0]; });
+        var flsProgCols = this.flsColDefs.filter(function(item) { return item[2] == TYPE_NUM_PROGRESS; }).map(function(item) { return item[0]; });
+
+        this.trtTable.setConfig({"colType": trtProgCols.map(progFunc).associate(trtProgCols)});
+        this.prsTable.setConfig({"colType": trtProgCols.map(progFunc).associate(prsProgCols)});
+        this.flsTable.setConfig({"colType": flsProgCols.map(progFunc).associate(flsProgCols)});
     },
     
     "updateStatusBar": function()
