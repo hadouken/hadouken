@@ -3,16 +3,10 @@
  **************************************************/
 
 .dlg-window {
-	-webkit-border-radius: 	5px 5px 0 0;
-	-moz-border-radius: 	5px 5px 0 0;
-	-ms-border-radius: 	5px 5px 0 0;
-	-o-border-radius: 	5px 5px 0 0;
-	border-radius: 	5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-moz-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.15), 0 0 6px rgba(0, 0, 0, 0.10);
+	-webkit-border-radius: 5px 5px 0 0;
 	-webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.15), 0 0 6px rgba(0, 0, 0, 0.10);
-	-moz-box-shadow: 	3px 3px 3px rgba(0, 0, 0, 0.15), 0 0 6px rgba(0, 0, 0, 0.10);
-	-ms-box-shadow: 	3px 3px 3px rgba(0, 0, 0, 0.15), 0 0 6px rgba(0, 0, 0, 0.10);
-	-o-box-shadow: 		3px 3px 3px rgba(0, 0, 0, 0.15), 0 0 6px rgba(0, 0, 0, 0.10);
-	box-shadow: 		3px 3px 3px rgba(0, 0, 0, 0.15), 0 0 6px rgba(0, 0, 0, 0.10);
 	background-color: #FFFFFF;
 	border: 2px solid #C0C0C0;
 	border-bottom-color: #A0A0A0 !important;
@@ -29,11 +23,8 @@
 }
 
 .dlg-head {
-	-webkit-border-radius: 	4px 4px 0 0;
-	-moz-border-radius: 	4px 4px 0 0;
-	-ms-border-radius: 		4px 4px 0 0;
-	-o-border-radius: 		4px 4px 0 0;
-	border-radius: 			4px 4px 0 0;
+	-moz-border-radius: 4px 4px 0 0;
+	-webkit-border-radius: 4px 4px 0 0;
 	background: #F5F5F5 url(../img/blank.gif) no-repeat 0.3em 0.3em;
 	border-bottom: 1px solid #C0C0C0;
 	border-radius: 4px 4px 0 0;
@@ -95,11 +86,8 @@
 }
 
 .dlg-top {
+	-moz-box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.15);
 	-webkit-box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.15);
-	-moz-box-shadow: 	5px 3px 5px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.15);
-	-ms-box-shadow: 	5px 3px 5px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.15);
-	-o-box-shadow: 		5px 3px 5px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.15);
-	box-shadow: 		5px 3px 5px rgba(0, 0, 0, 0.25), 0 0 8px rgba(0, 0, 0, 0.15);
 	border-color: #989898;
 	border-bottom-color: #707070 !important;
 	border-right-color: #707070 !important;
@@ -110,7 +98,6 @@
 	background-color: #E0E0E0;
 	border-color: #989898;
 	color: #202020;
-	text-transform: capitalize;
 }
 
 
@@ -137,22 +124,6 @@
 
 #dlgAbout {
 	width: 20em;
-	font-family: Helvetica, Arial, sans-serif;
-}
-
-#dlgAbout fieldset{
-	margin: 10px;
-	font-size: 12px;
-	border: 0;
-	border-top: 1px solid #d0d0d0;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	-ms-border-radius: 0;
-	-o-border-radius: 0;
-	border-radius: 0;
-}
-#dlgAbout fieldset legend{
-	font-size: 14px;
 }
 
 #dlgAbout .centered-about-body {
@@ -259,233 +230,16 @@
 	height: 4em;
 }
 
-
-/**************************************************
- * DIALOG: Add/Edit RSS Feed
- **************************************************/
-
-#dlgAddEditRSSFeed {
-	width: 32em;
-}
-
-#dlgAddEditRSSFeed-head {
-	background-image: url(../img/feed.png);
-}
-
-#dlgAddEditRSSFeed .dlg-body .tbox {
-	width: 20em;
-}
-
-
-/**************************************************
- * DIALOG: RSS Downloader
- **************************************************/
-
-#dlgRSSDownloader {
-	width: 700px;
-}
-
-#dlgRSSDownloader-head {
-	background-image: url(../img/feed.png);
-}
-
-#dlgRSSDownloader-content {
-	background: #FFFFFF;
-	border: 1px solid #868686;
-	height: 350px;
-	padding: 3px;
-	position: relative;
-}
-
-#dlgRSSDownloader-feedsMenu,
-#dlgRSSDownloader-filtersMenu {
-	background-color: #FFFFFF;
-	border: 1px solid #868686;
-	bottom: 3px;
-	left: 3px;
-	overflow: auto;
-	position: absolute;
-	top: 3px;
-	width: 150px;
-}
-
-#dlgRSSDownloader-feedsMenu > div,
-#dlgRSSDownloader-filtersMenu > div {
-	min-width: 100%;
-}
-
-#dlgRSSDownloader-feeds,
-#dlgRSSDownloader-filters {
-	list-style: none;
-	white-space: nowrap;
-}
-
-#dlgRSSDownloader-feeds li,
-#dlgRSSDownloader-filters li {
-	cursor: pointer;
-	padding: 2px 4px 2px 22px;
-	position: relative;
-}
-
-#dlgRSSDownloader-feeds li.sel,
-#dlgRSSDownloader-filters li.sel {
-	background-color: #C0C0C0;
-	color: #FFFFFF;
-}
-
-#dlgRSSDownloader-feedItemList,
-#dlgRSSDownloader-filterSettings {
-	bottom: 3px;
-	left: 158px;
-	margin: 0;
-	position: absolute;
-	right: 3px;
-	top: 3px;
-}
-
-/* Feeds Tab */
-
-#dlgRSSDownloader-feeds li .icon {
-	background: transparent url(../img/tstatus.png) no-repeat 0 -208px;
-	clip: rect(0 16px 16px 0);
-	left: 0;
-	margin: -8px 3px;
-	padding: 8px;
-	position: absolute;
-	top: 50%;
-}
-
-#dlgRSSDownloader-feeds li.disabled .icon {
-	background-position: 0 -32px;
-}
-
-.RSS_New .icon { background: transparent url(../img/tstatus.png) no-repeat 0 -272px !important; }
-.RSS_Old .icon { background: transparent url(../img/tstatus.png) no-repeat 0 -208px !important; }
-.RSS_Added .icon { background: transparent url(../img/tstatus.png) no-repeat 0 -288px !important; }
-
-/* Favorites Tab */
-
-#dlgRSSDownloader-filters li input {
-	left: 0;
-	margin: -6px 5px;
-	position: absolute;
-	top: 50%;
-	vertical-align: text-top;
-}
-
-#rssfilter_edit_control {
-	bottom: 5px;
-	display: none;
-	position: absolute;
-	right: 5px;
-}
-
-#rssfilter_name,
-#rssfilter_filter,
-#rssfilter_not,
-#rssfilter_save_in,
-#rssfilter_feed,
-#rssfilter_quality {
-	width: 450px;
-}
-
-#rssfilter_quality {
-	text-align: center;
-}
-
-#rssfilter_min_interval,
-#rssfilter_label {
-	width: 375px;
-}
-
-.panel-hider{
-	z-index: 499;
-	overflow: hidden;
-	position: absolute;
-	top: 85px;
-	height: 0;
-	bottom: auto;
-	left: 0;
-	right: 0;
-	pointer-events: none;
-}
-.panel-hider.open{
-	height: auto;
-	bottom: 30px;
-	pointer-events: auto;
-}
-.panel-hider .dlg-window{
-	position: absolute;
-	display: block;
-	height: 100%;
-	right: 0;
-	left: 0;
-	top: -100%;
-	border: 0;
-	-webkit-border-radius:	0;
-	-moz-border-radius: 	0;
-	-ms-border-radius: 		0;
-	-o-border-radius: 		0;
-	border-radius: 			0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: 	none;
-	-ms-box-shadow: 	none;
-	-o-box-shadow: 		none;
-	box-shadow: 		none;
-/*	-webkit-transition: top 0.25s linear;
-	-moz-transition: 	top 0.25s linear;
-	-ms-transition: 	top 0.25s linear;
-	-o-transition: 		top 0.25s linear;
-	transition: 		top 0.25s linear;*/
-}
-/*.panel-hider.open .dlg-window{
-	top: 0;
-}*/
-
 /**************************************************
  * DIALOG: Settings
  **************************************************/
 
 #dlgSettings {
-	width: 100%;
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 12px;
-}
-#dlgSettings.moving{
-	-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+	width: 680px;
 }
 
-#dlgSettings .dlg-body{
-	margin: 0;
-}
-
-/*#dlgSettings-head {
+#dlgSettings-head {
 	background-image: url(../img/settings.png);
-}*/
-
-#dlgSettings-title{
-	font-weight: normal;
-	font-size: 24px;
-	padding: 5px 10px 5px;
-	margin: 0 0 5px 150px;
-	color: #333;
-	text-shadow: 0 1px 0 #fff;
-	border-bottom: 1px solid #ccc;
-	background: #ECECEC;
-}
-#dlgSettings-title{
-	padding-left: 0;
-	border-color: #ddd;
-	background: none;
-	text-shadow: none;
-	margin-left: 160px;
-	margin-right: 10px;
-}
-
-#dlgSettings .dlg-body,
-#dlgSettings-form{
-	height: 100%;
-	width: 100%;
 }
 
 #dlgSettings-menuCont {
@@ -499,19 +253,10 @@
 	top: 0;
 	width: 149px;
 }
-#dlgSettings-menuCont h2{
-	font-weight: normal;
-	font-size: 22px;
-	padding: 10px 0 10px 10px;
-}
 
 #dlgSettings-menuCont > div {
 	display: block !important;
 	min-width: 100%;
-}
-
-#dlgSettings-advOptList{
-	min-height: 400px;
 }
 
 #dlgSettings-menu {
@@ -525,7 +270,6 @@
 	color: #333;
 	font-size: 12px;
 	border: 1px solid transparent;
-	text-indent: 10px;
 	border-left: 0;
 	border-right: 0;
 }
@@ -537,20 +281,17 @@
 /*	color: #FFFFFF;*/
 }
 
-#dlgSettings-menu li.hidden {
-	display: none!important;
-}
-
 #dlgSettings .dlg-body {
 	padding: 0;
 }
 
 #dlgSettings .settings-pane {
+	height: 400px;
 	left: 150px;
 	overflow: auto;
-	padding: 5px 20px;
+	padding: 5px 10px;
 	position: relative;
-	width: 560px;
+	width: 510px;
 	background: #fff;
 }
 
@@ -732,44 +473,30 @@ input[id="gui.dlrate_menu"] {
 	position: relative;
 	background: #fff;
 	margin: 8px 0;
-	padding: 10px 15px 15px;
+	padding: 5px 15px 10px;
 	border: 0;
-	border-top: 1px solid #e2e2e2;
+	border-top: 1px solid #ddd;
 	-webkit-border-radius: 	0;
 	-moz-border-radius: 	0;
 	-ms-border-radius: 		0;
 	-o-border-radius: 		0;
 	border-radius: 			0;
+	-webkit-box-shadow: 0 1px 0 #fdfdfd inset;
+/*	background-image: -webkit-linear-gradient(top, #f2f2f2, #fff);*/
 }
 
 #dlgSettings fieldset legend{
 	padding: 0 5px;
 	font-family: Helvetica, Arial, sans-serif;
 	font-weight: normal;
-	font-size: 18px;
+	font-size: 16px;
 /*	float: left;*/
 }
 #dlgSettings input.btn{
-	cursor: pointer;
 	height: 21px;
 	width: auto;
 	min-width: 70px;
-	padding: 0 5px;
-	color: #333;
-	text-shadow: 0 1px #fff;
-	-webkit-border-radius: 4px !important;
-	-moz-border-radius: 4px !important;
-	-ms-border-radius: 4px !important;
-	-o-border-radius: 4px !important;
-	border-radius: 4px !important;
-	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-	-moz-box-shadow: 	0 1px 3px rgba(0,0,0,0.1);
-	-ms-box-shadow: 	0 1px 3px rgba(0,0,0,0.1);
-	-o-box-shadow: 		0 1px 3px rgba(0,0,0,0.1);
-	box-shadow: 		0 1px 3px rgba(0,0,0,0.1);
-}
-#dlgSettings input.btn:hover{
-	border-color: #888;
+	padding: 0 3px;
 }
 #dlgSettings input.tbox{
 	text-indent: 4px;
@@ -810,29 +537,7 @@ input[id="gui.dlrate_menu"] {
 }
 #dlgSettings .dlg-foot{
 	height: 22px;
-	padding: 0;
-	position: absolute;
-	background: none;
-	border: 0;
-	margin: 0;
-	top: 6px;
-	right: 10px;
-}
-#dlgSettings .dlg-foot .btn{
-	height: 25px;
-	padding: 0 10px;
-	font-weight: bold;
-}
-#DLG_SETTINGS_CLOSE{
-	opacity: 0.8;
-	height: 16px;
-	width: 16px;
-	float: right;
-	margin: 5px 5px 0 10px;
-	background: url(../img/panel_close.png);
-}
-#DLG_SETTINGS_CLOSE:hover{
-	opacity: 1;
+	padding: 5px;
 }
 
 #total_uploaded_history,

@@ -75,6 +75,18 @@ var WebUI =
             "reverse": false,
             "sIndex": -1
         },
+        "fileTable":
+        {
+            "colMask": 0x0000, // automatically calculated based on this.flsColDefs
+            "colOrder": [], // automatically calculated based on this.flsColDefs
+            "colWidth": [], // automatically calculated based on this.flsColDefs
+            "reverse": false,
+            "sIndex": -1
+        },
+        "advOptTable":
+        {
+            "rowMultiSelect": false
+        },
         "activeSettingsPane": "",
         "activeTorGroups":
         {
@@ -90,6 +102,7 @@ var WebUI =
     "trtTable": new STable(),
     "prsTable": new STable(),
     "flsTable": new STable(),
+    "advOptTable": new STable(),
     
     "trtColDefs":
     [
@@ -147,6 +160,12 @@ var WebUI =
         , ["firstpc", 70, TYPE_NUMBER, true]
         , ["numpcs", 70, TYPE_NUMBER, true]
         , ["prio", 65, TYPE_NUMBER, false, false, ALIGN_LEFT]
+    ],
+   	"advOptColDefs":
+    [
+        //[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
+          ["name", 240, TYPE_STRING]
+        , ["value", 235, TYPE_STRING]
     ],
     
     "trtColDoneIdx": -1, // automatically calculated based on this.trtColDefs
@@ -519,107 +538,123 @@ var WebUI =
         }
     },
     
-    	"prsColMove": function() {
-this.config.peerTable.colOrder = this.prsTable.colOrder;
-this.config.peerTable.sIndex = this.prsTable.sIndex;
-if (Browser.opera)
-this.saveConfig(true);
-},
+    "prsColMove": function()
+    {
+        this.config.peerTable.colOrder = this.prsTable.colOrder;
+        this.config.peerTable.sIndex = this.prsTable.sIndex;
 
-"prsColReset": function() {
-var config = {
-"colMask": 0
-, "colOrder": this.prsColDefs.map(function(item, idx) { return idx; })
-, "colWidth": this.prsColDefs.map(function(item, idx) { return item[1]; })
-};
+        if (Browser.opera)
+            this.saveConfig(true);
+    },
 
-this.prsColDefs.each(function(item, idx) { if (!!item[3]) config.colMask |= (1 << idx); });
+    "prsColReset": function()
+    {
+        var config =
+        {
+              "colMask": 0
+            , "colOrder": this.prsColDefs.map(function(item, idx) { return idx; })
+            , "colWidth": this.prsColDefs.map(function(item, idx) { return item[1]; })
+        };
 
-this.prsTable.setConfig(config);
-Object.append(this.config.peerTable, config);
-if (Browser.opera)
-this.saveConfig(true);
-},
+        this.prsColDefs.each(function(item, idx) { if (!!item[3]) config.colMask |= (1 << idx); });
 
-"prsColResize": function() {
-this.config.peerTable.colWidth = this.prsTable.getColumnWidths();
-if (Browser.opera)
-this.saveConfig(true);
-},
+        this.prsTable.setConfig(config);
+        Object.append(this.config.peerTable, config);
+        
+        if (Browser.opera)
+            this.saveConfig(true);
+    },
 
-"prsColToggle": function(index, enable, nosave) {
-var num = 1 << index;
-if (enable) {
-this.config.peerTable.colMask |= num;
-} else {
-this.config.peerTable.colMask &= ~num;
-}
-if (!nosave && Browser.opera)
-this.saveConfig(true);
-},
+    "prsColResize": function()
+    {
+        this.config.peerTable.colWidth = this.prsTable.getColumnWidths();
 
-"prsDataToRow": function(data) {
-return this.prsColDefs.map(function(item) {
-switch (item[0]) {
-case "ip":
-return (
-((this.settings["resolve_peerips"] && data[CONST.PEER_REVDNS]) || data[CONST.PEER_IP])
-+ (data[CONST.PEER_UTP] ? " [uTP]" : "")
-);
+        if (Browser.opera)
+            this.saveConfig(true);
+    },
 
-case "port":
-return data[CONST.PEER_PORT];
+    "prsColToggle": function(index, enable, nosave)
+    {
+        var num = 1 << index;
+        
+        if (enable)
+        {
+            this.config.peerTable.colMask |= num;
+        }
+        else
+        {
+            this.config.peerTable.colMask &= ~num;
+        }
 
-case "client":
-return data[CONST.PEER_CLIENT];
+        if (!nosave && Browser.opera)
+            this.saveConfig(true);
+    },
 
-case "flags":
-return data[CONST.PEER_FLAGS];
+    "prsDataToRow": function(data)
+    {
+        return this.prsColDefs.map(function(item)
+        {
+            switch (item[0])
+            {
+                case "ip":
+                    return (
+                        ((this.settings["resolve_peerips"] && data[CONST.PEER_REVDNS]) || data[CONST.PEER_IP])
+                        + (data[CONST.PEER_UTP] ? " [uTP]" : "")
+                    );
 
-case "pcnt":
-return data[CONST.PEER_PROGRESS];
+                case "port":
+                    return data[CONST.PEER_PORT];
 
-case "relevance":
-return data[CONST.PEER_RELEVANCE];
+                case "client":
+                    return data[CONST.PEER_CLIENT];
+    
+                case "flags":
+                    return data[CONST.PEER_FLAGS];
 
-case "downspeed":
-return data[CONST.PEER_DOWNSPEED];
+                case "pcnt":
+                    return data[CONST.PEER_PROGRESS];
 
-case "upspeed":
-return data[CONST.PEER_UPSPEED];
+                case "relevance":
+                    return data[CONST.PEER_RELEVANCE];
 
-case "reqs":
-return data[CONST.PEER_REQS_OUT] + "|" + data[CONST.PEER_REQS_IN];
+                case "downspeed":
+                    return data[CONST.PEER_DOWNSPEED];
 
-case "waited":
-return data[CONST.PEER_WAITED];
+                case "upspeed":
+                    return data[CONST.PEER_UPSPEED];
 
-case "uploaded":
-return data[CONST.PEER_UPLOADED];
+                case "reqs":
+                    return data[CONST.PEER_REQS_OUT] + "|" + data[CONST.PEER_REQS_IN];
 
-case "downloaded":
-return data[CONST.PEER_DOWNLOADED];
+                case "waited":
+                    return data[CONST.PEER_WAITED];
 
-case "hasherr":
-return data[CONST.PEER_HASHERR];
+                case "uploaded":
+                    return data[CONST.PEER_UPLOADED];
 
-case "peerdl":
-return data[CONST.PEER_PEERDL];
+                case "downloaded":
+                    return data[CONST.PEER_DOWNLOADED];
 
-case "maxup":
-return data[CONST.PEER_MAXUP];
+                case "hasherr":
+                    return data[CONST.PEER_HASHERR];
 
-case "maxdown":
-return data[CONST.PEER_MAXDOWN];
+                case "peerdl":
+                    return data[CONST.PEER_PEERDL];
 
-case "queued":
-return data[CONST.PEER_QUEUED];
+                case "maxup":
+                    return data[CONST.PEER_MAXUP];
 
-case "inactive":
-return data[CONST.PEER_INACTIVE];
-}
-}, this);
-},
+                case "maxdown":
+                    return data[CONST.PEER_MAXDOWN];
+
+                case "queued":
+                    return data[CONST.PEER_QUEUED];
+
+                case "inactive":
+                    return data[CONST.PEER_INACTIVE];
+            }
+        }, this);
+    },
     
     "prsFormatRow": function(values, index) {
         var useidx = $chk(index);
@@ -1740,9 +1775,182 @@ return data[CONST.PEER_INACTIVE];
         this.toggleSearchBar();
     },
     
+    "setSettings": function()
+    {
+        var value = null, reload = false, hasChanged = false;
+        
+        // TODO: implement this mother
+        //Logger.setLogDate(this.getAdvSetting("gui.log_date"));
+        
+        // Update interval
+        value = ($("webui.updateInterval").get("value").toInt() || 0);
+        if(value < this.limits.minUpdateInterval)
+        {
+            value = this.limits.minUpdateInterval;
+            $("webui.updateInterval").set("value", value);
+        }
+        if(this.config.updateInterval != value)
+        {
+            this.beginPeriodicUpdate(value);
+            hasChanged = true;
+        }
+        
+        // Show-Hide toolbar
+        value = $("webui.showToolbar").checked;
+        if(this.config.showToolbar != value)
+        {
+            this.toggleToolbar(value);
+            hasChanged = true;
+        }
+        
+        // Show-Hide category panel
+        value = $("webui.showCategories").checked;
+        if(this.config.showCategories != value)
+        {
+            this.toggleCatPanel(value);
+            hasChanged = true;
+        }
+        
+        // show-hide details panel
+        value = $("webui.showDetails").checked;
+        if(this.config.showDetails != value)
+        {
+            this.toggleDetPanel(value);
+            hasChanged = true;
+        }
+        
+        // Show-Hide statusbar
+        value = $("webui.showStatusBar").checked;
+        if(this.config.showStatusBar != value)
+        {
+            this.toggleStatusBar(value);
+            hasChanged = value;
+        }
+        
+        // table max rows
+        value = ($("webui.maxRows").get("value").toInt() || 0);
+        if(value < this.limits.minTableRows)
+        {
+            value = (value <= 0 ? 0 : this.limits.minTableRows);
+            $("webui.maxRows").set("value", value);
+        }
+        if(this.config.maxRows != value)
+        {
+            this.tableSetMaxRows(value);
+            hasChanged = true;
+        }
+        
+        // use system font
+        value = $("webui.useSysFont").checked;
+        if(this.config.useSysFont != value)
+        {
+            this.toggleSystemFont(value);
+            hasChanged = true;
+        }
+        
+        // language
+        value = $("webui.lang").get("value");
+        if(this.config.lang != value)
+        {
+            this.config.lang = value;
+            loadLangStrings({ "lang": value });
+            hasChanged = true;
+        }
+        
+        // build cfg object
+        var data = {};
+        
+        if(hasChanged && Browser.opera)
+            data["webui.cookie"] = JSON.encode(this.config);
+        
+        
+        // speed in title
+        value = $("gui.speed_in_title").checked;
+        if(!value && !!this.settings["gui.speed_in_title"] != value)
+        {
+            document.title = g_winTitle;
+        }
+        
+        value = $("gui.alternate_color").checked;
+        if(!!this.settings["gui.alternate_color"] != value)
+        {
+            this.tableUseAltColor(value);
+        }
+        
+        value = this.getAdvSetting("gui.graph_legend");
+        if (undefined != value && !!this.settings["gui.graph_legend"] != value)
+        {
+            this.spdGraph.showLegend(value);
+        }
+        
+        value = this.getAdvSetting("gui.graphic_progress");
+        if (undefined != value && !!this.settings["gui.graphic_progress"] != value)
+        {
+            this.tableUseProgressBar(value);
+        }
+        
+        value = this.getAdvSetting("gui.tall_category_list");
+        
+        for(var key in this.settings)
+        {
+            var ele = $(key);
+            if(!ele) continue;
+            
+            var v = this.settings[key], nv;
+            if(ele.type == "checkbox")
+            {
+                nv = ele.checked ? 1 : 0;
+            }
+            else
+            {
+                nv = ele.get("value");
+            }
+            
+            switch(key)
+            {
+                case "seed_ratio": nv *= 10; break;
+                case "seed_time":  nv *= 60; break;
+            }
+            
+            if(v != nv)
+            {
+                this.settings[key] = nv;
+                
+                data[key] = nv;
+            }
+        }
+        
+        for(var key in this.advSettings)
+        {
+            var nv = this.getAdvSetting(key);
+            if(nv === undefined) continue;
+            
+            var v = this.settings[key];
+            
+            if(v != nv)
+            {
+                this.settings[key] = nv;
+                
+                if(typeOf(nv) == "boolean")
+                {
+                    nv = nv ? 1 : 0;
+                }
+                
+                data[key] = nv;
+            }
+        }
+        
+        this.request("post", "action=setsetting", data, Function.from(), !reload);
+        
+        // TODO: implement the port change bit.. perhaps
+        
+        this.toggleSearchBar();
+        resize();
+    },
+    
     "saveConfig": function(async, callback)
     {
-        this.request("post", "action=setsetting", { "webui.cookie": JSON.encode(this.config), callback || null, async || false);
+        this.request("post", "action=setsetting", { "webui.cookie": JSON.encode(this.config) }, callback || null, async || false);
     },
     
     "showDetails": function(id)
@@ -1897,6 +2105,7 @@ return data[CONST.PEER_INACTIVE];
     
     "showSettings": function()
     {
+        DialogManager.show("Settings");
     },
     
     "showAddUrl": function()
@@ -1995,6 +2204,112 @@ return data[CONST.PEER_INACTIVE];
                 break;
         }
     },
+    
+    	"advOptDataToRow": function(data) {
+return this.advOptColDefs.map(function(item) {
+switch (item[0]) {
+case "name":
+return data[0];
+
+case "value":
+return data[2];
+}
+}, this);
+},
+
+"advOptFormatRow": function(values, index) {
+var useidx = $chk(index);
+var len = (useidx ? (index + 1) : values.length);
+
+/*
+for (var i = (index || 0); i < len; i++) {
+switch (this.advOptColDefs[i][0]) {
+case "name":
+case "value":
+break;
+}
+}
+*/
+
+if (useidx)
+return values[index];
+else
+return values;
+},
+
+"advOptColReset": function() {
+var config = {
+"colMask": 0
+, "colOrder": this.advOptColDefs.map(function(item, idx) { return idx; })
+, "colWidth": this.advOptColDefs.map(function(item, idx) { return item[1]; })
+};
+
+this.advOptColDefs.each(function(item, idx) { if (!!item[3]) config.colMask |= (1 << idx); });
+
+this.advOptTable.setConfig(config);
+},
+
+"advOptSelect": function(ev, id) {
+var val = this.getAdvSetting(id);
+var contBool = $("dlgSettings-advBool-cont");
+var contText = $("dlgSettings-advText-cont")
+
+if (undefined != val) {
+// Item clicked
+if (typeOf(val) == 'boolean') {
+contBool.setStyle("display", "inline");
+contText.setStyle("display", "none");
+
+$("dlgSettings-adv" + (val ? "True" : "False")).checked = true;
+}
+else {
+contBool.setStyle("display", "none");
+contText.setStyle("display", "inline");
+
+$("dlgSettings-advText").value = val;
+}
+}
+else {
+// Item unclicked
+contBool.setStyle("display", "none");
+contText.setStyle("display", "none");
+}
+},
+
+"advOptDblClk": function(id) {
+var val = this.getAdvSetting(id);
+if (undefined != val) {
+if (typeOf(val) == 'boolean') {
+$("dlgSettings-adv" + (val ? "False" : "True")).checked = true;
+this.advOptChanged();
+}
+}
+},
+
+"advOptChanged": function() {
+var optIds = this.advOptTable.selectedRows;
+if (optIds.length > 0) {
+var id = optIds[0];
+
+switch (typeOf(this.getAdvSetting(id))) {
+case 'boolean':
+this.setAdvSetting(id, $("dlgSettings-advTrue").checked);
+break;
+
+case 'number':
+this.setAdvSetting(id, $("dlgSettings-advText").value.toInt() || 0);
+break;
+
+case 'string':
+this.setAdvSetting(id, $("dlgSettings-advText").value);
+break;
+}
+
+if (id == "bt.transp_disposition") {
+$("enable_bw_management").checked = !!(this.getAdvSetting("bt.transp_disposition") & CONST.TRANSDISP_UTP);
+}
+}
+},
     
     "detPanelTabChange": function(id)
     {
