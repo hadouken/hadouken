@@ -300,7 +300,7 @@ var LANG_STR = [
 	, "||Avail.||Availability"
 	, "Added"
 	, "Completed On"
-	, "Done"
+	, "Status"
 	, "Downloaded"
 	, "Down Speed"
 	, "ETA"
@@ -439,9 +439,9 @@ var LANG_STR = [
 	"remote", // i.e. uTorrent remote
 	"about",
 	"sessions",
-	"share",
-	"share this torrent",
-	"share link",
+	"Share",
+	"Share this torrent",
+	"Share link",
 	"add",
 	"logout",
 	"log in",

@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (c) 2011 BitTorrent, Inc. All rights reserved.
 
 Use of this source code is governed by a BSD-style that can be
@@ -417,70 +417,4 @@ var LANG_STR = [
 	, "%ds"
 	, "%dw %dd"
 	, "%dy %dw"
-, "More Actions",
-
-	"Torrents",
-	"Feeds",
-	"App",
-	"country",
-	'ETA', // i.e. how much time remaining
-	"of", // i.e. 3 of 4 peers
-	"/s", // "per second""
-	"Paste a torrent or feed URL",
-	"Home",
-	"Logout",
-	"Seeding",
-	"All Feeds",
-	"bitrate",
-	"resolution",
-	"length",
-	"streamable",
-	"type", // i.e. file extension
-	"remote", // i.e. uTorrent remote
-	"about",
-	"sessions",
-	"share",
-	"share this torrent",
-	"share link",
-	"add",
-	"logout",
-	"log in",
-	"anywhere access",
-	"stay signed in",
-	"download",
-	"Your client is currently not available. Verify that it is connected to the internet.",
-	"Unable to communicate with your &micro;Torrent client. This message will disappear automatically when a connection is re-established.",
-	"Get file",
-	"Download to your computer",
-	"Open with VLC Media Player",
-	"Actions",
-	"season" // i.e. of a TV show
-
-	, "Client Information"
-	, "Product Version"
-	, "Source Revision"
-	, "Build Date"
-	, "Peer ID"
-	, "User-agent"
-	, "UPnP external address:"
-	, "UI Revision"
-
-	, "Save settings"
-	, "Settings"
-
-	, "BitTorrent Remote"
-	, "BitTorrent Remote is a simple and secure web service that enables access to this BitTorrent client from anywhere on the internet."
-	, "Enable access here by creating a computer name and password, then access BitTorrent anytime from a PC or mobile web browser at remote.bittorrent.com or on your android phone with the BitTorrent Remote app"
-	, "Learn More..."
-	, "Enable BitTorrent Remote Access"
-	, "Set a username and password"
-	, "Username"
-	, "Password"
-	, "Sign in..."
-	, "Remote Access"
-
 ];
-
-var LANG_STR_fallback = LANG_STR;
-
-/* README : If you add any strings *Please consider updating fallback.js */
