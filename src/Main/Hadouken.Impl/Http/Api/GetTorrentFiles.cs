@@ -23,8 +23,8 @@ namespace Hadouken.Impl.Http.Api
 
             if (!String.IsNullOrEmpty(hash) && _torrentEngine.Managers.ContainsKey(hash))
             {
-                return Json(new object[]
-                {
+                return Json(new { files = new object[] {
+                    hash,
                     (from f in _torrentEngine.Managers[hash].Torrent.Files
                      select new object[]
                      {
@@ -33,6 +33,7 @@ namespace Hadouken.Impl.Http.Api
                          f.BytesDownloaded,
                          f.Priority
                      })
+                }
                 });
             }
 

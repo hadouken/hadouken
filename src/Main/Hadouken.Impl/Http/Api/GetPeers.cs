@@ -26,7 +26,9 @@ namespace Hadouken.Impl.Http.Api
 
             return Json(new
             {
-                peers = (from peer in _torrentEngine.Managers[hash].Peers
+                peers = new object[] {
+                        hash,
+                        (from peer in _torrentEngine.Managers[hash].Peers
                         select new object[]
                         {
                             "00", // country
@@ -52,6 +54,7 @@ namespace Hadouken.Impl.Http.Api
                             -1, // inactive
                             -1, // relevance
                         }).ToArray()
+                }
             });
         }
     }
