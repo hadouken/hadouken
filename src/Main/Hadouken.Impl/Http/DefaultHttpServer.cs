@@ -31,6 +31,9 @@ namespace Hadouken.Impl.Http
 
         private HttpListener _listener;
         private string _webUIPath;
+
+        private static readonly string TokenCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        private static readonly int TokenLength = 40;
         
         public DefaultHttpServer(IKeyValueStore kvs, IFileSystem fs)
         {
@@ -197,6 +200,10 @@ namespace Hadouken.Impl.Http
         private ActionResult FindAndExecuteAction(IHttpContext context)
         {
             string actionName = context.Request.QueryString["action"];
+
+            if (actionName == "gettoken")
+                return GenerateCSRFToken();
+
             var actions = Kernel.GetAll<IApiAction>();
 
             var action = (from a in actions
@@ -218,6 +225,19 @@ namespace Hadouken.Impl.Http
             }
 
             return null;
+        }
+
+        private ActionResult GenerateCSRFToken()
+        {
+            var rnd = new Random(DateTime.Now.Millisecond);
+            var sb = new StringBuilder();
+
+            for (int i = 0; i < TokenLength; i++)
+            {
+                sb.Append(TokenCharacters[rnd.Next(0, TokenCharacters.Length - 1)]);
+            }
+
+            return new JsonResult() { Data = sb.ToString() };
         }
 
         private ActionResult Error_500(string message, IHttpContext context, Exception e)
