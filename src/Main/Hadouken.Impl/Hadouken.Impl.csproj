@@ -90,6 +90,7 @@
     <Compile Include="Http\Api\GetPeers.cs" />
     <Compile Include="Http\Api\RemoveTorrent.cs" />
     <Compile Include="Http\Api\PauseTorrent.cs" />
+    <Compile Include="Http\Api\SetSetting.cs" />
     <Compile Include="Http\Api\StopTorrent.cs" />
     <Compile Include="Http\Api\GetProperties.cs" />
     <Compile Include="Http\Api\GetSettings.cs" />
