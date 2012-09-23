@@ -21,6 +21,9 @@ namespace Hadouken.Impl.Http.Api
         {
             var data = BindModel<Dictionary<string, object>>();
 
+            if (data == null)
+                return Json(false);
+
             foreach (var key in data.Keys)
             {
                 _keyValueStore.Set(key, data[key]);
