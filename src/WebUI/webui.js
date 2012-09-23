@@ -503,11 +503,9 @@ var utWebUI = {
 			this.clearDetails();
 		}
 
-        // send request, then get list
-        
-		this.getList("action=" + action + "&hash=" + hashes.join("&hash="), (function() {
-			this.updateToolbar();
-		}).bind(this));
+        this.request("post", "action=" + action, hashes, (function() {
+            this.update();
+        }).bind(this));
 	},
 
 	"getHashes": function(act, all) {
