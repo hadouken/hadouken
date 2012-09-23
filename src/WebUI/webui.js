@@ -2935,7 +2935,7 @@ var utWebUI = {
 
 		var now = Date.now();
 		if (forceload || this.filelist._ID_ !== id || !this.filelist._TIME_ || (now - this.filelist._TIME_) > (this.limits.minFileListCache * 1000)) {
-			this.request("get", "action=getfiles&hash=" + id, null, (function(json) {
+			this.request("get", "action=gettorrentfiles&hash=" + id, null, (function(json) {
 				this.filelist.empty();
 
 				var files = json.files;
