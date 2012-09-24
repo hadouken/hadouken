@@ -115,7 +115,7 @@ var LANG_STR = [
 	, "Minimum ratio (%):"
 	, "Minimum seeding time (minutes):"
 	, "Seeding tasks have higher priority than downloading tasks"
-	, "When µTorrent Reaches the Seeding Goal"
+	, "When Hadouken Reaches the Seeding Goal"
 	, "Limit the upload rate to (kB/s): [0: stop]"
 	, "Enable Scheduler"
 	, "Scheduler Table"
@@ -143,7 +143,7 @@ var LANG_STR = [
 	, "Persistent Labels [Separate multiple labels with a | character]"
 	, "Search Engines [Format: name|URL]"
 	, "Basic Cache Settings"
-	, "The disk cache is used to keep frequently accessed data in memory to reduce the number of reads and writes to the hard drive. µTorrent normally manages the cache automatically, but you may change its behavior by modifying these settings."
+	, "The disk cache is used to keep frequently accessed data in memory to reduce the number of reads and writes to the hard drive. Hadouken normally manages the cache automatically, but you may change its behavior by modifying these settings."
 	, "Override automatic cache size and specify the size manually (MB):"
 	, "Reduce memory usage when the cache is not needed"
 	, "Advanced Cache Settings"
@@ -357,10 +357,10 @@ var LANG_STR = [
 	, "Show Toolbar"
 	, "Icons on Tabs"
 	, "Help"
-	, "µTorrent Webpage"
-	, "µTorrent Forums"
-	, "Send WebUI Feedback"
-	, "About µTorrent WebUI"
+	, "Hadouken Webpage"
+	, "Hadouken Forums"
+	, "Send Feedback"
+	, "About Hadouken"
 	, "Torrents"
 	, "Pause all torrents"
 	, "Resume all torrents"
@@ -449,7 +449,7 @@ var LANG_STR = [
 	"stay signed in",
 	"download",
 	"Your client is currently not available. Verify that it is connected to the internet.",
-	"Unable to communicate with your &micro;Torrent client. This message will disappear automatically when a connection is re-established.",
+	"Unable to communicate with your Hadouken instance. This message will disappear automatically when a connection is re-established.",
 	"Get file",
 	"Download to your computer",
 	"Open with VLC Media Player",

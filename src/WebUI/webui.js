@@ -2088,7 +2088,6 @@ var utWebUI = {
 			]]
 			, [CMENU_CHILD, L_("MM_OPTIONS"), [
 				  [L_("MM_OPTIONS_PREFERENCES"), this.showSettings.bind(this)]
-				, [L_("OV_TB_RSSDOWNLDR"), this.showRSSDownloader.bind(this)]
 				, [CMENU_SEP]
 				, [L_("MM_OPTIONS_SHOW_TOOLBAR"), this.toggleToolbar.bind(this, undefined)]
 				, [L_("MM_OPTIONS_SHOW_DETAIL"), this.toggleDetPanel.bind(this, undefined)]
@@ -2098,10 +2097,10 @@ var utWebUI = {
 				, [L_("MM_OPTIONS_TAB_ICONS"), this.toggleDetPanelIcons.bind(this, undefined)]
 			]]
 			, [CMENU_CHILD, L_("MM_HELP"), [
-				  [L_("MM_HELP_UT_WEBPAGE"), openURL.pass(["http://www.utorrent.com/", null])] 
-				, [L_("MM_HELP_UT_FORUMS"), openURL.pass(["http://forum.utorrent.com/", null])] 
+				  [L_("MM_HELP_UT_WEBPAGE"), openURL.pass(["http://www.hdkn.net/", null])] 
+				, [L_("MM_HELP_UT_FORUMS"), openURL.pass(["http://forums.hdkn.net/", null])] 
 				, [CMENU_SEP]
-				, [L_("MM_HELP_WEBUI_FEEDBACK"), openURL.pass(["http://forum.utorrent.com/viewtopic.php?id=58156", null])] 
+				, [L_("MM_HELP_WEBUI_FEEDBACK"), openURL.pass(["http://forums.hdkn.net", null])] 
 				, [CMENU_SEP]
 				, [L_("MM_HELP_ABOUT_WEBUI"), this.showAbout.bind(this)]
 			]]
@@ -2114,11 +2113,11 @@ var utWebUI = {
 
 		// Process menu items
 		// NOTE: Yeah, very nasty code here.
-		if (this.config.showToolbar) menuItems[1][2][3].unshift(CMENU_CHECK);
-		if (this.config.showDetails) menuItems[1][2][4].unshift(CMENU_CHECK);
-		if (this.config.showStatusBar) menuItems[1][2][5].unshift(CMENU_CHECK);
-		if (this.config.showCategories) menuItems[1][2][6].unshift(CMENU_CHECK);
-		if (this.config.showDetailsIcons) menuItems[1][2][8].unshift(CMENU_CHECK);
+		if (this.config.showToolbar) menuItems[1][2][2].unshift(CMENU_CHECK);
+		if (this.config.showDetails) menuItems[1][2][3].unshift(CMENU_CHECK);
+		if (this.config.showStatusBar) menuItems[1][2][4].unshift(CMENU_CHECK);
+		if (this.config.showCategories) menuItems[1][2][5].unshift(CMENU_CHECK);
+		if (this.config.showDetailsIcons) menuItems[1][2][7].unshift(CMENU_CHECK);
 
 		// Show menu
 		ContextMenu.clear();
