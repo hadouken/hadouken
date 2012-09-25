@@ -19,6 +19,12 @@ namespace Hadouken.UnitTests.BitTorrent
         private readonly Mock<IKeyValueStore> kvs = new Mock<IKeyValueStore>();
         private MonoTorrentEngine engine;
 
+        [TestFixtureSetUp]
+        public void TestFixtureSetUp()
+        {
+            HdknConfig.ConfigManager = new MemoryConfigManager();            
+        }
+
         [SetUp]
         public void SetUp()
         {

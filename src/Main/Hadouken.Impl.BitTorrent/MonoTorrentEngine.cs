@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using Hadouken.Messages;
 using System.Threading;
 using Hadouken.Configuration;
+using MonoTorrent;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -30,6 +31,8 @@ namespace Hadouken.Impl.BitTorrent
         private IFileSystem _fs;
         private IMessageBus _mbus;
 
+        private string _torrentFileSavePath;
+
         private ClientEngine _clientEngine;
         private Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
@@ -39,11 +42,16 @@ namespace Hadouken.Impl.BitTorrent
             _data = data;
             _fs = fs;
             _mbus = mbus;
+
+            _torrentFileSavePath = Path.Combine(HdknConfig.ConfigManager["Paths.Data"], "Torrents");
         }
 
         public void Load()
         {
             _logger.Info("Loading BitTorrent engine");
+
+            if(!_fs.DirectoryExists(_torrentFileSavePath))
+                _fs.CreateDirectory(_torrentFileSavePath);
 
             LoadEngine();
             LoadState();
@@ -187,9 +195,20 @@ namespace Hadouken.Impl.BitTorrent
                 manager.Stop();
         }
 
+        public ITorrentManager AddMagnetLink(string url)
+        {
+            return AddMagnetLink(url, _clientEngine.Settings.SavePath);
+        }
+
+        public ITorrentManager AddMagnetLink(string url, string savePath)
+        {
+            var ml = new MagnetLink(url);
+            return RegisterTorrentManager(new TorrentManager(ml, savePath, new TorrentSettings(), _torrentFileSavePath));
+        }
+
         public ITorrentManager AddTorrent(byte[] data)
         {
-            return AddTorrent(data, null);
+            return AddTorrent(data, _clientEngine.Settings.SavePath);
         }
 
         public ITorrentManager AddTorrent(byte[] data, string savePath)
@@ -204,27 +223,29 @@ namespace Hadouken.Impl.BitTorrent
                 if (String.IsNullOrEmpty(savePath))
                     savePath = _clientEngine.Settings.SavePath;
 
-                TorrentManager manager = new TorrentManager(t, savePath, new TorrentSettings());
-
-                // register with engine
-                _clientEngine.Register(manager);
-
-                // add to dictionary
-                HdknTorrentManager hdknManager = new HdknTorrentManager(manager, _fs, _mbus);
-                hdknManager.TorrentData = data;
-                hdknManager.Load();
-
-                _torrents.Add(hdknManager.InfoHash, hdknManager);
-
-                _mbus.Send<ITorrentAdded>(m =>
-                {
-                    m.Torrent = hdknManager;
-                });
-
-                return hdknManager;
+                return RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()), data);
             }
 
             return null;
+        }
+
+        private HdknTorrentManager RegisterTorrentManager(TorrentManager manager, byte[] data = null)
+        {
+            // register with engine
+            _clientEngine.Register(manager);
+
+            // add to dictionary
+            var hdknManager = new HdknTorrentManager(manager, _fs, _mbus) { TorrentData = data };
+            hdknManager.Load();
+
+            _torrents.Add(hdknManager.InfoHash, hdknManager);
+
+            _mbus.Send<ITorrentAdded>(m =>
+            {
+                m.Torrent = hdknManager;
+            });
+
+            return hdknManager;
         }
 
         public void RemoveTorrent(ITorrentManager manager)
