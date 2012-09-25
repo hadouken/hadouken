@@ -15,8 +15,6 @@ namespace Hadouken.UnitTests.Data
     [TestFixture]
     public class DataRepositoryTests
     {
-        private static System.Data.SQLite.SQLiteConnection __conn__;
-
         [TestFixtureSetUp]
         public void Setup()
         {

@@ -13,14 +13,21 @@ require 'tools/buildscripts/utils'
 
 CLOBBER.include("build/*")
 
-task :default => [ :clobber, "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :default => [ "arch:x86", :alpha ]
+
+task :alpha => [ :clobber, "env:alpha", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :beta => [ :clobber, "env:beta", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :rc => [ :clobber, "env:rc", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :ga => [ :clobber, "env:ga", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
 
 desc "Build"
 msbuild :build => :version do |msb|
     puts "##teamcity[progressMessage 'Compiling code']"
     
     msb.properties :configuration => "Release"
+    msb.properties :platform      => BUILD_PLATFORM
     msb.targets :Clean, :Build
+    
     msb.solution = "Hadouken.sln"
 end
 
@@ -34,7 +41,7 @@ assemblyinfo :version => "env:common" do |asm|
     asm.copyright = "2012"
     asm.namespaces = "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security"
     
-    asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION}", # disposed as product version in explorer
+    asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION} (#{BUILD_PLATFORM})", # disposed as product version in explorer
         :CLSCompliantAttribute => false,
         :AssemblyConfiguration => "#{CONFIGURATION}"
     
@@ -56,41 +63,46 @@ task :test => :build do
 end
 
 task :test_teamcity => :build do
-    puts "#{ENV['NUNIT_LAUNCHER']} v4.0 x86 NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
-    system "#{ENV['NUNIT_LAUNCHER']} v4.0 x86 NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
+    puts "#{ENV['NUNIT_LAUNCHER']} v4.0 #{BUILD_PLATFORM} NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/Hadouken.UnitTests.dll"
+    system "#{ENV['NUNIT_LAUNCHER']} v4.0 #{BUILD_PLATFORM} NUnit-2.6.0 src/Tests/Hadouken.UnitTests/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/Hadouken.UnitTests.dll"
 end
 
 task :test_nunit => :build do
-    system "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe /framework:v4.0.30319 /xml:build/reports/nunit.xml src/Tests/Hadouken.UnitTests/bin/#{CONFIGURATION}/Hadouken.UnitTests.dll"
+    nunitcmd = "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe"
+    if BUILD_PLATFORM == "x64"
+        nunitcmd = "tools/nunit-2.6.0.12051/bin/nunit-console.exe"
+    end
+    
+    system "#{nunitcmd} /framework:v4.0.30319 /xml:build/reports/nunit.xml src/Tests/Hadouken.UnitTests/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/Hadouken.UnitTests.dll"
 end
 
 desc "Output"
 task :output => :build do
     puts "##teamcity[progressMessage 'Outputting binaries']"
     
-    copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/Release/", "*.{dll,exe}", "build/hdkn-#{BUILD_VERSION}"
-    copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/Release/", "*.{dll,exe}", "build/hdkn-#{BUILD_VERSION}"
-    copy_files "src/Config/Release/", "*.{config}", "build/hdkn-#{BUILD_VERSION}"    
+    copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    copy_files "src/Config/#{CONFIGURATION}/", "*.{config}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
 end
 
 desc "Zip"
 zip :zip => :output do |zip|
-    zip.directories_to_zip "build/hdkn-#{BUILD_VERSION}"
-    zip.output_file = "hdkn-#{BUILD_VERSION}.zip"
-    zip.output_path = "#{File.dirname(__FILE__)}/build/"
+    zip.directories_to_zip "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    zip.output_file = "hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.zip"
+    zip.output_path = "#{File.dirname(__FILE__)}/build/#{BUILD_PLATFORM}/"
 end
 
 desc "Zip WebUI"
 zip :zip_webui do |zip|
     zip.directories_to_zip "src/WebUI"
     zip.output_file = "webui.zip"
-    zip.output_path = "#{File.dirname(__FILE__)}/build/hdkn-#{BUILD_VERSION}/"
+    zip.output_path = "#{File.dirname(__FILE__)}/build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}/"
 end
 
 desc "MSI"
 task :msi => :output do
-    system "tools/wix-3.6rc/candle.exe -ext WixUtilExtension -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/hdkn-#{BUILD_VERSION} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs"
-    system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/hdkn-#{BUILD_VERSION}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj"
+    system "tools/wix-3.6rc/candle.exe -ext WixUtilExtension -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs"
+    system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj"
 end
 
 desc "Publish to Amazon S3"

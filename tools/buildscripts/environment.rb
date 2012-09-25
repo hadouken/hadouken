@@ -47,3 +47,15 @@ namespace :env do
         ENV['REVISION'] = REVISION = (ENV['BUILD_NUMBER'] ? (1000 + ENV['BUILD_NUMBER'].to_i).to_s : "1000")
     end
 end
+
+namespace :arch do
+    #x86
+    task :x86 do
+        ENV['BUILD_PLATFORM'] = BUILD_PLATFORM = 'x86'
+    end
+    
+    #x64
+    task :x64 do
+        ENV['BUILD_PLATFORM'] = BUILD_PLATFORM = 'x64'
+    end
+end

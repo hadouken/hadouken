@@ -57,7 +57,12 @@ namespace Hadouken.Impl.Data
 
     public class FluentNhibernateDataRepository : IDataRepository
     {
-        private object _lock = new object();
+#pragma warning disable 0169
+        private static System.Data.SQLite.SQLiteConnection __conn__;
+#pragma warning restore 0169
+
+
+        private readonly object _lock = new object();
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
