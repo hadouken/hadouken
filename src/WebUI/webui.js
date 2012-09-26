@@ -1387,7 +1387,7 @@ var utWebUI = {
 	"getDirectoryList": function(forceload, callback) {
 		var now = Date.now();
 		if (forceload || !this.dirlist._TIME_ || (now - this.dirlist._TIME_) > (this.limits.minDirListCache * 1000)) {
-			this.request("get", "action=list-dirs", null, (function(json) {
+			this.request("get", "action=listdirs", null, (function(json) {
 				this.dirlist.empty();
 
 				this.dirlist = json["download-dirs"];
@@ -1417,7 +1417,7 @@ var utWebUI = {
 		var eleURLList = $("dlgAddURL-basePath");
 		var eleURLListDiv = $("dlgAddURL-basePathDiv");
 		var dispStyle;
-		if (items.length > 1) {
+		if (items.length > 0) {
 			if (eleList)
 				_loadComboboxStrings("dlgAdd-basePath", items, eleList.value);
 			if (eleURLList)
