@@ -701,9 +701,9 @@ function setupAddTorrentDialog() {
 		var dir = $("dlgAdd-basePath").value || 0;
 		var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
 
-		$("dlgAdd-form").set("action", guiBase
+		$("dlgAdd-form").set("action", apiBase
 			+ "?token=" + utWebUI.TOKEN
-			+ "&action=add-file"
+			+ "&action=addfile"
 			+ "&download_dir=" + dir
 			+ "&path=" + sub
 		).submit();
