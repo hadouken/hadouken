@@ -43,7 +43,6 @@ var utWebUI = {
 		"lbl": {}
 	},
 	"torQueueMax": -1,
-	"cacheID": 0,
 	"limits": {
 		"reqRetryDelayBase": 2, // seconds
 		"reqRetryMaxAttempts": 5,
@@ -374,24 +373,10 @@ var utWebUI = {
 
 		var self = this;
 
-            var really_async = true;
-            if (really_async !== undefined) {
-                really_async = async;
-            }
-
-		if (window.getraptor) {/*
-			var params = qs.split('&');
-			var d = {};
-			for (var i=0; i<params.length; i++) {
-				var kv = params[i].split('=');
-				if (kv.length == 2) {
-					if (kv[0] != 'token') {
-						d[kv[0]] = decodeURIComponent(kv[1]);
-					}
-				}
-			}*/
-			return getraptor().post_raw( qs, {}, fn ? fn.bind(self) : function(resp) {}, fails, {async:async} );
-		}
+        var really_async = true;
+        if (really_async !== undefined) {
+            really_async = async;
+        }
 
 		var req = function() {
 			try {
@@ -742,7 +727,7 @@ var utWebUI = {
 		qs = qs || "";
 		if (qs != "")
 			qs += "&";
-		this.request("get", "action=gettorrents&cid=" + this.cacheID + "&getmsg=1", null, (function(json) {
+		this.request("get", "action=gettorrents", null, (function(json) {
 			this.loadList(json);
 			if (fn) fn(json);
 		}).bind(this));
@@ -846,9 +831,6 @@ var utWebUI = {
 
 			return extracted;
 		}
-
-		// Extract Cache ID
-		this.cacheID = json.torrentc;
 
 		// Extract Labels
 	        if (! json.label) { this.loadLabels(Array.clone([])); }
