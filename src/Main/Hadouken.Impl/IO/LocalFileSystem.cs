@@ -78,5 +78,17 @@ namespace Hadouken.Impl.IO
         {
             Directory.Delete(path);
         }
+
+        public long RemainingDiskSpace(string path)
+        {
+            string root = Path.GetPathRoot(path);
+
+            if (String.IsNullOrEmpty(root))
+                return -1;
+
+            var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.DriveType == DriveType.Fixed && d.IsReady && d.Name.StartsWith(root));
+
+            return drive != null ? drive.TotalFreeSpace : -1;
+        }
     }
 }

@@ -108,6 +108,7 @@
     <Compile Include="Http\Api\StartTorrentTests.cs" />
     <Compile Include="Http\HttpContextHelper.cs" />
     <Compile Include="Http\HttpServerTests.cs" />
+    <Compile Include="IO\LocalFileSystemTests.cs" />
     <Compile Include="KernelTests.cs" />
     <Compile Include="MemoryConfigManager.cs" />
     <Compile Include="Messaging\MessageBusTests.cs" />

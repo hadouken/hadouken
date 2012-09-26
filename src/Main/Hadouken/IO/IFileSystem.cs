@@ -29,5 +29,12 @@ namespace Hadouken.IO
         void CreateDirectory(string path);
 
         string[] GetDirectories(string path);
+
+        /// <summary>
+        /// Calculates remaining disk space on the specified drive.
+        /// </summary>
+        /// <param name="dir">Path on the drive</param>
+        /// <returns>The remaining disk space in bytes</returns>
+        long RemainingDiskSpace(string dir);
     }
 }
