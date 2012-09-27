@@ -98,6 +98,10 @@ namespace Hadouken.Impl.Http
 
                 _webUIPath = path;
             }
+            else
+            {
+                _webUIPath = Path.Combine(_webUIPath, "WebUI");
+            }
         }
 
         private void GetContext(IAsyncResult ar)
