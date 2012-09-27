@@ -20,10 +20,17 @@ namespace Hadouken.Impl.Http.Api
 
         public override ActionResult Execute()
         {
+            if (_torrentEngine.Managers == null)
+                return Json(new {labels = new object[] {}, torrents = new object[] {}});
+
             return Json(new
             {
-                labels = new object[] {
-                },
+                labels = (from l in _torrentEngine.Managers.Values.GroupBy(m => m.Label)
+                              select new object[]
+                                         {
+                                             l.Key,
+                                             l.Count()
+                                         }),
                 torrents= (from t in _torrentEngine.Managers.Values
                            select new object[]
                            {

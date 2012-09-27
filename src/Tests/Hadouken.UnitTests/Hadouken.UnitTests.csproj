@@ -103,6 +103,7 @@
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
     <Compile Include="Data\DataRepositoryTests.cs" />
     <Compile Include="Http\Api\AddFileTests.cs" />
+    <Compile Include="Http\Api\GetTorrentsTests.cs" />
     <Compile Include="Http\Api\PauseTorrentTests.cs" />
     <Compile Include="Http\Api\StopTorrentTests.cs" />
     <Compile Include="Http\Api\StartTorrentTests.cs" />
