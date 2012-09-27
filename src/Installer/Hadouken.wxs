@@ -1,45 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
+<?if $(var.Platform) = x64?>
+    <?define UpgradeCode = "20ECE40F-2E63-4A9A-A5EB-341154EFB798"?>
+    <?define InstallDir  = "ProgramFiles64Folder"?>
+    <?define IsWin64     = "yes"?>
+<?else?>
+    <?define UpgradeCode = "52A66249-5BE7-4F0B-BE83-7C7B7AED65D1"?>
+    <?define InstallDir  = "ProgramFilesFolder"?>
+    <?define IsWin64     = "no"?>
+<?endif?>
+
 <Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Product
     Id="*"
     Name="Hadouken"
     Manufacturer="Viktor Elofsson - vktr.se"
     Version="$(var.BuildVersion)"
-    UpgradeCode="52A66249-5BE7-4F0B-BE83-7C7B7AED65D1"
+    UpgradeCode="$(var.UpgradeCode)"
     Language="1033"
     Codepage="1252">
 
+    <?if $(var.Platform) = x64?>
+    <Package Id="*" Description="Hadouken $(var.BuildVersion) (64 bit) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" Platform="x64" />
+    <?else?>
     <Package Id="*" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
+    <?endif?>
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
     <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder" Name="PFiles">
+      <Directory Id="$(var.InstallDir)" Name="PFiles">
         <Directory Id="INSTALLDIR" Name="Hadouken">
-          <Component Id="Hdkn" Guid="A3FACA94-3F24-4EAC-AF60-5F4985179D33">
+          <Component Id="Hdkn" Guid="A3FACA94-3F24-4EAC-AF60-5F4985179D33" Win64="$(var.IsWin64)">
             <File Id="Hdkn" Name="Hadouken.dll" Source="$(var.BinDir)/Hadouken.dll" KeyPath="yes" />
           </Component>
 
-          <Component Id="HdknImpl" Guid="79C85E28-7AB4-432D-8AF2-2D20C8CB1278">
+          <Component Id="HdknDiNinject" Guid="02AB6D10-6AB5-4A9C-9DED-AB92C806D61C" Win64="$(var.IsWin64)">
+            <File Id="HdknDiNinject" Name="Hadouken.DI.Ninject.dll" Source="$(var.BinDir)/Hadouken.DI.Ninject.dll" KeyPath="yes" />
+          </Component>
+          
+          <Component Id="HdknImpl" Guid="79C85E28-7AB4-432D-8AF2-2D20C8CB1278" Win64="$(var.IsWin64)">
             <File Id="HadoukenImpl" Name="Hadouken.Impl.dll" Source="$(var.BinDir)/Hadouken.Impl.dll" KeyPath="yes" />
           </Component>
 
-          <Component Id="HdknImplBt" Guid="5992CB2D-A2D3-4F52-B1B7-28F34DE75307">
+          <Component Id="HdknImplBt" Guid="5992CB2D-A2D3-4F52-B1B7-28F34DE75307" Win64="$(var.IsWin64)">
             <File Id="HdknImplBt" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" KeyPath="yes" />
           </Component>
 
-          <Component Id="HdknMsg" Guid="1E766B20-B6AA-4751-8164-FE44CE7F4256">
+          <Component Id="HdknMsg" Guid="1E766B20-B6AA-4751-8164-FE44CE7F4256" Win64="$(var.IsWin64)">
             <File Id="HdknMsg" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" KeyPath="yes" />
           </Component>
 
-          <Component Id="HdknCmdLine" Guid="F4620120-41BA-4989-9098-79B3479652AE">
+          <Component Id="HdknCmdLine" Guid="F4620120-41BA-4989-9098-79B3479652AE" Win64="$(var.IsWin64)">
             <File Id="HdknCmdLine" Name="Hadouken.Hosts.CommandLine.exe" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe" KeyPath="yes" />
           </Component>
 
-          <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682">
+          <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682" Win64="$(var.IsWin64)">
             <Condition><![CDATA[HDKN_SRV_ENABLE = 1]]></Condition>
             <File Id="HdknWinSrv" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
 
@@ -68,12 +86,12 @@
             <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="Hadouken" Wait="yes" />
           </Component>
           
-          <Component Id="HdknWinSrvExe" Guid="8D6FD04D-1154-43D4-A3DB-B900E7F9B8DA">
+          <Component Id="HdknWinSrvExe" Guid="8D6FD04D-1154-43D4-A3DB-B900E7F9B8DA" Win64="$(var.IsWin64)">
             <Condition><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
             <File Id="HdknWinSrvExe" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
           </Component>
           
-          <Component Id="HdknWinSrvCfg" Guid="35A045FE-9F58-4C12-869E-A8AFFEDE1F4D">
+          <Component Id="HdknWinSrvCfg" Guid="35A045FE-9F58-4C12-869E-A8AFFEDE1F4D" Win64="$(var.IsWin64)">
             <File Id="HdknWinSrvCfg" Name="Hadouken.Hosts.WindowsService.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe.config" />
 
             <util:XmlFile 
@@ -98,7 +116,7 @@
               Value="[HDKN_AUTH_PASS]" />
           </Component>
 
-          <Component Id="Libs" Guid="5FC0B06D-AABD-4384-9987-BD732BDFA568">
+          <Component Id="Libs" Guid="5FC0B06D-AABD-4384-9987-BD732BDFA568" Win64="$(var.IsWin64)">
             <!-- 3rd party libraries -->
             <File Id="CastleCoreDll" Name="Castle.Core.dll" Source="$(var.BinDir)/Castle.Core.dll" />
             <File Id="FluentNHibernateDll" Name="FluentNHibernate.dll" Source="$(var.BinDir)/FluentNHibernate.dll" />
