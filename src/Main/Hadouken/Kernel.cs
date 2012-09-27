@@ -2,23 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Hadouken.DI;
 using Hadouken.Reflection;
 using System.Reflection;
-
-using Ninject;
 
 namespace Hadouken
 {
     public static class Kernel
     {
-        private static IKernel _kernel;
+        private static IDependencyResolver _resolver;
 
         public static void Register(params Assembly[] assemblies)
         {
-            if (_kernel == null)
-                _kernel = new StandardKernel();
-
             // get all interface types which are assignable from IComponent (but not IComponent itself)
 
             var componentTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
@@ -44,66 +39,27 @@ namespace Hadouken
 
                 foreach (var implementation in implementationTypes)
                 {
-                    Bind(component, implementation, lifestyle);
+                    _resolver.Register(component, implementation, lifestyle);
                 }
             }
         }
 
-        public static IEnumerable<T> GetAll<T>()
+        public static void SetResolver(IDependencyResolver resolver)
         {
-            return _kernel.GetAll<T>();
+            if(resolver == null)
+                throw new ArgumentNullException("resolver");
+
+            _resolver = resolver;
         }
 
-        public static T Get<T>()
+        public static IDependencyResolver Resolver
         {
-            return _kernel.Get<T>();
-        }
-
-        public static object Get(Type t)
-        {
-            return _kernel.Get(t);
-        }
-
-        public static T Get<T>(string name)
-        {
-            return _kernel.Get<T>(name);
-        }
-
-        public static T TryGet<T>()
-        {
-            return _kernel.TryGet<T>();
-        }
-
-        public static T TryGet<T>(string name)
-        {
-            return _kernel.TryGet<T>(name);
-        }
-
-        public static void Bind(Type component, Type implementation, ComponentLifestyle lifestyle, string name)
-        {
-            switch (lifestyle)
+            get
             {
-                case ComponentLifestyle.Singleton:
-                    _kernel.Bind(component).To(implementation).InSingletonScope().Named(name);
-                    break;
+                if(_resolver == null)
+                    throw new ArgumentNullException();
 
-                case ComponentLifestyle.Transient:
-                    _kernel.Bind(component).To(implementation).InTransientScope().Named(name);
-                    break;
-            }
-        }
-
-        public static void Bind(Type component, Type implementation, ComponentLifestyle lifestyle)
-        {
-            switch (lifestyle)
-            {
-                case ComponentLifestyle.Singleton:
-                    _kernel.Bind(component).To(implementation).InSingletonScope();
-                    break;
-
-                case ComponentLifestyle.Transient:
-                    _kernel.Bind(component).To(implementation).InTransientScope();
-                    break;
+                return _resolver;
             }
         }
     }

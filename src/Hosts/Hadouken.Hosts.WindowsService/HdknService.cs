@@ -28,7 +28,7 @@ namespace Hadouken.Hosts.WindowsService
 
         protected override void OnStart(string[] args)
         {
-            _host = Kernel.Get<IHost>();
+            _host = Kernel.Resolver.Get<IHost>();
             _host.Load();
         }
 

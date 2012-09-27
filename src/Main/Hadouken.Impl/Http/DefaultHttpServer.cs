@@ -204,7 +204,7 @@ namespace Hadouken.Impl.Http
             if (actionName == "gettoken")
                 return GenerateCSRFToken();
 
-            var actions = Kernel.GetAll<IApiAction>();
+            var actions = Kernel.Resolver.GetAll<IApiAction>();
 
             var action = (from a in actions
                           let attr = a.GetType().GetAttribute<ApiActionAttribute>()

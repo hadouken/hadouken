@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Hadouken.DI.Ninject;
 using Hadouken.Hosting;
 using System.IO;
 using System.Reflection;
@@ -14,7 +14,7 @@ namespace Hadouken.Hosts.CommandLine
     {
         public static void Main(string[] args)
         {
-            List<Assembly> assemblies = new List<Assembly>();
+            var assemblies = new List<Assembly>();
 
             foreach (string key in ConfigurationManager.AppSettings.Keys)
             {
@@ -25,9 +25,10 @@ namespace Hadouken.Hosts.CommandLine
             }
 
             // register base types
+            Kernel.SetResolver(new NinjectDependencyResolver());
             Kernel.Register(assemblies.ToArray());
 
-            var host = Kernel.Get<IHost>();
+            var host = Kernel.Resolver.Get<IHost>();
             host.Load();
 
             Console.ReadLine();

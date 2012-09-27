@@ -5,6 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Reflection;
 using System.Configuration;
+using Hadouken.DI.Ninject;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -12,7 +13,7 @@ namespace Hadouken.Hosts.WindowsService
     {
         public static void Main()
         {
-            List<Assembly> assemblies = new List<Assembly>();
+            var assemblies = new List<Assembly>();
 
             foreach (string key in ConfigurationManager.AppSettings.Keys)
             {
@@ -23,6 +24,7 @@ namespace Hadouken.Hosts.WindowsService
             }
 
             // register base types
+            Kernel.SetResolver(new NinjectDependencyResolver());
             Kernel.Register(assemblies.ToArray());
 
             // run the service

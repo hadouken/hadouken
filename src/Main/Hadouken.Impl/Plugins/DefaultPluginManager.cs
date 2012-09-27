@@ -83,7 +83,7 @@ namespace Hadouken.Impl.Plugins
 
             foreach (var parameter in ctor.GetParameters())
             {
-                object instance = Kernel.Get(parameter.ParameterType);
+                object instance = Kernel.Resolver.Get(parameter.ParameterType);
 
                 if (instance == null)
                     throw new ArgumentException(parameter.Name);
