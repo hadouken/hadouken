@@ -188,6 +188,7 @@
 
       <DialogRef Id="WebUIConfigDlg" />
       <DialogRef Id="WinSrvConfigDlg" />
+      <DialogRef Id="IncorrectDataDlg" />
 
       <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="WebUIConfigDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WinSrvConfigDlg" Order="1">NOT Installed</Publish>

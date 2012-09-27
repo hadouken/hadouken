@@ -105,8 +105,8 @@ end
 
 desc "MSI"
 task :msi => :output do
-    system "tools/wix-3.6rc/candle.exe -ext WixUtilExtension -dPlatform=#{BUILD_PLATFORM} -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs"
-    system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj"
+    system "tools/wix-3.6rc/candle.exe -ext WixUtilExtension -dPlatform=#{BUILD_PLATFORM} -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs src/Installer/IncorrectData.wxs"
+    system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj src/Installer/IncorrectData.wixobj"
 end
 
 desc "Publish to Amazon S3"
