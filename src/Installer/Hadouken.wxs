@@ -56,13 +56,38 @@
           <Component Id="HdknCmdLine" Guid="F4620120-41BA-4989-9098-79B3479652AE" Win64="$(var.IsWin64)">
             <File Id="HdknCmdLine" Name="Hadouken.Hosts.CommandLine.exe" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe" KeyPath="yes" />
           </Component>
+          
+          <Component Id="HdknCmdLineCfg" Guid="994CAAD3-3232-4B5A-B4F6-CC0A0F5BF90C" Win64="$(var.IsWin64)">
+            <File Id="HdknCmdLineCfg" Name="Hadouken.Hosts.CommandLine.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe.config" />
+
+            <util:XmlFile 
+              Id="ModifyWebUIPort2"
+              File="[#HdknCmdLineCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
+              Value="http://localhost:[HDKN_WEBUI_PORT]/" />
+              
+            <util:XmlFile 
+              Id="ModifyAuthUser2"
+              File="[#HdknCmdLineCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='Auth.Username'[\]]/@value"
+              Value="[HDKN_AUTH_USER]" />
+          
+            <util:XmlFile 
+              Id="ModifyAuthPassword2"
+              File="[#HdknCmdLineCfg]"              
+              Action="setValue"
+              ElementPath="//appSettings/add[\[]@key='Auth.Password'[\]]/@value"
+              Value="[HDKN_AUTH_PASS]" />
+          </Component>
 
           <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682" Win64="$(var.IsWin64)">
             <Condition><![CDATA[HDKN_SRV_ENABLE = 1]]></Condition>
             <File Id="HdknWinSrv" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
 
             <util:User
-              Id="GrantLogonAsService"
+              Id="UpdateUserLogonAsService"
               CreateUser="no"
               LogonAsService="yes"
               Name="[HDKN_SRV_USER]"
@@ -130,25 +155,26 @@
             <File Id="NinjectDll" Name="Ninject.dll" Source="$(var.BinDir)/Ninject.dll" />
             <File Id="NLogDll" Name="NLog.dll" Source="$(var.BinDir)/NLog.dll" />
             <File Id="SystemDataSQLiteDll" Name="System.Data.SQLite.dll" Source="$(var.BinDir)/System.Data.SQLite.dll" />
+            <File Id="SQLiteInterop" Name="SQLite.Interop.dll" Source="$(var.BinDir)/SQLite.Interop.dll" />
             <!--<File Id="SystemDataSQLiteLinqDll" Name="System.Data.SQLite.Linq.dll" Source="$(var.BinDir)/System.Data.SQLite.Linq.dll" />-->
           </Component>
 
-          <Directory Id="WEBUIDIR" Name="WebUI">
-            <Component Id="WebUI" Guid="417127BC-1E56-4DF6-870E-D7F00BBE9758">
+          <Component Id="WebUI" Guid="417127BC-1E56-4DF6-870E-D7F00BBE9758" Win64="$(var.IsWin64)">
               <!-- Web UI -->
               <File Id="WebUiZip" Name="webui.zip" Source="$(var.BinDir)/webui.zip" KeyPath="yes" />
             </Component>
-          </Directory>
         </Directory>
       </Directory>
     </Directory>
 
     <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="The full monty. The works." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
       <ComponentRef Id="Hdkn" />
+      <ComponentRef Id="HdknDiNinject" />
       <ComponentRef Id="HdknImpl" />
       <ComponentRef Id="HdknImplBt" />
       <ComponentRef Id="HdknMsg" />
       <ComponentRef Id="HdknCmdLine" />
+      <ComponentRef Id="HdknCmdLineCfg" />
       <ComponentRef Id="HdknWinSrv" />
       <ComponentRef Id="HdknWinSrvExe" />
       <ComponentRef Id="HdknWinSrvCfg" />
@@ -174,11 +200,8 @@
     
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
     <Property Id="HDKN_SRV_ENABLE" Value="1" />
-    <Property Id="HDKN_SRV_USER" Value="hdkn" />
     
     <Property Id="HDKN_AUTH_USER" Value="hdkn" />
     <Property Id="HDKN_AUTH_PASS" Value="hdkn" />
-
-    <SetProperty Id="HDKN_SRV_USER" Value="$(env.USERDOMAIN)\[LogonUser]" Before="AppSearch" />
   </Product>
 </Wix>

@@ -18,7 +18,7 @@
         <Control Id="WinSrvGroup" Type="GroupBox" X="20" Y="60" Width="330" Height="85" Text="Windows Service" />
 
         <!-- Service Enable -->
-        <Control Id="WinSrvEnableLabel" Type="Text" X="30" Y="80" Width="40" Height="15" Text="Enable:" />
+        <Control Id="WinSrvEnableLabel" Type="Text" X="30" Y="80" Width="40" Height="15" Text="Install:" />
         <Control Id="WinSrvEnable" Type="CheckBox" X="80" Y="79" Width="20" Height="15" Indirect="no" Property="HDKN_SRV_ENABLE" CheckBoxValue="1" />
         
         <!-- Service Username -->
@@ -27,7 +27,7 @@
           <Condition Action="enable">HDKN_SRV_ENABLE = 1</Condition>
           <Condition Action="disable"><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
         </Control>
-        <Control Id="WinSrvUserDesc" Type="Text" X="210" Y="100" Width="100" Height="15" Text="DOMAIN\Username" Disabled="yes" />
+        <Control Id="WinSrvUserDesc" Type="Text" X="210" Y="100" Width="100" Height="15" Text="ComputerName\User" Disabled="yes" />
         
         <!-- Service Password -->
         <Control Id="WinSrvPassLabel" Type="Text" X="30" Y="120" Width="40" Height="15" Text="Password:" />

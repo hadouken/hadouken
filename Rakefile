@@ -81,7 +81,11 @@ task :output => :build do
     puts "##teamcity[progressMessage 'Outputting binaries']"
     
     copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/#{BUILD_PLATFORM}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    
     copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}#{BUILD_PLATFORM}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    
     copy_files "src/Config/#{CONFIGURATION}/", "*.{config}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
 end
 
