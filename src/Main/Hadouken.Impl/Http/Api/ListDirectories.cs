@@ -29,7 +29,7 @@ namespace Hadouken.Impl.Http.Api
                                             available = "" + (_fileSystem.RemainingDiskSpace(dir) / 1024 / 1024)
                                         }).ToList();
 
-            var defaultSavePath = _keyValueStore.Get<string>("bt.savePath");
+            var defaultSavePath = _keyValueStore.Get<string>("paths.defaultSavePath");
 
             dirs.Insert(0, new { path = "Default download dir", available = "" + (_fileSystem.RemainingDiskSpace(defaultSavePath) / 1024 / 1024) });
 
