@@ -75,7 +75,9 @@ namespace Hadouken.Impl.Config
             var setting = _data.Single<Setting>(s => s.Key == key);
 
             if (setting == null)
-                setting = new Setting() { Key = key, Value = _serializer.Serialize(value), Type = (value == null ? typeof(Object).FullName : value.GetType().FullName) };
+                setting = new Setting() { Key = key, Type = (value == null ? typeof(Object).FullName : value.GetType().FullName) };
+
+            setting.Value = _serializer.Serialize(value);
 
             _data.SaveOrUpdate(setting);
         }
