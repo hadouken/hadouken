@@ -40,16 +40,20 @@ var CONST = {
 	, "TORRENT_DATE_COMPLETED": 24
 	, "TORRENT_APP_UPDATE_URL": 25
 	, "TORRENT_SAVE_PATH": 26
+    , "TORRENT_COMPLETE": 27
 
 	//----------------------------------------
 	// TORRENT STATUS CONSTANTS
 	//----------------------------------------
 
-	, "STATE_STARTED": 1
-	, "STATE_CHECKING": 2
-	, "STATE_ERROR": 16
-	, "STATE_PAUSED": 32
-	, "STATE_QUEUED": 64
+    , "STATE_STOPPED": 0
+    , "STATE_PAUSED": 1
+    , "STATE_DOWNLOADING": 2
+    , "STATE_SEEDING": 3
+    , "STATE_HASHING": 4
+    , "STATE_STOPPING": 5
+    , "STATE_ERROR": 6
+    , "STATE_METADATA": 7
 
 	//----------------------------------------
 	// FILE DATA CONSTANTS

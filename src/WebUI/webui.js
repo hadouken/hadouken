@@ -733,35 +733,39 @@ var utWebUI = {
 		}).bind(this));
 	},
 
-	"getStatusInfo": function(state, done) {
+	"getStatusInfo": function(state, progress, complete) {
 		var res = ["", ""];
-
-		if (state & CONST.STATE_PAUSED) { // paused
-			res = ["Status_Paused", (state & CONST.STATE_CHECKING) ? L_("OV_FL_CHECKED").replace(/%:\.1d%/, (done / 10).toFixedNR(1)) : L_("OV_FL_PAUSED")];
-		}
-		else if (state & CONST.STATE_STARTED) { // started, seeding or leeching
-			res = (done == 1000) ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
-			if (!(state & CONST.STATE_QUEUED)) { // forced start
-				res[1] = "[F] " + res[1];
-			}
-		}
-		else if (state & CONST.STATE_CHECKING) { // checking
-			res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (done / 10).toFixedNR(1))];
-		}
-		else if (state & CONST.STATE_ERROR) { // error
-			res = ["Status_Error", L_("OV_FL_ERROR").replace(/%s/, "??")];
-		}
-		else if (state & CONST.STATE_QUEUED) { // queued
-			res = (done == 1000) ? ["Status_Queued_Up", L_("OV_FL_QUEUED_SEED")] : ["Status_Queued_Down", L_("OV_FL_QUEUED")];
-		}
-		else if (done == 1000) { // finished
-			res = ["Status_Completed", L_("OV_FL_FINISHED")];
-		}
-		else { // stopped
-			res = ["Status_Incomplete", L_("OV_FL_STOPPED")];
-		}
-
-		return res;
+        
+        if(state == CONST.STATE_STOPPED && complete)
+        {
+            res = ["Status_Complete", L_("OV_FL_FINISHED")];
+        }
+        else if((state == CONST.STATE_STOPPED || state == CONST.STATE_STOPPING) && !complete)
+        {
+            res = ["Status_Incomplete", L_("OV_FL_STOPPED")];
+        }
+        else if(state == CONST.STATE_PAUSED)
+        {
+            res = ["Status_Paused", L_("OV_FL_PAUSED")];
+        }
+        else if(state == CONST.STATE_DOWNLOADING)
+        {
+            res = complete ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
+        }
+        else if(state == CONST.STATE_SEEDING)
+        {
+            res = ["Status_Up", L_("OV_FL_SEEDING")];
+        }
+        else if(state == CONST.STATE_HASHING)
+        {
+            res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (progress / 10).toFixedNR(1))];
+        }
+        else if(state == CONST.STATE_ERROR)
+        {
+            res = ["Status_Error", L_("OV_FL_ERROR").replace(/%s/, "??")];
+        }
+        
+        return res;
 	},
 
 	"loadList": function(json) {
@@ -847,7 +851,7 @@ var utWebUI = {
 					this.totalUL += item[CONST.TORRENT_UPSPEED];
 
 					var hash = item[CONST.TORRENT_HASH];
-					var statinfo = this.getStatusInfo(item[CONST.TORRENT_STATUS], item[CONST.TORRENT_PROGRESS]);
+                    var statinfo = this.getStatusInfo(item[CONST.TORRENT_STATUS], item[CONST.TORRENT_PROGRESS], item[CONST.TORRENT_COMPLETE]);
 
 					this.torGroups[hash] = this.getTorGroups(item);
 
@@ -2300,7 +2304,7 @@ var utWebUI = {
 
 		var doneIdx = this.trtColDoneIdx, statIdx = this.trtColStatusIdx;
 		if (!useidx || index == statIdx) {
-			var statInfo = this.getStatusInfo(values[statIdx][0], values[doneIdx]);
+			var statInfo = this.getStatusInfo(values[statIdx][0], values[doneIdx], false);
 			values[statIdx] = (statInfo[0] === "Status_Error" ? values[statIdx][1] || statInfo[1] : statInfo[1]);
 		}
 
@@ -2799,23 +2803,20 @@ var utWebUI = {
 	},
 	
 	"setLabel": function(param, fn) {
-		var new_label = encodeURIComponent((param.label || "").trim());
-
-		var torrents = param.view.selectedRows();
-
+		var torrents = this.trtTable.selectedRows;
         var self = this;
-        var client = utweb.current_client();
         
-        var i,l = torrents.length;
-        for (i=0; i<l; i++) {
-            (function (t) {
-        		var after_update = function() {
-                    client.raptor.post_raw( "action=setprops&s=label&v="+new_label, { hash: t.hash }, function() {} );
-                }
-
-        	     client.raptor.post_raw( "action=setprops&s=label&v=", { hash: t.hash }, after_update );
-	        })(torrents[i]);
+        var data = {};
+        
+        for(var i = 0; i < torrents.length; i++)
+        {
+            var id = torrents[i];
+            
+            data[id] = {};
+            data[id].label = param;
         }
+        
+        this.request("post", "action=setprops", data, fn);
 	},	
 
 	"addURL": function(param, fn) {
@@ -3647,37 +3648,36 @@ var utWebUI = {
 
 			selHash.each(function(hash) {
 				var tor = this.torrents[hash];
-
-				var queue = tor[CONST.TORRENT_QUEUE_POSITION],
-					state = tor[CONST.TORRENT_STATUS];
-
-				var started = !!(state & CONST.STATE_STARTED),
-					checking = !!(state & CONST.STATE_CHECKING),
-					paused = !!(state & CONST.STATE_PAUSED),
-					queued = !!(state & CONST.STATE_QUEUED);
-
-				if (queue > 0) {
-					++queueSelCount;
-
-					if (queue < queueSelMin) {
-						queueSelMin = queue;
-					}
-					if (queueSelMax < queue ) {
-						queueSelMax = queue;
-					}
-				}
-				if ((!started || queued || paused) && !checking) {
-					disabled.forcestart = 0;
-				}
-				if (!(queued || checking) || paused) {
-					disabled.start = 0;
-				}
-				if (!paused && (checking || started || queued)) {
-					disabled.pause = 0;
-				}
-				if (checking || started || queued) {
-					disabled.stop = 0;
-				}
+                var state = tor[CONST.TORRENT_STATUS];
+                
+                switch(state)
+                {
+                    case CONST.STATE_STOPPED:
+                    case CONST.STATE_STOPPING:
+                        disabled.start = 0;
+                        break;
+                        
+                    case CONST.STATE_PAUSED:
+                        disabled.start = disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_DOWNLOADING:
+                    case CONST.STATE_SEEDING:
+                    case CONST.STATE_METADATA:
+                        disabled.stop = disabled.pause = 0;
+                        break;
+                        
+                    case CONST.STATE_HASHING:
+                        disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_ERROR:
+                        disabled.stop = 0;
+                        break;
+                        
+                    case CONST.STATE_METADATA:
+                        break;
+                }
 			}, this);
 
 			if (queueSelCount < queueSelMax) {
