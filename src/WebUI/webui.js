@@ -1571,9 +1571,9 @@ var utWebUI = {
 				// convert types
 				switch (typ) {
 					case CONST.SETTINGTYPE_INTEGER: val = val.toInt(); break;
-					case CONST.SETTINGTYPE_BOOLEAN: val = ('true' === val); break;
+					//case CONST.SETTINGTYPE_BOOLEAN: val = ('true' === val); break;
 				}
-
+                
 				// handle special settings
 
 				switch (key) {
@@ -1826,16 +1826,6 @@ var utWebUI = {
 		if (hasChanged && Browser.opera)
             data["webui.cookie"] = JSON.encode(this.config);
 
-		value = $("gui.speed_in_title").checked;
-		if (!value && !!this.settings["gui.speed_in_title"] != value) {
-			document.title = g_winTitle;
-		}
-
-		value = $("gui.alternate_color").checked;
-		if (!!this.settings["gui.alternate_color"] != value) {
-			this.tableUseAltColor(value);
-		}
-
 		value = this.getAdvSetting("gui.graph_legend");
 		if (undefined != value && !!this.settings["gui.graph_legend"] != value) {
 			this.spdGraph.showLegend(value);
@@ -1855,7 +1845,7 @@ var utWebUI = {
 			if (key === 'webui.uconnect_enable' || key === 'webui.uconnect_username') continue;
 			var v = this.settings[key], nv;
 			if (ele.type == "checkbox") {
-				nv = ele.checked ? 1 : 0;
+				nv = ele.checked;
 			} else {
 				nv = ele.get("value");
 			}
@@ -1872,9 +1862,9 @@ var utWebUI = {
 			if (v != nv) {
 				this.settings[key] = nv;
 				if (key == "multi_day_transfer_mode") {
-                    data["multi_day_transfer_mode_ul"] = (nv == 0 ? 1 : 0);
-                    data["multi_day_transfer_mode_dl"] = (nv == 1 ? 1 : 0);
-                    data["multi_day_transfer_mode_uldl"] = (nv == 2 ? 1 : 0);
+                    data["multi_day_transfer_mode_ul"] = (nv == 0);
+                    data["multi_day_transfer_mode_dl"] = (nv == 1);
+                    data["multi_day_transfer_mode_uldl"] = (nv == 2);
 
 					continue;
 				}
@@ -1889,39 +1879,12 @@ var utWebUI = {
 
 			if (v != nv) {
 				this.settings[key] = nv;
-
-				if (typeOf(nv) == 'boolean') {
-					nv = nv ? 1 : 0;
-				}
                 data[key] = nv;
 			}
 		}
 
 		//if (str != "")
 		this.request("post", "action=setsetting", data, Function.from(), !reload); // if the page is going to reload make it a synchronous request
-
-		if (this.settings["webui.enable"] == 0 && ! window.raptor) {
-			this.showMsg('WebUI was disabled. Goodbye.');
-			return;
-		}
-
-		var port = (window.location.port ? window.location.port : (window.location.protocol == "http:" ? 80 : 443));
-		var new_port = (this.settings["webui.enable_listen"] === undefined || this.settings["webui.enable_listen"] ? this.settings["webui.port"] : this.settings["bind_port"]);
-
-		if (port != new_port && ! window.raptor) {
-			this.endPeriodicUpdate();
-			this.showMsg(
-				'<p>&micro;Torrent has been configured to use a listening port for WebUI different from the port on which it is currently being viewed.</p>' +
-				'<p>How do you wish to proceed?</p>' +
-				'<ul>' +
-					'<li><a href="' + changePort(new_port) + '">Reload</a> on the new port</li>' +
-					'<li><a href="#" onclick="utWebUI.beginPeriodicUpdate(); utWebUI.hideMsg(); return false;">Ignore</a> the port change</li>' +
-				'</ul>'
-			);
-		}
-		else if (reload) {
-			window.location.reload(true);
-		}
 
 		this.toggleSearchBar();
 		resizeUI();
@@ -1942,21 +1905,17 @@ var utWebUI = {
 	"showAddLabel": function() {
 		DialogManager.show("AddLabel");
 	},
-	
-	"showRSSDownloader": function() {
-		DialogManager.show("RSSDownloader");
-	},
-
+    
 	"showSettings": function() {
-		this.animateToggle(true);
-		//DialogManager.show("Settings");
+		//this.animateToggle(true);
+		DialogManager.show("Settings");
 	},
 	
 	"hideSettings": function(load_settings) {
 		if(load_settings)
 			utWebUI.loadSettings();
 			
-		this.animateToggle(false);
+		DialogManager.hide("Settings");
 	},
 	
 	"animateToggle": function(show) {
@@ -3898,8 +3857,6 @@ var utWebUI = {
 		if (this.config) {
 			this.config.activeSettingsPane = id;
 		}
-		
-		$("dlgSettings-title").set("text", ($("tab_" + id).get("text") || "Web UI"));
 	}
 }
 

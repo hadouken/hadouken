@@ -261,604 +261,226 @@
 
 
 /**************************************************
- * DIALOG: Add/Edit RSS Feed
- **************************************************/
-
-#dlgAddEditRSSFeed {
-	width: 32em;
-}
-
-#dlgAddEditRSSFeed-head {
-	background-image: url(./images/feed.png);
-}
-
-#dlgAddEditRSSFeed .dlg-body .tbox {
-	width: 20em;
-}
-
-
-/**************************************************
- * DIALOG: RSS Downloader
- **************************************************/
-
-#dlgRSSDownloader {
-	width: 700px;
-}
-
-#dlgRSSDownloader-head {
-	background-image: url(./images/feed.png);
-}
-
-#dlgRSSDownloader-content {
-	background: #FFFFFF;
-	border: 1px solid #868686;
-	height: 350px;
-	padding: 3px;
-	position: relative;
-}
-
-#dlgRSSDownloader-feedsMenu,
-#dlgRSSDownloader-filtersMenu {
-	background-color: #FFFFFF;
-	border: 1px solid #868686;
-	bottom: 3px;
-	left: 3px;
-	overflow: auto;
-	position: absolute;
-	top: 3px;
-	width: 150px;
-}
-
-#dlgRSSDownloader-feedsMenu > div,
-#dlgRSSDownloader-filtersMenu > div {
-	min-width: 100%;
-}
-
-#dlgRSSDownloader-feeds,
-#dlgRSSDownloader-filters {
-	list-style: none;
-	white-space: nowrap;
-}
-
-#dlgRSSDownloader-feeds li,
-#dlgRSSDownloader-filters li {
-	cursor: pointer;
-	padding: 2px 4px 2px 22px;
-	position: relative;
-}
-
-#dlgRSSDownloader-feeds li.sel,
-#dlgRSSDownloader-filters li.sel {
-	background-color: #C0C0C0;
-	color: #FFFFFF;
-}
-
-#dlgRSSDownloader-feedItemList,
-#dlgRSSDownloader-filterSettings {
-	bottom: 3px;
-	left: 158px;
-	margin: 0;
-	position: absolute;
-	right: 3px;
-	top: 3px;
-}
-
-/* Feeds Tab */
-
-#dlgRSSDownloader-feeds li .icon {
-	background: transparent url(./images/tstatus.png) no-repeat 0 -208px;
-	clip: rect(0 16px 16px 0);
-	left: 0;
-	margin: -8px 3px;
-	padding: 8px;
-	position: absolute;
-	top: 50%;
-}
-
-#dlgRSSDownloader-feeds li.disabled .icon {
-	background-position: 0 -32px;
-}
-
-.RSS_New .icon { background: transparent url(./images/tstatus.png) no-repeat 0 -272px !important; }
-.RSS_Old .icon { background: transparent url(./images/tstatus.png) no-repeat 0 -208px !important; }
-.RSS_Added .icon { background: transparent url(./images/tstatus.png) no-repeat 0 -288px !important; }
-
-/* Favorites Tab */
-
-#dlgRSSDownloader-filters li input {
-	left: 0;
-	margin: -6px 5px;
-	position: absolute;
-	top: 50%;
-	vertical-align: text-top;
-}
-
-#rssfilter_edit_control {
-	bottom: 5px;
-	display: none;
-	position: absolute;
-	right: 5px;
-}
-
-#rssfilter_name,
-#rssfilter_filter,
-#rssfilter_not,
-#rssfilter_save_in,
-#rssfilter_feed,
-#rssfilter_quality {
-	width: 450px;
-}
-
-#rssfilter_quality {
-	text-align: center;
-}
-
-#rssfilter_min_interval,
-#rssfilter_label {
-	width: 375px;
-}
-
-.panel-hider{
-	z-index: 499;
-	overflow: hidden;
-	position: absolute;
-	top: 85px;
-	height: 0;
-	bottom: auto;
-	left: 0;
-	right: 0;
-	pointer-events: none;
-}
-.panel-hider.open{
-	height: auto;
-	bottom: 30px;
-	pointer-events: auto;
-}
-.panel-hider .dlg-window{
-	position: absolute;
-	display: block;
-	height: 100%;
-	right: 0;
-	left: 0;
-	top: -100%;
-	border: 0;
-	-webkit-border-radius:	0;
-	-moz-border-radius: 	0;
-	-ms-border-radius: 		0;
-	-o-border-radius: 		0;
-	border-radius: 			0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: 	none;
-	-ms-box-shadow: 	none;
-	-o-box-shadow: 		none;
-	box-shadow: 		none;
-/*	-webkit-transition: top 0.25s linear;
-	-moz-transition: 	top 0.25s linear;
-	-ms-transition: 	top 0.25s linear;
-	-o-transition: 		top 0.25s linear;
-	transition: 		top 0.25s linear;*/
-}
-/*.panel-hider.open .dlg-window{
-	top: 0;
-}*/
-
-/**************************************************
  * DIALOG: Settings
  **************************************************/
-
 #dlgSettings {
-	width: 100%;
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 12px;
+    width: 650px;
 }
-#dlgSettings.moving{
-	-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+#dlgSettings-head {
+    background-image: url("./images/settings.png");
 }
-
-#dlgSettings .dlg-body{
-	margin: 0;
-}
-
-/*#dlgSettings-head {
-	background-image: url(./images/settings.png);
-}*/
-
-#dlgSettings-title{
-	font-weight: normal;
-	font-size: 24px;
-	padding: 5px 10px 5px;
-	margin: 0 0 5px 150px;
-	color: #333;
-	text-shadow: 0 1px 0 #fff;
-	border-bottom: 1px solid #ccc;
-	background: #ECECEC;
-}
-#dlgSettings-title{
-	padding-left: 0;
-	border-color: #ddd;
-	background: none;
-	text-shadow: none;
-	margin-left: 160px;
-	margin-right: 10px;
-}
-
-#dlgSettings .dlg-body,
-#dlgSettings-form{
-	height: 100%;
-	width: 100%;
-}
-
 #dlgSettings-menuCont {
-	background-color: #F4F6F9;
-	border-right: 1px solid #ccc;
-	bottom: 0;
-	display: block !important;
-	left: 0;
-	overflow: auto;
-	position: absolute;
-	top: 0;
-	width: 149px;
+    background-color: #FFFFFF;
+    border-right: 1px solid #D0D0D0;
+    bottom: 0;
+    display: block !important;
+    left: 0;
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    width: 120px;
 }
-#dlgSettings-menuCont h2{
-	font-weight: normal;
-	font-size: 22px;
-	padding: 10px 0 10px 10px;
-}
-
 #dlgSettings-menuCont > div {
-	display: block !important;
-	min-width: 100%;
+    display: block !important;
+    min-width: 100%;
 }
-
-#dlgSettings-advOptList{
-	min-height: 400px;
-}
-
 #dlgSettings-menu {
-	list-style: none;
-	white-space: nowrap;
+    list-style: none outside none;
+    white-space: nowrap;
 }
-
-#dlgSettings-menu li a {
-	display: block;
-	padding: 2px 6px;
-	color: #333;
-	font-size: 12px;
-	border: 1px solid transparent;
-	text-indent: 10px;
-	border-left: 0;
-	border-right: 0;
+#dlgSettings-menu li > a {
+    display: block;
+    padding: 2px 6px;
 }
-
-#dlgSettings-menu li.selected a {
-	background-color: #BBCEE9;
-	border-color: #8FAAD9;
-	color: #000;
-/*	color: #FFFFFF;*/
+#dlgSettings-menu .selected > a {
+    background-color: #0099FF;
+    color: #FFFFFF;
 }
-
-#dlgSettings-menu li.hidden {
-	display: none!important;
-}
-
 #dlgSettings .dlg-body {
-	padding: 0;
+    padding: 0;
 }
-
 #dlgSettings .settings-pane {
-	left: 150px;
-	overflow: auto;
-	padding: 5px 20px;
-	position: relative;
-	width: 560px;
-	background: #fff;
+    height: 350px;
+    left: 120px;
+    overflow: auto;
+    padding: 5px 10px;
+    position: relative;
+    width: 510px;
 }
-
-/* General */
-
-select[id="webui.lang"] { width: 360px; }
-
-/* UI Settings */
-
-select[id="gui.dblclick_seed"],
-select[id="gui.dblclick_dl"] {
-	width: 290px;
+select[id="webui.lang"] {
+    width: 360px;
 }
-
-/* Connection */
-
-#DLG_SETTINGS_4_CONN_11,
-#DLG_SETTINGS_4_CONN_16 {
-	margin-right: 5px;
+select[id="gui.dblclick_seed"], select[id="gui.dblclick_dl"] {
+    width: 290px;
 }
-
-#DLG_SETTINGS_4_CONN_13,
-#DLG_SETTINGS_4_CONN_18 {
-	margin: 0 5px 0 25px;
+#DLG_SETTINGS_4_CONN_11, #DLG_SETTINGS_4_CONN_16 {
+    margin-right: 5px;
 }
-
-select[id="proxy.type"] { margin-left: 3px; }
-input[id="proxy.proxy"] { width: 140px; }
-input[id="proxy.port"] { width: 45px; }
-input[id="proxy.username"] { width: 90px; }
-input[id="proxy.password"] { width: 70px; }
-
-/* BitTorrent */
-
-#tracker_ip { width: 245px; }
-#encryption_mode { margin-left: 3px; }
-
-/* Transfer Cap */
-
-#multi_day_transfer_mode,
-#multi_day_transfer_limit_value,
-#multi_day_transfer_limit_unit,
-#multi_day_transfer_limit_span {
-	margin-left: 3px;
+#DLG_SETTINGS_4_CONN_13, #DLG_SETTINGS_4_CONN_18 {
+    margin: 0 5px 0 25px;
 }
-
-/* Scheduler */
-
+select[id="proxy.type"] {
+    margin-left: 3px;
+}
+input[id="proxy.proxy"] {
+    width: 140px;
+}
+input[id="proxy.port"] {
+    width: 45px;
+}
+input[id="proxy.username"] {
+    width: 90px;
+}
+input[id="proxy.password"] {
+    width: 70px;
+}
+#tracker_ip {
+    width: 245px;
+}
+#encryption_mode {
+    margin-left: 3px;
+}
+#multi_day_transfer_mode, #multi_day_transfer_limit_value, #multi_day_transfer_limit_unit, #multi_day_transfer_limit_span {
+    margin-left: 3px;
+}
 #sched_table {
-	-moz-user-select: none;
-	border-collapse: collapse;
-	width: 100%;
+    -moz-user-select: none;
+    border-collapse: collapse;
+    width: 100%;
 }
-
-#sched_table * {
-	-webkit-user-select: ignore !important;
-	font-size: 0.95em;
-	font-weight: bold;
+#sched_table td {
+    font-size: 0.85em;
+    font-weight: bold;
 }
-
 #sched_table_lgnd ul {
-	float: right;
-	list-style: none;
-	margin: 5px 0 0 16px;
+    float: right;
+    list-style: none outside none;
+    margin: 5px 0 0 16px;
 }
-
 #sched_table_lgnd .block {
-	padding: 0 6px;
-	margin: 0 5px;
+    margin: 0 5px;
+    padding: 0 6px;
 }
-
 #sched_table_info {
-	line-height: 1.1em;
-	padding: 5px;
-	width: 200px;
+    line-height: 1.1em;
+    padding: 5px;
+    width: 200px;
 }
-
 #dlgSettings-Scheduler .daycode {
-	padding-right: 3px;
-	text-align: right;
-	white-space: nowrap;
+    padding-right: 3px;
+    text-align: right;
+    white-space: nowrap;
 }
-
 #dlgSettings-Scheduler .block {
-	border: 1px solid #000000;
-	height: 2em;
-	width: 2em;
+    border: 1px solid #000000;
+    height: 2em;
+    width: 2em;
 }
-
-#dlgSettings-Scheduler .mode0 { background-color: #00A800; }
-#dlgSettings-Scheduler .mode0:hover { background-color: #009300; }
-#dlgSettings-Scheduler .disabled .mode0 { background-color: #545454; }
-
-#dlgSettings-Scheduler .mode1 { background-color: #8DCE8D; }
-#dlgSettings-Scheduler .mode1:hover { background-color: #7BB47B; }
-#dlgSettings-Scheduler .disabled .mode1 { background-color: #8E8E8E; }
-
-#dlgSettings-Scheduler .mode2 { background-color: #FFFFFF; }
-#dlgSettings-Scheduler .mode2:hover { background-color: #DFDFDF; }
-#dlgSettings-Scheduler .disabled .mode2 { background-color: #FFFFFF; }
-
-#dlgSettings-Scheduler .mode3 { background-color: #FFC0C0; }
-#dlgSettings-Scheduler .mode3:hover { background-color: #DFA8A8; }
-#dlgSettings-Scheduler .disabled .mode3 { background-color: #D0D0D0; }
-
-/* Web UI */
-
-#DLG_SETTINGS_9_WEBUI_03,
-#DLG_SETTINGS_9_WEBUI_05 {
-	float: left;
+#dlgSettings-Scheduler .mode0 {
+    background-color: #00A800;
 }
-
-input[id="webui.username"],
-input[id="webui.password"],
-input[id="webui.guest"] {
-	float: right;
-	margin-left: 3px;
-	width: 135px;
+#dlgSettings-Scheduler .mode0:hover {
+    background-color: #009300;
 }
-
-/* Advanced */
-
+#dlgSettings-Scheduler .disabled .mode0 {
+    background-color: #545454;
+}
+#dlgSettings-Scheduler .mode1 {
+    background-color: #8DCE8D;
+}
+#dlgSettings-Scheduler .mode1:hover {
+    background-color: #7BB47B;
+}
+#dlgSettings-Scheduler .disabled .mode1 {
+    background-color: #8E8E8E;
+}
+#dlgSettings-Scheduler .mode2 {
+    background-color: #FFFFFF;
+}
+#dlgSettings-Scheduler .mode2:hover {
+    background-color: #DFDFDF;
+}
+#dlgSettings-Scheduler .disabled .mode2 {
+    background-color: #FFFFFF;
+}
+#dlgSettings-Scheduler .mode3 {
+    background-color: #FFC0C0;
+}
+#dlgSettings-Scheduler .mode3:hover {
+    background-color: #DFA8A8;
+}
+#dlgSettings-Scheduler .disabled .mode3 {
+    background-color: #D0D0D0;
+}
+#DLG_SETTINGS_10_REMOTE_04, #DLG_SETTINGS_10_REMOTE_05 {
+    float: left;
+}
+input[id="webui.uconnect_username"], input[id="webui.uconnect_password"] {
+    float: right;
+    margin-left: 3px;
+    width: 135px;
+}
 #dlgSettings-advOptInput {
-	height: 1.5em;
-	line-height: 1.3em;
-	margin-top: 3px;
-	padding: 0.1em 0;
-	position: relative;
+    height: 1.5em;
+    line-height: 1.3em;
+    margin-top: 3px;
+    padding: 0.1em 0;
+    position: relative;
 }
-
 #dlgSettings-advOptInput input {
-	vertical-align: baseline;
+    vertical-align: baseline;
 }
-
-#dlgSettings-advBool-cont,
-#dlgSettings-advText-cont {
-	display: none;
-	left: 4em;
-	position: absolute;
-	right: 0;
+#dlgSettings-advBool-cont, #dlgSettings-advText-cont {
+    display: none;
+    left: 4em;
+    position: absolute;
+    right: 0;
 }
-
 #dlgSettings-advText-wrap {
-	left: 0;
-	margin-right: 5px;
-	position: absolute;
-	right: 6em;
+    left: 0;
+    margin-right: 5px;
+    position: absolute;
+    right: 6em;
 }
-
 #dlgSettings-advText {
-	width: 100%;
+    width: 100%;
 }
-
 #DLG_SETTINGS_A_ADVANCED_05 {
-	float: right;
-	margin-top: 1px;
-	width: 6em;
+    float: right;
+    margin-top: 1px;
+    width: 6em;
 }
-
-/* UI Extras */
-
-input[id="gui.ulrate_menu"],
-input[id="gui.dlrate_menu"] {
-	width: 300px;
+input[id="gui.ulrate_menu"], input[id="gui.dlrate_menu"] {
+    width: 300px;
 }
-
 #search_list {
-	height: 75px;
+    height: 5em;
 }
-
-/* Hide Unknown Settings */
-
-#dlgSettings .dlg-body div,
-#dlgSettings .dlg-body fieldset {
-	display: none;
+#DLG_SETTINGS_9_WEBUI_03, #DLG_SETTINGS_9_WEBUI_05 {
+    float: left;
 }
-
-#dlgSettings fieldset{
-	position: relative;
-	background: #fff;
-	margin: 8px 0;
-	padding: 10px 15px 15px;
-	border: 0;
-	border-top: 1px solid #e2e2e2;
-	-webkit-border-radius: 	0;
-	-moz-border-radius: 	0;
-	-ms-border-radius: 		0;
-	-o-border-radius: 		0;
-	border-radius: 			0;
+#dlgSettings-cookieInput .line-cont {
+    margin-top: 2px;
 }
-
-#dlgSettings fieldset legend{
-	padding: 0 5px;
-	font-family: Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 18px;
-/*	float: left;*/
+#dlgSettings-cookieInput input {
+    vertical-align: baseline;
 }
-#dlgSettings input.btn{
-	cursor: pointer;
-	height: 21px;
-	width: auto;
-	min-width: 70px;
-	padding: 0 5px;
-/*	color: #333;
-*/	text-shadow: 0 1px #fff;
-	-webkit-border-radius: 4px !important;
-	-moz-border-radius: 4px !important;
-	-ms-border-radius: 4px !important;
-	-o-border-radius: 4px !important;
-	border-radius: 4px !important;
-	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-	-moz-box-shadow: 	0 1px 3px rgba(0,0,0,0.1);
-	-ms-box-shadow: 	0 1px 3px rgba(0,0,0,0.1);
-	-o-box-shadow: 		0 1px 3px rgba(0,0,0,0.1);
-	box-shadow: 		0 1px 3px rgba(0,0,0,0.1);
+#dlgSettings-cookieDomain-wrap, #dlgSettings-cookieData-wrap {
+    left: 6em;
+    position: absolute;
+    right: 10px;
 }
-#dlgSettings input.btn.disabled:hover {
-	cursor: default;
-	border-color: #AAA;
+#dlgSettings-cookieDomain, #dlgSettings-cookieData {
+    width: 100%;
 }
-
-#dlgSettings input.btn:hover{
-	border-color: #888;
+#dlgSettings .dlg-body div, #dlgSettings .dlg-body fieldset {
+    display: none;
 }
-#dlgSettings input.tbox{
-	text-indent: 4px;
-	height: 19px;
+#total_uploaded_history, #total_downloaded_history, #total_updown_history, #history_period, #sched_table_lgnd, #sched_table_info, #DLG_SETTINGS_C_ADV_CACHE_02, #DLG_SETTINGS_C_ADV_RUN_06 {
+    display: block !important;
 }
-#dlgSettings textarea,
-#dlgSettings input.tbox{
-	-webkit-box-shadow:	rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-	-moz-box-shadow: 	rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-	-ms-box-shadow: 	rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-	-o-box-shadow: 		rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-	box-shadow: 		rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-}
-#dlgSettings textarea,
-#dlgSettings input.tbox,
-#dlgSettings input.btn{
-	border: 1px solid #aaa;
-	-webkit-border-radius: 	2px;
-	-moz-border-radius: 	2px;
-	-ms-border-radius: 		2px;
-	-o-border-radius: 		2px;
-	border-radius: 			2px;
-}
-#dlgSettings input[type="checkbox"],
-#dlgSettings select{
-	top: 0;
-	position: relative;
-}
-#dlgSettings label{
-	
-}
-#dlgSettings .line-cont{
-	height: 22px;
-	line-height: 19px;
-}
-#dlgSettings .indent{
-	
-}
-#dlgSettings .dlg-foot{
-	height: 22px;
-	padding: 0;
-	position: absolute;
-	background: none;
-	border: 0;
-	margin: 0;
-	top: 6px;
-	right: 10px;
-}
-#dlgSettings .dlg-foot .btn{
-	height: 25px;
-	padding: 0 10px;
-	font-weight: bold;
-}
-#DLG_SETTINGS_CLOSE{
-	opacity: 0.8;
-	height: 16px;
-	width: 16px;
-	float: right;
-	margin: 5px 5px 0 10px;
-	background: url(./images/panel_close.png);
-}
-#DLG_SETTINGS_CLOSE:hover{
-	opacity: 1;
-}
-
-#total_uploaded_history,
-#total_downloaded_history,
-#total_updown_history,
-#history_period,
-#sched_table_lgnd,
-#sched_table_info,
-#DLG_SETTINGS_C_ADV_CACHE_02,
-#DLG_SETTINGS_C_ADV_RUN_06 {
-	display: block !important;
-}
-
-/*
-NOTE: The following is an ugly hack, but a necessary one if we want the settings
-      to remain scalable.
-*/
-
-#dlgSettings .dlg-body .stable,
-#dlgSettings .dlg-body .stable div {
-	display: block !important;
+#dlgSettings .stable, #dlgSettings .stable div {
+    display: block !important;
 }
 
 

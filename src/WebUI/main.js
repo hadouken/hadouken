@@ -677,7 +677,7 @@ function setupDialogManager() {
 
 	DialogManager.init();
 
-	["About", "Add", "AddURL", "AddLabel", "Props", "Delete"].each(function(k) {
+	["About", "Add", "AddURL", "AddLabel", "Props", "Delete", "Settings"].each(function(k) {
 		var isModal = ["Props"].contains(k);
 		DialogManager.add(k, isModal, {
 			  "Add": function() { utWebUI.getDirectoryList(); }
@@ -855,44 +855,35 @@ function setupSettings() {
 
 	// -- OK Button
 
-	// $("DLG_SETTINGS_03").addEvent("click", function() {
-	// 	//DialogManager.hide("Settings");
-	// 	utWebUI.hideSettings();
-	// 	utWebUI.setSettings();
-	// });
-	
-	// -- Save Button
-	$("DLG_SETTINGS_SAVE").addEvent("click", function() {
+	$("DLG_SETTINGS_03").addEvent("click", function() {
+		//DialogManager.hide("Settings");
 		utWebUI.hideSettings();
 		utWebUI.setSettings();
 	});
 	
-	$("DLG_SETTINGS_CLOSE").addEvent("click", function(e) {
-		e.preventDefault();
-		utWebUI.hideSettings();
-	});
+	// -- Save Button
 
 	// -- Cancel Button
 
-	// $("DLG_SETTINGS_04").addEvent("click", function(ev) {
-	// 	utWebUI.hideSettings(true);
-	// 	//$("dlgSettings").getElement(".dlg-close").fireEvent("click", ev);
-	// 		// Fire the "Close" button's click handler to make sure
-	// 		// controls are restored if necessary
-	// });
+	$("DLG_SETTINGS_04").addEvent("click", function(ev) {
+		utWebUI.hideSettings(true);
+		$("dlgSettings").getElement(".dlg-close").fireEvent("click", ev);
+			// Fire the "Close" button's click handler to make sure
+			// controls are restored if necessary
+	});
 
 	// -- Apply Button
 
-	// $("DLG_SETTINGS_05").addEvent("click", function(ev) {
-	// 	utWebUI.setSettings();
-	// });
+	$("DLG_SETTINGS_05").addEvent("click", function(ev) {
+		utWebUI.setSettings();
+	});
 
 	// -- Close Button
 
-	/*$("dlgSettings").getElement(".dlg-close").addEvent("click", function(ev) {
+	$("dlgSettings").getElement(".dlg-close").addEvent("click", function(ev) {
 		utWebUI.hideSettings(true);
 		//utWebUI.loadSettings();
-	});*/
+	});
 
 	// -- Form Submission
 
@@ -903,20 +894,9 @@ function setupSettings() {
 	utWebUI.stpanes = new Tabs("dlgSettings-menu", {
 		"tabs": {
 			  "dlgSettings-General"     : ""
-			, "dlgSettings-UISettings"  : ""
-			, "dlgSettings-Directories" : ""
-			, "dlgSettings-Connection"  : ""
-			, "dlgSettings-Bandwidth"   : ""
-			, "dlgSettings-BitTorrent"  : ""
-			, "dlgSettings-TransferCap" : ""
-			, "dlgSettings-Queueing"    : ""
-			, "dlgSettings-Scheduler"   : ""
-			, "dlgSettings-WebUI"       : ""
-			
-			, "dlgSettings-Advanced"    : ""
-			, "dlgSettings-UIExtras"    : ""
-			, "dlgSettings-DiskCache"   : ""
-			, "dlgSettings-RunProgram"  : ""
+            , "dlgSettings-Directories" : "Directories"
+            , "dlgSettings-Advanced"    : ""
+            , "dlgSettings-WebUI"       : ""  
 		},
 		"lazyshow": true,
 		"onChange": utWebUI.settingsPaneChange.bind(utWebUI)
@@ -938,117 +918,6 @@ function setupSettings() {
 		langSelect.options[k] = new Option(v.lang, v.code, false, false);
 	});
 	langSelect.set("value", utWebUI.defConfig.lang);
-
-	// -- Connection
-
-	$("DLG_SETTINGS_4_CONN_04").addEvent("click", function() {
-		var v = utWebUI.settings["bind_port"], rnd = 0;
-		do {
-			rnd = (Math.random() * 50000).toInt() + 15000;
-		} while (v == rnd);
-		$("bind_port").set("value", rnd);
-	});
-
-	// -- BitTorrent
-
-	$("enable_bw_management").addEvent("click", function() {
-		utWebUI.setAdvSetting("bt.transp_disposition", (
-			this.checked ? utWebUI.settings["bt.transp_disposition"] | CONST.TRANSDISP_UTP
-			             : utWebUI.settings["bt.transp_disposition"] & ~CONST.TRANSDISP_UTP
-		));
-	});
-
-	// -- Transfer Cap
-
-	$("multi_day_transfer_limit_span").addEvent("change", function() {
-		utWebUI.getTransferHistory();
-	});
-
-	$("DLG_SETTINGS_7_TRANSFERCAP_12").addEvent("click", function() {
-		utWebUI.resetTransferHistory();
-	});
-
-	// -- Scheduler
-
-	$("sched_table").addEvent("change", function() {
-		var sv = (utWebUI.settings["sched_table"] || "").pad(7*24, "0").substring(0, 7*24);
-		var tbody = new Element("tbody");
-		var active = false;
-		var mode = 0;
-
-		for (var i = 0; i < 7; i++) {
-			var tr = ELE_TR.clone(false);
-			for (var j = 0; j < 25; j++) {
-				var td = ELE_TD.clone(false);
-				if (j == 0) {
-					if ($chk(g_dayCodes))
-						td.set("text", g_dayCodes[i]).addClass("daycode");
-				} else {
-					(function() {
-						// Closure used here to ensure that each cell gets its own copy of idx...
-						// Otherwise, weird JavaScript scoping rules apply, and all cells will
-						// receive references to a shared idx (a variable's scope is function-wide
-						// in JavaScript, not block-wide as in most other C-styled languages)
-						var idx = i*24+j-1;
-						td.set("class", "block mode" + sv.substr(idx, 1)).addEvents({
-							"mousedown": function() {
-								if (!active && $("sched_enable").checked) {
-									for (var k = 0; k <= 3; k++) {
-										if (this.hasClass("mode" + k)) {
-											mode = (k + 1) % 4;
-											this.set("class", "block mode" + mode);
-											sv = sv.substring(0, idx) + mode + sv.substring(idx+1);
-											break;
-										}
-									}
-									active = true;
-								}
-
-								return false;
-							},
-
-							"mouseup": function() {
-								if ($("sched_enable").checked) {
-									$("sched_table").set("value", sv);
-								}
-								active = false;
-							},
-
-							"mouseenter": function() {
-								var day = Math.floor(idx / 24), hour = (idx % 24);
-								$("sched_table_info").set("text", g_dayNames[day] + ", " + hour + ":00 - " + hour + ":59");
-
-								if ($("sched_enable").checked && active && !this.hasClass("mode" + mode)) {
-									this.set("class", "block mode" + mode);
-									sv = sv.substring(0, idx) + mode + sv.substring(idx+1);
-								}
-							},
-
-							"mouseleave": function() {
-								$("sched_table_info").set("html", "");
-							}
-						});
-						if (Browser.ie) {
-							// Prevent text selection in IE
-							td.addEvent("selectstart", Function.from(false));
-						}
-					})();
-				}
-				tr.grab(td);
-			}
-			tbody.grab(tr);
-		}
-		$("sched_table").set("html", "").grab(tbody);
-	}).fireEvent("change");
-
-	$$("#sched_table_lgnd ul li").addEvents({
-		"mouseenter": function() {
-			$("sched_table_info").set("text", g_schLgndEx[this.get("id").match(/.*_([^_]+)$/)[1]]);
-		},
-		"mouseleave": function() {
-			$("sched_table_info").getChildren().destroy();
-		}
-	});
     
 	// -- Advanced Options
 
@@ -1069,91 +938,6 @@ function setupSettings() {
 	// -- Linked Controls
 
 	var linkedEvent = Browser.ie ? "click" : "change";
-
-	$("proxy.type").addEvent("change", function() { // onchange fires in IE on <select>s
-		_link(this, 0, ["proxy.proxy", "proxy.port", "proxy.auth", "proxy.resolve", "proxy.p2p", "no_local_dns", "private_ip", "only_proxied_conns"]);
-	});
-
-	$("proxy.auth").addEvent(linkedEvent, function() {
-		_link(this, 0, ["proxy.username"]);
-		_link(this, 0, ["proxy.password"], null, (this.checked && ($("proxy.type").get("value").toInt() == 1)));
-	});
-
-	$("cache.override").addEvent(linkedEvent, function() {
-		_link(this, 0, ["cache.override_size"], ["cache.override_size"]);
-	});
-
-	$("cache.write").addEvent(linkedEvent, function() {
-		_link(this, 0, ["cache.writeout", "cache.writeimm"]);
-	});
-
-	$("cache.read").addEvent(linkedEvent, function() {
-		_link(this, 0, ["cache.read_turnoff", "cache.read_prune", "cache.read_thrash"]);
-	});
-
-	$("prop-seed_override").addEvent(linkedEvent, function() {
-		_link(this, 0, ["prop-seed_ratio", "prop-seed_time"]);
-	});
-
-	$("webui.enable").addEvent(linkedEvent, function() {
-		_link(this, 0, ["webui.username", "webui.password", "webui.enable_guest", "webui.enable_listen", "webui.restrict"]);
-		_link(this, 0, ["webui.guest"], null, (this.checked && !$("webui.enable_guest").checked));
-		_link(this, 0, ["webui.port"], null, (this.checked && !$("webui.enable_listen").checked));
-	});
-
-	$("webui.enable_guest").addEvent(linkedEvent, function() {
-		_link(this, 0, ["webui.guest"]);
-	});
-
-	$("webui.enable_listen").addEvent(linkedEvent, function() {
-		_link(this, 0, ["webui.port"]);
-	});
-
-	$("multi_day_transfer_limit_en").addEvent(linkedEvent, function() {
-		_link(this, 0, ["multi_day_transfer_mode", "multi_day_transfer_limit_value", "multi_day_transfer_limit_unit", "multi_day_transfer_limit_span"]);
-	});
-
-	$("seed_prio_limitul_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["seed_prio_limitul"]);
-	});
-
-	$("sched_enable").addEvent(linkedEvent, function() {
-		_link(this, 0, ["sched_ul_rate", "sched_dl_rate", "sched_dis_dht"]);
-
-		// Manually disable, because we don't want to fire sched_table's "change" event, which _link() does
-		["sched_table", "sched_table_lgnd", "sched_table_info"].each(
-			this.checked ? function(k) { $(k).removeClass("disabled"); }
-			             : function(k) { $(k).addClass("disabled"); }
-		);
-	});
-
-	$("dir_active_download_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["always_show_add_dialog", "dir_active_download"]);
-	});
-
-	$("dir_completed_download_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["dir_add_label", "dir_completed_download", "move_if_defdir"]);
-	});
-
-	$("dir_torrent_files_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["dir_torrent_files"]);
-	});
-
-	$("dir_completed_torrents_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["dir_completed_torrents"]);
-	});
-
-	$("dir_autoload_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["dir_autoload_delete", "dir_autoload"]);
-	});
-
-	$("max_ul_rate_seed_flag").addEvent(linkedEvent, function() {
-		_link(this, 0, ["max_ul_rate_seed"]);
-	});
-
-	$("gui.manual_ratemenu").addEvent(linkedEvent, function() {
-		_link(this, 0, ["gui.ulrate_menu", "gui.dlrate_menu"]);
-	});
 
 	// -- Miscellaneous
 
@@ -1547,19 +1331,19 @@ function loadSettingStrings() {
 
 	utWebUI.stpanes.setNames({
 		  "dlgSettings-General"     : L_("ST_CAPT_GENERAL")
-		, "dlgSettings-UISettings"  : L_("ST_CAPT_UI_SETTINGS")
-		, "dlgSettings-Directories" : L_("ST_CAPT_FOLDER")
-		, "dlgSettings-Connection"  : L_("ST_CAPT_CONNECTION")
-		, "dlgSettings-Bandwidth"   : L_("ST_CAPT_BANDWIDTH")
-		, "dlgSettings-BitTorrent"  : L_("ST_CAPT_BITTORRENT")
-		, "dlgSettings-TransferCap" : L_("ST_CAPT_TRANSFER_CAP")
-		, "dlgSettings-Queueing"    : L_("ST_CAPT_QUEUEING")
+		//, "dlgSettings-UISettings"  : L_("ST_CAPT_UI_SETTINGS")
+		//, "dlgSettings-Directories" : L_("ST_CAPT_FOLDER")
+		//, "dlgSettings-Connection"  : L_("ST_CAPT_CONNECTION")
+		//, "dlgSettings-Bandwidth"   : L_("ST_CAPT_BANDWIDTH")
+		//, "dlgSettings-BitTorrent"  : L_("ST_CAPT_BITTORRENT")
+		//, "dlgSettings-TransferCap" : L_("ST_CAPT_TRANSFER_CAP")
+		//, "dlgSettings-Queueing"    : L_("ST_CAPT_QUEUEING")
 		, "dlgSettings-WebUI"       : L_("ST_CAPT_WEBUI")
-		, "dlgSettings-Scheduler"   : L_("ST_CAPT_SCHEDULER")
+		//, "dlgSettings-Scheduler"   : L_("ST_CAPT_SCHEDULER")
 		, "dlgSettings-Advanced"    : L_("ST_CAPT_ADVANCED")
-		, "dlgSettings-UIExtras"    : "&nbsp;&nbsp;&nbsp;&nbsp;" + L_("ST_CAPT_UI_EXTRAS") // TODO: Use CSS to indent instead of modifying the string directly...
-		, "dlgSettings-DiskCache"   : "&nbsp;&nbsp;&nbsp;&nbsp;" + L_("ST_CAPT_DISK_CACHE") // TODO: Use CSS to indent instead of modifying the string directly...
-		, "dlgSettings-RunProgram"  : "&nbsp;&nbsp;&nbsp;&nbsp;" + L_("ST_CAPT_RUN_PROGRAM") // TODO: Use CSS to indent instead of modifying the string directly...
+		//, "dlgSettings-UIExtras"    : "&nbsp;&nbsp;&nbsp;&nbsp;" + L_("ST_CAPT_UI_EXTRAS") // TODO: Use CSS to indent instead of modifying the string directly...
+		//, "dlgSettings-DiskCache"   : "&nbsp;&nbsp;&nbsp;&nbsp;" + L_("ST_CAPT_DISK_CACHE") // TODO: Use CSS to indent instead of modifying the string directly...
+		//, "dlgSettings-RunProgram"  : "&nbsp;&nbsp;&nbsp;&nbsp;" + L_("ST_CAPT_RUN_PROGRAM") // TODO: Use CSS to indent instead of modifying the string directly...
 	});
 
 	_loadStrings("text", [
@@ -1574,122 +1358,6 @@ function loadSettingStrings() {
 		, "DLG_SETTINGS_1_GENERAL_18"
 		, "DLG_SETTINGS_1_GENERAL_19"
 		, "DLG_SETTINGS_1_GENERAL_20"
-
-		// UI Settings
-		, "DLG_SETTINGS_2_UI_01"
-		, "DLG_SETTINGS_2_UI_02"
-		, "DLG_SETTINGS_2_UI_03"
-		, "DLG_SETTINGS_2_UI_04"
-		, "DLG_SETTINGS_2_UI_05"
-		, "DLG_SETTINGS_2_UI_06"
-		, "DLG_SETTINGS_2_UI_07"
-		, "DLG_SETTINGS_2_UI_15"
-		, "DLG_SETTINGS_2_UI_16"
-		, "DLG_SETTINGS_2_UI_17"
-		, "DLG_SETTINGS_2_UI_18"
-		, "DLG_SETTINGS_2_UI_19"
-		, "DLG_SETTINGS_2_UI_20"
-		, "DLG_SETTINGS_2_UI_22"
-
-		// Directories
-		, "DLG_SETTINGS_3_PATHS_01"
-		, "DLG_SETTINGS_3_PATHS_02"
-		, "DLG_SETTINGS_3_PATHS_03"
-		, "DLG_SETTINGS_3_PATHS_06"
-		, "DLG_SETTINGS_3_PATHS_07"
-		, "DLG_SETTINGS_3_PATHS_10"
-		, "DLG_SETTINGS_3_PATHS_11"
-		, "DLG_SETTINGS_3_PATHS_12"
-		, "DLG_SETTINGS_3_PATHS_15"
-		, "DLG_SETTINGS_3_PATHS_18"
-		, "DLG_SETTINGS_3_PATHS_19"
-
-		// Connection
-		, "DLG_SETTINGS_4_CONN_01"
-		, "DLG_SETTINGS_4_CONN_02"
-		, "DLG_SETTINGS_4_CONN_05"
-		, "DLG_SETTINGS_4_CONN_06"
-		, "DLG_SETTINGS_4_CONN_07"
-		, "DLG_SETTINGS_4_CONN_08"
-		, "DLG_SETTINGS_4_CONN_09"
-		, "DLG_SETTINGS_4_CONN_11"
-		, "DLG_SETTINGS_4_CONN_13"
-		, "DLG_SETTINGS_4_CONN_15"
-		, "DLG_SETTINGS_4_CONN_16"
-		, "DLG_SETTINGS_4_CONN_18"
-		, "DLG_SETTINGS_4_CONN_19"
-		, "DLG_SETTINGS_4_CONN_20"
-		, "DLG_SETTINGS_4_CONN_21"
-		, "DLG_SETTINGS_4_CONN_22"
-		, "DLG_SETTINGS_4_CONN_23"
-		, "DLG_SETTINGS_4_CONN_24"
-		, "DLG_SETTINGS_4_CONN_25"
-
-		// Bandwidth
-		, "DLG_SETTINGS_5_BANDWIDTH_01"
-		, "DLG_SETTINGS_5_BANDWIDTH_02"
-		, "DLG_SETTINGS_5_BANDWIDTH_05"
-		, "DLG_SETTINGS_5_BANDWIDTH_07"
-		, "DLG_SETTINGS_5_BANDWIDTH_08"
-		, "DLG_SETTINGS_5_BANDWIDTH_10"
-		, "DLG_SETTINGS_5_BANDWIDTH_11"
-		, "DLG_SETTINGS_5_BANDWIDTH_14"
-		, "DLG_SETTINGS_5_BANDWIDTH_15"
-		, "DLG_SETTINGS_5_BANDWIDTH_17"
-		, "DLG_SETTINGS_5_BANDWIDTH_18"
-		, "DLG_SETTINGS_5_BANDWIDTH_19"
-		, "DLG_SETTINGS_5_BANDWIDTH_20"
-
-		// BitTorrent
-		, "DLG_SETTINGS_6_BITTORRENT_01"
-		, "DLG_SETTINGS_6_BITTORRENT_02"
-		, "DLG_SETTINGS_6_BITTORRENT_03"
-		, "DLG_SETTINGS_6_BITTORRENT_04"
-		, "DLG_SETTINGS_6_BITTORRENT_05"
-		, "DLG_SETTINGS_6_BITTORRENT_06"
-		, "DLG_SETTINGS_6_BITTORRENT_07"
-		, "DLG_SETTINGS_6_BITTORRENT_08"
-		, "DLG_SETTINGS_6_BITTORRENT_10"
-		, "DLG_SETTINGS_6_BITTORRENT_11"
-		, "DLG_SETTINGS_6_BITTORRENT_13"
-		, "DLG_SETTINGS_6_BITTORRENT_14"
-		, "DLG_SETTINGS_6_BITTORRENT_15"
-
-		// Transfer Cap
-		, "DLG_SETTINGS_7_TRANSFERCAP_01"
-		, "DLG_SETTINGS_7_TRANSFERCAP_02"
-		, "DLG_SETTINGS_7_TRANSFERCAP_03"
-		, "DLG_SETTINGS_7_TRANSFERCAP_04"
-		, "DLG_SETTINGS_7_TRANSFERCAP_05"
-		, "DLG_SETTINGS_7_TRANSFERCAP_06"
-		, "DLG_SETTINGS_7_TRANSFERCAP_07"
-		, "DLG_SETTINGS_7_TRANSFERCAP_08"
-		, "DLG_SETTINGS_7_TRANSFERCAP_09"
-		, "DLG_SETTINGS_7_TRANSFERCAP_10"
-
-		// Queueing
-		, "DLG_SETTINGS_8_QUEUEING_01"
-		, "DLG_SETTINGS_8_QUEUEING_02"
-		, "DLG_SETTINGS_8_QUEUEING_04"
-		, "DLG_SETTINGS_8_QUEUEING_06"
-		, "DLG_SETTINGS_8_QUEUEING_07"
-		, "DLG_SETTINGS_8_QUEUEING_09"
-		, "DLG_SETTINGS_8_QUEUEING_11"
-		, "DLG_SETTINGS_8_QUEUEING_12"
-		, "DLG_SETTINGS_8_QUEUEING_13"
-
-		// Scheduler
-		, "DLG_SETTINGS_9_SCHEDULER_01"
-		, "DLG_SETTINGS_9_SCHEDULER_02"
-		, "DLG_SETTINGS_9_SCHEDULER_04"
-		, "DLG_SETTINGS_9_SCHEDULER_05"
-		, "DLG_SETTINGS_9_SCHEDULER_07"
-		, "DLG_SETTINGS_9_SCHEDULER_09"
-
-		, "ST_SCH_LGND_FULL"
-		, "ST_SCH_LGND_LIMITED"
-		, "ST_SCH_LGND_OFF"
-		, "ST_SCH_LGND_SEEDING"
 
 		// Web UI
 		, "DLG_SETTINGS_9_WEBUI_01"
@@ -1711,36 +1379,6 @@ function loadSettingStrings() {
 		, "DLG_SETTINGS_A_ADVANCED_02"
 		, "DLG_SETTINGS_A_ADVANCED_03"
 		, "DLG_SETTINGS_A_ADVANCED_04"
-
-		// UI Extras
-		, "DLG_SETTINGS_B_ADV_UI_01"
-		, "DLG_SETTINGS_B_ADV_UI_02"
-		, "DLG_SETTINGS_B_ADV_UI_03"
-		, "DLG_SETTINGS_B_ADV_UI_05"
-		, "DLG_SETTINGS_B_ADV_UI_07"
-		, "DLG_SETTINGS_B_ADV_UI_08"
-
-		// Disk Cache
-		, "DLG_SETTINGS_C_ADV_CACHE_01"
-		, "DLG_SETTINGS_C_ADV_CACHE_02"
-		, "DLG_SETTINGS_C_ADV_CACHE_03"
-		, "DLG_SETTINGS_C_ADV_CACHE_05"
-		, "DLG_SETTINGS_C_ADV_CACHE_06"
-		, "DLG_SETTINGS_C_ADV_CACHE_07"
-		, "DLG_SETTINGS_C_ADV_CACHE_08"
-		, "DLG_SETTINGS_C_ADV_CACHE_09"
-		, "DLG_SETTINGS_C_ADV_CACHE_10"
-		, "DLG_SETTINGS_C_ADV_CACHE_11"
-		, "DLG_SETTINGS_C_ADV_CACHE_12"
-		, "DLG_SETTINGS_C_ADV_CACHE_13"
-		, "DLG_SETTINGS_C_ADV_CACHE_14"
-		, "DLG_SETTINGS_C_ADV_CACHE_15"
-
-		// Run Program
-		, "DLG_SETTINGS_C_ADV_RUN_01"
-		, "DLG_SETTINGS_C_ADV_RUN_02"
-		, "DLG_SETTINGS_C_ADV_RUN_04"
-		, "DLG_SETTINGS_C_ADV_RUN_06"
 	]);
 
 	// -- Advanced Options
@@ -1757,25 +1395,12 @@ function loadSettingStrings() {
 	// -- Buttons
 	_loadStrings("value", [
 		  "DLG_SETTINGS_SAVE" // "Save settings"
-		, "DLG_SETTINGS_4_CONN_04" // "Random"
-		, "DLG_SETTINGS_7_TRANSFERCAP_12" // "Reset History"
 		, "DLG_SETTINGS_A_ADVANCED_05" // "Set"
 	]);
 	
 	_loadStrings("text", [
 		  "DLG_SETTINGS_MENU_TITLE" // "Settings"
 	]);
-
-	// -- Comboboxes
-	_loadComboboxStrings("gui.dblclick_seed", L_("ST_CBO_UI_DBLCLK_TOR").split("||"), utWebUI.settings["gui.dblclick_seed"]);
-	_loadComboboxStrings("gui.dblclick_dl", L_("ST_CBO_UI_DBLCLK_TOR").split("||"), utWebUI.settings["gui.dblclick_dl"]);
-	_loadComboboxStrings("encryption_mode", L_("ST_CBO_ENCRYPTIONS").split("||"), utWebUI.settings["encryption_mode"]);
-	_loadComboboxStrings("proxy.type", L_("ST_CBO_PROXY").split("||"), utWebUI.settings["proxy.type"]);
-	_loadComboboxStrings("multi_day_transfer_mode", L_("ST_CBO_TCAP_MODES").split("||"), utWebUI.settings["multi_day_transfer_mode"]);
-	_loadComboboxStrings("multi_day_transfer_limit_unit", L_("ST_CBO_TCAP_UNITS").split("||"), utWebUI.settings["multi_day_transfer_limit_unit"]);
-	_loadComboboxStrings("multi_day_transfer_limit_span", L_("ST_CBO_TCAP_PERIODS").split("||"), utWebUI.settings["multi_day_transfer_limit_span"]);
-
-	$("sched_table").fireEvent("change"); // Force update scheduler related language strings
 }
 
 function loadGlobalStrings() {
