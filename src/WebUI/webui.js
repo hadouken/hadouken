@@ -736,9 +736,11 @@ var utWebUI = {
 	"getStatusInfo": function(state, progress, complete) {
 		var res = ["", ""];
         
+        console.log(state + ", " + progress + ", " + complete);
+        
         if(state == CONST.STATE_STOPPED && complete)
         {
-            res = ["Status_Complete", L_("OV_FL_FINISHED")];
+            res = ["Status_Completed", L_("OV_FL_FINISHED")];
         }
         else if((state == CONST.STATE_STOPPED || state == CONST.STATE_STOPPING) && !complete)
         {
@@ -2263,7 +2265,7 @@ var utWebUI = {
 
 		var doneIdx = this.trtColDoneIdx, statIdx = this.trtColStatusIdx;
 		if (!useidx || index == statIdx) {
-			var statInfo = this.getStatusInfo(values[statIdx][0], values[doneIdx], false);
+			var statInfo = this.getStatusInfo(values[statIdx][0], values[doneIdx], values[doneIdx] === 1000);
 			values[statIdx] = (statInfo[0] === "Status_Error" ? values[statIdx][1] || statInfo[1] : statInfo[1]);
 		}
 
