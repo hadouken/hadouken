@@ -10,7 +10,7 @@
     <?define IsWin64     = "no"?>
 <?endif?>
 
-<Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+<Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension">
   <Product
     Id="*"
     Name="Hadouken"
@@ -55,6 +55,8 @@
 
           <Component Id="HdknCmdLine" Guid="F4620120-41BA-4989-9098-79B3479652AE" Win64="$(var.IsWin64)">
             <File Id="HdknCmdLine" Name="Hadouken.Hosts.CommandLine.exe" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe" KeyPath="yes" />
+            
+            <fw:FirewallException Id="CommandLineException" Name="Hadouken (Command-line)" Scope="any" Protocol="tcp" Profile="all" File="HdknCmdLine" IgnoreFailure="no" />
           </Component>
           
           <Component Id="HdknCmdLineCfg" Guid="994CAAD3-3232-4B5A-B4F6-CC0A0F5BF90C" Win64="$(var.IsWin64)">
@@ -85,6 +87,8 @@
           <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682" Win64="$(var.IsWin64)">
             <Condition><![CDATA[HDKN_SRV_ENABLE = 1]]></Condition>
             <File Id="HdknWinSrv" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
+            
+            <fw:FirewallException Id="ServiceException1" Name="Hadouken (Windows Service)" Scope="any" Protocol="tcp" Profile="all" File="HdknWinSrv" IgnoreFailure="no" />
 
             <util:User
               Id="UpdateUserLogonAsService"
@@ -114,6 +118,8 @@
           <Component Id="HdknWinSrvExe" Guid="8D6FD04D-1154-43D4-A3DB-B900E7F9B8DA" Win64="$(var.IsWin64)">
             <Condition><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
             <File Id="HdknWinSrvExe" Name="Hadouken.Hosts.WindowsService.exe" Source="$(var.BinDir)/Hadouken.Hosts.WindowsService.exe" KeyPath="yes" />
+            
+            <fw:FirewallException Id="ServiceException2" Name="Hadouken (Windows Service)" Scope="any" Protocol="tcp" Profile="all" File="HdknWinSrvExe" IgnoreFailure="no" />
           </Component>
           
           <Component Id="HdknWinSrvCfg" Guid="35A045FE-9F58-4C12-869E-A8AFFEDE1F4D" Win64="$(var.IsWin64)">
