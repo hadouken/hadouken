@@ -2781,30 +2781,7 @@ var utWebUI = {
 	},	
 
 	"addURL": function(param, fn) {
-		var urls = Array.from(param.url).map(function(url) {
-			return (encodeURIComponent((url || "").trim()) || undefined);
-		}).clean();
-		if (urls.length <= 0) return;
-
-		var count = 0;
-		var fnwrap = fn ? (function() {
-			if (++count === urls.length) fn();
-		}) : undefined;
-
-		var val, tail = "";
-
-		if ((val = encodeURIComponent(param.cookie || "").trim()))
-			tail += ":COOKIE:" + val;
-
-		if ((val = (parseInt(param.dir, 10) || 0)))
-			tail += "&download_dir=" + val;
-
-		if ((val = (param.sub || "")))
-			tail += "&path=" + encodeURIComponent(val); // TODO: Sanitize!
-
-		Array.each(urls, function(url) {
-			this.request("post", "action=add-url", url + tail, fnwrap);
-		}, this);
+        this.request("post", "action=addurl", param, fn);
 	},
 
 	"loadPeers": function() {
