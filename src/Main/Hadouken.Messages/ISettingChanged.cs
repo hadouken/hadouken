@@ -9,7 +9,7 @@ namespace Hadouken.Messages
     public interface ISettingChanged : IMessage
     {
         string Key { get; set; }
-        string OldValue { get; set; }
-        string NewValue { get; set; }
+        object OldValue { get; set; }
+        object NewValue { get; set; }
     }
 }

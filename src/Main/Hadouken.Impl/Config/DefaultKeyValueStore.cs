@@ -7,17 +7,21 @@ using Hadouken.Data;
 using Hadouken.Data.Models;
 using System.Web.Script.Serialization;
 using System.Linq.Expressions;
+using Hadouken.Messaging;
+using Hadouken.Messages;
 
 namespace Hadouken.Impl.Config
 {
     public class DefaultKeyValueStore : IKeyValueStore
     {
         private JavaScriptSerializer _serializer = new JavaScriptSerializer();
-        private IDataRepository _data;
+        private readonly IDataRepository _data;
+        private readonly IMessageBus _bus;
 
-        public DefaultKeyValueStore(IDataRepository data)
+        public DefaultKeyValueStore(IDataRepository data, IMessageBus bus)
         {
             _data = data;
+            _bus = bus;
         }
 
         public object Get(string key)
@@ -40,7 +44,7 @@ namespace Hadouken.Impl.Config
 
         public IDictionary<string, object> Get(Func<string, bool> filter)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>();
+            var result = new Dictionary<string, object>();
 
             var settings = _data.List<Setting>().Where(s => filter.Invoke(s.Key));
 
@@ -73,13 +77,22 @@ namespace Hadouken.Impl.Config
         public void Set(string key, object value)
         {
             var setting = _data.Single<Setting>(s => s.Key == key);
-
+            
             if (setting == null)
-                setting = new Setting() { Key = key, Type = (value == null ? typeof(Object).FullName : value.GetType().FullName) };
+            {
+                setting = new Setting { Key = key, Type = (value == null ? typeof (Object).FullName : value.GetType().FullName) };
+            }
 
             setting.Value = _serializer.Serialize(value);
 
             _data.SaveOrUpdate(setting);
+
+            // Send ISettingChanged message
+            _bus.Send<ISettingChanged>(msg =>
+                                           {
+                                               msg.Key = setting.Key;
+                                               msg.NewValue = value;
+                                           });
         }
     }
 }
