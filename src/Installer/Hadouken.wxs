@@ -203,6 +203,9 @@
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="src/Media/HdknSetupDialog.bmp" />
     
+    <CustomAction Id="NetSHRuleAdd_Cmd" Property="NetSHRuleAdd" Value="&quot;netsh&quot; http add urlacl url=http://+:[HDKN_WEBUI_PORT]/ user=[HDKN_SRV_USER]" Execute="immediate" />
+    <CustomAction Id="NetSHRuleAdd" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Return="check" Impersonate="no" />
+    
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
     
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
@@ -210,5 +213,10 @@
     
     <Property Id="HDKN_AUTH_USER" Value="hdkn" />
     <Property Id="HDKN_AUTH_PASS" Value="hdkn" />
+    
+    <InstallExecuteSequence>
+        <Custom Action="NetSHRuleAdd_Cmd" After="CostFinalize" />
+        <Custom Action="NetSHRuleAdd" Before="InstallFinalize"/>
+    </InstallExecuteSequence>
   </Product>
 </Wix>
