@@ -19,6 +19,7 @@ using Hadouken.Messages;
 using System.Threading;
 using Hadouken.Configuration;
 using MonoTorrent;
+using System.Net;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -43,6 +44,8 @@ namespace Hadouken.Impl.BitTorrent
             _fs = fs;
             _mbus = mbus;
 
+            _mbus.Subscribe<ISettingChanged>(SettingChanged);
+
             _torrentFileSavePath = Path.Combine(HdknConfig.ConfigManager["Paths.Data"], "Torrents");
         }
 
@@ -55,6 +58,16 @@ namespace Hadouken.Impl.BitTorrent
 
             LoadEngine();
             LoadState();
+        }
+
+        private void SettingChanged(ISettingChanged message)
+        {
+            if(_clientEngine == null || message.Key != "bt.listenPort")
+                return;
+
+            int newPort = Convert.ToInt32(message.NewValue);
+
+            _clientEngine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, newPort));
         }
 
         private void LoadEngine()
