@@ -894,6 +894,7 @@ function setupSettings() {
 	utWebUI.stpanes = new Tabs("dlgSettings-menu", {
 		"tabs": {
 			  "dlgSettings-General"     : ""
+            , "dlgSettings-Connection"  : "Connection"
             , "dlgSettings-Directories" : "Directories"
             , "dlgSettings-Advanced"    : ""
             , "dlgSettings-WebUI"       : ""  
