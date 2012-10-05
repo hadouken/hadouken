@@ -149,7 +149,6 @@ namespace Hadouken.Impl.Http
             catch (ObjectDisposedException)
             {
                 // probably closing
-                return;
             }
         }
 
@@ -224,6 +223,7 @@ namespace Hadouken.Impl.Http
                 }
                 catch (Exception e)
                 {
+                    _logger.ErrorException(String.Format("Could not execute action {0}", action.GetType().FullName), e);
                     return Error_500(String.Format("Could not execute action '{0}'.", actionName), context, e);
                 }
             }
