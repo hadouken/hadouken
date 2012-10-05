@@ -363,8 +363,15 @@ namespace Hadouken.Impl.BitTorrent
             _manager.Pause();
         }
 
-        public void Move(string newLocation, bool appendName = false)
+        public void Move(string newLocation)
         {
+            /* Move torrent
+             * Examples:
+             * C:\Downloads\movie.mkv - newLocation=D:\Movies - D:\Movies\movie.mkv
+             * C:\Downloads\Folder    - newLocation=D:\Misc   - D:\Misc\Folder
+             * 
+            */
+
             var isRunning = (State == TorrentState.Seeding || State == TorrentState.Downloading ||
                              State == TorrentState.Metadata || State == TorrentState.Paused ||
                              State == TorrentState.Hashing);
@@ -384,16 +391,20 @@ namespace Hadouken.Impl.BitTorrent
 
             if (isDirectory)
             {
-                if (appendName)
-                    newLocation = Path.Combine(newLocation, Torrent.Name);
-
+                newLocation = Path.Combine(newLocation, Torrent.Name);
                 DuplicateStructure(oldLocation, newLocation);
             }
+
+            if(!_fileSystem.DirectoryExists(newLocation))
+                _fileSystem.CreateDirectory(newLocation);
 
             _manager.MoveFiles(newLocation, true);
 
             if (isDirectory)
+            {
+                _fileSystem.EmptyDirectory(oldLocation);
                 _fileSystem.DeleteDirectory(oldLocation);
+            }
 
             if (isRunning)
                 Start();

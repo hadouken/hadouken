@@ -43,7 +43,7 @@ namespace Hadouken.BitTorrent
         void Start();
         void Stop();
         void Pause();
-        void Move(string newLocation, bool appendPath = false);
+        void Move(string newLocation);
         void HashCheck(bool autoStart);
 
         void LoadFastResume(byte[] data);
