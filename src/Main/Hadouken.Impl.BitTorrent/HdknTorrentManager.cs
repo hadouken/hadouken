@@ -4,26 +4,29 @@ using System.Linq;
 using System.Text;
 
 using Hadouken.BitTorrent;
+using Hadouken.Configuration;
 using MonoTorrent.Client;
 using System.IO;
 using MonoTorrent.BEncoding;
 using Hadouken.IO;
 using Hadouken.Messages;
 using Hadouken.Messaging;
+using System.Threading;
 
 namespace Hadouken.Impl.BitTorrent
 {
     public class HdknTorrentManager : ITorrentManager
     {
-        private object _lock = new object();
-        private object _peersLock = new object();
+        private readonly object _lock = new object();
+        private readonly object _peersLock = new object();
 
-        private TorrentManager _manager;
+        private readonly TorrentManager _manager;
 
         private HdknTorrent _torrent;
         private List<IPeer> _peers = new List<IPeer>();
         private List<ITracker> _trackers = new List<ITracker>();
 
+        private IKeyValueStore _kvs;
         private IFileSystem _fileSystem;
         private IMessageBus _mbus;
 
@@ -34,7 +37,7 @@ namespace Hadouken.Impl.BitTorrent
 
         private double _progress;
 
-        internal HdknTorrentManager(TorrentManager manager, IFileSystem fileSystem, IMessageBus mbus)
+        internal HdknTorrentManager(TorrentManager manager, IKeyValueStore kvs, IFileSystem fileSystem, IMessageBus mbus)
         {
             _manager = manager;
             _torrent = new HdknTorrent(manager.Torrent);
@@ -47,6 +50,7 @@ namespace Hadouken.Impl.BitTorrent
                 }
             }
 
+            _kvs = kvs;
             _fileSystem = fileSystem;
             _mbus = mbus;
             _startTime = DateTime.Now;
@@ -114,7 +118,36 @@ namespace Hadouken.Impl.BitTorrent
                 if (_completedTime == null)
                     _completedTime = DateTime.Now;
 
-                _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this);
+                var oldSavePath = String.Copy(SavePath);
+
+                _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ =>
+                                                                                          {
+                                                                                              if(!oldSavePath.Equals(SavePath))
+                                                                                                  return;
+
+                                                                                              var moveCompleted =
+                                                                                                  _kvs.Get<bool>(
+                                                                                                      "paths.shouldMoveCompleted");
+
+                                                                                              var newPath =
+                                                                                                  _kvs.Get<string>(
+                                                                                                      "paths.completedPath");
+
+                                                                                              if(moveCompleted && !String.IsNullOrEmpty(newPath))
+                                                                                              {
+                                                                                                  var appendLabel =
+                                                                                                      _kvs.Get<bool>(
+                                                                                                          "paths.appendLabelOnMoveCompleted");
+
+                                                                                                  if (appendLabel && !String.IsNullOrEmpty(Label))
+                                                                                                      newPath =
+                                                                                                          Path.Combine(
+                                                                                                              newPath,
+                                                                                                              Label);
+
+                                                                                                  Move(newPath);
+                                                                                              }
+                                                                                          });
             }
         }
 
@@ -332,20 +365,29 @@ namespace Hadouken.Impl.BitTorrent
 
         public void Move(string newLocation, bool appendName = false)
         {
-            var isRunning = (State == TorrentState.Seeding || State == TorrentState.Downloading);
+            var isRunning = (State == TorrentState.Seeding || State == TorrentState.Downloading ||
+                             State == TorrentState.Metadata || State == TorrentState.Paused ||
+                             State == TorrentState.Hashing);
 
             if (isRunning)
                 Stop();
 
-            var isDirectory = File.GetAttributes(SavePath).HasFlag(FileAttributes.Directory);
+            while(State != TorrentState.Stopped)
+                Thread.Sleep(100);
+
             var oldLocation = SavePath;
+
+            if (Torrent.Files.Length == 1)
+                oldLocation = Path.Combine(oldLocation, Torrent.Name);
+
+            var isDirectory = File.GetAttributes(oldLocation).HasFlag(FileAttributes.Directory);
 
             if (isDirectory)
             {
                 if (appendName)
                     newLocation = Path.Combine(newLocation, Torrent.Name);
 
-                DuplicateStructure(SavePath, newLocation);
+                DuplicateStructure(oldLocation, newLocation);
             }
 
             _manager.MoveFiles(newLocation, true);

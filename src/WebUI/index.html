@@ -324,10 +324,26 @@ found in the LICENSE file.
         
         <div id="dlgSettings-Directories" class="settings-pane">
             <fieldset>
-                <legend>Default download directory</legend>
+                <legend>Download directory</legend>
                 
                 <div class="line-cont">
                     <input type="text" id="paths.defaultSavePath" class="tbox wide" />
+                </div>
+                
+                <div class="line-cont">
+                    <div class="fll">
+                        <input id="paths.shouldMoveCompleted" type="checkbox" />
+                        <label id="DLG_SETTINGS_3_PATHS_06" for="paths.shouldMoveCompleted">Move completed downloads to:</label>
+                    </div>
+                    
+                    <div class="half flr">
+                        <input id="paths.appendLabelOnMoveCompleted" type="checkbox" />
+                        <label id="DLG_SETTINGS_3_PATHS_07" class="" for="paths.appendLabelOnMoveCompleted">Append the torrent's label</label>
+                    </div>
+                </div>
+                
+                <div class="line-cont indent">
+                    <input id="paths.completedPath" class="tbox wide" type="text" />
                 </div>
             </fieldset>
         </div>

@@ -21,11 +21,15 @@ namespace Hadouken.Impl.Data.Migrations
                 new Column("Permissions", System.Data.DbType.Int32)
             );
 
-            Database.Insert("Setting", new string [] { "Key", "Value", "Type" }, new string[] { "webui.cookie", "\"{}\"", "System.String" });
+            Database.Insert("Setting", new [] { "Key", "Value", "Type" }, new [] { "webui.cookie", "\"{}\"", "System.String" });
 
             // default gui settings
-            Database.Insert("Setting", new string[] { "Key", "Value", "Type" }, new string[] { "gui.tall_category_list", "true", "System.Boolean" });
+            Database.Insert("Setting", new [] { "Key", "Value", "Type" }, new [] { "gui.tall_category_list", "true", "System.Boolean" });
 
+            // Move on completed?
+            Database.Insert("Setting", new [] { "Key", "Value", "Type" }, new [] { "paths.shouldMoveCompleted", "false", "System.Boolean" });
+            Database.Insert("Setting", new [] { "Key", "Value", "Type" }, new [] { "paths.completedPath", "\"\"", "System.String" });
+            Database.Insert("Setting", new [] { "Key", "Value", "Type" }, new [] { "paths.appendLabelOnMoveCompleted", "false", "System.Boolean" });
         }
 
         public override void Down()

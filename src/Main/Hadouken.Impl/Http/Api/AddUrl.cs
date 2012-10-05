@@ -12,7 +12,7 @@ namespace Hadouken.Impl.Http.Api
     [ApiAction("addurl")]
     public class AddUrl : ApiAction
     {
-        private IBitTorrentEngine _torrentEngine;
+        private readonly IBitTorrentEngine _torrentEngine;
 
         public AddUrl(IBitTorrentEngine torrentEngine)
         {
@@ -31,7 +31,7 @@ namespace Hadouken.Impl.Http.Api
             
             if(isMagnet)
             {
-                _torrentEngine.AddMagnetLink(url);
+                return Json(false);
             }
             else
             {

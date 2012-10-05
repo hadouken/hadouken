@@ -20,6 +20,7 @@ using System.Threading;
 using Hadouken.Configuration;
 using MonoTorrent;
 using System.Net;
+using EncryptionTypes = MonoTorrent.Client.Encryption.EncryptionTypes;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -77,7 +78,24 @@ namespace Hadouken.Impl.BitTorrent
             string savePath = _kvs.Get<string>("paths.defaultSavePath", defaultSavePath);
             int listenPort = _kvs.Get<int>("bt.listenPort", 6998);
 
-            _clientEngine = new ClientEngine(new EngineSettings(savePath, listenPort));
+            var settings = new EngineSettings
+                               {
+                                   AllowedEncryption = EncryptionTypes.All,
+                                   GlobalMaxConnections = _kvs.Get("bandwidth.globalMaxConnections", 200),
+                                   GlobalMaxDownloadSpeed = _kvs.Get("bandwidth.globalMaxDlSpeed", 0),
+                                   GlobalMaxHalfOpenConnections = _kvs.Get("bandwidth.globalMaxHalfConnections", 100),
+                                   GlobalMaxUploadSpeed = _kvs.Get("bandwidth.globalMaxUpSpeed", 0),
+                                   //HaveSupressionEnabled
+                                   MaxOpenFiles = _kvs.Get("diskio.maxOpenFiles", 0),
+                                   MaxReadRate = _kvs.Get("diskio.maxReadRate", 0),
+                                   MaxWriteRate = _kvs.Get("diskio.maxWriteRate", 0),
+                                   PreferEncryption = _kvs.Get("bt.preferEncryption", true),
+                                   //ReportedAddress = _kvs.Get<string>("bt.reportedAddress")
+                                   SavePath = savePath
+                               };
+
+            _clientEngine = new ClientEngine(settings);
+            _clientEngine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, listenPort));
         }
 
         private void LoadState()
@@ -248,7 +266,7 @@ namespace Hadouken.Impl.BitTorrent
             _clientEngine.Register(manager);
 
             // add to dictionary
-            var hdknManager = new HdknTorrentManager(manager, _fs, _mbus) { TorrentData = data };
+            var hdknManager = new HdknTorrentManager(manager, _kvs, _fs, _mbus) { TorrentData = data };
             hdknManager.Load();
 
             _torrents.Add(hdknManager.InfoHash, hdknManager);
