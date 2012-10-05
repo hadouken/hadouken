@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Migrator.Framework;
 
-using Migrator;
-using Migrator.Framework;
-
-namespace Hadouken.Impl.Data.Migrations
+namespace Hadouken.Impl.Data.Migrations.Create
 {
     [Migration(201206251243)]
     public class CreateTorrentInfoTable_001 : Migration
