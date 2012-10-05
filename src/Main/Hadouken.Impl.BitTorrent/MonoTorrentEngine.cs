@@ -63,18 +63,29 @@ namespace Hadouken.Impl.BitTorrent
 
         private void SettingChanged(ISettingChanged message)
         {
-            if(_clientEngine == null || message.Key != "bt.listenPort")
+            if(_clientEngine == null)
                 return;
 
-            int newPort = Convert.ToInt32(message.NewValue);
+            switch(message.Key)
+            {
+                case "bandwidth.globalMaxConnections":
+                    _clientEngine.Settings.GlobalMaxConnections = Convert.ToInt32(message.NewValue);
+                    break;
 
-            _clientEngine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, newPort));
+                case "bt.listenPort":
+                    var newPort = Convert.ToInt32(message.NewValue);
+                    _clientEngine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, newPort));
+                    break;
+
+                case "paths.defaultSavePath":
+                    _clientEngine.Settings.SavePath = message.NewValue.ToString();
+                    break;
+            }
         }
 
         private void LoadEngine()
         {
             string defaultSavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-
             string savePath = _kvs.Get<string>("paths.defaultSavePath", defaultSavePath);
             int listenPort = _kvs.Get<int>("bt.listenPort", 6998);
 
