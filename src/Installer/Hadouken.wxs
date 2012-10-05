@@ -67,7 +67,7 @@
               File="[#HdknCmdLineCfg]"              
               Action="setValue"
               ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
-              Value="http://localhost:[HDKN_WEBUI_PORT]/" />
+              Value="http://+:[HDKN_WEBUI_PORT]/" />
               
             <util:XmlFile 
               Id="ModifyAuthUser2"
@@ -130,7 +130,7 @@
               File="[#HdknWinSrvCfg]"              
               Action="setValue"
               ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
-              Value="http://localhost:[HDKN_WEBUI_PORT]/" />
+              Value="http://+:[HDKN_WEBUI_PORT]/" />
               
             <util:XmlFile 
               Id="ModifyAuthUser"
