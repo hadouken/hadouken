@@ -79,6 +79,17 @@ namespace Hadouken.Impl.IO
             Directory.Delete(path);
         }
 
+        public void EmptyDirectory(string path)
+        {
+            var info = new DirectoryInfo(path);
+
+            foreach(var file in info.GetFiles())
+                file.Delete();
+
+            foreach(var dir in info.GetDirectories())
+                dir.Delete();
+        }
+
         public long RemainingDiskSpace(string path)
         {
             string root = Path.GetPathRoot(path);

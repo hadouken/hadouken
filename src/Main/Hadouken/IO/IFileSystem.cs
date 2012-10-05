@@ -36,5 +36,11 @@ namespace Hadouken.IO
         /// <param name="dir">Path on the drive</param>
         /// <returns>The remaining disk space in bytes</returns>
         long RemainingDiskSpace(string dir);
+
+        /// <summary>
+        /// Deletes all files and folders in the path given.
+        /// </summary>
+        /// <param name="path">The path to clean.</param>
+        void EmptyDirectory(string path);
     }
 }
