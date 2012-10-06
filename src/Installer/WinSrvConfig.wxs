@@ -27,7 +27,6 @@
           <Condition Action="enable">HDKN_SRV_ENABLE = 1</Condition>
           <Condition Action="disable"><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
         </Control>
-        <Control Id="WinSrvUserDesc" Type="Text" X="210" Y="100" Width="100" Height="15" Text="ComputerName\User" Disabled="yes" />
         
         <!-- Service Password -->
         <Control Id="WinSrvPassLabel" Type="Text" X="30" Y="120" Width="40" Height="15" Text="Password:" />
