@@ -137,6 +137,7 @@
     <Compile Include="Http\Api\AddFile.cs" />
     <Compile Include="Http\Api\AddUrl.cs" />
     <Compile Include="Http\Api\GetPeers.cs" />
+    <Compile Include="Http\Api\GetPlugins.cs" />
     <Compile Include="Http\Api\GetSystemInfo.cs" />
     <Compile Include="Http\Api\ListDirectories.cs" />
     <Compile Include="Http\Api\RemoveTorrent.cs" />
