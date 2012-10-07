@@ -25,8 +25,9 @@ namespace Hadouken.Impl.Http.Api
 
             return Json(new
             {
-                labels = (from l in _torrentEngine.Managers.Values.GroupBy(m => m.Label)
-                              select new object[]
+                label = (from l in _torrentEngine.Managers.Values.GroupBy(m => m.Label)
+                         where !String.IsNullOrEmpty(l.Key)
+                             select new object[]
                                          {
                                              l.Key,
                                              l.Count()
@@ -46,9 +47,9 @@ namespace Hadouken.Impl.Http.Api
                                t.DownloadSpeed,
                                t.ETA.TotalSeconds,
                                t.Label,
-                               t.Peers.Where(p => !p.IsSeeder).Count(),
+                               t.Peers.Count(p => !p.IsSeeder),
                                t.Trackers.Sum(tr => tr.Incomplete),
-                               t.Peers.Where(p => p.IsSeeder).Count(),
+                               t.Peers.Count(p => p.IsSeeder),
                                t.Trackers.Sum(tr => tr.Complete),
                                -1, // availability
                                -1, // queue position
