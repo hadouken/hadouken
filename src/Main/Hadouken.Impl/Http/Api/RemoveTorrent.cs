@@ -24,7 +24,11 @@ namespace Hadouken.Impl.Http.Api
             foreach (var hash in hashes)
             {
                 if (_torrentEngine.Managers.ContainsKey(hash))
-                    _torrentEngine.RemoveTorrent(_torrentEngine.Managers[hash]);
+                {
+                    var torrent = _torrentEngine.Managers[hash];
+
+                    _torrentEngine.RemoveTorrent(torrent);
+                }
             }
 
             return Json(true);

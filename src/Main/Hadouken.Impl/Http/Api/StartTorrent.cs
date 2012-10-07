@@ -19,7 +19,7 @@ namespace Hadouken.Impl.Http.Api
 
         public override ActionResult Execute()
         {
-            string[] hashes = BindModel<string[]>();
+            var hashes = BindModel<string[]>();
 
             foreach (var hash in hashes)
             {

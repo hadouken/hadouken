@@ -296,6 +296,13 @@ namespace Hadouken.Impl.BitTorrent
 
             if (hdknManager != null)
             {
+                // Stop torrent
+
+                hdknManager.Stop();
+
+                while(hdknManager.State != HdknTorrentState.Stopped)
+                    Thread.Sleep(100);
+
                 hdknManager.Unload();
 
                 _clientEngine.Unregister(hdknManager.Manager);
