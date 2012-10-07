@@ -20,5 +20,17 @@ namespace Hadouken.Data.Models
         public virtual string Label { get; set; }
         public virtual DateTime StartTime { get; set; }
         public virtual DateTime? CompletedTime { get; set; }
+
+        // Settings
+        public virtual long ConnectionRetentionFactor { get; set; }
+        public virtual bool EnablePeerExchange { get; set; }
+        public virtual bool InitialSeedingEnabled { get; set; }
+        public virtual int MaxConnections { get; set; }
+        public virtual int MaxDownloadSpeed { get; set; }
+        public virtual int MaxUploadSpeed { get; set; }
+        public virtual int MinimumTimeBetweenReviews { get; set; }
+        public virtual int PercentOfMaxRateToSkipReview { get; set; }
+        public virtual int UploadSlots { get; set; }
+        public virtual bool UseDht { get; set; }
     }
 }

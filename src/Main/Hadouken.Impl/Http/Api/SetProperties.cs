@@ -40,10 +40,36 @@ namespace Hadouken.Impl.Http.Api
         {
             foreach(var key in dictionary.Keys)
             {
+                object value = dictionary[key];
+
                 switch(key)
                 {
                     case "label":
-                        manager.Label = dictionary[key].ToString();
+                        manager.Label = value.ToString();
+                        break;
+
+                    case "ulrate":
+                        manager.Settings.MaxUploadSpeed = Convert.ToInt32(value);
+                        break;
+
+                    case "dlrate":
+                        manager.Settings.MaxDownloadSpeed = Convert.ToInt32(value);
+                        break;
+
+                    case "superseed":
+                        manager.Settings.InitialSeedingEnabled = Convert.ToBoolean(value);
+                        break;
+
+                    case "dht":
+                        manager.Settings.UseDht = Convert.ToBoolean(value);
+                        break;
+
+                    case "pex":
+                        manager.Settings.EnablePeerExchange = Convert.ToBoolean(value);
+                        break;
+
+                    case "ulslots":
+                        manager.Settings.UploadSlots = Convert.ToInt32(value);
                         break;
                 }
             }

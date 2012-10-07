@@ -130,6 +130,18 @@ namespace Hadouken.Impl.BitTorrent
                     manager.StartTime = torrentInfo.StartTime;
                     manager.CompletedTime = torrentInfo.CompletedTime;
 
+                    // Load settings
+                    manager.Settings.ConnectionRetentionFactor = torrentInfo.ConnectionRetentionFactor;
+                    manager.Settings.EnablePeerExchange = torrentInfo.EnablePeerExchange;
+                    manager.Settings.InitialSeedingEnabled = torrentInfo.InitialSeedingEnabled;
+                    manager.Settings.MaxConnections = torrentInfo.MaxConnections;
+                    manager.Settings.MaxDownloadSpeed = torrentInfo.MaxDownloadSpeed;
+                    manager.Settings.MaxUploadSpeed = torrentInfo.MaxUploadSpeed;
+                    manager.Settings.MinimumTimeBetweenReviews = torrentInfo.MinimumTimeBetweenReviews;
+                    manager.Settings.PercentOfMaxRateToSkipReview = torrentInfo.PercentOfMaxRateToSkipReview;
+                    manager.Settings.UploadSlots = torrentInfo.UploadSlots;
+                    manager.Settings.UseDht = torrentInfo.UseDht;
+
                     _logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
 
                     if (torrentInfo.FastResumeData != null)
@@ -223,6 +235,19 @@ namespace Hadouken.Impl.BitTorrent
 
             info.State = manager.State;
             info.UploadedBytes = manager.UploadedBytes;
+
+            // save torrent settings
+            info.ConnectionRetentionFactor = manager.Settings.ConnectionRetentionFactor;
+            info.EnablePeerExchange = manager.Settings.EnablePeerExchange;
+            info.InitialSeedingEnabled = manager.Settings.InitialSeedingEnabled;
+            info.MaxConnections = manager.Settings.MaxConnections;
+            info.MaxDownloadSpeed = manager.Settings.MaxDownloadSpeed;
+            info.MaxUploadSpeed = manager.Settings.MaxUploadSpeed;
+            info.MinimumTimeBetweenReviews = manager.Settings.MinimumTimeBetweenReviews;
+            info.PercentOfMaxRateToSkipReview = manager.Settings.PercentOfMaxRateToSkipReview;
+
+            info.UploadSlots = manager.Settings.UploadSlots;
+            info.UseDht = manager.Settings.UseDht;
         }
 
         public void StartAll()

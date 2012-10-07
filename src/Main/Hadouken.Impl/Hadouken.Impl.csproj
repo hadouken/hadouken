@@ -128,6 +128,7 @@
     <Compile Include="Config\DefaultKeyValueStore.cs" />
     <Compile Include="Data\DefaultMigratorRunner.cs" />
     <Compile Include="Data\FluentNhibernateDataRepository.cs" />
+    <Compile Include="Data\Migrations\Alter\AlterTorrentInfoTable_001.cs" />
     <Compile Include="Data\Migrations\Create\CreatePluginInfoTable_001.cs" />
     <Compile Include="Data\Migrations\Create\CreateSettingTable_001.cs" />
     <Compile Include="Data\Migrations\Create\CreateTorrentInfoTable_001.cs" />

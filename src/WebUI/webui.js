@@ -2673,10 +2673,7 @@ var utWebUI = {
             tdata[this.trtTable.selectedRows[i]] = data;
         }
         
-		if (str != "" || window.utweb !== undefined) {
-			this.request("post", "action=setprops", tdata);
-		}
-
+        this.request("post", "action=setprops", tdata);
 	},
 
 	"showDetails": function(id) {
