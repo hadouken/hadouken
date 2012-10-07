@@ -25,6 +25,7 @@ namespace Hadouken.Impl.BitTorrent
         private HdknTorrent _torrent;
         private List<IPeer> _peers = new List<IPeer>();
         private List<ITracker> _trackers = new List<ITracker>();
+        private ITorrentSettings _settings;
 
         private IKeyValueStore _kvs;
         private IFileSystem _fileSystem;
@@ -40,6 +41,7 @@ namespace Hadouken.Impl.BitTorrent
         internal HdknTorrentManager(TorrentManager manager, IKeyValueStore kvs, IFileSystem fileSystem, IMessageBus mbus)
         {
             _manager = manager;
+            _settings = new HdknTorrentSettings(manager.Settings);
             _torrent = new HdknTorrent(manager.Torrent);
 
             foreach (var t in _manager.TrackerManager.TrackerTiers)
@@ -262,6 +264,11 @@ namespace Hadouken.Impl.BitTorrent
         {
             get { return _completedTime; }
             internal set { _completedTime = value; }
+        }
+
+        public ITorrentSettings Settings
+        {
+            get { return _settings; }
         }
 
         public TorrentState State

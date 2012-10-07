@@ -98,6 +98,7 @@
     <Compile Include="HdknTorrent.cs" />
     <Compile Include="HdknTorrentFile.cs" />
     <Compile Include="HdknTorrentManager.cs" />
+    <Compile Include="HdknTorrentSettings.cs" />
     <Compile Include="HdknTracker.cs" />
     <Compile Include="MonoTorrentEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -24,6 +24,7 @@ namespace Hadouken.BitTorrent
         string SavePath { get; }
         DateTime StartTime { get; }
         DateTime? CompletedTime { get; }
+        ITorrentSettings Settings { get; }
         TorrentState State { get; }
         int UploadingTo { get; }
         TimeSpan ETA { get; }
