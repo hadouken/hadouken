@@ -15,5 +15,6 @@ namespace Hadouken.Plugins
 
         string Name { get; }
         Version Version { get; }
+        string ResourceBase { get; }
     }
 }

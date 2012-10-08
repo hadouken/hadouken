@@ -125,5 +125,10 @@ namespace Hadouken.Impl.Plugins
         {
             get { return _pluginType.GetAttribute<PluginAttribute>().Version; }
         }
+
+        public string ResourceBase
+        {
+            get { return _pluginType.GetAttribute<PluginAttribute>().ResourceBase; }
+        }
     }
 }

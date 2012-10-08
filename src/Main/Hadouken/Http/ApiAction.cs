@@ -35,6 +35,11 @@ namespace Hadouken.Http
             return new EmbeddedContentResult(this.GetType().Assembly, resourceName, contentType);
         }
 
+        public ActionResult FileNotFound()
+        {
+            return null;
+        }
+
         public T BindModel<T>()
         {
             using (var reader = new StreamReader(Context.Request.InputStream))
