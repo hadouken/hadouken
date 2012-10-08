@@ -306,12 +306,13 @@ var utWebUI = {
 		this.prsColDefs.each(function(item, index) { this.prsColToggle(index, item[3], true); }, this);
 		this.flsColDefs.each(function(item, index) { this.flsColToggle(index, item[3], true); }, this);
 
-		if (window.utweb) return;
 		// Load settings
 		this.getSettings((function() {
-			this.update.delay(0, this, (function() {
-				this.refreshSelectedTorGroups();
-				this.hideMsg();
+            this.getPlugins((function() {
+                this.update.delay(0, this, (function() {
+                    this.refreshSelectedTorGroups();
+                    this.hideMsg();
+                }).bind(this));
 			}).bind(this));
 		}).bind(this));
 	},
@@ -344,6 +345,26 @@ var utWebUI = {
 		clearTimeout(this.updateTimeout);
 		clearInterval(this.updateTimeout);
 	},
+    
+    "getPlugins": function(fn)
+    {
+        var self = this;
+        
+        this.request("get", "action=getplugins", null, (function(data)
+        {
+            for(var i = 0; i < data.plugins.length; i++)
+            {
+                var plugin = data.plugins[i];
+                
+                if(plugin.init !== undefined)
+                {
+                    Asset.javascript(apiBase + "?token=" + self.TOKEN + "&action=getpluginfile&plugin=" + plugin.name + "&file=" + plugin.init);
+                }
+            }
+            
+            if(fn) fn.delay(0, self);
+        }).bind(this));
+    },
 
 	"proxyFiles": function(sid, fids, streaming) {
 
