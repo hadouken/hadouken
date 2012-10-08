@@ -32,18 +32,19 @@ msbuild :build => :version do |msb|
 end
 
 desc "Versioning"
-assemblyinfo :version => "env:common" do |asm|
+assemblyinfo :version => "env:common" do |asm|    
     asm.version = BUILD_VERSION
     asm.file_version = BUILD_VERSION
     
     asm.company_name = "Hadouken"
     asm.product_name = "Hadouken"
     asm.copyright = "2012"
-    asm.namespaces = "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security"
+    asm.namespaces = "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security", "Hadouken.Reflection"
     
     asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION} (#{BUILD_PLATFORM})", # disposed as product version in explorer
         :CLSCompliantAttribute => false,
-        :AssemblyConfiguration => "#{CONFIGURATION}"
+        :AssemblyConfiguration => "#{CONFIGURATION}",
+        :BuildDate => Time.now.to_i
     
     asm.com_visible = false
     
