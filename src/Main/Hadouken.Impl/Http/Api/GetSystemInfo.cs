@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hadouken.Http;
+﻿using Hadouken.Http;
+using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Http.Api
 {
@@ -13,7 +10,8 @@ namespace Hadouken.Impl.Http.Api
         {
             return Json(new
                             {
-                                version = typeof (Kernel).Assembly.GetName().Version
+                                version = typeof (Kernel).Assembly.GetName().Version.ToString(),
+                                buildDate = typeof(Kernel).Assembly.GetAttribute<BuildDateAttribute>().BuildDate.ToUnixTime()
                             });
         }
     }

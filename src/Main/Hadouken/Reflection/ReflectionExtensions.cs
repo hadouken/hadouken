@@ -10,7 +10,7 @@ namespace Hadouken.Reflection
     {
         public static T GetAttribute<T>(this Assembly asm)
         {
-            return (T)asm.GetCustomAttributes(typeof(T), false).Where(attr => attr.GetType() == typeof(T)).FirstOrDefault();
+            return (T)asm.GetCustomAttributes(typeof(T), false).FirstOrDefault();
         }
 
         public static bool HasAttribute<T>(this MemberInfo mi)
