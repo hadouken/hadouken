@@ -7,6 +7,7 @@ using System.IO;
 
 using Hadouken.Configuration;
 using Hadouken.Data;
+using Hadouken.Http;
 using Hadouken.Impl.Http;
 using Hadouken.IO;
 
@@ -30,7 +31,7 @@ namespace Hadouken.UnitTests.Http
             var kvs = new Mock<IKeyValueStore>();
             var fs = new Mock<IFileSystem>();
 
-            var server = new DefaultHttpServer(kvs.Object, fs.Object);
+            var server = new DefaultHttpServer(kvs.Object, fs.Object, new List<ApiAction>());
             server.Start();
             server.Stop();
         }
