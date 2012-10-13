@@ -32,8 +32,8 @@ namespace Hadouken.Impl.Http.Api
 
             var manager = _pluginEngine.Managers[plugin];
 
-            if (HasResource(manager.GetType().Assembly, manager.ResourceBase + "." + file))
-                return GetResource(manager.GetType().Assembly, manager.ResourceBase + "." + file);
+            if (HasResource(manager.PluginType.Assembly, manager.ResourceBase + "." + file))
+                return GetResource(manager.PluginType.Assembly, manager.ResourceBase + "." + file);
 
             return FileNotFound();
         }
