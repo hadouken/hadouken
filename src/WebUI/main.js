@@ -900,7 +900,7 @@ function setupSettings() {
             , "dlgSettings-WebUI"       : "" 
             , "dlgSettings-Plugins"     : "Plugins"
 		},
-		"lazyshow": true,
+		"lazyshow": false,
 		"onChange": utWebUI.settingsPaneChange.bind(utWebUI)
 	}).draw().show("dlgSettings-General");
 

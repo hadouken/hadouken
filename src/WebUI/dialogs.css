@@ -473,9 +473,7 @@ input[id="gui.ulrate_menu"], input[id="gui.dlrate_menu"] {
 #dlgSettings-cookieDomain, #dlgSettings-cookieData {
     width: 100%;
 }
-#dlgSettings .dlg-body div, #dlgSettings .dlg-body fieldset {
-    display: none;
-}
+
 #total_uploaded_history, #total_downloaded_history, #total_updown_history, #history_period, #sched_table_lgnd, #sched_table_info, #DLG_SETTINGS_C_ADV_CACHE_02, #DLG_SETTINGS_C_ADV_RUN_06 {
     display: block !important;
 }

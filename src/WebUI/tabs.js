@@ -39,33 +39,43 @@ var Tabs = new Class({
 		this.element.set("html", "");
 
 		Object.each(this.tabs, function(text, id) {
-			var ele = ELE_LI.clone(false);
-			if (this.lazyshow) {
-				ele.hide();
-
-				var showCB = function() {
-					ele.show();
-					$(id).removeEvent("show", showCB);
-				};
-
-				$(id).addEvent("show", showCB);
-			}
-
-			this.element.adopt(ele
-				.set("id", "tab_" + id)
-				.adopt(ELE_A.clone(false)
-					.setProperty("href", "#")
-					.store("showId", id)
-					.adopt(ELE_SPAN.clone(false)
-						.adopt(ELE_SPAN.clone(false))
-						.appendText(text)
-					)
-				)
-			);
+			this.addTab(id, text);
 		}, this);
 
 		return this;
 	},
+    
+    "addTab": function(id, text) {
+        if(!has(this.tabs, id))
+            this.tabs[id] = text;
+    
+        var ele = ELE_LI.clone(false);
+        
+        if (this.lazyshow) {
+            ele.hide();
+
+            var showCB = function() {
+                ele.show();
+                $(id).removeEvent("show", showCB);
+            };
+
+            $(id).addEvent("show", showCB);
+        }
+
+        this.element.adopt(ele
+            .set("id", "tab_" + id)
+            .adopt(ELE_A.clone(false)
+                .setProperty("href", "#")
+                .store("showId", id)
+                .adopt(ELE_SPAN.clone(false)
+                    .adopt(ELE_SPAN.clone(false))
+                    .appendText(text)
+                )
+            )
+        );
+        
+        return this;
+    },
 
 	"onChange": function() {
 		if (arguments.length > 0)
