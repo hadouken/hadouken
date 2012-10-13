@@ -6,20 +6,27 @@ using Hadouken.Plugins;
 using Hadouken.Data;
 using Hadouken.Data.Models;
 using Hadouken.Messaging;
+using Hadouken.Configuration;
+using Hadouken.IO;
+using NLog;
 
 namespace Hadouken.Impl.Plugins
 {
     public class DefaultPluginEngine : IPluginEngine
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private Dictionary<string, IPluginManager> _managers = new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
 
+        private IFileSystem _fs;
         private IDataRepository _repo;
         private IMessageBus _mbus;
         private IMigrationRunner _runner;
         private IPluginLoader[] _loaders;
 
-        public DefaultPluginEngine(IDataRepository repo, IMessageBus mbus, IMigrationRunner runner, IPluginLoader[] loaders)
+        public DefaultPluginEngine(IFileSystem fs, IDataRepository repo, IMessageBus mbus, IMigrationRunner runner, IPluginLoader[] loaders)
         {
+            _fs = fs;
             _repo = repo;
             _mbus = mbus;
             _runner = runner;
@@ -28,8 +35,24 @@ namespace Hadouken.Impl.Plugins
 
         public IEnumerable<IPluginManager> Refresh()
         {
-            // load all PluginInfo where Name not in _managers.Keys
             var infos = _repo.List<PluginInfo>();
+
+            // Load all plugins from path
+            var path = HdknConfig.ConfigManager["Paths.Plugins"];
+
+            foreach(var info in _fs.GetFileSystemInfos(path))
+            {
+                if(_loaders.Any(l => l.CanLoad(info.FullName)) && infos.All(i => i.Path != info.FullName))
+                {
+                    Logger.Info("Found new plugin {0}", info.FullName);
+
+                    var pluginInfo = new PluginInfo {Path = info.FullName};
+                    _repo.Save(pluginInfo);
+                    infos.Add(pluginInfo);
+                }
+            }
+
+            // load all PluginInfo where Name not in _managers.Keys
             var ret = new List<IPluginManager>();
 
             foreach (PluginInfo info in infos)
