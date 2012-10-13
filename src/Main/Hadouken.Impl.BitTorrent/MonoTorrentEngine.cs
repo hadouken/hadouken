@@ -290,11 +290,7 @@ namespace Hadouken.Impl.BitTorrent
                 if (String.IsNullOrEmpty(savePath))
                     savePath = _clientEngine.Settings.SavePath;
 
-                var manager = RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()), data);
-
-                _mbus.Send<ITorrentAdded>(m => m.Torrent = manager);
-
-                return manager;
+                return RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()), data); ;
             }
 
             return null;
