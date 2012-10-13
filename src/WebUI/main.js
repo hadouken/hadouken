@@ -897,7 +897,8 @@ function setupSettings() {
             , "dlgSettings-Connection"  : "Connection"
             , "dlgSettings-Directories" : "Directories"
             , "dlgSettings-Advanced"    : ""
-            , "dlgSettings-WebUI"       : ""  
+            , "dlgSettings-WebUI"       : "" 
+            , "dlgSettings-Plugins"     : "Plugins"
 		},
 		"lazyshow": true,
 		"onChange": utWebUI.settingsPaneChange.bind(utWebUI)
