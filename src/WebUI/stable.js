@@ -1016,6 +1016,7 @@ var STable = new Class({
 
 	"addRow": function(data, id, icon, hidden, sortin) {
 		if (data.length != this.cols) return;
+
 		id = id || (1000 + this.rows);
 		this.rowData[id] = {
 			"data": data,

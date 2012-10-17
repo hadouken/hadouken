@@ -20,7 +20,7 @@ window.apiBase = "/api";
 var isGuest = window.location.pathname.test(/.*guest.html$/);
 
 var utWebUI = {
-
+    "plugins": {},
 	"torrents": {},
 	"peerlist": [],
 	"filelist": [],
@@ -3854,7 +3854,19 @@ var utWebUI = {
 		if (this.config) {
 			this.config.activeSettingsPane = id;
 		}
-	}
+        
+        SettingsManager.changePane(id);
+	},
+    
+    "addPlugin": function(plugin) {
+        if(has(this.plugins, plugin.id))
+            return;
+            
+        // Load
+        plugin.load();
+        
+        this.plugins[id] = plugin;
+    }
 }
 
 window.isGuest = isGuest;
