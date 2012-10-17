@@ -299,6 +299,9 @@ namespace Hadouken.Impl.BitTorrent
         private HdknTorrentManager RegisterTorrentManager(TorrentManager manager, byte[] data = null)
         {
             // register with engine
+            if (_clientEngine.Contains(manager))
+                return null;
+
             _clientEngine.Register(manager);
 
             // add to dictionary
