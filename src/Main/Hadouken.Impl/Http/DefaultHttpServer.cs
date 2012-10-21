@@ -220,7 +220,8 @@ namespace Hadouken.Impl.Http
             if (actionName == "gettoken")
                 return GenerateCSRFToken();
 
-            var action = (from a in _actions
+            var action = (from a in Kernel.Resolver.GetAll<IApiAction>()
+                          where a.GetType().HasAttribute<ApiActionAttribute>()
                           let attr = a.GetType().GetAttribute<ApiActionAttribute>()
                           where attr != null && attr.Name == actionName
                           select a).SingleOrDefault();
