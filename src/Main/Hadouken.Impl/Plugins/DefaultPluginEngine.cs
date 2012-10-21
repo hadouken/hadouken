@@ -57,16 +57,23 @@ namespace Hadouken.Impl.Plugins
 
             foreach (PluginInfo info in infos)
             {
-                var manager = new DefaultPluginManager(info, _mbus, _runner, _loaders);
-
-                if (!_managers.ContainsKey(manager.Name))
+                try
                 {
-                    manager.Initialize();
-                    manager.Install();
+                    var manager = new DefaultPluginManager(info, _mbus, _runner, _loaders);
 
-                    _managers.Add(manager.Name, manager);
+                    if (!_managers.ContainsKey(manager.Name))
+                    {
+                        manager.Initialize();
+                        manager.Install();
 
-                    ret.Add(manager);
+                        _managers.Add(manager.Name, manager);
+
+                        ret.Add(manager);
+                    }
+                }
+                catch(Exception e)
+                {
+                    Logger.ErrorException(String.Format("Could not create plugin from path {0}", info.Path), e);
                 }
             }
 
@@ -76,13 +83,31 @@ namespace Hadouken.Impl.Plugins
         public void LoadAll()
         {
             foreach (var man in _managers.Values)
-                man.Load();
+            {
+                try
+                {
+                    man.Load();
+                }
+                catch(Exception e)
+                {
+                    Logger.ErrorException(String.Format("Could not load plugin {0}", man.Name), e);
+                }
+            }
         }
 
         public void UnloadAll()
         {
             foreach (var man in _managers.Values)
-                man.Unload();
+            {
+                try
+                {
+                    man.Unload();
+                }
+                catch(Exception e)
+                {
+                    Logger.ErrorException(String.Format("Could not unload plugin {0}", man.Name), e);
+                }
+            }
         }
 
         public IDictionary<string, IPluginManager> Managers
