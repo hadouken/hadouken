@@ -38,7 +38,7 @@ namespace Hadouken.Impl.Plugins
             var infos = _repo.List<PluginInfo>();
 
             // Load all plugins from path
-            var path = HdknConfig.ConfigManager["Paths.Plugins"];
+            var path = HdknConfig.GetPath("Paths.Plugins");
 
             foreach(var info in _fs.GetFileSystemInfos(path))
             {
