@@ -47,7 +47,7 @@ namespace Hadouken.Impl.BitTorrent
 
             _mbus.Subscribe<ISettingChanged>(SettingChanged);
 
-            _torrentFileSavePath = Path.Combine(HdknConfig.ConfigManager["Paths.Data"], "Torrents");
+            _torrentFileSavePath = Path.Combine(HdknConfig.GetPath("Paths.Data"), "Torrents");
         }
 
         public void Load()

@@ -53,7 +53,15 @@ namespace Hadouken.Impl.Http
 
         public void Start()
         {
-            _listener.Start();
+            try
+            {
+                _listener.Start();
+            } catch(HttpListenerException e)
+            {
+                _logger.FatalException("Could not start the HTTP server interface.", e);
+                return;
+            }
+
             ReceiveLoop();
 
             _logger.Info("HTTP server up and running");
@@ -61,8 +69,11 @@ namespace Hadouken.Impl.Http
 
         public void Stop()
         {
-            _listener.Stop();
-            _listener.Close();
+            if (_listener.IsListening)
+            {
+                _listener.Stop();
+                _listener.Close();
+            }
         }
 
         public Uri ListenUri

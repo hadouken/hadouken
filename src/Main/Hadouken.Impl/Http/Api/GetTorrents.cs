@@ -61,7 +61,7 @@ namespace Hadouken.Impl.Http.Api
                                t.StartTime.ToUnixTime(),
                                (t.CompletedTime.HasValue ? t.CompletedTime.Value.ToUnixTime() : -1),
                                "", // app update url
-                               Path.Combine(t.SavePath, t.Torrent.Name),
+                               (t.Torrent.Files.Length > 1 ? t.SavePath : Path.Combine(t.SavePath, t.Torrent.Name)),
                                t.Complete
                            })
             });
