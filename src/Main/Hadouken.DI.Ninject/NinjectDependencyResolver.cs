@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ninject;
+using Ninject.Activation;
+using Ninject.Extensions.ChildKernel;
 
 namespace Hadouken.DI.Ninject
 {
     public class NinjectDependencyResolver : IDependencyResolver
     {
-        private IKernel _kernel;
+        private readonly IKernel _kernel;
 
         public NinjectDependencyResolver()
         {
@@ -53,6 +55,11 @@ namespace Hadouken.DI.Ninject
         public void Register(Type service, Type implementation)
         {
             _kernel.Bind(service).To(implementation).InSingletonScope();
+        }
+
+        public void Register(Type service, object constant)
+        {
+            _kernel.Bind(service).ToConstant(constant);
         }
 
         public void Register(Type service, Type implementation, ComponentLifestyle lifestyle)

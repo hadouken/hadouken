@@ -21,5 +21,7 @@ namespace Hadouken.DI
         void Register(Type service, Type implementation);
         void Register(Type service, Type implementation, ComponentLifestyle lifestyle);
         void Register(Type service, Type implementation, ComponentLifestyle lifestyle, string name);
+
+        void Register(Type service, object constant);
     }
 }
