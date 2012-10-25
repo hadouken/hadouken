@@ -14,7 +14,7 @@ namespace Hadouken.Impl.Config
 {
     public class DefaultKeyValueStore : IKeyValueStore
     {
-        private JavaScriptSerializer _serializer = new JavaScriptSerializer();
+        private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
         private readonly IDataRepository _data;
         private readonly IMessageBus _bus;
 
@@ -76,11 +76,14 @@ namespace Hadouken.Impl.Config
 
         public void Set(string key, object value)
         {
+            if(value == null)
+                throw new ArgumentNullException("value");
+
             var setting = _data.Single<Setting>(s => s.Key == key);
             
             if (setting == null)
             {
-                setting = new Setting { Key = key, Type = (value == null ? typeof (Object).FullName : value.GetType().FullName) };
+                setting = new Setting { Key = key, Type = value.GetType().FullName };
             }
 
             setting.Value = _serializer.Serialize(value);
