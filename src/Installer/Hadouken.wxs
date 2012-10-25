@@ -220,7 +220,7 @@
     
     <InstallExecuteSequence>
         <Custom Action="NetSHRuleAdd_Cmd" After="CostFinalize">NOT Installed</Custom>
-        <Custom Action="NetSHRuleAdd" Before="InstallFinalize">NOT Installed</Custom>
+        <Custom Action="NetSHRuleAdd" After="InstallInitialize">NOT Installed</Custom>
         
         <Custom Action="NetSHRuleDel_Cmd" After="CostFinalize">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
         <Custom Action="NetSHRuleDel" Before="InstallFinalize">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
