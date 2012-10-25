@@ -1,8 +1,7 @@
 ﻿using System.Linq;
-using Hadouken.Http;
 using Hadouken.Plugins;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("getplugins")]
     public class GetPlugins : ApiAction

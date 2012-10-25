@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using Hadouken.BitTorrent;
 using Hadouken.Http;
+using Hadouken.Http.Api;
 using Hadouken.Impl.BitTorrent;
-using Hadouken.Impl.Http.Api;
 using Moq;
 using NUnit.Framework;
 

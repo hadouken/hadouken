@@ -8,7 +8,7 @@ using System.IO;
 using Hadouken.Configuration;
 using Hadouken.Data;
 using Hadouken.Http;
-using Hadouken.Impl.Http;
+using Hadouken.Http.HttpServer;
 using Hadouken.IO;
 
 using Moq;

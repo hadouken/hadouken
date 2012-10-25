@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hadouken.Http;
 using System.IO;
 using Hadouken.BitTorrent;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("addfile")]
     public class AddFile : ApiAction

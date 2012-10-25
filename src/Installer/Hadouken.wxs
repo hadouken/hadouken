@@ -48,6 +48,10 @@
           <Component Id="HdknImplBt" Guid="5992CB2D-A2D3-4F52-B1B7-28F34DE75307" Win64="$(var.IsWin64)">
             <File Id="HdknImplBt" Name="Hadouken.Impl.BitTorrent.dll" Source="$(var.BinDir)/Hadouken.Impl.BitTorrent.dll" KeyPath="yes" />
           </Component>
+          
+          <Component Id="HdknHttp" Guid="C7F253C4-6DBE-4DDD-B42E-65BA05BF1521" Win64="$(var.IsWin64)">
+            <File Id="HdknHttp" Name="Hadouken.Http.HttpServer.dll" Source="$(var.BinDir)/Hadouken.Http.HttpServer.dll" KeyPath="yes" />
+          </Component>
 
           <Component Id="HdknMsg" Guid="1E766B20-B6AA-4751-8164-FE44CE7F4256" Win64="$(var.IsWin64)">
             <File Id="HdknMsg" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" KeyPath="yes" />
@@ -177,6 +181,7 @@
       <ComponentRef Id="HdknDiNinject" />
       <ComponentRef Id="HdknImpl" />
       <ComponentRef Id="HdknImplBt" />
+      <ComponentRef Id="HdknHttp" />
       <ComponentRef Id="HdknMsg" />
       <ComponentRef Id="HdknCmdLine" />
       <ComponentRef Id="HdknCmdLineCfg" />

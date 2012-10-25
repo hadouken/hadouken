@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Hadouken.Http;
 using Hadouken.Plugins;
 using System.Reflection;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("getpluginfile")]
     public class GetPluginFile : ApiAction

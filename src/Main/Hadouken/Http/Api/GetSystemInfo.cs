@@ -1,7 +1,6 @@
-﻿using Hadouken.Http;
-using Hadouken.Reflection;
+﻿using Hadouken.Reflection;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("getsysteminfo")]
     public class GetSystemInfo : ApiAction

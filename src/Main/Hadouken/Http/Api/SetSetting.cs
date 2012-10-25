@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hadouken.Http;
+﻿using System.Collections.Generic;
 using Hadouken.Configuration;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("setsetting")]
     public class SetSetting : ApiAction

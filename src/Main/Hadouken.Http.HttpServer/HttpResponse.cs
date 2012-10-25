@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Hadouken.Http;
 using System.Net;
 
-namespace Hadouken.Impl.Http
+namespace Hadouken.Http.HttpServer
 {
     public class HttpResponse : IHttpResponse
     {

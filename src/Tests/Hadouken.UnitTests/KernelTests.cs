@@ -14,7 +14,7 @@ namespace Hadouken.UnitTests
         public void Can_register_and_resolve_components()
         {
             Kernel.SetResolver(new NinjectDependencyResolver());
-            Kernel.Register(AppDomain.CurrentDomain.Load("Hadouken.Impl"), AppDomain.CurrentDomain.Load("Hadouken.Impl.BitTorrent"));
+            Kernel.Register(AppDomain.CurrentDomain.Load("Hadouken.Impl"), AppDomain.CurrentDomain.Load("Hadouken.Impl.BitTorrent"), AppDomain.CurrentDomain.Load("Hadouken.Http.HttpServer"));
 
             var host = Kernel.Resolver.Get<IHost>();
 

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Hadouken.Http;
 using Hadouken.Configuration;
 using Hadouken.IO;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("listdirs")]
     public class ListDirectories : ApiAction

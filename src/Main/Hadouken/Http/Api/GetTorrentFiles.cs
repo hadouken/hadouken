@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Hadouken.Http;
 using Hadouken.BitTorrent;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("gettorrentfiles")]
     public class GetTorrentFiles : ApiAction

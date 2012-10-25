@@ -6,13 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
-
 using Hadouken.Extensions;
 
 // boldly borrowed from
 // http://blog.peterlesliemorris.com/archive/2011/04/02/a-webserver-for-monotouch-that-also-parses-posted-form-data.aspx
 
-namespace Hadouken.Impl.Http
+namespace Hadouken.Http.HttpServer
 {
     public class FormData
     {

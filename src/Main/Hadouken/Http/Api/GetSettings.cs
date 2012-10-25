@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-
 using Hadouken.Configuration;
-using Hadouken.Http;
 using Hadouken.Reflection;
-using Hadouken.Data.Models;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("getsettings")]
     public class GetSettings : ApiAction

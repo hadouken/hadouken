@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hadouken.Http;
-using Hadouken.BitTorrent;
+﻿using Hadouken.BitTorrent;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
-    [ApiAction("pause")]
-    public class PauseTorrent : ApiAction
+    [ApiAction("remove")]
+    public class RemoveTorrent : ApiAction
     {
         private IBitTorrentEngine _torrentEngine;
 
-        public PauseTorrent(IBitTorrentEngine torrentEngine)
+        public RemoveTorrent(IBitTorrentEngine torrentEngine)
         {
             _torrentEngine = torrentEngine;
         }
@@ -24,7 +19,11 @@ namespace Hadouken.Impl.Http.Api
             foreach (var hash in hashes)
             {
                 if (_torrentEngine.Managers.ContainsKey(hash))
-                    _torrentEngine.Managers[hash].Pause();
+                {
+                    var torrent = _torrentEngine.Managers[hash];
+
+                    _torrentEngine.RemoveTorrent(torrent);
+                }
             }
 
             return Json(true);

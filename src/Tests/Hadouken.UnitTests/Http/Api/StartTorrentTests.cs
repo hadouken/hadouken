@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hadouken.Http.Api;
 using NUnit.Framework;
 using Moq;
 using Hadouken.BitTorrent;
 using System.IO;
-using Hadouken.Impl.Http.Api;
 using Hadouken.Http;
 
 namespace Hadouken.UnitTests.Http.Api

@@ -3,26 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Hadouken.Http;
 using Hadouken.Reflection;
-
 using System.Net;
 using System.IO;
 using Hadouken.IO;
-using Hadouken.Data;
-using System.Configuration;
 using Hadouken.Configuration;
-using System.Text.RegularExpressions;
-using System.Reflection;
-
-using NLog;
 using Ionic.Zip;
+using NLog;
 
-namespace Hadouken.Impl.Http
+namespace Hadouken.Http.HttpServer
 {
     public class DefaultHttpServer : IHttpServer
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private List<ActionCacheItem> _cache = new List<ActionCacheItem>();
 
@@ -58,13 +51,13 @@ namespace Hadouken.Impl.Http
                 _listener.Start();
             } catch(HttpListenerException e)
             {
-                _logger.FatalException("Could not start the HTTP server interface.", e);
+                Logger.FatalException("Could not start the HTTP server interface.", e);
                 return;
             }
 
             ReceiveLoop();
 
-            _logger.Info("HTTP server up and running");
+            Logger.Info("HTTP server up and running");
         }
 
         public void Stop()
@@ -115,7 +108,7 @@ namespace Hadouken.Impl.Http
         {
             try
             {
-                _logger.Trace("Incoming request to {0}", context.Request.Url);
+                Logger.Trace("Incoming request to {0}", context.Request.Url);
 
                 if(IsAuthenticatedUser(context))
                 {
@@ -154,14 +147,14 @@ namespace Hadouken.Impl.Http
 
             string uiZip = Path.Combine(_webUIPath, "webui.zip");
 
-            _logger.Debug("Checking if webui.zip exists at {0}", uiZip);
+            Logger.Debug("Checking if webui.zip exists at {0}", uiZip);
 
             if (_fs.FileExists(uiZip))
             {
                 string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 _fs.CreateDirectory(path);
 
-                _logger.Info("Extracting webui.zip to {0}", path);
+                Logger.Info("Extracting webui.zip to {0}", path);
 
                 using (var zip = ZipFile.Read(uiZip))
                 {
@@ -246,7 +239,7 @@ namespace Hadouken.Impl.Http
                 }
                 catch (Exception e)
                 {
-                    _logger.ErrorException(String.Format("Could not execute action {0}", action.GetType().FullName), e);
+                    Logger.ErrorException(String.Format("Could not execute action {0}", action.GetType().FullName), e);
                 }
             }
 

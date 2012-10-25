@@ -4,13 +4,12 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
-
 using Hadouken.Extensions;
 
 // boldly borrowed from
 // http://blog.peterlesliemorris.com/archive/2011/04/02/a-webserver-for-monotouch-that-also-parses-posted-form-data.aspx
 
-namespace Hadouken.Impl.Http
+namespace Hadouken.Http.HttpServer
 {
     public class MultiPartStreamEnumerator : IEnumerator<MultiPartStreamValue>
     {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hadouken.Http;
+﻿using System.Linq;
 using Hadouken.BitTorrent;
 
-namespace Hadouken.Impl.Http.Api
+namespace Hadouken.Http.Api
 {
     [ApiAction("getpeers")]
     public class GetPeers : ApiAction

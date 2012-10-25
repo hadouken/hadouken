@@ -83,6 +83,10 @@
       <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
       <Name>Hadouken.DI.Ninject</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Http.HttpServer\Hadouken.Http.HttpServer.csproj">
+      <Project>{71DB95DE-C310-4165-A4BA-2C23A250CDB1}</Project>
+      <Name>Hadouken.Http.HttpServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
       <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>
       <Name>Hadouken.Impl.BitTorrent</Name>
