@@ -122,35 +122,31 @@ namespace Hadouken.Impl.BitTorrent
 
                 var oldSavePath = String.Copy(SavePath);
 
-                _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ =>
-                                                                                          {
-                                                                                              if(!oldSavePath.Equals(SavePath))
-                                                                                                  return;
-
-                                                                                              var moveCompleted =
-                                                                                                  _kvs.Get<bool>(
-                                                                                                      "paths.shouldMoveCompleted");
-
-                                                                                              var newPath =
-                                                                                                  _kvs.Get<string>(
-                                                                                                      "paths.completedPath");
-
-                                                                                              if(moveCompleted && !String.IsNullOrEmpty(newPath))
-                                                                                              {
-                                                                                                  var appendLabel =
-                                                                                                      _kvs.Get<bool>(
-                                                                                                          "paths.appendLabelOnMoveCompleted");
-
-                                                                                                  if (appendLabel && !String.IsNullOrEmpty(Label))
-                                                                                                      newPath =
-                                                                                                          Path.Combine(
-                                                                                                              newPath,
-                                                                                                              Label);
-
-                                                                                                  Move(newPath);
-                                                                                              }
-                                                                                          });
+                _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ => BasicMove(oldSavePath));
             }
+        }
+
+        private void BasicMove(string oldSavePath)
+        {
+            if (!oldSavePath.Equals(SavePath))
+                return;
+
+            var moveCompleted =
+                _kvs.Get<bool>(
+                    "paths.shouldMoveCompleted");
+
+            var newPath =
+                _kvs.Get<string>(
+                    "paths.completedPath");
+
+            if (!moveCompleted || String.IsNullOrEmpty(newPath)) return;
+
+            var appendLabel = _kvs.Get<bool>("paths.appendLabelOnMoveCompleted");
+
+            if (appendLabel && !String.IsNullOrEmpty(Label))
+                newPath = Path.Combine(newPath, Label);
+
+            Move(newPath);
         }
 
         public IBitField BitField
