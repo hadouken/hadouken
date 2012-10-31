@@ -27,6 +27,9 @@ namespace Hadouken.Hosts.WindowsService
             Kernel.SetResolver(new NinjectDependencyResolver());
             Kernel.Register(assemblies.ToArray());
 
+            if(Bootstrapper.RunAsConsoleIfRequested<HdknService>())
+                return;
+
             // run the service
             ServiceBase.Run(new ServiceBase[] { new HdknService() });
         }
