@@ -56,38 +56,9 @@
           <Component Id="HdknMsg" Guid="1E766B20-B6AA-4751-8164-FE44CE7F4256" Win64="$(var.IsWin64)">
             <File Id="HdknMsg" Name="Hadouken.Messages.dll" Source="$(var.BinDir)/Hadouken.Messages.dll" KeyPath="yes" />
           </Component>
-
-          <Component Id="HdknCmdLine" Guid="F4620120-41BA-4989-9098-79B3479652AE" Win64="$(var.IsWin64)">
-            <File Id="HdknCmdLine" Name="Hadouken.Hosts.CommandLine.exe" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe" KeyPath="yes" />
-          </Component>
-          
-          <Component Id="HdknCmdLineCfg" Guid="994CAAD3-3232-4B5A-B4F6-CC0A0F5BF90C" Win64="$(var.IsWin64)">
-            <File Id="HdknCmdLineCfg" Name="Hadouken.Hosts.CommandLine.exe.config" Source="$(var.BinDir)/Hadouken.Hosts.CommandLine.exe.config" />
-
-            <util:XmlFile 
-              Id="ModifyWebUIPort2"
-              File="[#HdknCmdLineCfg]"              
-              Action="setValue"
-              ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
-              Value="http://+:[HDKN_WEBUI_PORT]/" />
-              
-            <util:XmlFile 
-              Id="ModifyAuthUser2"
-              File="[#HdknCmdLineCfg]"              
-              Action="setValue"
-              ElementPath="//appSettings/add[\[]@key='Auth.Username'[\]]/@value"
-              Value="[HDKN_AUTH_USER]" />
-          
-            <util:XmlFile 
-              Id="ModifyAuthPassword2"
-              File="[#HdknCmdLineCfg]"              
-              Action="setValue"
-              ElementPath="//appSettings/add[\[]@key='Auth.Password'[\]]/@value"
-              Value="[HDKN_AUTH_PASS]" />
-          </Component>
           
           <Component Id="HdknFirewallEx" Guid="" Win64="$(var.IsWin64)">
-            <fw:FirewallException Id="CommandLineException" Name="Hadouken (Command-line)" Scope="any" Protocol="tcp" Profile="all" Port="[HDKN_WEBUI_PORT]" IgnoreFailure="no" />
+            <fw:FirewallException Id="HdknFirewallException" Name="Hadouken" Scope="any" Protocol="tcp" Profile="all" Port="[HDKN_WEBUI_PORT]" IgnoreFailure="no" />
           </Component>
 
           <Component Id="HdknWinSrv" Guid="9A0109C2-CF47-40DD-B49B-8D7F511B4682" Win64="$(var.IsWin64)">
@@ -183,8 +154,6 @@
       <ComponentRef Id="HdknImplBt" />
       <ComponentRef Id="HdknHttp" />
       <ComponentRef Id="HdknMsg" />
-      <ComponentRef Id="HdknCmdLine" />
-      <ComponentRef Id="HdknCmdLineCfg" />
       <ComponentRef Id="HdknWinSrv" />
       <ComponentRef Id="HdknWinSrvExe" />
       <ComponentRef Id="HdknWinSrvCfg" />
