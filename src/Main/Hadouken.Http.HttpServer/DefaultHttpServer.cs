@@ -17,8 +17,6 @@ namespace Hadouken.Http.HttpServer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private List<ActionCacheItem> _cache = new List<ActionCacheItem>();
-
         private IFileSystem _fs;
         private IKeyValueStore _kvs;
         private IEnumerable<IApiAction> _actions; 
