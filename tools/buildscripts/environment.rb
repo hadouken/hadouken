@@ -56,6 +56,7 @@ namespace :arch do
     
     #x64
     task :x64 do
+        Object.send(:remove_const, :BUILD_PLATFORM)
         ENV['BUILD_PLATFORM'] = BUILD_PLATFORM = 'x64'
     end
 end

@@ -5,7 +5,6 @@ $: << './'
 
 require 'albacore'
 require 'semver'
-require 'aws/s3'
 require 'rake/clean'
 
 require 'tools/buildscripts/environment'
@@ -13,12 +12,27 @@ require 'tools/buildscripts/utils'
 
 CLOBBER.include("build/*")
 
-task :default => [ "arch:x86", :alpha ]
+task :default => [ :alpha ]
 
-task :alpha => [ :clobber, "env:alpha", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
-task :beta => [ :clobber, "env:beta", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
-task :rc => [ :clobber, "env:rc", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
-task :ga => [ :clobber, "env:ga", "env:release", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :alpha => [ :clobber, "env:alpha", "env:release", :build_x86, :reset, :build_x64 ]
+task :beta => [ :clobber, "env:beta", "env:release", :build_x86, :reset, :build_x64 ]
+task :rc => [ :clobber, "env:rc", "env:release", :build_x86, :reset, :build_x64 ]
+task :ga => [ :clobber, "env:ga", "env:release", :build_x86, :reset, :build_x64 ]
+
+task :build_x86 => [ "arch:x86", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+task :build_x64 => [ "arch:x64", :version, :build, :test, :output, :zip_webui, :zip, :msi ]
+
+task :reset do
+    Rake::Task["version"].reenable
+    Rake::Task["build"].reenable
+    Rake::Task["test"].reenable
+    Rake::Task["test_nunit"].reenable
+    Rake::Task["test_teamcity"].reenable
+    Rake::Task["output"].reenable
+    Rake::Task["zip_webui"].reenable
+    Rake::Task["zip"].reenable
+    Rake::Task["msi"].reenable
+end
 
 desc "Build"
 msbuild :build => :version do |msb|
@@ -43,8 +57,7 @@ assemblyinfo :version => "env:common" do |asm|
     
     asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION} (#{BUILD_PLATFORM})", # disposed as product version in explorer
         :CLSCompliantAttribute => false,
-        :AssemblyConfiguration => "#{CONFIGURATION}",
-        :BuildDate => Time.now.to_i
+        :AssemblyConfiguration => "#{CONFIGURATION}"
     
     asm.com_visible = false
     
@@ -70,10 +83,10 @@ end
 
 task :test_nunit => :build do
     nunitcmd = "tools/nunit-2.6.0.12051/bin/nunit-console-x86.exe"
+
     if BUILD_PLATFORM == "x64"
         nunitcmd = "tools/nunit-2.6.0.12051/bin/nunit-console.exe"
     end
-    
     system "#{nunitcmd} /framework:v4.0.30319 /xml:build/reports/nunit.xml src/Tests/Hadouken.UnitTests/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/Hadouken.UnitTests.dll"
 end
 
@@ -81,11 +94,8 @@ desc "Output"
 task :output => :build do
     puts "##teamcity[progressMessage 'Outputting binaries']"
     
-    copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
-    copy_files "src/Hosts/Hadouken.Hosts.CommandLine/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/#{BUILD_PLATFORM}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
-    
     copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
-    copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}#{BUILD_PLATFORM}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
+    copy_files "src/Hosts/Hadouken.Hosts.WindowsService/bin/#{BUILD_PLATFORM}/#{CONFIGURATION}/#{BUILD_PLATFORM}/", "*.{dll,exe}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
     
     copy_files "src/Config/#{CONFIGURATION}/", "*.{config}", "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}"
 end
@@ -108,22 +118,4 @@ desc "MSI"
 task :msi => :output do
     system "tools/wix-3.6rc/candle.exe -ext WixFirewallExtension -ext WixUtilExtension -dPlatform=#{BUILD_PLATFORM} -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs src/Installer/IncorrectData.wxs"
     system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixFirewallExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj src/Installer/IncorrectData.wixobj"
-end
-
-desc "Publish to Amazon S3"
-task :publish do
-    if(ENV['S3_ACCESS_KEY'] && ENV['S3_SECRET_KEY'] && ENV['S3_BUCKET'])
-        AWS::S3::Base.establish_connection!(
-            :access_key_id     => ENV['S3_ACCESS_KEY'],
-            :secret_access_key => ENV['S3_SECRET_KEY']
-        )
-        
-        Dir.glob('build/*.{msi,zip}') { |file|
-            AWS::S3::S3Object.store(File.basename(file), 
-                open(file), 
-                ENV['S3_BUCKET'])
-        }
-    else
-        fail "Invalid S3 parameters"
-    end
 end
