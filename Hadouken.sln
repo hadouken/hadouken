@@ -23,7 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{022E9E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{2AFAE465-F84D-48ED-8F26-BF304FCCCDB2}"
 	ProjectSection(SolutionItems) = preProject
-		src\Config\Release\Hadouken.Hosts.CommandLine.exe.config = src\Config\Release\Hadouken.Hosts.CommandLine.exe.config
 		src\Config\Release\Hadouken.Hosts.WindowsService.exe.config = src\Config\Release\Hadouken.Hosts.WindowsService.exe.config
 	EndProjectSection
 EndProject
