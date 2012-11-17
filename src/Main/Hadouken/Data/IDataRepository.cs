@@ -8,15 +8,15 @@ namespace Hadouken.Data
 {
     public interface IDataRepository : IComponent
     {
-        void Save<TModel>(TModel instance) where TModel : IModel, new();
-        void SaveOrUpdate<TModel>(TModel instance) where TModel : IModel, new();
-        void Update<TModel>(TModel instance) where TModel : IModel, new();
-        void Delete<TModel>(TModel instance) where TModel : IModel, new();
+        void Save<TModel>(TModel instance) where TModel : Model, new();
+        void SaveOrUpdate<TModel>(TModel instance) where TModel : Model, new();
+        void Update<TModel>(TModel instance) where TModel : Model, new();
+        void Delete<TModel>(TModel instance) where TModel : Model, new();
 
-        TModel Single<TModel>(int id) where TModel : IModel, new();
-        TModel Single<TModel>(Expression<Func<TModel, bool>> where) where TModel : IModel, new();
+        TModel Single<TModel>(int id) where TModel : Model, new();
+        TModel Single<TModel>(Expression<Func<TModel, bool>> where) where TModel : Model, new();
 
-        IList<TModel> List<TModel>() where TModel : IModel, new();
-        IList<TModel> List<TModel>(Expression<Func<TModel, bool>> where) where TModel : IModel, new();
+        IList<TModel> List<TModel>() where TModel : Model, new();
+        IList<TModel> List<TModel>(Expression<Func<TModel, bool>> where) where TModel : Model, new();
     }
 }

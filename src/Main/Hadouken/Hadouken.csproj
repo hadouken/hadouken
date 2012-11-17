@@ -77,7 +77,7 @@
     <Compile Include="Configuration\IKeyValueStore.cs" />
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
-    <Compile Include="Data\IModel.cs" />
+    <Compile Include="Data\Model.cs" />
     <Compile Include="Data\Models\PluginInfo.cs" />
     <Compile Include="Data\Models\Setting.cs" />
     <Compile Include="Data\Models\TorrentInfo.cs" />

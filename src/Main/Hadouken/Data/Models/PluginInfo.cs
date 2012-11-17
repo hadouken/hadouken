@@ -5,9 +5,8 @@ using System.Text;
 
 namespace Hadouken.Data.Models
 {
-    public class PluginInfo : IModel
+    public class PluginInfo : Model
     {
-        public virtual int Id { get; set; }
         public virtual string Path { get; set; }
     }
 }

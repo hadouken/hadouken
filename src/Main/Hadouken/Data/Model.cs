@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Hadouken.Data
 {
-    public interface IModel
+    public abstract class Model
     {
-        int Id { get; set; }
+        public virtual int Id { get; set; }
     }
 }

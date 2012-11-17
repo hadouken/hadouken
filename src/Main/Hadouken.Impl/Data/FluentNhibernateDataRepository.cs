@@ -25,7 +25,7 @@ namespace Hadouken.Impl.Data
     {
         public override bool ShouldMap(Type type)
         {
-            return typeof(IModel).IsAssignableFrom(type);
+            return typeof(Model).IsAssignableFrom(type);
         }
     }
 
@@ -110,7 +110,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public void Save<TModel>(TModel instance) where TModel : IModel, new()
+        public void Save<TModel>(TModel instance) where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -119,7 +119,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public void SaveOrUpdate<TModel>(TModel instance) where TModel : IModel, new()
+        public void SaveOrUpdate<TModel>(TModel instance) where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -128,7 +128,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public void Update<TModel>(TModel instance) where TModel : IModel, new()
+        public void Update<TModel>(TModel instance) where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -137,7 +137,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public void Delete<TModel>(TModel instance) where TModel : IModel, new()
+        public void Delete<TModel>(TModel instance) where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -146,7 +146,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public TModel Single<TModel>(int id) where TModel : IModel, new()
+        public TModel Single<TModel>(int id) where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -154,7 +154,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public TModel Single<TModel>(Expression<Func<TModel, bool>> where) where TModel : IModel, new()
+        public TModel Single<TModel>(Expression<Func<TModel, bool>> where) where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -162,7 +162,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public IList<TModel> List<TModel>() where TModel : IModel, new()
+        public IList<TModel> List<TModel>() where TModel : Model, new()
         {
             lock (_lock)
             {
@@ -170,7 +170,7 @@ namespace Hadouken.Impl.Data
             }
         }
 
-        public IList<TModel> List<TModel>(Expression<Func<TModel, bool>> where) where TModel : IModel, new()
+        public IList<TModel> List<TModel>(Expression<Func<TModel, bool>> where) where TModel : Model, new()
         {
             lock (_lock)
             {

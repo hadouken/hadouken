@@ -7,9 +7,8 @@ using Hadouken.BitTorrent;
 
 namespace Hadouken.Data.Models
 {
-    public class TorrentInfo : IModel
+    public class TorrentInfo : Model
     {
-        public virtual int Id { get; set; }
         public virtual string InfoHash { get; set; }
         public virtual byte[] Data { get; set; }
         public virtual byte[] FastResumeData { get; set; }
