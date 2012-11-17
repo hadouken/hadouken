@@ -315,6 +315,9 @@ namespace Hadouken.Impl.BitTorrent
                 m.Torrent = hdknManager;
             });
 
+            // Save state whenever adding torrents.
+            SaveState();
+
             return hdknManager;
         }
 
