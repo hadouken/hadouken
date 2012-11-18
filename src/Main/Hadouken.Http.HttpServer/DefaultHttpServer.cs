@@ -17,11 +17,11 @@ namespace Hadouken.Http.HttpServer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private IFileSystem _fs;
-        private IKeyValueStore _kvs;
-        private IEnumerable<IApiAction> _actions; 
+        private readonly IFileSystem _fileSystem;
+        private readonly IKeyValueStore _keyValueStore;
+        private IEnumerable<IApiAction> _actions;
 
-        private HttpListener _listener;
+        private readonly HttpListener _listener;
         private string _webUIPath;
 
         private static readonly string TokenCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -29,8 +29,8 @@ namespace Hadouken.Http.HttpServer
         
         public DefaultHttpServer(IKeyValueStore kvs, IFileSystem fs, IEnumerable<IApiAction> actions)
         {
-            _fs = fs;
-            _kvs = kvs;
+            _fileSystem = fs;
+            _keyValueStore = kvs;
             _actions = actions;
 
             var binding = HdknConfig.ConfigManager["WebUI.Url"];
@@ -49,7 +49,7 @@ namespace Hadouken.Http.HttpServer
                 _listener.Start();
             } catch(HttpListenerException e)
             {
-                Logger.FatalException("Could not start the HTTP server interface.", e);
+                Logger.FatalException("Could not start the HTTP server interface. HTTP server NOT up and running.", e);
                 return;
             }
 
@@ -147,10 +147,10 @@ namespace Hadouken.Http.HttpServer
 
             Logger.Debug("Checking if webui.zip exists at {0}", uiZip);
 
-            if (_fs.FileExists(uiZip))
+            if (_fileSystem.FileExists(uiZip))
             {
                 string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                _fs.CreateDirectory(path);
+                _fileSystem.CreateDirectory(path);
 
                 Logger.Info("Extracting webui.zip to {0}", path);
 
@@ -171,7 +171,7 @@ namespace Hadouken.Http.HttpServer
         {
             string path = _webUIPath + (context.Request.Url.AbsolutePath == "/" ? "/index.html" : context.Request.Url.AbsolutePath);
 
-            if (_fs.FileExists(path))
+            if (_fileSystem.FileExists(path))
             {
                 string contentType = "text/html";
 
@@ -194,7 +194,7 @@ namespace Hadouken.Http.HttpServer
                         break;
                 }
 
-                return new ContentResult { Content = _fs.ReadAllBytes(path), ContentType = contentType };
+                return new ContentResult { Content = _fileSystem.ReadAllBytes(path), ContentType = contentType };
             }
 
             return null;
