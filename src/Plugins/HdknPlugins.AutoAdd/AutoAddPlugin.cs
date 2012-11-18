@@ -39,7 +39,7 @@ namespace HdknPlugins.AutoAdd
 
         public void Load()
         {
-            var interval = _keyValueStore.Get("plugins.autoadd.pollInterval", 3000);
+            var interval = _keyValueStore.Get("plugins.autoadd.updateInterval", 3000);
 
             _timer = _timerFactory.CreateTimer();
             _timer.SetCallback(interval, CheckFolders);
