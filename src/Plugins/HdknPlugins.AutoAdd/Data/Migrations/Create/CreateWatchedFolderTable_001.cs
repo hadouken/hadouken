@@ -20,7 +20,10 @@ namespace HdknPlugins.AutoAdd.Data.Migrations.Create
             Database.AddTable("plugin_AutoAdd_WatchedFolders",
                 new Column("Id", DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                 new Column("Path", DbType.String, ColumnProperty.NotNull),
-                new Column("Label", DbType.String)
+                new Column("Label", DbType.String),
+                new Column("IncludeFilter", DbType.String),
+                new Column("ExcludeFilter", DbType.String),
+                new Column("AutoStart", DbType.Boolean)
             );
         }
     }
