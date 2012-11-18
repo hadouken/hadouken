@@ -41,8 +41,11 @@ namespace HdknPlugins.AutoAdd
         {
             var interval = _keyValueStore.Get("plugins.autoadd.updateInterval", 3000);
 
+            Logger.Info("Starting timer with {0}ms update interval", interval);
+
             _timer = _timerFactory.CreateTimer();
             _timer.SetCallback(interval, CheckFolders);
+            _timer.Start();
         }
 
         internal void CheckFolders()
