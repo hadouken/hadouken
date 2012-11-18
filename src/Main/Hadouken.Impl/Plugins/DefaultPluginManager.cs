@@ -35,11 +35,11 @@ namespace Hadouken.Impl.Plugins
 
             var loader = (from l in _loaders
                           where l.CanLoad(_info.Path)
-                          select l).First();
+                          select l).FirstOrDefault();
 
             if (loader != null)
             {
-                _pluginType = loader.Load(_info.Path).First();
+                _pluginType = loader.Load(_info.Path).FirstOrDefault();
 
                 if (_pluginType == null)
                 {
