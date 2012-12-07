@@ -75,6 +75,9 @@
     <Compile Include="AutoAddPlugin.cs" />
     <Compile Include="Data\Migrations\Create\CreateWatchedFolderTable_001.cs" />
     <Compile Include="Data\Models\WatchedFolder.cs" />
+    <Compile Include="Http\Api\GetWatchedFolders.cs" />
+    <Compile Include="Http\Api\RemoveWatchedFolders.cs" />
+    <Compile Include="Http\Api\SetWatchedFolders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\DefaultTimerFactory.cs" />
     <Compile Include="Timers\ITimer.cs" />
@@ -87,7 +90,9 @@
       <Name>Hadouken</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="UI\boot.js" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
