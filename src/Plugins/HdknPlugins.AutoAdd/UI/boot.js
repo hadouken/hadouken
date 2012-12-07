@@ -12,10 +12,7 @@
             
             utWebUI.request("get", "action=autoadd-getwatchedfolders", null, function (data) {
                 $each(data.folders, function (val) {
-                    self.fldTable.addRow([val.Path, val.Label], val.Id);
-
-                    // add to local dictionary as well
-                    self.folders[val.Id] = val;
+                    self.addFolder(val);
                 });
             });
         },
@@ -52,6 +49,13 @@
             } else {
                 this.folderId = -1;
             }
+        },
+
+        "addFolder": function(val) {
+            this.fldTable.addRow([val.Path, val.Label], val.Id);
+
+            // add to local dictionary as well
+            this.folders[val.Id] = val;
         },
         
         "refreshTable": function () {
@@ -123,7 +127,7 @@
 
         utWebUI.request("post", "action=autoadd-setwatchedfolders", d, function (folders) {
             for (var i = 0; i < folders.length; i++) {
-                AutoAdd.fldTable.addRow([folders[i].Path, folders[i].Label], folders[i].Id);
+                AutoAdd.addFolder(folders[i]);
 
                 $("autoadd_add_folder_path").set("value", "");
                 $("autoadd_add_folder_label").set("value", "");
