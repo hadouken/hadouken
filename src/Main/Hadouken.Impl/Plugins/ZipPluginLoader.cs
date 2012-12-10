@@ -13,28 +13,31 @@ namespace Hadouken.Impl.Plugins
 {
     public class ZipPluginLoader : IPluginLoader
     {
-        private IFileSystem _fs;
+        private IFileSystem _fileSystem;
 
-        public ZipPluginLoader(IFileSystem fs)
+        public ZipPluginLoader(IFileSystem fileSystem)
         {
-            _fs = fs;
+            _fileSystem = fileSystem;
         }
 
         public bool CanLoad(string path)
         {
+            if (_fileSystem.IsDirectory(path))
+                return false;
+
             // TODO: check file header as well
-            byte[] data = _fs.ReadAllBytes(path);
+            byte[] data = _fileSystem.ReadAllBytes(path);
 
             int header = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
 
-            return (header == 0x04034b50 && !_fs.IsDirectory(path) && path.EndsWith(".zip"));
+            return (header == 0x04034b50 && !_fileSystem.IsDirectory(path) && path.EndsWith(".zip"));
         }
 
         public IEnumerable<Type> Load(string path)
         {
             List<Assembly> assemblies = new List<Assembly>();
 
-            using (ZipFile file = ZipFile.Read(_fs.OpenRead(path)))
+            using (ZipFile file = ZipFile.Read(_fileSystem.OpenRead(path)))
             {
                 foreach (ZipEntry entry in file.Entries.Where(e => e.FileName.EndsWith(".dll")))
                 {
