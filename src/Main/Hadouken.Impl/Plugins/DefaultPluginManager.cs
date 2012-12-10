@@ -17,35 +17,18 @@ namespace Hadouken.Impl.Plugins
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private PluginInfo _info;
         private Type _pluginType;
         private IPlugin _instance;
 
         private IMessageBus _mbus;
         private IMigrationRunner _runner;
-        private IPluginLoader[] _loaders;
 
-        internal DefaultPluginManager(PluginInfo info, IMessageBus mbus, IMigrationRunner runner, IPluginLoader[] loaders)
+        internal DefaultPluginManager(Type pluginType, IMessageBus mbus, IMigrationRunner runner)
         {
-            _info = info;
+            _pluginType = pluginType;
 
             _mbus = mbus;
             _runner = runner;
-            _loaders = loaders;
-
-            var loader = (from l in _loaders
-                          where l.CanLoad(_info.Path)
-                          select l).FirstOrDefault();
-
-            if (loader != null)
-            {
-                _pluginType = loader.Load(_info.Path).FirstOrDefault();
-
-                if (_pluginType == null)
-                {
-                    throw new ArgumentException("Could not find plugin type in given PluginInfo.Path", "info");
-                }
-            }
         }
 
         internal void Initialize()

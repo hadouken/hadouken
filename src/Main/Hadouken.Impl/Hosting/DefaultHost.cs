@@ -52,9 +52,7 @@ namespace Hadouken.Impl.Hosting
             _migratorRunner.Up(this.GetType().Assembly);
 
             _torrentEngine.Load();
-
-            _pluginEngine.Refresh();
-            _pluginEngine.LoadAll();
+            _pluginEngine.Load();
 
             _httpServer.Start();
         }

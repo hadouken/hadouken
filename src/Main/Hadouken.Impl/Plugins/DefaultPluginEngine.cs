@@ -8,6 +8,7 @@ using Hadouken.Data.Models;
 using Hadouken.Messaging;
 using Hadouken.Configuration;
 using Hadouken.IO;
+using Hadouken.Reflection;
 using NLog;
 
 namespace Hadouken.Impl.Plugins
@@ -33,71 +34,102 @@ namespace Hadouken.Impl.Plugins
             _loaders = loaders;
         }
 
-        public IEnumerable<IPluginManager> Refresh()
+        public void Load()
         {
-            var infos = _repo.List<PluginInfo>();
-
-            // Load all plugins from path
-            var path = HdknConfig.GetPath("Paths.Plugins");
-
-            foreach(var info in _fs.GetFileSystemInfos(path))
-            {
-                if(_loaders.Any(l => l.CanLoad(info.FullName)) && infos.All(i => i.Path != info.FullName))
-                {
-                    Logger.Info("Found new plugin {0}", info.FullName);
-
-                    var pluginInfo = new PluginInfo {Path = info.FullName};
-                    _repo.Save(pluginInfo);
-                    infos.Add(pluginInfo);
-                }
-            }
-
-            // load all PluginInfo where Name not in _managers.Keys
-            var ret = new List<IPluginManager>();
-
-            foreach (PluginInfo info in infos)
-            {
-                try
-                {
-                    var manager = new DefaultPluginManager(info, _mbus, _runner, _loaders);
-
-                    if (!_managers.ContainsKey(manager.Name))
-                    {
-                        manager.Initialize();
-                        manager.Install();
-
-                        _managers.Add(manager.Name, manager);
-
-                        ret.Add(manager);
-                    }
-                }
-                catch(Exception e)
-                {
-                    Logger.ErrorException(String.Format("Could not create plugin from path {0}", info.Path), e);
-                }
-            }
-
-            return ret;
+            Load(HdknConfig.GetPath("Paths.Plugins"));
         }
 
-        public void LoadAll()
+        public void Load(string path)
         {
-            foreach (var man in _managers.Values)
+            var pluginInfos = _repo.List<PluginInfo>();
+
+            foreach (var info in _fs.GetFileSystemInfos(path)
+                                    .Select(i => i.FullName)
+                                    .Union(pluginInfos.Select(pi => pi.Path))
+                                    .Distinct())
             {
-                try
+                // Do we have a IPluginLoader for this path?
+                var loader = _loaders.FirstOrDefault(l => l.CanLoad(info));
+
+                if (loader == null)
+                    continue;
+
+                var pluginTypes = loader.Load(info);
+
+                foreach (var pluginType in pluginTypes)
                 {
-                    man.Load();
-                }
-                catch(Exception e)
-                {
-                    Logger.ErrorException(String.Format("Could not load plugin {0}", man.Name), e);
+                    Load(info, pluginType);
                 }
             }
+        }
+
+        internal void Load(string path, Type pluginType)
+        {
+            var attr = pluginType.GetAttribute<PluginAttribute>();
+
+            // Plugin not marked with attribute, should
+            // not happen since the IPluginLoader should've
+            // checked that it exists.
+            if (attr == null)
+                return;
+
+            // We have already loaded this plugin, do nothing
+            if (_managers.ContainsKey(attr.Name))
+                return;
+
+            var manager = new DefaultPluginManager(pluginType, _mbus, _runner);
+            manager.Initialize();
+
+            // Check if we have a PluginInfo for this plugin.
+            // If we don't, add one and run Install()
+            // If we do, and versions are equal, do nothing
+            // If we do, and versions are NOT equal, run Install()
+
+            var pluginInfo = _repo.Single<PluginInfo>(p => p.Name == attr.Name);
+
+            if (pluginInfo == null)
+            {
+                _repo.Save(new PluginInfo
+                {
+                    Name = attr.Name,
+                    Version = attr.Version.ToString(),
+                    Path = path
+                });
+
+                manager.Install();
+
+                Logger.Info("Found new plugin ({0} [{1}])", attr.Name, attr.Version);
+            }
+            else if (new Version(pluginInfo.Version) < attr.Version || String.IsNullOrEmpty(pluginInfo.Version))
+            {
+                string oldVersion = pluginInfo.Version;
+
+                manager.Install();
+
+                pluginInfo.Name = manager.Name;
+                pluginInfo.Version = manager.Version.ToString();
+
+                _repo.Update(pluginInfo);
+
+                Logger.Info("Plugin {0} upgraded from [{1}] to [{2}]", manager.Name, oldVersion, attr.Version);
+            }
+
+            Load(manager);
+        }
+
+        internal void Load(IPluginManager manager)
+        {
+            manager.Load();
+            _managers.Add(manager.Name, manager);
+
+            Logger.Info("{0} [{1}] loaded", manager.Name, manager.Version);
         }
 
         public void UnloadAll()
         {
-            foreach (var man in _managers.Values)
+            var managers = _managers.Values;
+
+            foreach (var man in managers)
             {
                 try
                 {
