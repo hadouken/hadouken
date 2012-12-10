@@ -55,8 +55,6 @@ namespace Hadouken.Impl.Plugins
                 throw new Exception("Could not load plugin");
 
             _mbus.Send<IPluginLoaded>(m => m.Manager = this).Wait();
-
-            _logger.Info("Plugin {0} loaded", attr.Name);
         }
 
         private IPlugin CreatePluginFromType(Type t)
