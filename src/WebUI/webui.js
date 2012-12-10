@@ -97,6 +97,9 @@ var utWebUI = {
 		"advOptTable": {
 			"rowMultiSelect": false
 		},
+		"plgTable": {
+			"rowMultiSelect": false
+		},
 		"activeSettingsPane": "",
 		"activeTorGroups": {
 			"cat": {"cat_all": 1},
@@ -110,6 +113,7 @@ var utWebUI = {
 	"prsTable": new STable(),
 	"flsTable": new STable(),
 	"advOptTable": new STable(),
+	"plgTable": new STable(),
 	"trtColDefs": [
 		//[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
 		  ["name", 220, TYPE_STRING]
@@ -168,6 +172,11 @@ var utWebUI = {
 		//[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
 		  ["name", 240, TYPE_STRING]
 		, ["value", 235, TYPE_STRING]
+	],
+	"plgTableColDefs": [
+		//[ colID, colWidth, colType, colDisabled = false, colIcon = false, colAlign = ALIGN_AUTO, colText = "" ]
+		  ["Name", 240, TYPE_STRING]
+		, ["Version", 235, TYPE_STRING]	
 	],
 	"trtColDoneIdx": -1, // automatically calculated based on this.trtColDefs
 	"trtColStatusIdx": -1, // automatically calculated based on this.trtColDefs
@@ -360,6 +369,8 @@ var utWebUI = {
                 {
                     Asset.javascript(apiBase + "?token=" + self.TOKEN + "&action=getpluginfile&plugin=" + plugin.name + "&file=" + plugin.init);
                 }
+
+				self.plgTable.addRow([plugin.name, plugin.version], plugin.name);
             }
             
             if(fn) fn.delay(0, self);
@@ -3783,18 +3794,16 @@ var utWebUI = {
 		this.trtTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
 		this.prsTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
 		this.flsTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
-		if (!isGuest) {
-			this.advOptTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
-		}
+		this.advOptTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
+		this.plgTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
 	},
 
 	"tableUseAltColor": function(enable) {
 		this.trtTable.setConfig({"rowAlternate": enable});
 		this.prsTable.setConfig({"rowAlternate": enable});
 		this.flsTable.setConfig({"rowAlternate": enable});
-		if (!isGuest) {
-			this.advOptTable.setConfig({"rowAlternate": enable});
-		}
+		this.advOptTable.setConfig({"rowAlternate": enable});
+		this.plgTable.setConfig({"rowAlternate": enable});
 	},
 
 	"tableUseProgressBar": function(enable) {
@@ -3849,6 +3858,12 @@ var utWebUI = {
 				this.advOptTable.restoreScroll();
 				this.advOptTable.resizePads();
 			break;
+
+			case "dlgSettings-Plugins":
+				this.plgTable.calcSize();
+				this.plgTable.restoreScroll();
+				this.plgTable.resizePads();
+			break;
 		}
 
 		if (this.config) {
@@ -3856,6 +3871,31 @@ var utWebUI = {
 		}
         
         SettingsManager.changePane(id);
+	},
+
+	"plgFormatRow": function(values, index) {
+		var useidx = $chk(index);
+		var len = (useidx ? (index + 1) : values.length);
+
+		if (useidx)
+			return values[index];
+		else
+			return values;
+	},
+
+	"plgColReset": function() {
+		var config = {
+			  "colMask": 0
+			, "colOrder": this.plgColDefs.map(function(item, idx) { return idx; })
+			, "colWidth": this.plgColDefs.map(function(item, idx) { return item[1]; })
+		};
+
+		this.plgColDefs.each(function(item, idx) { if (!!item[3]) config.colMask |= (1 << idx); });
+
+		this.plgTable.setConfig(config);
+	},
+
+	"plgSelect": function(ev, id) {
 	},
     
     "addPlugin": function(plugin) {

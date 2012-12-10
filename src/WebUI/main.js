@@ -920,6 +920,16 @@ function setupSettings() {
 		langSelect.options[k] = new Option(v.lang, v.code, false, false);
 	});
 	langSelect.set("value", utWebUI.defConfig.lang);
+
+	// -- Plugin table
+	utWebUI.plgTable.create("dlgSettings-pluginList", utWebUI.plgTableColDefs, Object.append({
+		"format": utWebUI.plgFormatRow.bind(utWebUI),
+		"onColReset": utWebUI.plgColReset.bind(utWebUI),
+		"onSelect": utWebUI.plgSelect.bind(utWebUI)
+	}, utWebUI.defConfig.plgTable));
+
+	var plgSize = $("dlgSettings-Plugins").getDimensions({computeSize: true});
+	utWebUI.plgTable.resizeTo(plgSize.x - 15, plgSize.y - 70);
     
 	// -- Advanced Options
 
