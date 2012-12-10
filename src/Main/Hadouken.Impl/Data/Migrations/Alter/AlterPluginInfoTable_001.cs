@@ -18,7 +18,7 @@ namespace Hadouken.Impl.Data.Migrations.Alter
         public override void Up()
         {
             Database.AddColumn("PluginInfo", new Column("Name", System.Data.DbType.String));
-            Database.AddColumn("PluginInfo", new Column("Version", System.Data.DbType.String, "0.0.0.0"));
+            Database.AddColumn("PluginInfo", new Column("Version", System.Data.DbType.String));
         }
     }
 }
