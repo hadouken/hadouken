@@ -36,30 +36,35 @@ namespace Hadouken.Impl.Plugins
 
         public void Load()
         {
-            Load(HdknConfig.GetPath("Paths.Plugins"));
-        }
-
-        public void Load(string path)
-        {
             var pluginInfos = _repo.List<PluginInfo>();
+            var path = HdknConfig.GetPath("Paths.Plugins");
 
             foreach (var info in _fs.GetFileSystemInfos(path)
                                     .Select(i => i.FullName)
                                     .Union(pluginInfos.Select(pi => pi.Path))
                                     .Distinct())
             {
-                // Do we have a IPluginLoader for this path?
-                var loader = _loaders.FirstOrDefault(l => l.CanLoad(info));
+                Load(info);
+            }
+        }
 
-                if (loader == null)
-                    continue;
+        public void Load(string path)
+        {
+            
+            // Do we have a IPluginLoader for this path?
+            var loader = _loaders.FirstOrDefault(l => l.CanLoad(path));
 
-                var pluginTypes = loader.Load(info);
+            if (loader == null)
+            {
+                Logger.Info("No IPluginLoader can handle the path {0}", path);
+                return;
+            }
 
-                foreach (var pluginType in pluginTypes)
-                {
-                    Load(info, pluginType);
-                }
+            var pluginTypes = loader.Load(path);
+
+            foreach (var pluginType in pluginTypes)
+            {
+                Load(path, pluginType);
             }
         }
 
@@ -82,8 +87,8 @@ namespace Hadouken.Impl.Plugins
 
             // Check if we have a PluginInfo for this plugin.
             // If we don't, add one and run Install()
-            // If we do, and versions are equal, do nothing
             // If we do, and versions are NOT equal, run Install()
+            // If we do, and versions are equal, do nothing
 
             var pluginInfo = _repo.Single<PluginInfo>(p => p.Name == attr.Name);
 
