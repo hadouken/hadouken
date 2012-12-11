@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdknPlugins.AutoAdd", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdknPlugins.Rss", "src\Plugins\HdknPlugins.Rss\HdknPlugins.Rss.csproj", "{8B0CDBEF-A59E-48EA-814D-7A32B9A761DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdknPlugins.Importer", "src\Plugins\HdknPlugins.Importer\HdknPlugins.Importer.csproj", "{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -124,6 +126,14 @@ Global
 		{8B0CDBEF-A59E-48EA-814D-7A32B9A761DA}.Release|x64.Build.0 = Release|x64
 		{8B0CDBEF-A59E-48EA-814D-7A32B9A761DA}.Release|x86.ActiveCfg = Release|x86
 		{8B0CDBEF-A59E-48EA-814D-7A32B9A761DA}.Release|x86.Build.0 = Release|x86
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Debug|x64.ActiveCfg = Debug|x64
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Debug|x64.Build.0 = Debug|x64
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Debug|x86.ActiveCfg = Debug|x86
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Debug|x86.Build.0 = Debug|x86
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x64.ActiveCfg = Release|x64
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x64.Build.0 = Release|x64
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x86.ActiveCfg = Release|x86
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,5 +150,6 @@ Global
 		{2AFAE465-F84D-48ED-8F26-BF304FCCCDB2} = {022E9E69-163D-4875-92B4-07B9BAE90EC3}
 		{A7C38FA3-CAD6-4743-A758-82FB587DCDB4} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 		{8B0CDBEF-A59E-48EA-814D-7A32B9A761DA} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
+		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 	EndGlobalSection
 EndGlobal
