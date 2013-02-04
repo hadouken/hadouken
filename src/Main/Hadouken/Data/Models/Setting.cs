@@ -10,14 +10,22 @@ namespace Hadouken.Data.Models
         public virtual string Key { get; set; }
         public virtual string Value { get; set; }
         public virtual string Type { get; set; }
-        public virtual SettingPermissions Permissions { get; set; }
+        public virtual Permissions Permissions { get; set; }
+        public virtual Options Options { get; set; }
     }
 
     [Flags]
-    public enum SettingPermissions
+    public enum Permissions
     {
         None = 0,
         Read = 1,
         Write = 2
+    }
+
+    [Flags]
+    public enum Options
+    {
+        None = 0,
+        Hashed = 1,
     }
 }
