@@ -102,6 +102,7 @@
     <Compile Include="Data\Migrations\Create\CreateSettingTable_001.cs" />
     <Compile Include="Data\Migrations\Create\CreateTorrentInfoTable_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_001.cs" />
+    <Compile Include="Data\Migrations\Insert\InsertSettingData_002.cs" />
     <Compile Include="Hosting\DefaultHost.cs" />
     <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
