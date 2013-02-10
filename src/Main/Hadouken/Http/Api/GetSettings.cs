@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Hadouken.Configuration;
+using System.Web.Script.Serialization;
 using Hadouken.Reflection;
+using Hadouken.Data;
+using Hadouken.Data.Models;
 
 namespace Hadouken.Http.Api
 {
     [ApiAction("getsettings")]
     public class GetSettings : ApiAction
     {
-        private IKeyValueStore _data;
+        private readonly JavaScriptSerializer _javaScriptSerializer = new JavaScriptSerializer();
+        private readonly IDataRepository _dataRepository;
 
-        public GetSettings(IKeyValueStore data)
+        public GetSettings(IDataRepository dataRepository)
         {
-            _data = data;
+            _dataRepository = dataRepository;
         }
 
         public override ActionResult Execute()
@@ -22,23 +25,23 @@ namespace Hadouken.Http.Api
                 new
                 {
                     version = typeof(Kernel).Assembly.GetAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion,
-                    settings = (from setting in _data.Get(s => true)
+                    settings = (from setting in _dataRepository.List<Setting>()
+                                where setting.Key != "auth.password" // do not send hashed password to webui
                                 select new object[]
                                 {
                                     setting.Key,
-                                    GetSettingType(setting.Value.GetType()),
-                                    setting.Value,
-                                    new {
-                                        access = -1
-                                    }
+                                    GetSettingType(setting.Type),
+                                    _javaScriptSerializer.Deserialize(setting.Value, Type.GetType(setting.Type)),
+                                    setting.Permissions,
+                                    setting.Options
                                 })
                 }
             );
         }
 
-        private int GetSettingType(Type clrType)
+        private static int GetSettingType(string clrType)
         {
-            switch (clrType.FullName)
+            switch (clrType)
             {
                 case "System.Int32":
                     return 0;

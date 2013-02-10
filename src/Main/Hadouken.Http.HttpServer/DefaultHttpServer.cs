@@ -10,6 +10,7 @@ using Hadouken.IO;
 using Hadouken.Configuration;
 using Ionic.Zip;
 using NLog;
+using Hadouken.Security;
 
 namespace Hadouken.Http.HttpServer
 {
@@ -206,10 +207,10 @@ namespace Hadouken.Http.HttpServer
             {
                 var id = (HttpListenerBasicIdentity)context.User.Identity;
 
-                string usr = HdknConfig.ConfigManager["Auth.Username"];
-                string pwd = HdknConfig.ConfigManager["Auth.Password"];
+                var usr = _keyValueStore.Get<string>("auth.username");
+                var pwd = _keyValueStore.Get<string>("auth.password");
 
-                return (id.Name == usr && id.Password == pwd);
+                return (id.Name == usr && Hash.Generate(id.Password) == pwd);
             }
 
             return false;

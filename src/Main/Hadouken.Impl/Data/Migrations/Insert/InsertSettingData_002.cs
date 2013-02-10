@@ -22,8 +22,8 @@ namespace Hadouken.Impl.Data.Migrations.Insert
 
         public override void Up()
         {
-            Database.Insert("Setting", new[] { "Key", "Value", "Type", "Permissions", "Options" }, new[] { "auth.username", "hdkn", "System.String", "3", "0" });
-            Database.Insert("Setting", new[] { "Key", "Value", "Type", "Permissions", "Options" }, new[] { "auth.password", DefaultPassword, "System.String", "3", "1" });
+            Database.Insert("Setting", new[] { "Key", "Value", "Type", "Permissions", "Options" }, new[] { "auth.username", "\"hdkn\"", "System.String", "3", "0" });
+            Database.Insert("Setting", new[] { "Key", "Value", "Type", "Permissions", "Options" }, new[] { "auth.password", "\"" + DefaultPassword + "\"", "System.String", "3", "1" });
         }
     }
 }
