@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdknPlugins.Rss", "src\Plug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdknPlugins.Importer", "src\Plugins\HdknPlugins.Importer\HdknPlugins.Importer.csproj", "{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdknPlugins.CreateTorrent", "src\Plugins\HdknPlugins.CreateTorrent\HdknPlugins.CreateTorrent.csproj", "{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -134,6 +136,14 @@ Global
 		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x64.Build.0 = Release|x64
 		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x86.ActiveCfg = Release|x86
 		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52}.Release|x86.Build.0 = Release|x86
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Debug|x64.ActiveCfg = Debug|x64
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Debug|x64.Build.0 = Debug|x64
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Debug|x86.ActiveCfg = Debug|x86
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Debug|x86.Build.0 = Debug|x86
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Release|x64.ActiveCfg = Release|x64
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Release|x64.Build.0 = Release|x64
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Release|x86.ActiveCfg = Release|x86
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,5 +161,6 @@ Global
 		{A7C38FA3-CAD6-4743-A758-82FB587DCDB4} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 		{8B0CDBEF-A59E-48EA-814D-7A32B9A761DA} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
+		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 	EndGlobalSection
 EndGlobal

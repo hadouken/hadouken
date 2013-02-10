@@ -74,7 +74,7 @@ namespace Hadouken.Http.HttpServer
             {
                 if (_listener.IsListening)
                 {
-                    return new Uri(_listener.Prefixes.FirstOrDefault());
+                    return new Uri(_listener.Prefixes.First());
                 }
 
                 return null;
