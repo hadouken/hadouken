@@ -141,6 +141,7 @@
     <Compile Include="Reflection\BuildCommitAttribute.cs" />
     <Compile Include="Reflection\BuildDateAttribute.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />
+    <Compile Include="Security\Hash.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
