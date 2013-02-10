@@ -18,6 +18,9 @@ namespace Hadouken.Impl.Data.Migrations.Alter
         public override void Up()
         {
             Database.AddColumn("Setting", new Column("Options", DbType.Int32, ColumnProperty.NotNull, 0));
+
+            // Update Permissions for every row and set Read/Write.
+            Database.Update("Setting", new[] {"Permissions"}, new[] {"3"});
         }
     }
 }

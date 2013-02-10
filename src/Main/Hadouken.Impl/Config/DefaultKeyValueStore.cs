@@ -9,6 +9,7 @@ using System.Web.Script.Serialization;
 using System.Linq.Expressions;
 using Hadouken.Messaging;
 using Hadouken.Messages;
+using Hadouken.Security;
 
 namespace Hadouken.Impl.Config
 {
@@ -80,13 +81,20 @@ namespace Hadouken.Impl.Config
                 throw new ArgumentNullException("value");
 
             var setting = _data.Single<Setting>(s => s.Key == key);
-            
-            if (setting == null)
-            {
-                setting = new Setting { Key = key, Type = value.GetType().FullName };
-            }
 
-            setting.Value = _serializer.Serialize(value);
+            if (setting == null)
+                setting = new Setting
+                    {
+                        Key = key,
+                        Type = value.GetType().FullName,
+                        Permissions = Permissions.Read | Permissions.Write,
+                        Options = Options.None
+                    };
+
+            if (!setting.Permissions.HasFlag(Permissions.Write))
+                throw new UnauthorizedAccessException("No write permissions on key " + key);
+
+            setting.Value = _serializer.Serialize(setting.Options.HasFlag(Options.Hashed) ? Hash.Generate(value.ToString()) : value);
 
             _data.SaveOrUpdate(setting);
 
