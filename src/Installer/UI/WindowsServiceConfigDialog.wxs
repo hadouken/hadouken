@@ -3,7 +3,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>    
     <UI>
-      <Dialog Id="WinSrvConfigDlg" Width="370" Height="270" Title="[ProductName] Setup">
+      <Dialog Id="WindowsServiceConfigDlg" Width="370" Height="270" Title="[ProductName] Setup">
         <!-- banner information -->
         <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
         <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
@@ -45,7 +45,7 @@
         <!-- next -->
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
           <Publish Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[HDKN_SRV_ENABLE <> 1 OR (HDKN_SRV_USER <> "" AND HDKN_SRV_PASS <> "")]]></Publish>
-          <Publish Event="NewDialog" Value="IncorrectDataDlg"><![CDATA[HDKN_SRV_ENABLE = 1 AND (HDKN_SRV_USER = "" OR HDKN_SRV_PASS = "")]]></Publish>
+          <Publish Event="NewDialog" Value="WindowsServiceConfigInvalidDlg"><![CDATA[HDKN_SRV_ENABLE = 1 AND (HDKN_SRV_USER = "" OR HDKN_SRV_PASS = "")]]></Publish>
         </Control>
         
         <!-- cancel -->

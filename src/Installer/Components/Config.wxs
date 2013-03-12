@@ -18,8 +18,16 @@
           Id="ModifyWebUIPort"
           File="[#HdknWinSrvCfg]"
           Action="setValue"
-          ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
-          Value="http://+:[HDKN_WEBUI_PORT]/" />
+          ElementPath="//appSettings/add[\[]@key='WebUI.Port'[\]]/@value"
+          Value="[HDKN_WEBUI_PORT]" />
+        
+        <!-- Write INSTALLDIR to registry -->
+      </Component>
+
+      <Component Win64="$(var.IsWin64)">
+        <RegistryKey Root="HKLM" Key="Software\Hadouken">
+          <RegistryValue Type="string" Name="InstallDir" Value="[INSTALLDIR]"/>
+        </RegistryKey>
       </Component>
     </ComponentGroup>
   </Fragment>

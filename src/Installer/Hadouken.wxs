@@ -49,11 +49,12 @@
       <UIRef Id="WixUI_ErrorProgressText" />
 
       <DialogRef Id="WebUIConfigDlg" />
-      <DialogRef Id="WinSrvConfigDlg" />
-      <DialogRef Id="IncorrectDataDlg" />
+      <DialogRef Id="WebUIConfigInvalidDlg" />
+      <DialogRef Id="WindowsServiceConfigDlg" />
+      <DialogRef Id="WindowsServiceConfigInvalidDlg" />
 
       <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="WebUIConfigDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WinSrvConfigDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WindowsServiceConfigDlg" Order="1">NOT Installed</Publish>
     </UI>
     
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
@@ -64,6 +65,10 @@
     
     <CustomAction Id="NetSHRuleDel_Cmd" Property="NetSHRuleDel" Value="&quot;netsh&quot; http delete urlacl url=http://+:[HDKN_WEBUI_PORT]/" Execute="immediate" />
     <CustomAction Id="NetSHRuleDel" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Return="check" Impersonate="no" />
+
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="SearchRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" Win64="$(var.IsWin64)" />
+    </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
     

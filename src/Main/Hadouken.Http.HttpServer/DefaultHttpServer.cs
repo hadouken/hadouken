@@ -35,6 +35,9 @@ namespace Hadouken.Http.HttpServer
             _actions = actions;
 
             var binding = HdknConfig.ConfigManager["WebUI.Url"];
+            var port = HdknConfig.ConfigManager["WebUI.Port"];
+
+            binding = binding.Replace("{port}", port);
 
             _listener = new HttpListener();
             _listener.Prefixes.Add(binding);
