@@ -20,11 +20,7 @@
     Language="1033"
     Codepage="1252">
 
-    <?if $(var.Platform) = x64?>
-    <Package Id="*" Description="Hadouken $(var.BuildVersion) (64 bit) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" Platform="x64" />
-    <?else?>
-    <Package Id="*" Description="Hadouken $(var.BuildVersion) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
-    <?endif?>
+    <Package Id="*" Description="Hadouken $(var.BuildVersion) ($(var.Platform)) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" Platform="$(var.Platform)" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
