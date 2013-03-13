@@ -28,7 +28,7 @@
                     DisplayName="Hadouken BitTorrent client"
                     Description="The service for Hadouken BitTorrent client"
                     Start="auto"
-                    Account=".\[HDKN_SRV_USER]"
+                    Account="[HDKN_SRV_USER]"
                     Password="[HDKN_SRV_PASS]"
                     Interactive="no"
                     ErrorControl="normal" />
