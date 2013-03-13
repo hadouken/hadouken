@@ -106,14 +106,8 @@
     <Compile Include="Http\Api\StartTorrent.cs" />
     <Compile Include="Http\Api\StopTorrent.cs" />
     <Compile Include="Http\ContentResult.cs" />
-    <Compile Include="Http\EmbeddedContentResult.cs" />
-    <Compile Include="Http\HttpPutAttribute.cs" />
-    <Compile Include="Http\HttpDeleteAttribute.cs" />
-    <Compile Include="Http\HttpGetAttribute.cs" />
-    <Compile Include="Http\HttpMethodAttribute.cs" />
     <Compile Include="Http\ActionResult.cs" />
     <Compile Include="Http\ApiAction.cs" />
-    <Compile Include="Http\HttpPostAttribute.cs" />
     <Compile Include="Http\IApiAction.cs" />
     <Compile Include="Http\IHttpPostedFile.cs" />
     <Compile Include="Http\IHttpContext.cs" />
@@ -123,7 +117,6 @@
     <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Http\JsonResult.cs" />
     <Compile Include="Http\RedirectResult.cs" />
-    <Compile Include="Http\RouteAttribute.cs" />
     <Compile Include="Http\ViewResult.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Kernel.cs" />

@@ -25,16 +25,6 @@ namespace Hadouken.Http
             return new RedirectResult(url);
         }
 
-        public ActionResult EmbeddedContent(string resourceName)
-        {
-            return EmbeddedContent(resourceName, "text/html");
-        }
-
-        public ActionResult EmbeddedContent(string resourceName, string contentType)
-        {
-            return new EmbeddedContentResult(this.GetType().Assembly, resourceName, contentType);
-        }
-
         public ActionResult FileNotFound()
         {
             return null;
