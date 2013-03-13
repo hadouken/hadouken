@@ -44,13 +44,11 @@
       <UIRef Id="WixUI_InstallDir" />
       <UIRef Id="WixUI_ErrorProgressText" />
 
-      <DialogRef Id="WebUIConfigDlg" />
-      <DialogRef Id="WebUIConfigInvalidDlg" />
-      <DialogRef Id="WindowsServiceConfigDlg" />
-      <DialogRef Id="WindowsServiceConfigInvalidDlg" />
+      <DialogRef Id="ConfigDlg" />
+      <DialogRef Id="ConfigInvalidDlg" />
 
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="WebUIConfigDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WindowsServiceConfigDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ConfigDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ConfigDlg" Order="1">NOT Installed</Publish>
     </UI>
     
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
