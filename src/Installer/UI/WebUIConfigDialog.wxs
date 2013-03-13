@@ -10,23 +10,16 @@
           <Text>{\WixUI_Font_Title}Web UI</Text>
         </Control>
         <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes">
-          <Text>Enter desired Web UI settings.</Text>
+          <Text>Enter the web UI port to use.</Text>
         </Control>
         <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
 
         <!-- Web UI -->
-        <Control Id="WebUIGroup" Type="GroupBox" X="20" Y="60" Width="330" Height="85" Text="Web UI" />
+        <Control Id="WebUIGroup" Type="GroupBox" X="20" Y="60" Width="330" Height="45" Text="Web UI" />
         
         <Control Id="PortLabel" Type="Text" X="30" Y="80" Width="40" Height="15" Text="Port:" />        
         <Control Id="Port" Type="Edit" X="80" Y="78" Width="30" Height="17" Property="HDKN_WEBUI_PORT" Indirect="no" Integer="yes" Text="[HDKN_WEBUI_PORT]" />
-
-        <Control Id="WebUIUserLabel" Type="Text" X="30" Y="100" Width="40" Height="15" Text="Username:" />        
-        <Control Id="WebUIUser" Type="Edit" X="80" Y="98" Width="120" Height="17" Property="HDKN_AUTH_USER" Indirect="no" Text="[HDKN_AUTH_USER]" />
         
-        <Control Id="WebUIPasswordLabel" Type="Text" X="30" Y="120" Width="40" Height="15" Text="Password:" />        
-        <Control Id="WebUIPassword" Type="Edit" X="80" Y="118" Width="120" Height="17" Property="HDKN_AUTH_PASS" Indirect="no" Text="[HDKN_AUTH_PASS]" Password="yes" />
-        <Control Id="WebUIPasswordDescLabel" Type="Text" X="220" Y="120" Width="100" Height="15" Text="(Default: hdkn)" />
-
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
                  
         <!-- back -->
@@ -36,8 +29,8 @@
         
         <!-- next -->
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
-          <Publish Event="NewDialog" Value="WebUIConfigInvalidDlg"><![CDATA[HDKN_WEBUI_PORT = "" OR HDKN_AUTH_USER = "" OR HDKN_AUTH_PASS = ""]]></Publish>
-          <Publish Event="NewDialog" Value="WindowsServiceConfigDlg"><![CDATA[HDKN_WEBUI_PORT <> "" AND HDKN_AUTH_USER <> "" AND HDKN_AUTH_PASS <> ""]]></Publish>
+          <Publish Event="NewDialog" Value="WebUIConfigInvalidDlg"><![CDATA[HDKN_WEBUI_PORT = ""]]></Publish>
+          <Publish Event="NewDialog" Value="WindowsServiceConfigDlg"><![CDATA[HDKN_WEBUI_PORT <> ""]]></Publish>
         </Control>
         
         <!-- cancel -->

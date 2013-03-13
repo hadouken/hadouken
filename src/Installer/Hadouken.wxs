@@ -71,9 +71,6 @@
     <Property Id="HDKN_WEBUI_PORT" Value="8080" />
     <Property Id="HDKN_SRV_ENABLE" Value="1" />
     
-    <Property Id="HDKN_AUTH_USER" Value="hdkn" />
-    <Property Id="HDKN_AUTH_PASS" Value="hdkn" />
-    
     <InstallExecuteSequence>
         <Custom Action="NetSHRuleAdd_Cmd" After="CostFinalize">NOT Installed</Custom>
         <Custom Action="NetSHRuleAdd" After="InstallInitialize">NOT Installed</Custom>
