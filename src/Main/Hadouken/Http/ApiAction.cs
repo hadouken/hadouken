@@ -10,11 +10,6 @@ namespace Hadouken.Http
 {
     public abstract class ApiAction : IApiAction
     {
-        public ActionResult View(string name)
-        {
-            return new ViewResult(name);
-        }
-
         public ActionResult Json(object data)
         {
             return new JsonResult() { Data = data };
