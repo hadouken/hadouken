@@ -1,24 +1,22 @@
 ﻿
 
 namespace :build do
-    msbuild :x86 => :version do |msb|
-        puts "##teamcity[progressMessage 'Compiling x86 code']"
+    def compile(msb, platform)
+        puts "##teamcity[progressMessage 'Compiling #{platform} code']"
         
         msb.properties :configuration => :Release
-        msb.properties :platform      => :x86
+        msb.properties :platform      => platform
         msb.targets :Clean, :Build
         
         msb.solution = "Hadouken.sln"
     end
     
+    msbuild :x86 => :version do |msb|
+        compile msb, :x86
+    end
+    
     msbuild :x64 => :version do |msb|
-        puts "##teamcity[progressMessage 'Compiling x64 code']"
-        
-        msb.properties :configuration => :Release
-        msb.properties :platform      => :x64
-        msb.targets :Clean, :Build
-        
-        msb.solution = "Hadouken.sln"
+        compile msb, :x64
     end
     
     task :all do
