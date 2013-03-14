@@ -46,6 +46,7 @@ namespace :release do
     ensure_version_available(version.to_s)
     
     tag_repo(version.to_s)
+    push_repo(:origin, version.to_s)
   end
   
   def ensure_msi_packages(v)
@@ -110,5 +111,10 @@ namespace :release do
   def tag_repo(v)
     puts "tagging repo with version #{v}"
     `git tag #{v}`
+  end
+  
+  def push_repo(remote, tag)
+    puts "pushing tag #{tag} to remote repository #{remote}"
+    `git push test #{tag}`
   end
 end
