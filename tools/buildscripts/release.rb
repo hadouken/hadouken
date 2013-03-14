@@ -2,19 +2,52 @@ require 'semver'
 require 'httparty'
 
 namespace :release do
-  task :common do    
-    #ensure_clean_repo()
+  task :common do
+    ensure_clean_repo()
+    ensure_correct_branch()
   end
   
   task :patch => :common do
     version = SemVer.find
     version.patch += 1
-    
-    ensure_version_available(version.to_s)
-    
     version.save
     
-    commit_and_tag(version.to_s)
+    `git commit .semver "Bumping version to #{version.to_s}"`
+    
+    Rake::Task["ga"].invoke
+  end
+  
+  task :publish => :common do
+    version = SemVer.find
+    
+    ensure_msi_packages(version.format("%M.%m.%p"))
+    ensure_version_available(version.to_s)
+    
+    tag_repo(version.to_s)
+  end
+  
+  def ensure_msi_packages(v)
+    x86 = "build/msi/hdkn-#{v}.4000-x86.msi"
+    x64 = "build/msi/hdkn-#{v}.4000-x64.msi"
+    
+    puts "checking for #{x86} and #{x64}"
+    
+    unless File.exist?(x86)
+      fail "x86 msi package does not exist"
+    end
+    
+    unless File.exist?(x64)
+      fail "x64 msi package does not exist"
+    end
+  end
+  
+  def ensure_correct_branch()
+    puts "checking current branch (must be master)"
+    branch = `git rev-parse --abbrev-ref HEAD`.strip
+    
+    if branch != "releaseflow" then
+      fail "can only release from master branch (current branch is #{branch})"
+    end
   end
   
   def ensure_clean_repo()
@@ -52,8 +85,8 @@ namespace :release do
     puts "version OK"
   end
   
-  def commit_and_tag(v)
-    `git commit .semver -m "Bumping version to #{v}"`
+  def tag_repo(v)
+    puts "tagging repo with version #{v}"
     `git tag #{v}`
   end
 end
