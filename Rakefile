@@ -26,7 +26,7 @@ task :alpha => [ :clobber, "env:alpha", "env:release", "build:all", "test:all", 
 
 task :beta => [ :clobber, "env:beta", "env:release", :build_x86, :reset, :build_x64 ]
 task :rc => [ :clobber, "env:rc", "env:release", :build_x86, :reset, :build_x64 ]
-task :ga => [ :clobber, "env:ga", "env:release", :build_x86, :reset, :build_x64 ]
+task :ga => [ :clobber, "env:ga", "env:release", "build:all", "test:all", "output:all", "zip:all", "msi:all" ]
 
 desc "Versioning"
 assemblyinfo :version => "env:common" do |asm|    
