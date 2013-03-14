@@ -12,6 +12,7 @@ require 'tools/buildscripts/environment'
 require 'tools/buildscripts/utils'
 require 'tools/buildscripts/msi'
 require 'tools/buildscripts/output'
+require 'tools/buildscripts/release'
 require 'tools/buildscripts/test'
 require 'tools/buildscripts/zip'
 
