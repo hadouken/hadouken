@@ -12,7 +12,7 @@ namespace :release do
     version.patch += 1
     version.save
     
-    `git commit .semver "Bumping version to #{version.to_s}"`
+    `git commit .semver -m "Bumping version to #{version.to_s}"`
     
     Rake::Task["ga"].invoke
   end
