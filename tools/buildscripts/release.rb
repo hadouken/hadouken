@@ -13,6 +13,8 @@ namespace :release do
     ensure_version_available(version.to_s)
     
     version.save
+    
+    commit_and_tag(version.to_s)
   end
   
   def ensure_clean_repo()
@@ -48,5 +50,10 @@ namespace :release do
     end
     
     puts "version OK"
+  end
+  
+  def commit_and_tag(v)
+    `git commit .semver -m "Bumping version to #{v}"`
+    `git tag #{v}`
   end
 end
