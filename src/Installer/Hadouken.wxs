@@ -10,7 +10,7 @@
     <?define IsWin64     = "no"?>
 <?endif?>
 
-<Wix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product
     Id="*"
     Name="Hadouken"
@@ -20,7 +20,13 @@
     Language="1033"
     Codepage="1252">
 
-    <Package Id="*" Description="Hadouken $(var.BuildVersion) ($(var.Platform)) Installer" InstallerVersion="300" Languages="1033" Compressed="yes" SummaryCodepage="1252" Platform="$(var.Platform)" />
+    <Package Id="*"
+             Description="Hadouken $(var.BuildVersion) ($(var.Platform)) Installer"
+             InstallerVersion="300"
+             Languages="1033"
+             Compressed="yes"
+             SummaryCodepage="1252"
+             Platform="$(var.Platform)" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
