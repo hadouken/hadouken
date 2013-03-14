@@ -21,3 +21,6 @@ src/Shared/CommonAssemblyInfo.cs
 *.wxobj
 *.wixobj
 *.wixpdb
+
+#Config
+config/config.yml
