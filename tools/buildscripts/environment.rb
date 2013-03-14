@@ -1,4 +1,4 @@
-require 'semver'
+﻿require 'semver'
 
 namespace :env do
     # version setup

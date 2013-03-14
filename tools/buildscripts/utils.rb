@@ -1,4 +1,4 @@
-require 'fileutils'
+﻿require 'fileutils'
 
 def commit_data
   begin
