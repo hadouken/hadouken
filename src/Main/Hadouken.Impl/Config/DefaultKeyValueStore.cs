@@ -95,6 +95,9 @@ namespace Hadouken.Impl.Config
         {
             var setting = _data.Single<Setting>(s => s.Key == key);
 
+            if (setting == null)
+                return null;
+
             if (!setting.Permissions.HasFlag(Permissions.Read) && setting.Permissions.HasFlag(Permissions.Write))
                 throw new UnauthorizedAccessException("Key " + key + " is write-only.");
 
