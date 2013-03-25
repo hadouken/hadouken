@@ -22,25 +22,11 @@
         <!-- // Web UI -->
 
         <!-- Service -->
-        <Control Id="WinSrvGroup" Type="GroupBox" X="20" Y="125" Width="330" Height="85" Text="Windows Service" />
+        <Control Id="WinSrvGroup" Type="GroupBox" X="20" Y="125" Width="330" Height="45" Text="Windows Service" />
 
         <!-- Service Enable -->
         <Control Id="WinSrvEnableLabel" Type="Text" X="30" Y="145" Width="40" Height="15" Text="Install:" />
         <Control Id="WinSrvEnable" Type="CheckBox" X="80" Y="144" Width="20" Height="15" Indirect="no" Property="HDKN_SRV_ENABLE" CheckBoxValue="1" />
-
-        <!-- Service Username -->
-        <Control Id="WinSrvUserLabel" Type="Text" X="30" Y="165" Width="40" Height="15" Text="Account:" />
-        <Control Id="WinSrvUser" Type="Edit" X="80" Y="163" Width="120" Height="17" Property="HDKN_SRV_USER" Indirect="no" Text="[HDKN_SRV_USER]">
-          <Condition Action="enable">HDKN_SRV_ENABLE = 1</Condition>
-          <Condition Action="disable"><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
-        </Control>
-
-        <!-- Service Password -->
-        <Control Id="WinSrvPassLabel" Type="Text" X="30" Y="185" Width="40" Height="15" Text="Password:" />
-        <Control Id="WinSrvPass" Type="Edit" X="80" Y="183" Width="120" Height="17" Property="HDKN_SRV_PASS" Indirect="no" Text="[HDKN_SRV_PASS]" Password="yes">
-          <Condition Action="enable">HDKN_SRV_ENABLE = 1</Condition>
-          <Condition Action="disable"><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
-        </Control>
         
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
                  
@@ -51,8 +37,8 @@
         
         <!-- next -->
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
-          <Publish Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[HDKN_WEBUI_PORT <> "" AND (HDKN_SRV_ENABLE <> 1 OR (HDKN_SRV_USER <> "" AND HDKN_SRV_PASS <> ""))]]></Publish>
-          <Publish Event="SpawnDialog" Value="ConfigInvalidDlg"><![CDATA[HDKN_WEBUI_PORT = "" OR (HDKN_SRV_ENABLE = 1 AND (HDKN_SRV_USER = "" OR HDKN_SRV_PASS = ""))]]></Publish>
+          <Publish Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[HDKN_WEBUI_PORT <> ""]]></Publish>
+          <Publish Event="SpawnDialog" Value="ConfigInvalidDlg"><![CDATA[HDKN_WEBUI_PORT = ""]]></Publish>
         </Control>
         
         <!-- cancel -->

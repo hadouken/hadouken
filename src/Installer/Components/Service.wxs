@@ -15,21 +15,13 @@
         <Condition><![CDATA[HDKN_SRV_ENABLE = 1]]></Condition>
         <File Id="HadoukenServiceExecutable" Name="Hadouken.Hosts.WindowsService.exe" />
 
-        <util:User Id="UpdateUserLogonAsService"
-                    CreateUser="no"
-                    LogonAsService="yes"
-                    Name="[HDKN_SRV_USER]"
-                    UpdateIfExists="yes" />
-
         <ServiceInstall Id="ServiceInstaller"
                     Type="ownProcess"
                     Vital="yes"
                     Name="Hadouken"
-                    DisplayName="Hadouken BitTorrent client"
+                    DisplayName="Hadouken"
                     Description="The service for Hadouken BitTorrent client"
                     Start="auto"
-                    Account="[HDKN_SRV_USER]"
-                    Password="[HDKN_SRV_PASS]"
                     Interactive="no"
                     ErrorControl="normal" />
 
