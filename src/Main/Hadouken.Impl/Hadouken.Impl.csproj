@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\DefaultKeyValueStore.cs" />
+    <Compile Include="Config\DefaultRegistryReader.cs" />
     <Compile Include="Data\DefaultMigratorRunner.cs" />
     <Compile Include="Data\FluentNhibernateDataRepository.cs" />
     <Compile Include="Data\Migrations\Alter\AlterPluginInfoTable_001.cs" />

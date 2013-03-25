@@ -30,8 +30,9 @@ namespace Hadouken.UnitTests.Http
         {
             var kvs = new Mock<IKeyValueStore>();
             var fs = new Mock<IFileSystem>();
+            var rr = new Mock<IRegistryReader>();
 
-            var server = new DefaultHttpServer(kvs.Object, fs.Object);
+            var server = new DefaultHttpServer(kvs.Object, rr.Object, fs.Object);
             server.Start();
             server.Stop();
         }

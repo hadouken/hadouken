@@ -29,25 +29,19 @@ namespace Hadouken.Impl.Config
 
         public object Get(string key)
         {
-            return InternalGet(key, null, false, StorageLocation.Database);
+            return InternalGet(key, null, false);
         }
 
         public object Get(string key, object defaultValue)
         {
-            return InternalGet(key, defaultValue, true, StorageLocation.Database);
+            return InternalGet(key, defaultValue, true);
         }
 
-        public object Get(string key, object defaultValue, StorageLocation storageLocation)
-        {
-            return InternalGet(key, defaultValue, true, storageLocation);
-        }
-
-        private object InternalGet(string key, object defaultValue, bool userProvidedDefaultValue,
-                                   StorageLocation storageLocation)
+        private object InternalGet(string key, object defaultValue, bool userProvidedDefaultValue)
         {
             object v;
 
-            if (TryGet(key, storageLocation, out v))
+            if (TryGet(key, out v))
             {
                 return v;
             }
@@ -60,23 +54,7 @@ namespace Hadouken.Impl.Config
 
         public bool TryGet(string key, out object value)
         {
-            return TryGet(key, StorageLocation.Database, out value);
-        }
-
-        public bool TryGet(string key, StorageLocation storageLocation, out object value)
-        {
-            object internalValue = null;
-
-            switch (storageLocation)
-            {
-                case StorageLocation.Database:
-                    internalValue = GetFromDatabase(key);
-                    break;
-
-                case StorageLocation.Registry:
-                    internalValue = GetFromRegistry(key);
-                    break;
-            }
+            object internalValue = GetFromDatabase(key);;
 
             if (internalValue != null)
             {
@@ -123,37 +101,21 @@ namespace Hadouken.Impl.Config
             return setting;
         }
 
-        private object GetFromRegistry(string key)
-        {
-            var regKey = Registry.LocalMachine.OpenSubKey("Software\\Hadouken");
-
-            if(regKey == null)
-                throw new Exception("Could not open registry key");
-
-            return regKey.GetValue(key);
-        }
-
         public T Get<T>(string key)
         {
-            return InternalGet<T>(key, default(T), false, StorageLocation.Database);
+            return InternalGet<T>(key, default(T), false);
         }
 
         public T Get<T>(string key, T defaultValue)
         {
-            return InternalGet<T>(key, defaultValue, true, StorageLocation.Database);
+            return InternalGet<T>(key, defaultValue, true);
         }
 
-        public T Get<T>(string key, T defaultValue, StorageLocation storageLocation)
-        {
-            return InternalGet<T>(key, defaultValue, true, storageLocation);
-        }
-
-        public T InternalGet<T>(string key, T defaultValue, bool userProvidedDefaultValue,
-                                StorageLocation storageLocation)
+        public T InternalGet<T>(string key, T defaultValue, bool userProvidedDefaultValue)
         {
             T v;
 
-            if (TryGet<T>(key, storageLocation, out v))
+            if (TryGet<T>(key, out v))
             {
                 return v;
             }
@@ -166,26 +128,8 @@ namespace Hadouken.Impl.Config
 
         public bool TryGet<T>(string key, out T value)
         {
-            return TryGet<T>(key, StorageLocation.Database, out value);
-        }
-
-        public bool TryGet<T>(string key, StorageLocation storageLocation, out T value)
-        {
-            T internalValue = default(T);
-            bool hasValue = false;
-
-            switch (storageLocation)
-            {
-                case StorageLocation.Database:
-                    internalValue = GetFromDatabase<T>(key);
-                    hasValue = true;
-                    break;
-
-                case StorageLocation.Registry:
-                    internalValue = (T)GetFromRegistry(key);
-                    hasValue = true;
-                    break;
-            }
+            T internalValue = GetFromDatabase<T>(key);
+            bool hasValue = !EqualityComparer<T>.Default.Equals(internalValue, default(T));
 
             value = internalValue;
 

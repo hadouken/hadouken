@@ -16,10 +16,14 @@ namespace Hadouken.Http.HttpServer
 {
     public class DefaultHttpServer : IHttpServer
     {
+        private static readonly int DefaultPort = 8081;
+        private static readonly string DefaultBinding = "http://localhost:{port}/";
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
+        private readonly IRegistryReader _registryReader;
 
         private HttpListener _listener;
         private string _webUIPath;
@@ -27,9 +31,10 @@ namespace Hadouken.Http.HttpServer
         private static readonly string TokenCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private static readonly int TokenLength = 40;
         
-        public DefaultHttpServer(IKeyValueStore keyValueStore, IFileSystem fileSystem)
+        public DefaultHttpServer(IKeyValueStore keyValueStore, IRegistryReader registryReader, IFileSystem fileSystem)
         {
             _keyValueStore = keyValueStore;
+            _registryReader = registryReader;
             _fileSystem = fileSystem;
         }
 
@@ -81,26 +86,15 @@ namespace Hadouken.Http.HttpServer
 
         private string GetBinding()
         {
-            var binding = "http://+:{port}/";
-            var port = -1;
+            var binding = _registryReader.ReadString("webui.binding", DefaultBinding);
+            var port = _registryReader.ReadInt("webui.port", DefaultPort);
 
-            if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Url"))
-            {
-                binding = HdknConfig.ConfigManager["WebUI.Url"];
-            }
+            // Allow overriding from application configuration file.
+            if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Binding"))
+                binding = HdknConfig.ConfigManager["WebUI.Binding"];
 
             if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Port"))
-            {
                 port = Convert.ToInt32(HdknConfig.ConfigManager["WebUI.Port"]);
-            }
-            else
-            {
-                port = _keyValueStore.Get("webui.port", -1, StorageLocation.Registry);
-                
-            }
-
-            if (port == -1)
-                throw new InvalidDataException("Could not find a port for the web ui.");
 
             return binding.Replace("{port}", port.ToString());;
         }
