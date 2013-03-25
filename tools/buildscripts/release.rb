@@ -11,38 +11,6 @@ namespace :release do
     ensure_correct_branch()
   end
   
-  task :major => :common do
-    version = SemVer.find
-    version.major += 1
-    version.minor = version.patch = 0
-    version.save
-    
-    `git commit .semver -m "Release #{version.to_s}"`
-    
-    Rake::Task["ga"].invoke
-  end
-  
-  task :minor => :common do
-    version = SemVer.find
-    version.minor += 1
-    version.patch = 0
-    version.save
-    
-    `git commit .semver -m "Release #{version.to_s}"`
-    
-    Rake::Task["ga"].invoke
-  end
-  
-  task :patch => :common do
-    version = SemVer.find
-    version.patch += 1
-    version.save
-    
-    `git commit .semver -m "Release #{version.to_s}"`
-    
-    Rake::Task["ga"].invoke
-  end
-  
   task :publish => :common do
     version = SemVer.find
     
