@@ -17,8 +17,6 @@ namespace :release do
     version.minor = version.patch = 0
     version.save
     
-    `git commit .semver -m "Release #{version.to_s}"`
-    
     Rake::Task["ga"].invoke
   end
   
@@ -28,8 +26,6 @@ namespace :release do
     version.patch = 0
     version.save
     
-    `git commit .semver -m "Release #{version.to_s}"`
-    
     Rake::Task["ga"].invoke
   end
   
@@ -37,8 +33,6 @@ namespace :release do
     version = SemVer.find
     version.patch += 1
     version.save
-    
-    `git commit .semver -m "Release #{version.to_s}"`
     
     Rake::Task["ga"].invoke
   end
@@ -52,6 +46,7 @@ namespace :release do
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x86.msi", version.format("%M.%m"))
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x64.msi", version.format("%M.%m"))
     
+    commit_repo(version.to_s)
     tag_repo(version.to_s)
     push_repo(CFG["git"]["remote"], version.to_s)
   end
@@ -102,15 +97,15 @@ namespace :release do
       lv = version(v)
       
       if(tv[0] > lv[0])
-        fail "newer version already released"
+        fail "newer version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
       if(tv[1] > lv[1])
-        fail "newer version already released"
+        fail "newer version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
       if(tv[2] >= lv[2])
-        fail "newer version already released"
+        fail "newer version already released. github tag: #{tag["name"]}, version: #{v}"
       end
     end
     
@@ -140,6 +135,10 @@ namespace :release do
       puts "uploading file"
       sftp.upload!(localFile, File.join(s["path"], v, File.basename(localFile)))
     end
+  end
+  
+  def commit_repo(v)
+    `git commit .semver -m "Release #{v}"`
   end
   
   def tag_repo(v)
