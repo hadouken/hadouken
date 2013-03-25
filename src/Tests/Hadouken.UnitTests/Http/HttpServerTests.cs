@@ -31,7 +31,7 @@ namespace Hadouken.UnitTests.Http
             var kvs = new Mock<IKeyValueStore>();
             var fs = new Mock<IFileSystem>();
 
-            var server = new DefaultHttpServer(kvs.Object, fs.Object, new List<ApiAction>());
+            var server = new DefaultHttpServer(kvs.Object, fs.Object);
             server.Start();
             server.Stop();
         }

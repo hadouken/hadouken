@@ -28,7 +28,11 @@ namespace HdknPlugins.AutoAdd
 
         private ITimer _timer;
 
-        public AutoAddPlugin(IKeyValueStore keyValueStore, IDataRepository dataRepository, IBitTorrentEngine bitTorrentEngine, IFileSystem fileSystem, ITimerFactory timerFactory)
+        public AutoAddPlugin(IKeyValueStore keyValueStore,
+                             IDataRepository dataRepository,
+                             IBitTorrentEngine bitTorrentEngine,
+                             IFileSystem fileSystem,
+                             ITimerFactory timerFactory)
         {
             _keyValueStore = keyValueStore;
             _dataRepository = dataRepository;
@@ -39,7 +43,7 @@ namespace HdknPlugins.AutoAdd
 
         public void Load()
         {
-            var interval = _keyValueStore.Get("plugins.autoadd.updateInterval", 3000);
+            int interval = _keyValueStore.Get("plugins.autoadd.updateInterval", 3000);
 
             Logger.Info("Starting timer with {0}ms update interval", interval);
 

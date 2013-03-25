@@ -8,8 +8,8 @@ namespace Hadouken.Http.Api
     [ApiAction("listdirs")]
     public class ListDirectories : ApiAction
     {
-        private IKeyValueStore _keyValueStore;
-        private IFileSystem _fileSystem;
+        private readonly IKeyValueStore _keyValueStore;
+        private readonly IFileSystem _fileSystem;
 
         public ListDirectories(IKeyValueStore keyValueStore, IFileSystem fileSystem)
         {
@@ -19,12 +19,19 @@ namespace Hadouken.Http.Api
 
         public override ActionResult Execute()
         {
-            var dirs = (from dir in _keyValueStore.Get("paths.favorites", new List<string>())
-                             select new
-                                        {
-                                            path = dir,
-                                            available = "" + (_fileSystem.RemainingDiskSpace(dir) / 1024 / 1024)
-                                        }).ToList();
+            IList<string> directories;
+
+            if(!_keyValueStore.TryGet("paths.favorites", out directories))
+            {
+                directories = new List<string>();
+            }
+
+            var dirs = (from dir in directories
+                        select new
+                            {
+                                path = dir,
+                                available = "" + (_fileSystem.RemainingDiskSpace(dir)/1024/1024)
+                            }).ToList();
 
             var defaultSavePath = _keyValueStore.Get<string>("paths.defaultSavePath");
 

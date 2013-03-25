@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionCacheItem.cs" />
     <Compile Include="DefaultHttpServer.cs" />
     <Compile Include="FormData.cs" />
     <Compile Include="HttpContext.cs" />

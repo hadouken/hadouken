@@ -20,34 +20,29 @@ namespace Hadouken.Http.HttpServer
 
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
-        private IEnumerable<IApiAction> _actions;
 
-        private readonly HttpListener _listener;
+        private HttpListener _listener;
         private string _webUIPath;
 
         private static readonly string TokenCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private static readonly int TokenLength = 40;
         
-        public DefaultHttpServer(IKeyValueStore kvs, IFileSystem fs, IEnumerable<IApiAction> actions)
+        public DefaultHttpServer(IKeyValueStore keyValueStore, IFileSystem fileSystem)
         {
-            _fileSystem = fs;
-            _keyValueStore = kvs;
-            _actions = actions;
+            _keyValueStore = keyValueStore;
+            _fileSystem = fileSystem;
+        }
 
-            var binding = HdknConfig.ConfigManager["WebUI.Url"];
-            var port = HdknConfig.ConfigManager["WebUI.Port"];
-
-            binding = binding.Replace("{port}", port);
+        public void Start()
+        {
+            var binding = GetBinding();
 
             _listener = new HttpListener();
             _listener.Prefixes.Add(binding);
             _listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
 
             UnzipWebUI();
-        }
 
-        public void Start()
-        {
             try
             {
                 _listener.Start();
@@ -59,16 +54,16 @@ namespace Hadouken.Http.HttpServer
 
             ReceiveLoop();
 
-            Logger.Info("HTTP server up and running");
+            Logger.Info("HTTP server up and running on address " + ListenUri);
         }
 
         public void Stop()
         {
-            if (_listener.IsListening)
-            {
-                _listener.Stop();
-                _listener.Close();
-            }
+            if (_listener == null) return;
+
+            _listener.Stop();
+            _listener.Close();
+            _listener = null;
         }
 
         public Uri ListenUri
@@ -82,6 +77,32 @@ namespace Hadouken.Http.HttpServer
 
                 return null;
             }
+        }
+
+        private string GetBinding()
+        {
+            var binding = "http://+:{port}/";
+            var port = -1;
+
+            if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Url"))
+            {
+                binding = HdknConfig.ConfigManager["WebUI.Url"];
+            }
+
+            if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Port"))
+            {
+                port = Convert.ToInt32(HdknConfig.ConfigManager["WebUI.Port"]);
+            }
+            else
+            {
+                port = _keyValueStore.Get("webui.port", -1, StorageLocation.Registry);
+                
+            }
+
+            if (port == -1)
+                throw new InvalidDataException("Could not find a port for the web ui.");
+
+            return binding.Replace("{port}", port.ToString());;
         }
 
         private void ReceiveLoop()
