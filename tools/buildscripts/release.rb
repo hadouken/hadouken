@@ -148,7 +148,7 @@ namespace :release do
   
   def push_repo(remote, tag)
     puts "pushing tag #{tag} to remote repository #{remote}"
-    `git push #{remote}`
+    `git push #{remote} #{CFG["git"]["release_branch"]}`
     `git push #{remote} #{tag}`
   end
 end
