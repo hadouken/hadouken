@@ -97,15 +97,15 @@ namespace :release do
       lv = version(v)
       
       if(tv[0] > lv[0])
-        fail "newer version already released. github tag: #{tag["name"]}, version: #{v}"
+        fail "newer major version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
-      if(tv[1] > lv[1])
-        fail "newer version already released. github tag: #{tag["name"]}, version: #{v}"
+      if(tv[0] > lv[0] && tv[1] > lv[1])
+        fail "newer minor version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
-      if(tv[2] >= lv[2])
-        fail "newer version already released. github tag: #{tag["name"]}, version: #{v}"
+      if(tv[0] > lv[0] && tv[1] > lv[1] && tv[2] >= lv[2])
+        fail "newer patch version already released. github tag: #{tag["name"]}, version: #{v}"
       end
     end
     
