@@ -22,7 +22,6 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void Load()
         {
-            // For each plugin in Paths.Plugin, call Load(path)
             var pluginPath = HdknConfig.GetPath("Paths.Plugins");
 
             foreach (var info in _fileSystem.GetFileSystemInfos(pluginPath))
@@ -40,19 +39,32 @@ namespace Hadouken.Plugins.PluginEngine
             if (loader == null)
                 return;
 
-            // Using the loader, get all assemblies as a List<byte[]> (assemblies).
+            var assemblies = loader.Load(path);
 
-            // Create a new instance of SandboxedPlugin (sandbox) which should act as a proxy to the real plugin
+            var domain = AppDomain.CreateDomain(path);
+            var sandbox = (SandboxedPlugin)domain.CreateInstanceFromAndUnwrap(this.GetType().Assembly.Location,
+                                                             typeof (SandboxedPlugin).FullName);
 
-            // Create a new instance of the SandboxedPluginManager (sandboxManager) which just makes WCF-calls to
-            // the SandboxedPlugin to get information
+            foreach (var assembly in (assemblies as byte[][] ?? assemblies.ToArray()))
+            {
+                domain.Load(assembly);
+            }
 
-            // Add the sandboxManager to the dictionary of IPluginManagers with the plugins name as key
+            var manager = new SandboxedPluginManager(sandbox);
+            manager.Load();
+
+            _pluginManagers.Add(manager.Name, manager);
         }
 
         public void UnloadAll()
         {
-            throw new NotImplementedException();
+            var managers = _pluginManagers.Values;
+
+            foreach (var manager in managers)
+            {
+                manager.Unload();
+                _pluginManagers.Remove(manager.Name);
+            }
         }
 
         public IDictionary<string, IPluginManager> Managers
