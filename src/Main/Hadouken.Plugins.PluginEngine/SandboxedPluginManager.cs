@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Castle.DynamicProxy;
+using Hadouken.DI;
+
 namespace Hadouken.Plugins.PluginEngine
 {
     public class SandboxedPluginManager : IPluginManager
@@ -16,7 +19,7 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void Load()
         {
-            _plugin.Load(Kernel.Resolver);
+            _plugin.Load(new ProxyResolver(Kernel.Resolver));
         }
 
         public void Unload()

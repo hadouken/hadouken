@@ -14,7 +14,7 @@ namespace Hadouken.Plugins.PluginEngine
         private string _pluginName;
         private Version _pluginVersion;
 
-        public void Load(IDependencyResolver dependencyResolver)
+        public void Load(ProxyResolver dependencyResolver)
         {
             if (_plugin != null)
                 return;
@@ -28,8 +28,8 @@ namespace Hadouken.Plugins.PluginEngine
                         select new
                             {
                                 Type = t,
-                                Name = a.Name,
-                                Version = a.Version
+                                a.Name,
+                                a.Version
                             }).FirstOrDefault();
 
             if (info == null)
