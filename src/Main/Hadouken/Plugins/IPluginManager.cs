@@ -10,12 +10,9 @@ namespace Hadouken.Plugins
         void Load();
         void Unload();
 
-        void Install();
-        void Uninstall();
+        byte[] GetResource(string name);
 
         string Name { get; }
         Version Version { get; }
-        string ResourceBase { get; }
-        Type PluginType { get; }
     }
 }

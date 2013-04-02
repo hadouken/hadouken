@@ -28,28 +28,12 @@ namespace Hadouken.Http.Api
                 return FileNotFound();
 
             var manager = _pluginEngine.Managers[plugin];
+            var resource = manager.GetResource(file);
 
-            if (HasResource(manager.PluginType.Assembly, manager.ResourceBase + "." + file))
-                return GetResource(manager.PluginType.Assembly, manager.ResourceBase + "." + file);
+            if (resource != null && resource.Length > 0)
+                return new ContentResult() {Content = resource, ContentType = GetContentType(Path.GetExtension(file))};
 
             return FileNotFound();
-        }
-
-        private ActionResult GetResource(Assembly assembly, string resourceName)
-        {
-            using(var ms = new MemoryStream())
-            using(var resourceStream = assembly.GetManifestResourceStream(resourceName))
-            {
-                if (resourceStream != null)
-                {
-                    resourceStream.CopyTo(ms);
-                    var data = ms.ToArray();
-
-                    return new ContentResult() { Content = data, ContentType = GetContentType(Path.GetExtension(resourceName)) };
-                }
-            }
-
-            return null;
         }
 
         private string GetContentType(string extension)
@@ -73,11 +57,6 @@ namespace Hadouken.Http.Api
             }
 
             return "text/html";
-        }
-
-        private bool HasResource(Assembly assembly, string resourceName)
-        {
-            return assembly.GetManifestResourceNames().Any(mrn => mrn == resourceName);
         }
     }
 }
