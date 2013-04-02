@@ -105,8 +105,6 @@
     <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
     <Compile Include="Messaging\PropertiesInterceptor.cs" />
-    <Compile Include="Plugins\DefaultPluginEngine.cs" />
-    <Compile Include="Plugins\DefaultPluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
