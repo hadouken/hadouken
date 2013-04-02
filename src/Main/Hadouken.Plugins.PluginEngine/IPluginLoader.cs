@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 
-namespace Hadouken.Plugins
+namespace Hadouken.Plugins.PluginEngine
 {
     public interface IPluginLoader : IComponent
     {
         bool CanLoad(string path);
-        IEnumerable<Type> Load(string path);
+        IEnumerable<byte[]> Load(string path);
     }
 }

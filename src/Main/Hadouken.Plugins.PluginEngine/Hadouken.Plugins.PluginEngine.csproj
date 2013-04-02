@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\lib\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,6 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefaultPluginEngine.cs" />
+    <Compile Include="IPluginLoader.cs" />
+    <Compile Include="Loaders\AssemblyPluginLoader.cs" />
+    <Compile Include="Loaders\DirectoryPluginLoader.cs" />
+    <Compile Include="Loaders\ZipPluginLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +54,9 @@
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
       <Name>Hadouken</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

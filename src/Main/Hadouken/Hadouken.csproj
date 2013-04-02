@@ -125,7 +125,6 @@
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
-    <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\PluginAttribute.cs" />
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">

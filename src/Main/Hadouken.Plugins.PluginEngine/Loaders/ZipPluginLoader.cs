@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Hadouken.Plugins;
 using Hadouken.IO;
 using System.Reflection;
-using Ionic.Zip;
 using System.IO;
 using Hadouken.Reflection;
+using Ionic.Zip;
 
-namespace Hadouken.Impl.Plugins
+namespace Hadouken.Plugins.PluginEngine.Loaders
 {
     public class ZipPluginLoader : IPluginLoader
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public ZipPluginLoader(IFileSystem fileSystem)
         {
@@ -25,35 +23,29 @@ namespace Hadouken.Impl.Plugins
             if (_fileSystem.IsDirectory(path))
                 return false;
 
-            // TODO: check file header as well
             byte[] data = _fileSystem.ReadAllBytes(path);
-
             int header = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
 
-            return (header == 0x04034b50 && !_fileSystem.IsDirectory(path) && path.EndsWith(".zip"));
+            return (header == 0x04034b50 && path.EndsWith(".zip"));
         }
 
-        public IEnumerable<Type> Load(string path)
+        public IEnumerable<byte[]> Load(string path)
         {
-            List<Assembly> assemblies = new List<Assembly>();
+            var data = new List<byte[]>();
 
             using (ZipFile file = ZipFile.Read(_fileSystem.OpenRead(path)))
             {
-                foreach (ZipEntry entry in file.Entries.Where(e => e.FileName.EndsWith(".dll")))
+                foreach(var entry in file.Entries.Where(e => e.FileName.EndsWith(".dll")))
                 {
                     using (var ms = new MemoryStream())
                     {
                         entry.Extract(ms);
-                        assemblies.Add(AppDomain.CurrentDomain.Load(ms.ToArray()));
+                        data.Add(ms.ToArray());
                     }
                 }
             }
 
-            return from asm in assemblies
-                   from type in asm.GetTypes()
-                   where type.IsClass && !type.IsAbstract && type.HasAttribute<PluginAttribute>()
-                   where typeof(IPlugin).IsAssignableFrom(type)
-                   select type;
+            return data;
         }
     }
 }

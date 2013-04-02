@@ -57,9 +57,6 @@
     <Reference Include="Iesi.Collections">
       <HintPath>..\..\..\lib\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\..\lib\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
-    </Reference>
     <Reference Include="Migrator">
       <HintPath>..\..\..\lib\MigratorDotNet.0.9.0.33276\lib\NET40\Migrator.dll</HintPath>
     </Reference>
@@ -108,11 +105,8 @@
     <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
     <Compile Include="Messaging\PropertiesInterceptor.cs" />
-    <Compile Include="Plugins\AssemblyPluginLoader.cs" />
     <Compile Include="Plugins\DefaultPluginEngine.cs" />
     <Compile Include="Plugins\DefaultPluginManager.cs" />
-    <Compile Include="Plugins\DirectoryPluginLoader.cs" />
-    <Compile Include="Plugins\ZipPluginLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
