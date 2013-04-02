@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Hadouken.Reflection;
+using Hadouken.DI;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -13,7 +14,7 @@ namespace Hadouken.Plugins.PluginEngine
         private string _pluginName;
         private Version _pluginVersion;
 
-        public void Load()
+        public void Load(IDependencyResolver dependencyResolver)
         {
             if (_plugin != null)
                 return;
@@ -38,8 +39,8 @@ namespace Hadouken.Plugins.PluginEngine
             _pluginVersion = info.Version;
 
             var type = info.Type;
-            var constructor = type.GetConstructors(BindingFlags.DeclaredOnly).First();
-            var parameters = constructor.GetParameters().Select(cparam => Kernel.Resolver.Get(cparam.ParameterType)).ToArray();
+            var constructor = type.GetConstructors().First();
+            var parameters = constructor.GetParameters().Select(cparam => dependencyResolver.Get(cparam.ParameterType)).ToArray();
 
             _plugin = (IPlugin)constructor.Invoke(parameters);
             _plugin.Load();
@@ -63,6 +64,14 @@ namespace Hadouken.Plugins.PluginEngine
         public Version Version
         {
             get { return _pluginVersion; }
+        }
+
+        internal void LoadAssemblies(IEnumerable<byte[]> assemblies)
+        {
+            foreach (var assembly in (assemblies as byte[][] ?? assemblies.ToArray()))
+            {
+                AppDomain.CurrentDomain.Load(assembly);
+            }
         }
     }
 }

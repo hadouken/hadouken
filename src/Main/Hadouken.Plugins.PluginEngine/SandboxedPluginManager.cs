@@ -16,7 +16,7 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void Load()
         {
-            _plugin.Load();
+            _plugin.Load(Kernel.Resolver);
         }
 
         public void Unload()

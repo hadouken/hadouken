@@ -102,6 +102,10 @@
       <Project>{28B6D10B-1CA2-43A9-B247-FAA7DD2155FA}</Project>
       <Name>Hadouken.Impl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Plugins.PluginEngine\Hadouken.Plugins.PluginEngine.csproj">
+      <Project>{4c688a37-172c-41a1-8664-9661917fa0f2}</Project>
+      <Name>Hadouken.Plugins.PluginEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken\Hadouken.csproj">
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
       <Name>Hadouken</Name>

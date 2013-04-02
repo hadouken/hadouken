@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using Hadouken.IO;
 using Hadouken.Configuration;
+using NLog;
 
 namespace Hadouken.Plugins.PluginEngine
 {
     public class DefaultPluginEngine : IPluginEngine
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly IDictionary<string, IPluginManager> _pluginManagers = new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
 
         private readonly IFileSystem _fileSystem;
@@ -39,16 +42,15 @@ namespace Hadouken.Plugins.PluginEngine
             if (loader == null)
                 return;
 
+            Logger.Debug("Loading plugin from path '{0}' using loader '{1}'", path, loader.GetType().FullName);
+
             var assemblies = loader.Load(path);
 
             var domain = AppDomain.CreateDomain(path);
             var sandbox = (SandboxedPlugin)domain.CreateInstanceFromAndUnwrap(this.GetType().Assembly.Location,
                                                              typeof (SandboxedPlugin).FullName);
 
-            foreach (var assembly in (assemblies as byte[][] ?? assemblies.ToArray()))
-            {
-                domain.Load(assembly);
-            }
+            sandbox.LoadAssemblies(assemblies);
 
             var manager = new SandboxedPluginManager(sandbox);
             manager.Load();
