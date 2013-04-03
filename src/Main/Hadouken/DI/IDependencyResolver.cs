@@ -7,6 +7,8 @@ namespace Hadouken.DI
 {
     public interface IDependencyResolver
     {
+        bool Has(string typeName);
+
         object Get(Type t);
         object Get(Type t, string name);
 
