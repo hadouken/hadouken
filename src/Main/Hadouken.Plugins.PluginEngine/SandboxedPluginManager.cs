@@ -19,7 +19,7 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void Load()
         {
-            _plugin.Load(new ProxyResolver(Kernel.Resolver));
+            _plugin.Load(new ObjectBuilder(Kernel.Resolver));
         }
 
         public void Unload()

@@ -14,7 +14,7 @@ namespace Hadouken.Plugins.PluginEngine
         private string _pluginName;
         private Version _pluginVersion;
 
-        public void Load(ProxyResolver dependencyResolver)
+        public void Load(ObjectBuilder builder)
         {
             if (_plugin != null)
                 return;
@@ -40,7 +40,7 @@ namespace Hadouken.Plugins.PluginEngine
 
             var type = info.Type;
             var constructor = type.GetConstructors().First();
-            var parameters = constructor.GetParameters().Select(cparam => dependencyResolver.Get(cparam.ParameterType)).ToArray();
+            var parameters = constructor.GetParameters().Select(cparam => builder.Get(cparam.ParameterType)).ToArray();
 
             _plugin = (IPlugin)constructor.Invoke(parameters);
             _plugin.Load();
