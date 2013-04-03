@@ -17,6 +17,11 @@ namespace Hadouken.Plugins.PluginEngine
             _resolver = resolver;
         }
 
+        public bool Has(string typeName)
+        {
+            return _resolver.Has(typeName);
+        }
+
         public object Get(Type type)
         {
             var o = _resolver.Get(type);
