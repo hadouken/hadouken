@@ -43,6 +43,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpContext.cs" />
+    <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageBusExtensions.cs" />

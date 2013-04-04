@@ -6,11 +6,11 @@ using System.Net;
 
 namespace Hadouken.Common.Http
 {
-    public abstract class HttpServer
+    public abstract class HttpServer : IHttpServer
     {
         private Action<IHttpContext> _requestCallback;
 
-        public abstract void Start(Uri binding, NetworkCredential credentials);
+        public abstract void Start(Uri binding, NetworkCredential credential);
         public abstract void Stop();
 
         public void SetRequestCallback(Action<IHttpContext> requestCallback)
