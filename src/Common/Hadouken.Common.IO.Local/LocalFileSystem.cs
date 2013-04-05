@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Hadouken.Common.IO.Local
 {
+    [Component]
     public class LocalFileSystem : IFileSystem
     {
         public bool IsDirectory(string path)

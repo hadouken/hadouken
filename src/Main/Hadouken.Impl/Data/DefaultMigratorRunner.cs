@@ -11,9 +11,11 @@ using System.IO;
 using Hadouken.Configuration;
 using Migrator.Framework;
 using NLog;
+using Hadouken.Common;
 
 namespace Hadouken.Impl.Data
 {
+    [Component]
     public class DefaultMigratorRunner : IMigrationRunner
     {
         public void Up(Assembly target)

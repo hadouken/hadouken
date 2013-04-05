@@ -1,26 +1,28 @@
 ﻿using System;
 
 using NLog;
+using Hadouken.Common;
 
 namespace Hadouken.Plugins.PluginEngine
 {
+    [Component]
     public class DefaultPluginEngine : IPluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void Load()
         {
-            throw new NotImplementedException();
+            //
         }
 
         public void Load(string path)
         {
-            throw new NotImplementedException();
+            //
         }
 
         public void UnloadAll()
         {
-            throw new NotImplementedException();
+            //
         }
     }
 }
