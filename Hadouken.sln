@@ -46,6 +46,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{56D3E2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Messaging.Msmq", "src\Main\Hadouken.Messaging.Msmq\Hadouken.Messaging.Msmq.csproj", "{45144E7E-D412-468F-857F-3D7665CC971F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Data.FluentNHibernate", "src\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj", "{8252AB50-901E-436C-9B06-ABD32E50A692}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -166,6 +168,14 @@ Global
 		{45144E7E-D412-468F-857F-3D7665CC971F}.Release|x64.Build.0 = Release|Any CPU
 		{45144E7E-D412-468F-857F-3D7665CC971F}.Release|x86.ActiveCfg = Release|Any CPU
 		{45144E7E-D412-468F-857F-3D7665CC971F}.Release|x86.Build.0 = Release|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Debug|x64.Build.0 = Debug|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Debug|x86.Build.0 = Debug|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Release|x64.ActiveCfg = Release|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Release|x64.Build.0 = Release|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Release|x86.ActiveCfg = Release|Any CPU
+		{8252AB50-901E-436C-9B06-ABD32E50A692}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,5 +196,6 @@ Global
 		{41E9A5E5-3671-4206-BA1A-BF7A33D08B52} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 		{C8D8F4ED-C7D9-429D-8956-0C1CCE1728EA} = {D33CFFC7-9C47-429A-99D1-E2E343B916F0}
 		{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
+		{8252AB50-901E-436C-9B06-ABD32E50A692} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 	EndGlobalSection
 EndGlobal

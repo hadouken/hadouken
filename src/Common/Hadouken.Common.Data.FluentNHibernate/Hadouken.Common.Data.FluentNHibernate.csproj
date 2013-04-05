@@ -5,13 +5,15 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</ProjectGuid>
+    <ProjectGuid>{8252AB50-901E-436C-9B06-ABD32E50A692}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hadouken.Common</RootNamespace>
-    <AssemblyName>Hadouken.Common</AssemblyName>
+    <RootNamespace>Hadouken.Common.Data.FluentNHibernate</RootNamespace>
+    <AssemblyName>Hadouken.Common.Data.FluentNHibernate</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +33,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\..\..\lib\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\..\lib\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\..\lib\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,41 +51,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentErrorMessage.cs" />
-    <Compile Include="BitTorrent\TorrentMessage.cs" />
-    <Compile Include="BitTorrent\TorrentRemovedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentStartedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentStoppedMessage.cs" />
-    <Compile Include="ComponentAttribute.cs" />
-    <Compile Include="Data\IDataRepository.cs" />
-    <Compile Include="Data\Model.cs" />
-    <Compile Include="Http\HttpServer.cs" />
-    <Compile Include="Http\IHttpContext.cs" />
-    <Compile Include="Http\IHttpRequest.cs" />
-    <Compile Include="Http\IHttpResponse.cs" />
-    <Compile Include="Http\IHttpServer.cs" />
-    <Compile Include="Http\Mvc\ActionResult.cs" />
-    <Compile Include="Http\Mvc\Controller.cs" />
-    <Compile Include="Http\Mvc\JsonResult.cs" />
-    <Compile Include="Http\Mvc\RedirectResult.cs" />
-    <Compile Include="Http\Mvc\RouteAttribute.cs" />
-    <Compile Include="Http\Mvc\ViewResult.cs" />
-    <Compile Include="IComponentFactory.cs" />
-    <Compile Include="IO\IFileSystem.cs" />
-    <Compile Include="Plugins\IPluginEnvironment.cs" />
-    <Compile Include="Plugins\Plugin.cs" />
-    <Compile Include="Messaging\IMessageBus.cs" />
-    <Compile Include="Messaging\IMessageHandler.cs" />
-    <Compile Include="Messaging\Message.cs" />
-    <Compile Include="Messaging\MessageBusExtensions.cs" />
-    <Compile Include="Plugins\PluginLoadedMessage.cs" />
-    <Compile Include="Plugins\PluginUnloadedMessage.cs" />
+    <Compile Include="CustomAutomappingConfig.cs" />
+    <Compile Include="FluentNHibernateDataRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
