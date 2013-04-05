@@ -40,11 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpContext.cs" />
+    <Compile Include="Http\IHttpRequest.cs" />
+    <Compile Include="Http\IHttpResponse.cs" />
     <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
+    <Compile Include="Messaging\IMessageHandler.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageBusExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
