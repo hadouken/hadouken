@@ -22,9 +22,11 @@ using MonoTorrent;
 using System.Net;
 using EncryptionTypes = MonoTorrent.Client.Encryption.EncryptionTypes;
 using Hadouken.Common.BitTorrent;
+using Hadouken.Common;
 
 namespace Hadouken.Impl.BitTorrent
 {
+    [Component]
     public class MonoTorrentEngine : IBitTorrentEngine
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
@@ -39,12 +41,12 @@ namespace Hadouken.Impl.BitTorrent
         private ClientEngine _clientEngine;
         private Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
-        public MonoTorrentEngine(IFileSystem fs, IMessageBus mbus, IDataRepository data, IKeyValueStore kvs)
+        public MonoTorrentEngine(IFileSystem fs, IMessageBusFactory mbusFactory, IDataRepository data, IKeyValueStore kvs)
         {
             _kvs = kvs;
             _data = data;
             _fs = fs;
-            _mbus = mbus;
+            _mbus = mbusFactory.Create("hdkn.torrentEngine");
 
             _mbus.Subscribe<KeyValueChangedMessage>(SettingChanged);
 

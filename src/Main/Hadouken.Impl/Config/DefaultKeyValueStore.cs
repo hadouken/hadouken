@@ -13,19 +13,21 @@ using System.Linq.Expressions;
 using Hadouken.Security;
 
 using Microsoft.Win32;
+using Hadouken.Common;
 
 namespace Hadouken.Impl.Config
 {
+    [Component]
     public class DefaultKeyValueStore : IKeyValueStore
     {
         private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
         private readonly IDataRepository _data;
         private readonly IMessageBus _bus;
 
-        public DefaultKeyValueStore(IDataRepository data, IMessageBus bus)
+        public DefaultKeyValueStore(IDataRepository data, IMessageBusFactory busFactory)
         {
             _data = data;
-            _bus = bus;
+            _bus = busFactory.Create("hdkn.keyValuStore");
         }
 
         public object Get(string key)
