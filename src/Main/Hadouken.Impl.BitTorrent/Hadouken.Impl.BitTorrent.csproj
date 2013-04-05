@@ -73,10 +73,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hadouken.Messages\Hadouken.Messages.csproj">
-      <Project>{DEA098A4-8A50-4A2D-A19B-D457ABA1FEE8}</Project>
-      <Name>Hadouken.Messages</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
       <Name>Hadouken</Name>

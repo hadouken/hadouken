@@ -7,11 +7,17 @@ namespace Hadouken.Plugins
 {
     public interface IPluginEngine : IComponent
     {
+        /// <summary>
+        /// Load all plugins in the default plugin folder.
+        /// </summary>
         void Load();
+
+        /// <summary>
+        /// Load a plugin from the path specified.
+        /// </summary>
+        /// <param name="path">The path to a plugin.</param>
         void Load(string path);
 
         void UnloadAll();
-
-        IDictionary<string, IPluginManager> Managers { get;}
     }
 }

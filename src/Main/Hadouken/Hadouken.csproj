@@ -78,55 +78,17 @@
     <Compile Include="Configuration\IRegistryReader.cs" />
     <Compile Include="Configuration\Options.cs" />
     <Compile Include="Configuration\Permissions.cs" />
-    <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
-    <Compile Include="Data\Model.cs" />
     <Compile Include="Data\Models\PluginInfo.cs" />
     <Compile Include="Data\Models\Setting.cs" />
     <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Extensions\HttpListenerResponseExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHost.cs" />
-    <Compile Include="Http\ApiActionAttribute.cs" />
-    <Compile Include="Http\Api\AddFile.cs" />
-    <Compile Include="Http\Api\AddUrl.cs" />
-    <Compile Include="Http\Api\GetPeers.cs" />
-    <Compile Include="Http\Api\GetPluginFile.cs" />
-    <Compile Include="Http\Api\GetPlugins.cs" />
-    <Compile Include="Http\Api\GetProperties.cs" />
-    <Compile Include="Http\Api\GetSettings.cs" />
-    <Compile Include="Http\Api\GetSystemInfo.cs" />
-    <Compile Include="Http\Api\GetTorrentFiles.cs" />
-    <Compile Include="Http\Api\GetTorrents.cs" />
-    <Compile Include="Http\Api\ListDirectories.cs" />
-    <Compile Include="Http\Api\PauseTorrent.cs" />
-    <Compile Include="Http\Api\RemoveTorrent.cs" />
-    <Compile Include="Http\Api\SetProperties.cs" />
-    <Compile Include="Http\Api\SetSetting.cs" />
-    <Compile Include="Http\Api\StartTorrent.cs" />
-    <Compile Include="Http\Api\StopTorrent.cs" />
-    <Compile Include="Http\ContentResult.cs" />
-    <Compile Include="Http\ActionResult.cs" />
-    <Compile Include="Http\ApiAction.cs" />
-    <Compile Include="Http\IApiAction.cs" />
-    <Compile Include="Http\IHttpPostedFile.cs" />
-    <Compile Include="Http\IHttpContext.cs" />
-    <Compile Include="Http\IHttpRequest.cs" />
-    <Compile Include="Http\IHttpResponse.cs" />
-    <Compile Include="Http\IHttpServer.cs" />
-    <Compile Include="Http\JsonResult.cs" />
-    <Compile Include="Http\RedirectResult.cs" />
-    <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Kernel.cs" />
-    <Compile Include="Messaging\IMessage.cs" />
-    <Compile Include="Messaging\IMessageBus.cs" />
-    <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
-    <Compile Include="Plugins\IPluginManager.cs" />
-    <Compile Include="Plugins\PluginAttribute.cs" />
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
@@ -136,7 +98,12 @@
     <Compile Include="Reflection\ReflectionExtensions.cs" />
     <Compile Include="Security\Hash.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />
   <PropertyGroup>

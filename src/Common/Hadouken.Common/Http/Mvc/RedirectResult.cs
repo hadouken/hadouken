@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Hadouken.Http
+namespace Hadouken.Common.Http.Mvc
 {
     public class RedirectResult : ActionResult
     {
-        private string _url;
+        private readonly string _url;
 
         public RedirectResult(string url)
         {
