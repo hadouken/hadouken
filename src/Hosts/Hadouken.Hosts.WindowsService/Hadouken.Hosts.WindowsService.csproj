@@ -86,6 +86,26 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj">
+      <Project>{8252ab50-901e-436c-9b06-abd32e50a692}</Project>
+      <Name>Hadouken.Common.Data.FluentNHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Http.HttpListener\Hadouken.Common.Http.HttpListener.csproj">
+      <Project>{25eb6288-005f-42a3-ae45-78730f63fd6a}</Project>
+      <Name>Hadouken.Common.Http.HttpListener</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.IO.Local\Hadouken.Common.IO.Local.csproj">
+      <Project>{5926e8ba-144b-4b88-93d5-56c2d5ca6573}</Project>
+      <Name>Hadouken.Common.IO.Local</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Messaging.Msmq\Hadouken.Common.Messaging.Msmq.csproj">
+      <Project>{45144e7e-d412-468f-857f-3d7665cc971f}</Project>
+      <Name>Hadouken.Common.Messaging.Msmq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3f2758d7-b296-41c4-b2b8-8f11aafd5b8b}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.DI.Ninject\Hadouken.DI.Ninject.csproj">
       <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
       <Name>Hadouken.DI.Ninject</Name>

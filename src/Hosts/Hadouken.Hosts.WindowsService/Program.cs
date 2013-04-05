@@ -6,6 +6,7 @@ using System.Text;
 using System.Reflection;
 using System.Configuration;
 using Hadouken.DI.Ninject;
+using System.IO;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -13,14 +14,11 @@ namespace Hadouken.Hosts.WindowsService
     {
         public static void Main()
         {
-            var assemblies = new List<Assembly>();
+            var startupPath = Path.GetDirectoryName(typeof (Program).Assembly.Location);
 
-            foreach (string key in ConfigurationManager.AppSettings.Keys)
+            foreach (string file in Directory.GetFiles(startupPath, "Hadouken.**.dll"))
             {
-                if (key.StartsWith("Assembly."))
-                {
-                    assemblies.Add(AppDomain.CurrentDomain.Load(ConfigurationManager.AppSettings[key]));
-                }
+                AppDomain.CurrentDomain.Load(File.ReadAllBytes(file));
             }
 
             // register base types
