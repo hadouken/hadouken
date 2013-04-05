@@ -14,20 +14,23 @@ namespace Hadouken.Common.Messaging.Msmq
         private readonly IDictionary<string, MessageQueue> _subscribers =
             new Dictionary<string, MessageQueue>(StringComparer.InvariantCultureIgnoreCase); 
 
-        public MsmqMessageBus(string queuePath, params MessageQueue[] subscribers)
+        public MsmqMessageBus(string queuePath)
         {
             if(queuePath == null)
                 throw new ArgumentNullException("queuePath");
 
 
             _queuePath = queuePath;
+        }
 
+        public void AddSubscribers(params ISubscriber[] subscribers)
+        {
             if (subscribers == null)
                 return;
 
             foreach (var subscriber in subscribers)
             {
-                _subscribers.Add(subscriber.Path, subscriber);
+                subscriber.AddSelfTo(this);
             }
         }
 
@@ -86,7 +89,7 @@ namespace Hadouken.Common.Messaging.Msmq
 
         public void Subscribe<TMessage>(Action<TMessage> callback) where TMessage : Message
         {
-            throw new NotImplementedException();
+            //
         }
     }
 }

@@ -45,8 +45,9 @@
     <Compile Include="Handlers\SubscribeMessageHandler.cs" />
     <Compile Include="Handlers\UnsubscribeMessageHandler.cs" />
     <Compile Include="MsmqMessage.cs" />
-    <Compile Include="DefaultMsmqMessageBus.cs" />
+    <Compile Include="MsmqMessageBus.cs" />
     <Compile Include="IMsmqMessageBus.cs" />
+    <Compile Include="MsmqMessageBusFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubscribeMessage.cs" />
     <Compile Include="UnsubscribeMessage.cs" />
