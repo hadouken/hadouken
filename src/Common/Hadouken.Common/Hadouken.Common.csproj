@@ -47,6 +47,7 @@
     <Compile Include="BitTorrent\TorrentRemovedMessage.cs" />
     <Compile Include="BitTorrent\TorrentStartedMessage.cs" />
     <Compile Include="BitTorrent\TorrentStoppedMessage.cs" />
+    <Compile Include="ComponentAttribute.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpRequest.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Http\Mvc\JsonResult.cs" />
     <Compile Include="Http\Mvc\RouteAttribute.cs" />
     <Compile Include="Http\Mvc\ViewResult.cs" />
+    <Compile Include="IComponentFactory.cs" />
     <Compile Include="Plugins\IPluginEnvironment.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
