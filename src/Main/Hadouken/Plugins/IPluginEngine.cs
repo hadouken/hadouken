@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Plugins
 {
-    public interface IPluginEngine : IComponent
+    public interface IPluginEngine
     {
         /// <summary>
         /// Load all plugins in the default plugin folder.

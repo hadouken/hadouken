@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
-using Hadouken.Common.Messaging;
 
-namespace Hadouken.Messaging.Msmq.Handlers
+namespace Hadouken.Common.Messaging.Msmq.Handlers
 {
     public class SubscribeMessageHandler : IMessageHandler<SubscribeMessage>
     {

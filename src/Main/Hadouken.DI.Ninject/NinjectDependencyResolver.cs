@@ -71,32 +71,9 @@ namespace Hadouken.DI.Ninject
             _kernel.Bind(service).ToConstant(constant);
         }
 
-        public void Register(Type service, Type implementation, ComponentLifestyle lifestyle)
+        public void Register(Type service, Type implementation, string name)
         {
-            switch(lifestyle)
-            {
-                case ComponentLifestyle.Transient:
-                    _kernel.Bind(service).To(implementation).InTransientScope();
-                    break;
-
-                case ComponentLifestyle.Singleton:
-                    _kernel.Bind(service).To(implementation).InSingletonScope();
-                    break;
-            }
-        }
-
-        public void Register(Type service, Type implementation, ComponentLifestyle lifestyle, string name)
-        {
-            switch (lifestyle)
-            {
-                case ComponentLifestyle.Transient:
-                    _kernel.Bind(service).To(implementation).InTransientScope().Named(name);
-                    break;
-
-                case ComponentLifestyle.Singleton:
-                    _kernel.Bind(service).To(implementation).InSingletonScope().Named(name);
-                    break;
-            }
+            _kernel.Bind(service).To(implementation).Named(name);
         }
     }
 }

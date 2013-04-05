@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hadouken.Common.Messaging;
-
-namespace Hadouken.Messaging.Msmq
+﻿namespace Hadouken.Common.Messaging.Msmq
 {
     public class MsmqMessage<TMessage> where TMessage : Message
     {

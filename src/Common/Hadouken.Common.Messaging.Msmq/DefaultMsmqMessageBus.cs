@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Messaging;
-using System.Text;
 using System.Threading.Tasks;
-using Hadouken.Common.Messaging;
-using Hadouken.Messaging.Msmq.Formatters;
-using Message = Hadouken.Common.Messaging.Message;
+using Hadouken.Common.Messaging.Msmq.Formatters;
 
-namespace Hadouken.Messaging.Msmq
+namespace Hadouken.Common.Messaging.Msmq
 {
     public class MsmqMessageBus : IMsmqMessageBus
     {

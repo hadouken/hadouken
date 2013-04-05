@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Hosting
 {
-    public interface IHadoukenHost : IComponent
+    public interface IHadoukenHost
     {
         void Load();
         void Unload();

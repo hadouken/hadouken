@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using Hadouken.Common.IO;
 using Ionic.Zip;
+using Hadouken.Common;
 
 namespace Hadouken.Plugins.PluginEngine.Loaders
 {
+    [Component]
     public class ZipPluginLoader : IPluginLoader
     {
         private readonly IFileSystem _fileSystem;

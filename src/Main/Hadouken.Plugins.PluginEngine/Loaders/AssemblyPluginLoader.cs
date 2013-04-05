@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Hadouken.Common.IO;
+using Hadouken.Common;
 
 namespace Hadouken.Plugins.PluginEngine.Loaders
 {
+    [Component]
     public class AssemblyPluginLoader : IPluginLoader
     {
         private readonly IFileSystem _fileSystem;

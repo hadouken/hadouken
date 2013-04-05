@@ -69,8 +69,6 @@
     <Compile Include="BitTorrent\Priority.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />
     <Compile Include="BitTorrent\TrackerState.cs" />
-    <Compile Include="ComponentAttribute.cs" />
-    <Compile Include="ComponentLifestyle.cs" />
     <Compile Include="Configuration\AppSettingsManager.cs" />
     <Compile Include="Configuration\HdknConfig.cs" />
     <Compile Include="Configuration\IConfigManager.cs" />
@@ -93,7 +91,6 @@
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="IComponent.cs" />
     <Compile Include="Reflection\BuildCommitAttribute.cs" />
     <Compile Include="Reflection\BuildDateAttribute.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />

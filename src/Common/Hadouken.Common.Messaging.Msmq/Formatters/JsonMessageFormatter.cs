@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Messaging;
 
-namespace Hadouken.Messaging.Msmq.Formatters
+namespace Hadouken.Common.Messaging.Msmq.Formatters
 {
     public class JsonMessageFormatter : IMessageFormatter
     {
-        public bool CanRead(Message message)
+        public bool CanRead(System.Messaging.Message message)
         {
             throw new NotImplementedException();
         }
 
-        public object Read(Message message)
+        public object Read(System.Messaging.Message message)
         {
             throw new NotImplementedException();
         }
 
-        public void Write(Message message, object obj)
+        public void Write(System.Messaging.Message message, object obj)
         {
             throw new NotImplementedException();
         }

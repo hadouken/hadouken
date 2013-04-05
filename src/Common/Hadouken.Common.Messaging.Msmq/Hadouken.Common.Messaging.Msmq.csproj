@@ -8,8 +8,8 @@
     <ProjectGuid>{45144E7E-D412-468F-857F-3D7665CC971F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hadouken.Messaging.Msmq</RootNamespace>
-    <AssemblyName>Hadouken.Messaging.Msmq</AssemblyName>
+    <RootNamespace>Hadouken.Common.Messaging.Msmq</RootNamespace>
+    <AssemblyName>Hadouken.Common.Messaging.Msmq</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

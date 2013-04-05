@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Hadouken.Common.IO;
+using Hadouken.Common;
 
 namespace Hadouken.Plugins.PluginEngine.Loaders
 {
+    [Component]
     public class DirectoryPluginLoader : IPluginLoader
     {
         private readonly IFileSystem _fileSystem;
