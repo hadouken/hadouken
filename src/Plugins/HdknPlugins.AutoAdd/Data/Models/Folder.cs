@@ -1,13 +1,8 @@
-﻿using Hadouken.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Hadouken.Common.Data;
 
 namespace HdknPlugins.AutoAdd.Data.Models
 {
-    [Table("plugin_AutoAdd_WatchedFolders")]
-    public class WatchedFolder : Model
+    public class Folder : Model
     {
         public virtual string Path { get; set; }
         public virtual string Label { get; set; }

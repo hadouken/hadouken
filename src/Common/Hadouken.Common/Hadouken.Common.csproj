@@ -57,9 +57,11 @@
     <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Http\Mvc\ActionResult.cs" />
     <Compile Include="Http\Mvc\Controller.cs" />
+    <Compile Include="Http\Mvc\HttpGetAttribute.cs" />
+    <Compile Include="Http\Mvc\HttpMethodAttribute.cs" />
+    <Compile Include="Http\Mvc\HttpPostAttribute.cs" />
     <Compile Include="Http\Mvc\JsonResult.cs" />
     <Compile Include="Http\Mvc\RedirectResult.cs" />
-    <Compile Include="Http\Mvc\RouteAttribute.cs" />
     <Compile Include="Http\Mvc\ViewResult.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="IO\IFileSystem.cs" />

@@ -6,12 +6,15 @@ using System.Text;
 namespace Hadouken.Common.Http.Mvc
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class RouteAttribute : Attribute
+    public abstract class HttpMethodAttribute : Attribute
     {
-        public RouteAttribute(string route)
+        protected HttpMethodAttribute(string route, string method)
         {
             Route = route;
+            Method = method;
         }
+
+        public string Method { get; private set; }
 
         public string Route { get; private set; }
     }

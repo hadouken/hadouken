@@ -73,11 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoAddPlugin.cs" />
-    <Compile Include="Data\Migrations\Create\CreateWatchedFolderTable_001.cs" />
-    <Compile Include="Data\Models\WatchedFolder.cs" />
-    <Compile Include="Http\Api\GetWatchedFolders.cs" />
-    <Compile Include="Http\Api\RemoveWatchedFolders.cs" />
-    <Compile Include="Http\Api\SetWatchedFolders.cs" />
+    <Compile Include="Data\Migrations\Create\CreateFolderTable_001.cs" />
+    <Compile Include="Data\Models\Folder.cs" />
+    <Compile Include="Http\Api\FoldersController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\DefaultTimerFactory.cs" />
     <Compile Include="Timers\ITimer.cs" />
@@ -85,9 +83,9 @@
     <Compile Include="Timers\ThreadedTimer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Main\Hadouken\Hadouken.csproj">
-      <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
-      <Name>Hadouken</Name>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
+      <Name>Hadouken.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
