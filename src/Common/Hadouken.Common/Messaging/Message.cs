@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Common.Messaging
 {
-    public abstract class Message
+    public abstract class Message : IMessage
     {
         protected Message()
         {

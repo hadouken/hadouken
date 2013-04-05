@@ -5,6 +5,5 @@ namespace Hadouken.Common.Messaging.Msmq
 {
     public interface IMsmqMessageBus : IMessageBus
     {
-        IDictionary<string, MessageQueue> ExternalQueues { get; } 
     }
 }

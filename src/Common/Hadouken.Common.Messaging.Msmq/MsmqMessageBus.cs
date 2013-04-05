@@ -1,90 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Messaging;
 using System.Threading.Tasks;
-using Hadouken.Common.Messaging.Msmq.Formatters;
+
+using MassTransit;
 
 namespace Hadouken.Common.Messaging.Msmq
 {
+    public class TestMessage
+    {
+        public string Text { get; set; }
+    }
+
     public class MsmqMessageBus : IMsmqMessageBus
     {
         private readonly string _queuePath;
-        private MessageQueue _queue;
-
-        private readonly IDictionary<string, MessageQueue> _subscribers =
-            new Dictionary<string, MessageQueue>(StringComparer.InvariantCultureIgnoreCase); 
+        private IServiceBus _serviceBus;
 
         public MsmqMessageBus(string queuePath)
         {
             if(queuePath == null)
                 throw new ArgumentNullException("queuePath");
 
-
             _queuePath = queuePath;
         }
 
-        public void AddSubscribers(params ISubscriber[] subscribers)
+        private void OnMessage(TestMessage message)
         {
-            if (subscribers == null)
-                return;
-
-            foreach (var subscriber in subscribers)
-            {
-                subscriber.AddSelfTo(this);
-            }
-        }
-
-        public IDictionary<string, MessageQueue> ExternalQueues
-        {
-            get { return _subscribers; }
-        } 
-
-        private void BeginReceive(IAsyncResult asyncResult)
-        {
-            var msg = _queue.EndReceive(asyncResult);
-            _queue.BeginReceive(TimeSpan.MaxValue, null, BeginReceive);
-
-            Task.Factory.StartNew(() => ParseIncomingMessage(msg));
-        }
-
-        private void ParseIncomingMessage(System.Messaging.Message message)
-        {
-            var obj = message.Body;
+            //
         }
 
         public void Load()
         {
-            if (!MessageQueue.Exists(_queuePath))
-                MessageQueue.Create(_queuePath);
+            _serviceBus = ServiceBusFactory.New(b =>
+            {
+                b.UseMsmq();
+                b.VerifyMsmqConfiguration();
+                b.UseMulticastSubscriptionClient();
+                b.ReceiveFrom(_queuePath);
+                b.SetCreateMissingQueues(true);
+                b.SetPurgeOnStartup(true);
 
-            _queue = new MessageQueue(_queuePath) { Formatter = new JsonMessageFormatter() };
-            _queue.BeginReceive(TimeSpan.MaxValue, null, BeginReceive);
-
-            Publish(new SubscribeMessage {Path = _queuePath});
+                b.Subscribe(s => s.Handler<TestMessage>(OnMessage));
+            });
         }
 
         public void Unload()
         {
-            Publish(new UnsubscribeMessage {Path = _queuePath});
-
-            _queue.Dispose();
-
-            if (MessageQueue.Exists(_queuePath))
-                MessageQueue.Delete(_queuePath);
         }
 
         public void Publish<TMessage>(TMessage message) where TMessage : Message
         {
-            var wrapper = new MsmqMessage<TMessage>()
-                {
-                    Message = message,
-                    TypeName = typeof (TMessage).FullName
-                };
-            
-            foreach (var subscriber in _subscribers.Values)
-            {
-                subscriber.Send(wrapper);
-            }
+            //
         }
 
         public void Subscribe<TMessage>(Action<TMessage> callback) where TMessage : Message

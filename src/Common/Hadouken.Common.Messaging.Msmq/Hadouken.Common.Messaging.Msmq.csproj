@@ -31,6 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Magnum">
+      <HintPath>..\..\..\lib\Magnum.2.1.0\lib\NET40\Magnum.dll</HintPath>
+    </Reference>
+    <Reference Include="MassTransit">
+      <HintPath>..\..\..\lib\MassTransit.2.7.1\lib\net40\MassTransit.dll</HintPath>
+    </Reference>
+    <Reference Include="MassTransit.Transports.MSMQ">
+      <HintPath>..\..\..\lib\MassTransit.2.7.1\lib\net40\MassTransit.Transports.MSMQ.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Messaging" />
@@ -41,22 +50,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Formatters\JsonMessageFormatter.cs" />
-    <Compile Include="Handlers\SubscribeMessageHandler.cs" />
-    <Compile Include="Handlers\UnsubscribeMessageHandler.cs" />
     <Compile Include="MsmqMessage.cs" />
     <Compile Include="MsmqMessageBus.cs" />
     <Compile Include="IMsmqMessageBus.cs" />
     <Compile Include="MsmqMessageBusFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubscribeMessage.cs" />
-    <Compile Include="UnsubscribeMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
       <Name>Hadouken.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

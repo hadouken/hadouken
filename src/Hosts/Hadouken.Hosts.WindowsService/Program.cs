@@ -16,9 +16,9 @@ namespace Hadouken.Hosts.WindowsService
         {
             var startupPath = Path.GetDirectoryName(typeof (Program).Assembly.Location);
 
-            foreach (string file in Directory.GetFiles(startupPath, "Hadouken.**.dll"))
+            foreach (string file in Directory.GetFiles(startupPath, "*.dll"))
             {
-                AppDomain.CurrentDomain.Load(File.ReadAllBytes(file));
+                Assembly.LoadFile(file);
             }
 
             // register base types
