@@ -7,8 +7,10 @@ namespace Hadouken.Common.Messaging
 {
     public interface IMessageBus
     {
-        void Publish<TMessage>(TMessage message) where TMessage : Message;
+        void Load();
+        void Unload();
 
+        void Publish<TMessage>(TMessage message) where TMessage : Message;
         void Subscribe<TMessage>(Action<TMessage> callback) where TMessage : Message;
     }
 }
