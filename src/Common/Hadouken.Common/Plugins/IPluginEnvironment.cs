@@ -7,6 +7,7 @@ namespace Hadouken.Common.Plugins
 {
     public interface IPluginEnvironment
     {
+        string ConnectionString { get; }
         string DataFolder { get; }
     }
 }
