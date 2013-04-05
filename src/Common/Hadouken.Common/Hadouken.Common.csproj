@@ -66,6 +66,9 @@
     <Compile Include="Http\Mvc\ViewResult.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="Messaging\IMessageBusFactory.cs" />
+    <Compile Include="Messaging\ISubscriber.cs" />
+    <Compile Include="Messaging\ISubscriberFactory.cs" />
     <Compile Include="Plugins\IPluginEnvironment.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
