@@ -9,20 +9,22 @@ namespace Hadouken.Common.Http.HttpListener
 {
     public class HttpListenerServer : HttpServer
     {
-        private System.Net.HttpListener _httpListener;
-        private HttpListenerBasicIdentity _credential;
+        private readonly System.Net.HttpListener _httpListener;
+        private readonly HttpListenerBasicIdentity _credential;
 
-        public override void Start(Uri binding, NetworkCredential credential)
+        public HttpListenerServer(Uri binding, NetworkCredential credential) : base(binding, credential)
         {
-            if (_httpListener != null)
-                return;
-
-            _credential = new HttpListenerBasicIdentity(credential.UserName, credential.Password);
-
             _httpListener = new System.Net.HttpListener();
             _httpListener.Prefixes.Add(binding.ToString());
-            _httpListener.Start();
 
+            _credential = new HttpListenerBasicIdentity(credential.UserName, credential.Password);            
+        }
+
+        public override void Start()
+        {
+            if (_httpListener == null) return;
+
+            _httpListener.Start();
             _httpListener.BeginGetContext(BeginGetContext, null);
         }
 
@@ -48,7 +50,6 @@ namespace Hadouken.Common.Http.HttpListener
         public override void Stop()
         {
             _httpListener.Stop();
-            _httpListener = null;
         }
     }
 }

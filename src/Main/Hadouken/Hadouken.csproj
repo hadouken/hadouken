@@ -76,6 +76,7 @@
     <Compile Include="Configuration\IConfigManager.cs" />
     <Compile Include="Configuration\IKeyValueStore.cs" />
     <Compile Include="Configuration\IRegistryReader.cs" />
+    <Compile Include="Configuration\KeyValueChangedMessage.cs" />
     <Compile Include="Configuration\Options.cs" />
     <Compile Include="Configuration\Permissions.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
@@ -86,7 +87,7 @@
     <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Hosting\IHost.cs" />
+    <Compile Include="Hosting\IHadoukenHost.cs" />
     <Compile Include="Kernel.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">

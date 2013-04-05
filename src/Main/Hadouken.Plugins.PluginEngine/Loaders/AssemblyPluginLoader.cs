@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Hadouken.IO;
-using Hadouken.Reflection;
+﻿using System.Collections.Generic;
+using Hadouken.Common.IO;
 
 namespace Hadouken.Plugins.PluginEngine.Loaders
 {
     public class AssemblyPluginLoader : IPluginLoader
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public AssemblyPluginLoader(IFileSystem fs)
         {

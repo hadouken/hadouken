@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Hadouken.IO;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using System.IO;
-using Hadouken.Reflection;
+using System.Linq;
+using Hadouken.Common.IO;
 using Ionic.Zip;
 
 namespace Hadouken.Plugins.PluginEngine.Loaders

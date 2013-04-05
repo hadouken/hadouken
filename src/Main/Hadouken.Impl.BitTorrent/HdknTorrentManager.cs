@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 
 using Hadouken.BitTorrent;
+using Hadouken.Common.IO;
+using Hadouken.Common.Messaging;
 using Hadouken.Configuration;
 using MonoTorrent.Client;
 using System.IO;
 using MonoTorrent.BEncoding;
-using Hadouken.IO;
-using Hadouken.Messages;
-using Hadouken.Messaging;
+
 using System.Threading;
+using Hadouken.Common.BitTorrent;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -112,7 +113,7 @@ namespace Hadouken.Impl.BitTorrent
         {
             if (e.NewState == MonoTorrent.Common.TorrentState.Error)
             {
-                _mbus.Send<ITorrentError>(msg => msg.Torrent = this);
+                _mbus.Publish(new TorrentErrorMessage {InfoHash = InfoHash, Name = Torrent.Name, Size = Torrent.Size});
             }
 
             if (e.OldState == MonoTorrent.Common.TorrentState.Downloading && e.NewState == MonoTorrent.Common.TorrentState.Seeding)
@@ -122,7 +123,8 @@ namespace Hadouken.Impl.BitTorrent
 
                 var oldSavePath = String.Copy(SavePath);
 
-                _mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ => BasicMove(oldSavePath));
+                //TODO: fix below
+                //_mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ => BasicMove(oldSavePath));
             }
         }
 
@@ -412,12 +414,13 @@ namespace Hadouken.Impl.BitTorrent
             if (isRunning)
                 Start();
 
-            _mbus.Send<ITorrentMoved>(m =>
-            {
-                m.TorrentManager = this;
-                m.OldPath = oldLocation;
-                m.NewPath = SavePath;
-            });
+            //TODO: Fix below
+            //_mbus.Send<ITorrentMoved>(m =>
+            //{
+            //    m.TorrentManager = this;
+            //    m.OldPath = oldLocation;
+            //    m.NewPath = SavePath;
+            //});
         }
 
         private void DuplicateStructure(string source, string target)

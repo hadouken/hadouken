@@ -10,7 +10,11 @@ namespace Hadouken.Common.Http
     {
         private Action<IHttpContext> _requestCallback;
 
-        public abstract void Start(Uri binding, NetworkCredential credential);
+        protected HttpServer(Uri binding, NetworkCredential credential)
+        {
+        }
+
+        public abstract void Start();
         public abstract void Stop();
 
         public void SetRequestCallback(Action<IHttpContext> requestCallback)

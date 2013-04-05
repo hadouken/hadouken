@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using Hadouken.IO;
-using System.IO;
 
-namespace Hadouken.Impl.IO
+namespace Hadouken.Common.IO.Local
 {
     public class LocalFileSystem : IFileSystem
     {
@@ -83,10 +82,10 @@ namespace Hadouken.Impl.IO
         {
             var info = new DirectoryInfo(path);
 
-            foreach(var file in info.GetFiles())
+            foreach (var file in info.GetFiles())
                 file.Delete();
 
-            foreach(var dir in info.GetDirectories())
+            foreach (var dir in info.GetDirectories())
                 dir.Delete();
         }
 

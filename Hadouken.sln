@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Data.Fluent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Http.HttpListener", "src\Common\Hadouken.Common.Http.HttpListener\Hadouken.Common.Http.HttpListener.csproj", "{25EB6288-005F-42A3-AE45-78730F63FD6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.IO.Local", "src\Common\Hadouken.Common.IO.Local\Hadouken.Common.IO.Local.csproj", "{5926E8BA-144B-4B88-93D5-56C2D5CA6573}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -176,6 +178,14 @@ Global
 		{25EB6288-005F-42A3-AE45-78730F63FD6A}.Release|x64.Build.0 = Release|Any CPU
 		{25EB6288-005F-42A3-AE45-78730F63FD6A}.Release|x86.ActiveCfg = Release|Any CPU
 		{25EB6288-005F-42A3-AE45-78730F63FD6A}.Release|x86.Build.0 = Release|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Debug|x64.Build.0 = Debug|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Debug|x86.Build.0 = Debug|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Release|x64.ActiveCfg = Release|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Release|x64.Build.0 = Release|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Release|x86.ActiveCfg = Release|Any CPU
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -197,5 +207,6 @@ Global
 		{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 		{8252AB50-901E-436C-9B06-ABD32E50A692} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 		{25EB6288-005F-42A3-AE45-78730F63FD6A} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
+		{5926E8BA-144B-4B88-93D5-56C2D5CA6573} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 	EndGlobalSection
 EndGlobal

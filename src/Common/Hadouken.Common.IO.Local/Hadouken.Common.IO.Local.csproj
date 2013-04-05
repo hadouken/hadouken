@@ -4,15 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4C688A37-172C-41A1-8664-9661917FA0F2}</ProjectGuid>
+    <ProjectGuid>{5926E8BA-144B-4B88-93D5-56C2D5CA6573}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hadouken.Plugins.PluginEngine</RootNamespace>
-    <AssemblyName>Hadouken.Plugins.PluginEngine</AssemblyName>
+    <RootNamespace>Hadouken.Common.IO.Local</RootNamespace>
+    <AssemblyName>Hadouken.Common.IO.Local</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,15 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\..\..\lib\Castle.Core.3.2.0\lib\net40-client\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\..\lib\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\..\..\lib\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,28 +39,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultPluginEngine.cs" />
-    <Compile Include="IPluginLoader.cs" />
-    <Compile Include="Loaders\AssemblyPluginLoader.cs" />
-    <Compile Include="Loaders\DirectoryPluginLoader.cs" />
-    <Compile Include="Loaders\ZipPluginLoader.cs" />
+    <Compile Include="LocalFileSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+    <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
       <Name>Hadouken.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Hadouken\Hadouken.csproj">
-      <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
-      <Name>Hadouken</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -8,7 +8,7 @@ namespace Hadouken.Common.Http
 {
     public interface IHttpServer
     {
-        void Start(Uri binding, NetworkCredential credential);
+        void Start();
         void Stop();
 
         void SetRequestCallback(Action<IHttpContext> requestCallback);

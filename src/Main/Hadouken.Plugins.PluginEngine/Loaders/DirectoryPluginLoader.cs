@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hadouken.IO;
-using Hadouken.Reflection;
+using Hadouken.Common.IO;
 
 namespace Hadouken.Plugins.PluginEngine.Loaders
 {
     public class DirectoryPluginLoader : IPluginLoader
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public DirectoryPluginLoader(IFileSystem fs)
         {

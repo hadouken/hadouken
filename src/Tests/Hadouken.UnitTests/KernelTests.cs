@@ -23,7 +23,7 @@ namespace Hadouken.UnitTests
             Kernel.SetResolver(new NinjectDependencyResolver());
             Kernel.Register(AppDomain.CurrentDomain.Load("Hadouken.Impl"), AppDomain.CurrentDomain.Load("Hadouken.Impl.BitTorrent"), AppDomain.CurrentDomain.Load("Hadouken.Http.HttpServer"));
 
-            var host = Kernel.Resolver.Get<IHost>();
+            var host = Kernel.Resolver.Get<IHadoukenHost>();
 
             Assert.IsNotNull(host);
         }

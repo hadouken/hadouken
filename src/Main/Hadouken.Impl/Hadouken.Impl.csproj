@@ -96,7 +96,6 @@
     <Compile Include="Config\DefaultKeyValueStore.cs" />
     <Compile Include="Config\DefaultRegistryReader.cs" />
     <Compile Include="Data\DefaultMigratorRunner.cs" />
-    <Compile Include="Data\FluentNhibernateDataRepository.cs" />
     <Compile Include="Data\Migrations\Alter\AlterPluginInfoTable_001.cs" />
     <Compile Include="Data\Migrations\Alter\AlterSettingTable_001.cs" />
     <Compile Include="Data\Migrations\Alter\AlterTorrentInfoTable_001.cs" />
@@ -105,14 +104,17 @@
     <Compile Include="Data\Migrations\Create\CreateTorrentInfoTable_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_002.cs" />
-    <Compile Include="Hosting\DefaultHost.cs" />
-    <Compile Include="IO\LocalFileSystem.cs" />
+    <Compile Include="Hosting\DefaultHadoukenHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
       <Name>Hadouken</Name>
