@@ -17,15 +17,6 @@ namespace Hadouken.DI.Ninject
             _kernel = new StandardKernel();
         }
 
-        public bool Has(string typeName)
-        {
-            return (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                    from type in asm.GetTypes()
-                    let name = type.FullName + ", " + type.Assembly.FullName
-                    where name == typeName
-                    select true).Any();
-        }
-
         public object Get(Type t)
         {
             return _kernel.Get(t);
