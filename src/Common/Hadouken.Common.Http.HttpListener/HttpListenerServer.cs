@@ -16,6 +16,7 @@ namespace Hadouken.Common.Http.HttpListener
         {
             _httpListener = new System.Net.HttpListener();
             _httpListener.Prefixes.Add(binding.ToString());
+            _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
 
             _credential = new HttpListenerBasicIdentity(credential.UserName, credential.Password);            
         }
@@ -30,13 +31,20 @@ namespace Hadouken.Common.Http.HttpListener
 
         private void BeginGetContext(IAsyncResult ar)
         {
-            var context = _httpListener.EndGetContext(ar);
-            _httpListener.BeginGetContext(BeginGetContext, null);
+            try
+            {
+                var context = _httpListener.EndGetContext(ar);
+                _httpListener.BeginGetContext(BeginGetContext, null);
 
-            if (!IsAuthenticated(context.User.Identity as HttpListenerBasicIdentity))
-                return;
+                if (!IsAuthenticated(context.User.Identity as HttpListenerBasicIdentity))
+                    return;
 
-            Task.Factory.StartNew(() => OnHttpRequest(new HttpContext(context)));
+                Task.Factory.StartNew(() => OnHttpRequest(new HttpContext(context)));
+            }
+            catch (Exception)
+            {
+                //TODO: better catch clause
+            }
         }
 
         private bool IsAuthenticated(HttpListenerBasicIdentity identity)
