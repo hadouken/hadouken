@@ -33,6 +33,8 @@ namespace HdknPlugins.AutoAdd.Http.Api
                 folder.Id = 0;
                 _dataRepository.Save(folder);
             }
+
+            return new JsonResult(folder);
         }
     }
 }
