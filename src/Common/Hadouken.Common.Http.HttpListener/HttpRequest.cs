@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Collections.Specialized;
-using System.IO;
-using Hadouken.Common.Http;
 
-namespace Hadouken.Http.HttpServer
+namespace Hadouken.Common.Http.HttpListener
 {
     public class HttpRequest : IHttpRequest
     {

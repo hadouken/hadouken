@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Net;
-using Hadouken.Common.Http;
 
-namespace Hadouken.Http.HttpServer
+namespace Hadouken.Common.Http.HttpListener
 {
     public class HttpResponse : IHttpResponse
     {
