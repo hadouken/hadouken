@@ -48,6 +48,8 @@
     <Compile Include="BitTorrent\TorrentStartedMessage.cs" />
     <Compile Include="BitTorrent\TorrentStoppedMessage.cs" />
     <Compile Include="ComponentAttribute.cs" />
+    <Compile Include="Data\IRepository.cs" />
+    <Compile Include="Data\Model.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpRequest.cs" />
