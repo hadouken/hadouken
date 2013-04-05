@@ -8,6 +8,7 @@ using FluentNHibernate.Cfg.Db;
 
 namespace Hadouken.Common.Data.FluentNHibernate
 {
+    [Component]
     public class FluentNHibernateDataRepository : IDataRepository
     {
         private ISessionFactory _sessionFactory;
