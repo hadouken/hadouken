@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Hadouken.Common.Data;
 using Hadouken.Common.Http;
@@ -10,9 +11,11 @@ using Hadouken.Data;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;
+using Hadouken.Common;
 
 namespace Hadouken.Impl.Hosting
 {
+    [Component]
     public class DefaultHadoukenHost : IHadoukenHost
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -22,12 +25,13 @@ namespace Hadouken.Impl.Hosting
         private readonly IPluginEngine _pluginEngine;
         private readonly IHttpServer _httpServer;
 
-        public DefaultHadoukenHost(IBitTorrentEngine torrentEngine, IMigrationRunner runner, IPluginEngine pluginEngine, IHttpServer httpServer)
+        public DefaultHadoukenHost(IBitTorrentEngine torrentEngine, IMigrationRunner runner, IPluginEngine pluginEngine, IHttpServerFactory httpServerFactory)
         {
             _torrentEngine = torrentEngine;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
-            _httpServer = httpServer;
+
+            _httpServer = httpServerFactory.Create("http://localhost:8081/", new NetworkCredential("hdkn", "hdkn"));
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
