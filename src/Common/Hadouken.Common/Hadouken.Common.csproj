@@ -40,6 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentErrorMessage.cs" />
+    <Compile Include="BitTorrent\TorrentMessage.cs" />
+    <Compile Include="BitTorrent\TorrentRemovedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentStartedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentStoppedMessage.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpRequest.cs" />
@@ -50,11 +57,14 @@
     <Compile Include="Http\Mvc\JsonResult.cs" />
     <Compile Include="Http\Mvc\RouteAttribute.cs" />
     <Compile Include="Http\Mvc\ViewResult.cs" />
-    <Compile Include="Plugin.cs" />
+    <Compile Include="Plugins\IPluginEnvironment.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Messaging\IMessageHandler.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageBusExtensions.cs" />
+    <Compile Include="Plugins\PluginLoadedMessage.cs" />
+    <Compile Include="Plugins\PluginUnloadedMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
