@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="HttpContext.cs" />
     <Compile Include="HttpListenerServer.cs" />
+    <Compile Include="HttpListenerServerFactory.cs" />
     <Compile Include="HttpRequest.cs" />
     <Compile Include="HttpResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
