@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Messaging;
 using System.Text;
 using Hadouken.Common.Messaging;
 
@@ -19,6 +20,11 @@ namespace Hadouken.Messaging.Msmq.Handlers
         {
             if(message == null)
                 throw new ArgumentNullException("message");
+
+            if (!_messageBus.ExternalQueues.ContainsKey(message.Path))
+                throw new ArgumentException("The message bus is not subscribing to this queue: " + message.Path);
+
+            _messageBus.ExternalQueues.Add(message.Path, new MessageQueue(message.Path));
         }
     }
 }
