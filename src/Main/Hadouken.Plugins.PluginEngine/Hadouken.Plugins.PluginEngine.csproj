@@ -35,6 +35,9 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\lib\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\lib\Newtonsoft.Json.5.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\..\..\lib\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
@@ -52,7 +55,10 @@
     <Compile Include="Loaders\AssemblyPluginLoader.cs" />
     <Compile Include="Loaders\DirectoryPluginLoader.cs" />
     <Compile Include="Loaders\ZipPluginLoader.cs" />
+    <Compile Include="PluginManifest.cs" />
+    <Compile Include="PluginManifestReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sandbox.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
