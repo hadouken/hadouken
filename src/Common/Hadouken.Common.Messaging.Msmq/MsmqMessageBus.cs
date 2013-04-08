@@ -7,11 +7,6 @@ using NLog;
 
 namespace Hadouken.Common.Messaging.Msmq
 {
-    public class TestMessage
-    {
-        public string Text { get; set; }
-    }
-
     public class MsmqMessageBus : IMsmqMessageBus
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -38,7 +33,7 @@ namespace Hadouken.Common.Messaging.Msmq
                 b.SetCreateMissingQueues(true);
                 b.SetPurgeOnStartup(true);
 
-                b.Subscribe(s => s.Handler<TestMessage>(OnMessage));
+                b.Subscribe(s => s.Handler<Message>(OnMessage));
             });
 
             Logger.Info("Created message queue '{0}'.", _queuePath);
@@ -48,9 +43,18 @@ namespace Hadouken.Common.Messaging.Msmq
         {
         }
 
-        private void OnMessage(TestMessage message)
+        private void OnMessage(Message message)
         {
-            //
+            if(message == null)
+                throw new ArgumentNullException("message");
+
+            var handlerType = typeof (IMessageHandler<>).MakeGenericType(message.GetType());
+
+            // Resolve all types of the above handlerType
+
+            // Union this with all ad-hoc listeners (Action<T> subscribers)
+
+            // Invoke each and every last one of them
         }
 
         public void Publish<TMessage>(TMessage message) where TMessage : Message
