@@ -14,7 +14,8 @@ namespace Hadouken.Common.DI.Ninject
         public NinjectDependencyResolver()
         {
             _kernel = new StandardKernel(
-                new ComponentModule()
+                new ComponentModule(),
+                new PluginModule()
             );
         }
 
