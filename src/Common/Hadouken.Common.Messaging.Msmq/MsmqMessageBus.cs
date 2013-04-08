@@ -14,6 +14,9 @@ namespace Hadouken.Common.Messaging.Msmq
         private readonly string _queuePath;
         private IServiceBus _serviceBus;
 
+        private readonly IDictionary<Type, IMessageHandlerWrapper> _wrapperCache =
+            new Dictionary<Type, IMessageHandlerWrapper>(); 
+
         public MsmqMessageBus(string queuePath)
         {
             if(queuePath == null)
@@ -41,6 +44,7 @@ namespace Hadouken.Common.Messaging.Msmq
 
         public void Unload()
         {
+            _serviceBus.Dispose();
         }
 
         private void OnMessage(Message message)
@@ -49,17 +53,35 @@ namespace Hadouken.Common.Messaging.Msmq
                 throw new ArgumentNullException("message");
 
             var handlerType = typeof (IMessageHandler<>).MakeGenericType(message.GetType());
+            var wrapperType = typeof (MessageHandlerWrapper<>).MakeGenericType(handlerType);
+            var handlers = Kernel.GetAll(handlerType);
 
-            // Resolve all types of the above handlerType
+            foreach (var handler in handlers)
+            {
+                IMessageHandlerWrapper wrapper;
 
-            // Union this with all ad-hoc listeners (Action<T> subscribers)
+                if (_wrapperCache.ContainsKey(wrapperType))
+                {
+                    wrapper = _wrapperCache[wrapperType];
+                }
+                else
+                {
+                    wrapper = (IMessageHandlerWrapper)Activator.CreateInstance(wrapperType, handler);
+                    _wrapperCache.Add(wrapperType, wrapper);
+                }
+
+                if (wrapper == null)
+                    throw new InvalidOperationException("No wrapper found.");
+
+                wrapper.Execute(message);
+            }
 
             // Invoke each and every last one of them
         }
 
         public void Publish<TMessage>(TMessage message) where TMessage : Message
         {
-            //
+            _serviceBus.Publish(message);
         }
 
         public void Subscribe<TMessage>(Action<TMessage> callback) where TMessage : Message
