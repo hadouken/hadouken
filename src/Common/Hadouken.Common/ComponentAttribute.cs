@@ -12,15 +12,11 @@ namespace Hadouken.Common
         {
         }
 
-        /// <summary>
-        /// Uses the specified instance of IComponentFactory to create this component.
-        /// </summary>
-        /// <param name="factory">The factory type, must inherit IComponentFactory.</param>
-        public ComponentAttribute(Type factory)
+        public ComponentAttribute(ComponentType componentType)
         {
-            Factory = factory;
+            ComponentType = componentType;
         }
 
-        public Type Factory { get; private set; }
+        public ComponentType ComponentType { get; private set; }
     }
 }

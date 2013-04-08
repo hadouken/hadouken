@@ -49,6 +49,7 @@
     <Compile Include="BitTorrent\TorrentStartedMessage.cs" />
     <Compile Include="BitTorrent\TorrentStoppedMessage.cs" />
     <Compile Include="ComponentAttribute.cs" />
+    <Compile Include="ComponentType.cs" />
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\Model.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
