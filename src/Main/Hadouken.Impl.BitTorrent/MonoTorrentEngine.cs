@@ -26,10 +26,10 @@ using Hadouken.Common;
 
 namespace Hadouken.Impl.BitTorrent
 {
-    [Component]
+    [Component(ComponentType.Singleton)]
     public class MonoTorrentEngine : IBitTorrentEngine
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IKeyValueStore _kvs;
         private readonly IDataRepository _data;
@@ -55,7 +55,7 @@ namespace Hadouken.Impl.BitTorrent
 
         public void Load()
         {
-            _logger.Info("Loading BitTorrent engine");
+            Logger.Info("Loading BitTorrent engine");
 
             if(!_fs.DirectoryExists(_torrentFileSavePath))
                 _fs.CreateDirectory(_torrentFileSavePath);
@@ -114,7 +114,7 @@ namespace Hadouken.Impl.BitTorrent
 
         private void LoadState()
         {
-            _logger.Info("Loading torrent state");
+            Logger.Info("Loading torrent state");
 
             var infos = _data.List<TorrentInfo>();
 
@@ -145,7 +145,7 @@ namespace Hadouken.Impl.BitTorrent
                     manager.Settings.UploadSlots = torrentInfo.UploadSlots;
                     manager.Settings.UseDht = torrentInfo.UseDht;
 
-                    _logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
+                    Logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
 
                     if (torrentInfo.FastResumeData != null)
                         manager.LoadFastResume(torrentInfo.FastResumeData);
@@ -167,7 +167,7 @@ namespace Hadouken.Impl.BitTorrent
                 if (info == null)
                     info = new TorrentInfo();
 
-                _logger.Debug("Saving state for torrent {0}", manager.Torrent.Name);
+                Logger.Debug("Saving state for torrent {0}", manager.Torrent.Name);
 
                 CreateTorrentInfo(manager, info);
 
