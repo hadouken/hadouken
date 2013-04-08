@@ -2,29 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hadouken.Common.DI;
 
 namespace Hadouken.Common
 {
     public static class Kernel
     {
-        public static T Get<T>()
+        private static IDependencyResolver _dependencyResolver;
+
+        public static void SetResolver(IDependencyResolver dependencyResolver)
         {
-            throw new NotImplementedException();
+            if(dependencyResolver == null)
+                throw new ArgumentNullException("dependencyResolver");
+
+            _dependencyResolver = dependencyResolver;
         }
 
-        public static object Get(Type type)
+        public static T Get<T>()
         {
-            throw new NotImplementedException();
+            return _dependencyResolver.Get<T>();
         }
 
         public static IEnumerable<T> GetAll<T>()
         {
-            throw new NotImplementedException();
-        } 
+            return _dependencyResolver.GetAll<T>();
+        }
 
-        public static IEnumerable<object> GetAll(Type type)
+        public static void BindToFunc<T>(Func<T> factory)
         {
-            throw new NotImplementedException();
-        } 
+            _dependencyResolver.BindToFunc(factory);
+        }
     }
 }

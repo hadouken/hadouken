@@ -93,6 +93,10 @@
       <Project>{8252ab50-901e-436c-9b06-abd32e50a692}</Project>
       <Name>Hadouken.Common.Data.FluentNHibernate</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.DI.Ninject\Hadouken.Common.DI.Ninject.csproj">
+      <Project>{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}</Project>
+      <Name>Hadouken.Common.DI.Ninject</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Hadouken.Common.Http.HttpListener\Hadouken.Common.Http.HttpListener.csproj">
       <Project>{25eb6288-005f-42a3-ae45-78730f63fd6a}</Project>
       <Name>Hadouken.Common.Http.HttpListener</Name>
@@ -108,10 +112,6 @@
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{3f2758d7-b296-41c4-b2b8-8f11aafd5b8b}</Project>
       <Name>Hadouken.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Main\Hadouken.DI.Ninject\Hadouken.DI.Ninject.csproj">
-      <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
-      <Name>Hadouken.DI.Ninject</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
       <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>

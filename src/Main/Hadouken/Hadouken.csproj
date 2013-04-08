@@ -82,11 +82,9 @@
     <Compile Include="Data\Models\Setting.cs" />
     <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
-    <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHadoukenHost.cs" />
-    <Compile Include="Kernel.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
-
+using Hadouken.Common;
 using Hadouken.Hosting;
 
 namespace Hadouken.Hosts.WindowsService
@@ -28,7 +28,7 @@ namespace Hadouken.Hosts.WindowsService
 
         protected override void OnStart(string[] args)
         {
-            _host = Kernel.Resolver.Get<IHadoukenHost>();
+            _host = Kernel.Get<IHadoukenHost>();
             _host.Load();
         }
 

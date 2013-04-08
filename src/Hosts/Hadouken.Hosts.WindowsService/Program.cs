@@ -5,7 +5,8 @@ using System.ServiceProcess;
 using System.Text;
 using System.Reflection;
 using System.Configuration;
-using Hadouken.DI.Ninject;
+using Hadouken.Common;
+using Hadouken.Common.DI.Ninject;
 using System.IO;
 
 namespace Hadouken.Hosts.WindowsService
