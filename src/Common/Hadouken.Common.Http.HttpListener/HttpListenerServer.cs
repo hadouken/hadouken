@@ -41,7 +41,7 @@ namespace Hadouken.Common.Http.HttpListener
 
                 Task.Factory.StartNew(() => OnHttpRequest(new HttpContext(context)));
             }
-            catch (Exception)
+            catch (HttpListenerException)
             {
                 //TODO: better catch clause
             }
