@@ -5,6 +5,7 @@ using Hadouken.Common;
 using Hadouken.Configuration;
 using Hadouken.Common.IO;
 using Hadouken.Common.Messaging;
+using Hadouken.Common.Plugins;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -51,6 +52,7 @@ namespace Hadouken.Plugins.PluginEngine
             var assemblies = pluginLoader.Load(path);
             var manifest = Sandbox.ReadManifest(assemblies);
 
+            _messageBus.Publish(new PluginLoadedMessage {Name = manifest.Name, Version = manifest.Version});
         }
 
         public void UnloadAll()

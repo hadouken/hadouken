@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Common.Messaging
 {
-    public interface IMessageHandler<in TMessage> where TMessage : Message
+    public interface IMessageHandler<in TMessage> where TMessage : IMessage
     {
         void Handle(TMessage message);
     }

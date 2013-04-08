@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using MassTransit;
+using MassTransit.SubscriptionConfigurators;
 using NLog;
+using MassTransit.BusConfigurators;
 
 namespace Hadouken.Common.Messaging.Msmq
 {
@@ -13,9 +15,6 @@ namespace Hadouken.Common.Messaging.Msmq
 
         private readonly string _queuePath;
         private IServiceBus _serviceBus;
-
-        private readonly IDictionary<Type, IMessageHandlerWrapper> _wrapperCache =
-            new Dictionary<Type, IMessageHandlerWrapper>(); 
 
         public MsmqMessageBus(string queuePath)
         {
@@ -36,7 +35,9 @@ namespace Hadouken.Common.Messaging.Msmq
                 b.SetCreateMissingQueues(true);
                 b.SetPurgeOnStartup(true);
 
-                b.Subscribe(s => s.Handler<Message>(OnMessage));
+                b.Subscribe(sbc => sbc.LoadHandlers());
+
+                //b.Subscribe(s => s.Handler<IMessage>(OnMessage));
             });
 
             Logger.Info("Created message queue '{0}'.", _queuePath);
@@ -45,38 +46,6 @@ namespace Hadouken.Common.Messaging.Msmq
         public void Unload()
         {
             _serviceBus.Dispose();
-        }
-
-        private void OnMessage(Message message)
-        {
-            if(message == null)
-                throw new ArgumentNullException("message");
-
-            var handlerType = typeof (IMessageHandler<>).MakeGenericType(message.GetType());
-            var wrapperType = typeof (MessageHandlerWrapper<>).MakeGenericType(handlerType);
-            var handlers = Kernel.GetAll(handlerType);
-
-            foreach (var handler in handlers)
-            {
-                IMessageHandlerWrapper wrapper;
-
-                if (_wrapperCache.ContainsKey(wrapperType))
-                {
-                    wrapper = _wrapperCache[wrapperType];
-                }
-                else
-                {
-                    wrapper = (IMessageHandlerWrapper)Activator.CreateInstance(wrapperType, handler);
-                    _wrapperCache.Add(wrapperType, wrapper);
-                }
-
-                if (wrapper == null)
-                    throw new InvalidOperationException("No wrapper found.");
-
-                wrapper.Execute(message);
-            }
-
-            // Invoke each and every last one of them
         }
 
         public void Publish<TMessage>(TMessage message) where TMessage : Message

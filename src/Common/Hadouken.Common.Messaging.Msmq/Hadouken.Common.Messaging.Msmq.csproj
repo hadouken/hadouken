@@ -55,9 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IMessageHandlerWrapper.cs" />
-    <Compile Include="MessageHandlerWrapper.cs" />
-    <Compile Include="MsmqMessage.cs" />
+    <Compile Include="ConsumerFactoryConfigurator.cs" />
+    <Compile Include="MassTransitExtensions.cs" />
     <Compile Include="MsmqMessageBus.cs" />
     <Compile Include="IMsmqMessageBus.cs" />
     <Compile Include="MsmqMessageBusFactory.cs" />
