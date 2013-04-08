@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\ComponentModule.cs" />
+    <Compile Include="Modules\MessageHandlerModule.cs" />
     <Compile Include="Modules\PluginModule.cs" />
     <Compile Include="NinjectDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
