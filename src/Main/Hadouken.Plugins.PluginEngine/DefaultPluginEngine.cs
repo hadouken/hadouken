@@ -52,6 +52,27 @@ namespace Hadouken.Plugins.PluginEngine
             var assemblies = pluginLoader.Load(path);
             var manifest = Sandbox.ReadManifest(assemblies);
 
+            // Add common assemblies to list
+            foreach (
+                var file in
+                    _fileSystem.GetFiles(System.IO.Path.GetDirectoryName(typeof (Kernel).Assembly.Location),
+                                         "Hadouken.Common.**.dll"))
+            {
+                assemblies.Add(_fileSystem.ReadAllBytes(file));
+            }
+
+            try
+            {
+                var sandbox = Sandbox.CreatePluginSandbox(manifest, assemblies);
+                sandbox.Load(manifest);
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorException(String.Format("Could not load plugin {0}.", manifest.Name), e);
+
+                return;
+            }
+
             _messageBus.Publish(new PluginLoadedMessage {Name = manifest.Name, Version = manifest.Version});
         }
 

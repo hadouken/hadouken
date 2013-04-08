@@ -19,7 +19,7 @@ namespace Hadouken.Plugins.PluginEngine.Loaders
             return path.EndsWith(".dll");
         }
 
-        public IEnumerable<byte[]> Load(string path)
+        public IList<byte[]> Load(string path)
         {
             return new [] { _fileSystem.ReadAllBytes(path) };
         }

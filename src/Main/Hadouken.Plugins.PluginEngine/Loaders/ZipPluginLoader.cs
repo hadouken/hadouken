@@ -28,7 +28,7 @@ namespace Hadouken.Plugins.PluginEngine.Loaders
             return (header == 0x04034b50 && path.EndsWith(".zip"));
         }
 
-        public IEnumerable<byte[]> Load(string path)
+        public IList<byte[]> Load(string path)
         {
             var data = new List<byte[]>();
 

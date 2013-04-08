@@ -26,5 +26,18 @@ namespace Hadouken.Plugins.PluginEngine
 
             return manifest;
         }
+
+        internal static PluginSandbox CreatePluginSandbox(PluginManifest manifest, IEnumerable<byte[]> assemblies)
+        {
+            var domain =
+                AppDomain.CreateDomain(String.Format("{0}-{1}", manifest.Name, manifest.Version).ToLowerInvariant());
+
+
+            var ps = (PluginSandbox) domain.CreateInstanceFromAndUnwrap(typeof (PluginSandbox).Assembly.Location,
+                                                                        typeof (PluginSandbox).FullName);
+            ps.AddAssemblies(assemblies);
+
+            return ps;
+        }
     }
 }

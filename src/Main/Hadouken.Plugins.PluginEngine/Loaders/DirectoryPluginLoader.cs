@@ -21,7 +21,7 @@ namespace Hadouken.Plugins.PluginEngine.Loaders
             return _fileSystem.IsDirectory(path);
         }
 
-        public IEnumerable<byte[]> Load(string path)
+        public IList<byte[]> Load(string path)
         {
             return (from f in _fileSystem.GetFiles(path)
                     where f.EndsWith(".dll")

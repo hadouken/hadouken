@@ -57,6 +57,7 @@
     <Compile Include="Loaders\ZipPluginLoader.cs" />
     <Compile Include="PluginManifest.cs" />
     <Compile Include="PluginManifestReader.cs" />
+    <Compile Include="PluginSandbox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sandbox.cs" />
   </ItemGroup>
