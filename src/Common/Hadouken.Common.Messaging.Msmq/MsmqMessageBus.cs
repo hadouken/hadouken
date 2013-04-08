@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using MassTransit;
+using NLog;
 
 namespace Hadouken.Common.Messaging.Msmq
 {
@@ -13,6 +14,8 @@ namespace Hadouken.Common.Messaging.Msmq
 
     public class MsmqMessageBus : IMsmqMessageBus
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly string _queuePath;
         private IServiceBus _serviceBus;
 
@@ -22,11 +25,6 @@ namespace Hadouken.Common.Messaging.Msmq
                 throw new ArgumentNullException("queuePath");
 
             _queuePath = queuePath;
-        }
-
-        private void OnMessage(TestMessage message)
-        {
-            //
         }
 
         public void Load()
@@ -42,10 +40,17 @@ namespace Hadouken.Common.Messaging.Msmq
 
                 b.Subscribe(s => s.Handler<TestMessage>(OnMessage));
             });
+
+            Logger.Info("Created message queue '{0}'.", _queuePath);
         }
 
         public void Unload()
         {
+        }
+
+        private void OnMessage(TestMessage message)
+        {
+            //
         }
 
         public void Publish<TMessage>(TMessage message) where TMessage : Message
