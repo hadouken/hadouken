@@ -85,6 +85,7 @@
     <Compile Include="Data\Migrations\Create\CreateTorrentInfoTable_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_002.cs" />
+    <Compile Include="HostEnvironment.cs" />
     <Compile Include="Hosting\DefaultHadoukenHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

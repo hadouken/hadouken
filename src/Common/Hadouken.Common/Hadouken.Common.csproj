@@ -68,6 +68,7 @@
     <Compile Include="Http\Mvc\RedirectResult.cs" />
     <Compile Include="Http\Mvc\ViewResult.cs" />
     <Compile Include="IComponentFactory.cs" />
+    <Compile Include="IEnvironment.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Kernel.cs" />
     <Compile Include="Messaging\IMessage.cs" />
