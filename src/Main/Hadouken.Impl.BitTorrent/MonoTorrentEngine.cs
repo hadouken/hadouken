@@ -46,7 +46,7 @@ namespace Hadouken.Impl.BitTorrent
             _kvs = kvs;
             _data = data;
             _fs = fs;
-            _mbus = mbusFactory.Create("hdkn.torrentEngine");
+            _mbus = mbusFactory.Create("hdkn");
 
             _mbus.Subscribe<KeyValueChangedMessage>(SettingChanged);
 

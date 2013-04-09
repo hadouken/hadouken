@@ -27,7 +27,7 @@ namespace Hadouken.Impl.Config
         public DefaultKeyValueStore(IDataRepository data, IMessageBusFactory busFactory)
         {
             _data = data;
-            _bus = busFactory.Create("hdkn.keyValueStore");
+            _bus = busFactory.Create("hdkn");
         }
 
         public object Get(string key)
