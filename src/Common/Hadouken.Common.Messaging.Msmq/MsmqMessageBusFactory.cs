@@ -8,17 +8,19 @@ namespace Hadouken.Common.Messaging.Msmq
     [Component(ComponentType.Singleton)]
     public class MsmqMessageBusFactory : IMessageBusFactory
     {
-        private IMessageBus _messageBus;
-
+        private readonly IDictionary<string, IMessageBus> _messageBusses = new Dictionary<string, IMessageBus>();
+ 
         public IMessageBus Create(string name)
         {
-            if (_messageBus == null)
+            if (!_messageBusses.ContainsKey(name))
             {
-                _messageBus = new MsmqMessageBus("msmq://localhost/hdkn");
-                _messageBus.Load();
+                var messageBus = new MsmqMessageBus("msmq://localhost/" + name);
+                messageBus.Load();
+
+                _messageBusses.Add(name, messageBus);
             }
 
-            return _messageBus;
+            return _messageBusses[name];
         }
     }
 }

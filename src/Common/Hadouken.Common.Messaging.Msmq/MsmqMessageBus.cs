@@ -36,8 +36,6 @@ namespace Hadouken.Common.Messaging.Msmq
                 b.SetPurgeOnStartup(true);
 
                 b.Subscribe(sbc => sbc.LoadHandlers());
-
-                //b.Subscribe(s => s.Handler<IMessage>(OnMessage));
             });
 
             Logger.Info("Created message queue '{0}'.", _queuePath);
