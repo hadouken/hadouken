@@ -8,6 +8,7 @@ using Hadouken.Common.Http;
 using Hadouken.Hosting;
 
 using Hadouken.Data;
+using Hadouken.Impl.Http;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;
@@ -32,6 +33,7 @@ namespace Hadouken.Impl.Hosting
             _pluginEngine = pluginEngine;
 
             _httpServer = httpServerFactory.Create("http://localhost:8081/", new NetworkCredential("hdkn", "hdkn"));
+            _httpServer.SetRequestCallback(HttpApiRequestHandler.Handle);
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -43,11 +45,18 @@ namespace Hadouken.Impl.Hosting
 
         public void Load()
         {
+            Logger.Trace("Load()");
+
+            Logger.Debug("Running migrations");
             _migratorRunner.Up(this.GetType().Assembly);
 
+            Logger.Debug("Loading the IBitTorrentEngine implementation");
             _torrentEngine.Load();
+
+            Logger.Debug("Loading the IPluginEngine implementation");
             _pluginEngine.Load();
 
+            Logger.Debug("Starting the HTTP API server");
             _httpServer.Start();
         }
 

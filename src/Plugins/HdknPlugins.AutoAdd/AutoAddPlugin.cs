@@ -36,7 +36,7 @@ namespace HdknPlugins.AutoAdd
 
         private void CheckFolders()
         {
-            var folders = _dataRepository.List<Folder>();
+            //var folders = _dataRepository.List<Folder>();
         }
 
         public override void Unload()

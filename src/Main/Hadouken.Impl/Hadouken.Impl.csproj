@@ -88,6 +88,7 @@
     <Compile Include="Data\Migrations\Insert\InsertSettingData_002.cs" />
     <Compile Include="HostEnvironment.cs" />
     <Compile Include="Hosting\DefaultHadoukenHost.cs" />
+    <Compile Include="Http\HttpApiRequestHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
