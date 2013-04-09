@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentNHibernate.Automapping;
 using NHibernate;
 using NHibernate.Linq;
 using FluentNHibernate.Cfg;
@@ -10,9 +11,13 @@ using NLog;
 
 namespace Hadouken.Common.Data.FluentNHibernate
 {
-    [Component]
+    [Component(ComponentType.Singleton)]
     public class FluentNHibernateDataRepository : IDataRepository
     {
+#pragma warning disable 0169
+        private static System.Data.SQLite.SQLiteConnection __conn__;
+#pragma warning restore 0169
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private ISessionFactory _sessionFactory;
@@ -33,6 +38,10 @@ namespace Hadouken.Common.Data.FluentNHibernate
 
             _sessionFactory = Fluently.Configure()
                                       .Database(SQLiteConfiguration.Standard.ConnectionString(_environment.ConnectionString))
+                                      .Mappings(
+                                          m => m.AutoMappings.Add(AutoMap.Assemblies(new CustomAutomappingConfig(),
+                                                                                     AppDomain.CurrentDomain.GetAssemblies())
+                                                                         .Conventions.Add(new EnumMappingConvention())))
                                       .BuildSessionFactory();
 
             Logger.Debug("Opening an ISession to use.");
