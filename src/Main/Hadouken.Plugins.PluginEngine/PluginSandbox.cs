@@ -8,11 +8,14 @@ using Hadouken.Common.Plugins;
 using Hadouken.Common.Messaging;
 using Hadouken.Common.DI;
 using Hadouken.Common.IO;
+using NLog;
 
 namespace Hadouken.Plugins.PluginEngine
 {
     public class PluginSandbox : MarshalByRefObject
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private Plugin _plugin;
 
         public PluginSandbox()
@@ -37,6 +40,8 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void Load(PluginManifest manifest)
         {
+            Logger.Debug("Loading plugin '{0}' in the sandbox.", manifest.Name);
+
             var resolverType = (from asm in AppDomain.CurrentDomain.GetAssemblies()
                                 from type in asm.GetTypes()
                                 where typeof (IDependencyResolver).IsAssignableFrom(type)

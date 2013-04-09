@@ -39,6 +39,8 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void Load(string path)
         {
+            Logger.Trace("Load(\"{0}\");", path);
+
             var pluginLoader = (from pl in _pluginLoaders
                                 where pl.CanLoad(path)
                                 select pl).FirstOrDefault();
@@ -52,6 +54,8 @@ namespace Hadouken.Plugins.PluginEngine
             var assemblies = pluginLoader.Load(path);
             var manifest = Sandbox.ReadManifest(assemblies);
 
+            Logger.Debug("Loaded {0} assemblies from path", assemblies.Count);
+
             // Add common assemblies to list
             foreach (
                 var file in
@@ -63,6 +67,8 @@ namespace Hadouken.Plugins.PluginEngine
 
             try
             {
+                Logger.Debug("Creating plugin sandbox");
+
                 var sandbox = Sandbox.CreatePluginSandbox(manifest, assemblies);
                 sandbox.Load(manifest);
             }
