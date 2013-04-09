@@ -23,7 +23,7 @@ namespace Hadouken.Plugins.PluginEngine
                                    IPluginLoader[] pluginLoaders)
         {
             _fileSystem = fileSystem;
-            _messageBus = messageBusFactory.Create("hdkn.pluginEngine");
+            _messageBus = messageBusFactory.Create("hdkn");
             _pluginLoaders = pluginLoaders;
         }
 
