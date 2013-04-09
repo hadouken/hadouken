@@ -7,6 +7,6 @@ namespace Hadouken.Common.Data
 {
     public abstract class Model
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
     }
 }
