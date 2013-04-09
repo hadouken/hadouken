@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionMessageHandlerWrapper.cs" />
     <Compile Include="ConsumerFactoryConfigurator.cs" />
     <Compile Include="MassTransitExtensions.cs" />
     <Compile Include="MsmqMessageBus.cs" />

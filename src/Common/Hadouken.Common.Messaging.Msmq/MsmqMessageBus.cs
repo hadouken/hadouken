@@ -53,7 +53,7 @@ namespace Hadouken.Common.Messaging.Msmq
 
         public void Subscribe<TMessage>(Action<TMessage> callback) where TMessage : Message
         {
-            //
+            Kernel.BindToInstance<IMessageHandler<TMessage>>(new ActionMessageHandlerWrapper<TMessage>(callback));
         }
     }
 }
