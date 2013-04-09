@@ -34,12 +34,13 @@ namespace Hadouken.Common.Http.HttpListener
             try
             {
                 var context = _httpListener.EndGetContext(ar);
-                _httpListener.BeginGetContext(BeginGetContext, null);
 
                 if (!IsAuthenticated(context.User.Identity as HttpListenerBasicIdentity))
                     return;
 
                 Task.Factory.StartNew(() => OnHttpRequest(new HttpContext(context)));
+
+                _httpListener.BeginGetContext(BeginGetContext, null);
             }
             catch (HttpListenerException)
             {
@@ -52,7 +53,7 @@ namespace Hadouken.Common.Http.HttpListener
             if (identity == null)
                 return false;
 
-            return (identity == _credential);
+            return (identity.Name == _credential.Name && identity.Password == _credential.Password);
         }
 
         public override void Stop()
