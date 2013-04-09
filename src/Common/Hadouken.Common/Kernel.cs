@@ -32,5 +32,10 @@ namespace Hadouken.Common
         {
             _dependencyResolver.BindToFunc(factory);
         }
+
+        public static void BindToInstance<T>(T instance)
+        {
+            _dependencyResolver.BindToInstance<T>(instance);
+        }
     }
 }

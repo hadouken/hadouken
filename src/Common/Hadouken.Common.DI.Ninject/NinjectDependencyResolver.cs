@@ -34,5 +34,10 @@ namespace Hadouken.Common.DI.Ninject
         {
             _kernel.Bind<T>().ToMethod(ctx => factory());
         }
+
+        public void BindToInstance<T>(T instance)
+        {
+            _kernel.Bind<T>().ToConstant(instance);
+        }
     }
 }

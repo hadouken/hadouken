@@ -11,5 +11,7 @@ namespace Hadouken.Common.DI
         IEnumerable<T> GetAll<T>();
 
         void BindToFunc<T>(Func<T> factory);
+
+        void BindToInstance<T>(T instance);
     }
 }
