@@ -6,25 +6,36 @@ using NHibernate;
 using NHibernate.Linq;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using NLog;
 
 namespace Hadouken.Common.Data.FluentNHibernate
 {
     [Component]
     public class FluentNHibernateDataRepository : IDataRepository
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private ISessionFactory _sessionFactory;
         private ISession _session;
 
-        public FluentNHibernateDataRepository()
+        private readonly IEnvironment _environment;
+
+        public FluentNHibernateDataRepository(IEnvironment environment)
         {
+            _environment = environment;
+
             BuildSessionFactory();
         }
 
         private void BuildSessionFactory()
         {
+            Logger.Debug("Creating the ISessionFactory with connection string {0}.", _environment.ConnectionString);
+
             _sessionFactory = Fluently.Configure()
-                                      .Database(SQLiteConfiguration.Standard.ConnectionString("Data Source=:memory:"))
+                                      .Database(SQLiteConfiguration.Standard.ConnectionString(_environment.ConnectionString))
                                       .BuildSessionFactory();
+
+            Logger.Debug("Opening an ISession to use.");
 
             _session = _sessionFactory.OpenSession();
         }
