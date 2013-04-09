@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Hadouken.Common.Messaging;
 using Hadouken.Common.BitTorrent;
+using Hadouken.Common.Messaging;
+using Hadouken.BitTorrent;
 
-namespace Hadouken.BitTorrent.MessageHandlers
+namespace Hadouken.Impl.BitTorrent.Handlers
 {
     public class AddTorrentHandler : IMessageHandler<AddTorrentMessage>
     {

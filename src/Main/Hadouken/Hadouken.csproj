@@ -66,7 +66,6 @@
     <Compile Include="BitTorrent\ITorrentManager.cs" />
     <Compile Include="BitTorrent\ITorrentSettings.cs" />
     <Compile Include="BitTorrent\ITracker.cs" />
-    <Compile Include="BitTorrent\MessageHandlers\AddTorrentHandler.cs" />
     <Compile Include="BitTorrent\Priority.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />
     <Compile Include="BitTorrent\TrackerState.cs" />
