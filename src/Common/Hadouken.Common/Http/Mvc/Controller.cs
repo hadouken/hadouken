@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Common.Http.Mvc
 {
-    public abstract class Controller
+    public abstract class Controller : IController
     {
         public IHttpContext Context { get; set; }
 

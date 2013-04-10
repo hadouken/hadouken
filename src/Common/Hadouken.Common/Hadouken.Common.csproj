@@ -66,6 +66,8 @@
     <Compile Include="Http\Mvc\HttpMethodAttribute.cs" />
     <Compile Include="Http\Mvc\HttpPostAttribute.cs" />
     <Compile Include="Http\Mvc\HttpPutAttribute.cs" />
+    <Compile Include="Http\Mvc\IController.cs" />
+    <Compile Include="Http\Mvc\IControllerFactory.cs" />
     <Compile Include="Http\Mvc\JsonResult.cs" />
     <Compile Include="Http\Mvc\RedirectResult.cs" />
     <Compile Include="Http\Mvc\ViewResult.cs" />
