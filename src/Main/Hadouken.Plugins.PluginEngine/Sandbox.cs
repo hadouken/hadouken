@@ -32,8 +32,14 @@ namespace Hadouken.Plugins.PluginEngine
 
         internal static PluginSandbox CreatePluginSandbox(PluginManifest manifest, IEnumerable<byte[]> assemblies)
         {
-            var domain =
-                AppDomain.CreateDomain(String.Format("{0}-{1}", manifest.Name, manifest.Version).ToLowerInvariant());
+            var setup = new AppDomainSetup
+                {
+                    ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                    ApplicationName = String.Format("{0}-{1}", manifest.Name, manifest.Version).ToLowerInvariant(),
+                    ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
+                };
+
+            var domain = AppDomain.CreateDomain(setup.ApplicationName, null, setup);
 
 
             var ps = (PluginSandbox) domain.CreateInstanceFromAndUnwrap(typeof (PluginSandbox).Assembly.Location,
