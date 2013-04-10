@@ -8,8 +8,8 @@ namespace Hadouken.Common.BitTorrent
 {
     public class AddTorrentMessage : Message
     {
+        public bool AutoStart { get; set; }
         public byte[] Data { get; set; }
-
         public string Label { get; set; }
     }
 }
