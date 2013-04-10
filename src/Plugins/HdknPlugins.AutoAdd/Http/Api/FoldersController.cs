@@ -36,5 +36,35 @@ namespace HdknPlugins.AutoAdd.Http.Api
 
             return new JsonResult(folder);
         }
+
+        [HttpPut("api/folders/{id}")]
+        public ActionResult Edit(int id)
+        {
+            var folder = BindModel<Folder>();
+            var oldFolder = _dataRepository.Single<Folder>(id);
+
+            if (oldFolder != null)
+            {
+                folder.Id = id;
+                _dataRepository.Update(folder);
+            }
+
+            return new JsonResult(folder);
+        }
+
+        [HttpDelete("api/folders/{id}")]
+        public ActionResult Delete(int id)
+        {
+            var folder = _dataRepository.Single<Folder>(id);
+
+            if (folder != null)
+            {
+                _dataRepository.Delete(folder);
+
+                return new JsonResult(true);
+            }
+
+            return new JsonResult(false);
+        }
     }
 }
