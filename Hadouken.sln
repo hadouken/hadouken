@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.IO.Local", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.DI.Ninject", "src\Common\Hadouken.Common.DI.Ninject\Hadouken.Common.DI.Ninject.csproj", "{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Http.ControllerFactory", "src\Common\Hadouken.Common.Http.ControllerFactory\Hadouken.Common.Http.ControllerFactory.csproj", "{65567C7B-D93D-443B-95D2-A33FC486FCBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -186,6 +188,14 @@ Global
 		{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}.Release|x64.Build.0 = Release|Any CPU
 		{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}.Release|x86.ActiveCfg = Release|Any CPU
 		{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}.Release|x86.Build.0 = Release|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Debug|x64.Build.0 = Debug|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Debug|x86.Build.0 = Debug|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Release|x64.ActiveCfg = Release|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Release|x64.Build.0 = Release|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Release|x86.ActiveCfg = Release|Any CPU
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -208,5 +218,6 @@ Global
 		{25EB6288-005F-42A3-AE45-78730F63FD6A} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 		{5926E8BA-144B-4B88-93D5-56C2D5CA6573} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 		{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
+		{65567C7B-D93D-443B-95D2-A33FC486FCBF} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 	EndGlobalSection
 EndGlobal
