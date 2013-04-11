@@ -13,6 +13,7 @@ using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;
 using Hadouken.Common;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Hosting
 {
@@ -21,19 +22,32 @@ namespace Hadouken.Impl.Hosting
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IEnvironment _environment;
         private readonly IBitTorrentEngine _torrentEngine;
+        private readonly IKeyValueStore _keyValueStore;
         private readonly IMigrationRunner _migratorRunner;
         private readonly IPluginEngine _pluginEngine;
         private readonly IHttpServer _httpServer;
 
-        public DefaultHadoukenHost(IBitTorrentEngine torrentEngine, IMigrationRunner runner, IPluginEngine pluginEngine, IHttpServerFactory httpServerFactory)
+        public DefaultHadoukenHost(IEnvironment environment,
+                                   IKeyValueStore keyValueStore,
+                                   IBitTorrentEngine torrentEngine,
+                                   IMigrationRunner runner,
+                                   IPluginEngine pluginEngine,
+                                   IHttpServerFactory httpServerFactory)
         {
+            _environment = environment;
+            _keyValueStore = keyValueStore;
             _torrentEngine = torrentEngine;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
 
-            _httpServer = httpServerFactory.Create("http://localhost:8081/", new NetworkCredential("hdkn", "hdkn"));
-            _httpServer.SetRequestCallback(HttpApiRequestHandler.Handle);
+            var httpUser = _keyValueStore.Get("http.auth.username", "hdkn");
+            var httpPass = _keyValueStore.Get("http.auth.password", "hdkn");
+
+            _httpServer = httpServerFactory.Create(environment.HttpBinding, new NetworkCredential(httpUser, httpPass));
+            _httpServer.FileLocationBase = "C:\\webui";
+            _httpServer.FileLocationType = FileLocationType.FileSystem;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -62,6 +76,8 @@ namespace Hadouken.Impl.Hosting
 
         public void Unload()
         {
+            Logger.Trace("Unload()");
+
             _pluginEngine.UnloadAll();
 
             _torrentEngine.Unload();

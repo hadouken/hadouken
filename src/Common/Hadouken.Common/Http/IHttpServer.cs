@@ -8,9 +8,10 @@ namespace Hadouken.Common.Http
 {
     public interface IHttpServer
     {
+        FileLocationType FileLocationType { get; set; }
+        string FileLocationBase { get; set; }
+
         void Start();
         void Stop();
-
-        void SetRequestCallback(Action<IHttpContext> requestCallback);
     }
 }

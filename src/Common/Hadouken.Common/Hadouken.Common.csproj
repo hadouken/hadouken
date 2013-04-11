@@ -53,7 +53,6 @@
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\Model.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
-    <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\FileLocationType.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpRequest.cs" />

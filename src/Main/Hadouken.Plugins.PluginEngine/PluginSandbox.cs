@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Hadouken.Common;
 using Hadouken.Common.Plugins;
@@ -9,6 +10,7 @@ using Hadouken.Common.Messaging;
 using Hadouken.Common.DI;
 using Hadouken.Common.IO;
 using NLog;
+using Hadouken.Common.Http;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -49,12 +51,19 @@ namespace Hadouken.Plugins.PluginEngine
                                 select type).First();
 
             var resolver = (IDependencyResolver) Activator.CreateInstance(resolverType);
-
             Kernel.SetResolver(resolver);
+
             Kernel.BindToFunc(() =>
                 {
                     var factory = Kernel.Get<IMessageBusFactory>();
                     return factory.Create("hdkn.plugins." + manifest.Name.ToLowerInvariant());
+                });
+
+            Kernel.BindToFunc(() =>
+                {
+                    var factory = Kernel.Get<IHttpServerFactory>();
+                    return factory.Create(String.Format("http://localhost:8081/plugins/{0}/", manifest.Name),
+                                          new NetworkCredential("hdkn", "hdkn"));
                 });
 
             Kernel.BindToFunc<IEnvironment>(() =>
@@ -70,7 +79,15 @@ namespace Hadouken.Plugins.PluginEngine
                     return env;
                 });
 
+            // Resolve the plugin
             _plugin = Kernel.Get<Plugin>();
+
+            // Get a HTTP server
+            var httpServer = Kernel.Get<IHttpServer>();
+            httpServer.FileLocationBase = _plugin.GetType().Namespace + ".UI";
+            httpServer.FileLocationType = FileLocationType.EmbeddedResource;
+            httpServer.Start();
+
             _plugin.Load();
         }
 
