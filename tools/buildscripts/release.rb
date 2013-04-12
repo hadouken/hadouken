@@ -70,11 +70,11 @@ namespace :release do
         fail "newer major version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
-      if(tv[0] > lv[0] && tv[1] > lv[1])
+      if(tv[0] >= lv[0] && tv[1] > lv[1])
         fail "newer minor version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
-      if(tv[0] > lv[0] && tv[1] > lv[1] && tv[2] >= lv[2])
+      if(tv[0] >= lv[0] && tv[1] >= lv[1] && tv[2] >= lv[2])
         fail "newer patch version already released. github tag: #{tag["name"]}, version: #{v}"
       end
     end
