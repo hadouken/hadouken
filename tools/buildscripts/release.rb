@@ -11,32 +11,6 @@ namespace :release do
     ensure_correct_branch()
   end
   
-  task :major => :common do
-    version = SemVer.find
-    version.major += 1
-    version.minor = version.patch = 0
-    version.save
-    
-    Rake::Task["ga"].invoke
-  end
-  
-  task :minor => :common do
-    version = SemVer.find
-    version.minor += 1
-    version.patch = 0
-    version.save
-    
-    Rake::Task["ga"].invoke
-  end
-  
-  task :patch => :common do
-    version = SemVer.find
-    version.patch += 1
-    version.save
-    
-    Rake::Task["ga"].invoke
-  end
-  
   task :publish => :common do
     version = SemVer.find
     
@@ -45,10 +19,6 @@ namespace :release do
     
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x86.msi", version.format("%M.%m"))
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x64.msi", version.format("%M.%m"))
-    
-    commit_repo(version.to_s)
-    tag_repo(version.to_s)
-    push_repo(CFG["git"]["remote"], version.to_s)
   end
   
   def ensure_msi_packages(v)
@@ -135,20 +105,5 @@ namespace :release do
       puts "uploading file"
       sftp.upload!(localFile, File.join(s["path"], v, File.basename(localFile)))
     end
-  end
-  
-  def commit_repo(v)
-    `git commit .semver -m "Release #{v}"`
-  end
-  
-  def tag_repo(v)
-    puts "tagging repo with version #{v}"
-    `git tag #{v}`
-  end
-  
-  def push_repo(remote, tag)
-    puts "pushing tag #{tag} to remote repository #{remote}"
-    `git push #{remote} #{CFG["git"]["release_branch"]}`
-    `git push #{remote} #{tag}`
   end
 end
