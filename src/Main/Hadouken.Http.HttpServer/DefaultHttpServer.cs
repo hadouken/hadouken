@@ -64,7 +64,7 @@ namespace Hadouken.Http.HttpServer
 
         public void Stop()
         {
-            if (_listener == null) return;
+            if (_listener == null || !_listener.IsListening) return;
 
             _listener.Stop();
             _listener.Close();

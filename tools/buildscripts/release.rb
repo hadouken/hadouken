@@ -3,38 +3,14 @@ require 'psych'
 require 'httparty'
 require 'net/sftp'
 
-CFG = YAML.load_file("config/config.yml") unless defined? CFG
+if ENV['HDKN_CONFIG'] != nil then
+  CFG = YAML.load_file(ENV['HDKN_CONFIG']) unless defined? CFG
+end
 
 namespace :release do
   task :common do
     ensure_clean_repo()
     ensure_correct_branch()
-  end
-  
-  task :major => :common do
-    version = SemVer.find
-    version.major += 1
-    version.minor = version.patch = 0
-    version.save
-    
-    Rake::Task["ga"].invoke
-  end
-  
-  task :minor => :common do
-    version = SemVer.find
-    version.minor += 1
-    version.patch = 0
-    version.save
-    
-    Rake::Task["ga"].invoke
-  end
-  
-  task :patch => :common do
-    version = SemVer.find
-    version.patch += 1
-    version.save
-    
-    Rake::Task["ga"].invoke
   end
   
   task :publish => :common do
@@ -45,10 +21,6 @@ namespace :release do
     
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x86.msi", version.format("%M.%m"))
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x64.msi", version.format("%M.%m"))
-    
-    commit_repo(version.to_s)
-    tag_repo(version.to_s)
-    push_repo(CFG["git"]["remote"], version.to_s)
   end
   
   def ensure_msi_packages(v)
@@ -100,11 +72,11 @@ namespace :release do
         fail "newer major version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
-      if(tv[0] > lv[0] && tv[1] > lv[1])
+      if(tv[0] >= lv[0] && tv[1] > lv[1])
         fail "newer minor version already released. github tag: #{tag["name"]}, version: #{v}"
       end
       
-      if(tv[0] > lv[0] && tv[1] > lv[1] && tv[2] >= lv[2])
+      if(tv[0] >= lv[0] && tv[1] >= lv[1] && tv[2] >= lv[2])
         fail "newer patch version already released. github tag: #{tag["name"]}, version: #{v}"
       end
     end
@@ -135,20 +107,5 @@ namespace :release do
       puts "uploading file"
       sftp.upload!(localFile, File.join(s["path"], v, File.basename(localFile)))
     end
-  end
-  
-  def commit_repo(v)
-    `git commit .semver -m "Release #{v}"`
-  end
-  
-  def tag_repo(v)
-    puts "tagging repo with version #{v}"
-    `git tag #{v}`
-  end
-  
-  def push_repo(remote, tag)
-    puts "pushing tag #{tag} to remote repository #{remote}"
-    `git push #{remote}`
-    `git push #{remote} #{tag}`
   end
 end
