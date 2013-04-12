@@ -21,7 +21,7 @@ namespace Hadouken.UnitTests
             config.Add("Paths.Plugins", "Plugins");
             config.Add("Paths.WebUI", "../../../../WebUI");
 
-            config.Add("WebUI.Url", "http://localhost:{port}/");
+            config.Add("WebUI.Binding", "http://localhost:{port}/");
             config.Add("WebUI.Port", "8081");
         }
 
