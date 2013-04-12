@@ -3,7 +3,9 @@ require 'psych'
 require 'httparty'
 require 'net/sftp'
 
-CFG = YAML.load_file("config/config.yml") unless defined? CFG
+if ENV['HDKN_CONFIG'] != nil then
+  CFG = YAML.load_file(ENV['HDKN_CONFIG']) unless defined? CFG
+end
 
 namespace :release do
   task :common do
