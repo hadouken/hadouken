@@ -23,7 +23,7 @@ namespace Hadouken.Impl
             HttpBinding = GetBinding();
         }
 
-        private string GetBinding()
+        private Uri GetBinding()
         {
             var binding = _registryReader.ReadString("http.binding", "http://localhost:{port}/");
             var port = _registryReader.ReadInt("http.port", 8081);
@@ -35,7 +35,7 @@ namespace Hadouken.Impl
             if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Port"))
                 port = Convert.ToInt32(HdknConfig.ConfigManager["WebUI.Port"]);
 
-            return binding.Replace("{port}", port.ToString()); ;
+            return new Uri(binding.Replace("{port}", port.ToString()));
         }
 
         public string ConnectionString
@@ -43,6 +43,6 @@ namespace Hadouken.Impl
             get { return HdknConfig.ConnectionString; }
         }
 
-        public string HttpBinding { get; private set; }
+        public Uri HttpBinding { get; private set; }
     }
 }

@@ -9,6 +9,6 @@ namespace Hadouken.Common
     public interface IEnvironment
     {
         string ConnectionString { get; }
-        string HttpBinding { get; }
+        Uri HttpBinding { get; }
     }
 }

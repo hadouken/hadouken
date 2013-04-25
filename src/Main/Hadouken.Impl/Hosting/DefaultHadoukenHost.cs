@@ -27,7 +27,7 @@ namespace Hadouken.Impl.Hosting
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMigrationRunner _migratorRunner;
         private readonly IPluginEngine _pluginEngine;
-        private readonly IHttpServer _httpServer;
+        private readonly IHttpFileSystemServer _httpServer;
 
         public DefaultHadoukenHost(IEnvironment environment,
                                    IKeyValueStore keyValueStore,
@@ -45,9 +45,10 @@ namespace Hadouken.Impl.Hosting
             var httpUser = _keyValueStore.Get("http.auth.username", "hdkn");
             var httpPass = _keyValueStore.Get("http.auth.password", "hdkn");
 
-            _httpServer = httpServerFactory.Create(environment.HttpBinding, new NetworkCredential(httpUser, httpPass));
-            _httpServer.FileLocationBase = "C:\\webui";
-            _httpServer.FileLocationType = FileLocationType.FileSystem;
+
+            _httpServer = httpServerFactory.Create(environment.HttpBinding,
+                                                   new NetworkCredential(httpUser, httpPass),
+                                                   "C:\\temp\\webui");
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }

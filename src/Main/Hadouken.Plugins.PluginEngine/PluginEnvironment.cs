@@ -11,6 +11,6 @@ namespace Hadouken.Plugins.PluginEngine
     {
         public string ConnectionString { get; set; }
         public NetworkCredential HttpCredentials { get; set; }
-        public string HttpBinding { get; set; }
+        public Uri HttpBinding { get; set; }
     }
 }

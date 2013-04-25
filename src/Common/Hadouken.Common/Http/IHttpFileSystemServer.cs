@@ -6,11 +6,8 @@ using System.Net;
 
 namespace Hadouken.Common.Http
 {
-    public interface IHttpServer
+    public interface IHttpFileSystemServer
     {
-        FileLocationType FileLocationType { get; set; }
-        string FileLocationBase { get; set; }
-
         void Start();
         void Stop();
     }

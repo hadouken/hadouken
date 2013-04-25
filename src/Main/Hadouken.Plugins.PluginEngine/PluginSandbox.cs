@@ -62,8 +62,9 @@ namespace Hadouken.Plugins.PluginEngine
             Kernel.BindToFunc(() =>
                 {
                     var factory = Kernel.Get<IHttpServerFactory>();
-                    return factory.Create(String.Format("http://localhost:8081/plugins/{0}/", manifest.Name),
-                                          new NetworkCredential("hdkn", "hdkn"));
+                    return factory.Create(new Uri(String.Format("http://localhost:8081/plugins/{0}/", manifest.Name)),
+                                          new NetworkCredential("hdkn", "hdkn"),
+                                          AppDomain.CurrentDomain.GetAssemblies());
                 });
 
             Kernel.BindToFunc<IEnvironment>(() =>
@@ -83,9 +84,7 @@ namespace Hadouken.Plugins.PluginEngine
             _plugin = Kernel.Get<Plugin>();
 
             // Get a HTTP server
-            var httpServer = Kernel.Get<IHttpServer>();
-            httpServer.FileLocationBase = _plugin.GetType().Namespace + ".UI";
-            httpServer.FileLocationType = FileLocationType.EmbeddedResource;
+            var httpServer = Kernel.Get<IHttpWebApiServer>();
             httpServer.Start();
 
             _plugin.Load();

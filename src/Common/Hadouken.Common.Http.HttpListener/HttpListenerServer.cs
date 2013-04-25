@@ -9,18 +9,17 @@ using Hadouken.Common.Http.Mvc;
 
 namespace Hadouken.Common.Http.HttpListener
 {
-    public class HttpListenerServer : IHttpServer
+    public class HttpListenerServer : IHttpFileSystemServer
     {
         private readonly System.Net.HttpListener _httpListener;
         private readonly HttpListenerBasicIdentity _credential;
         private readonly Uri _binding;
-        private readonly IController[] _controllers;
+        private readonly string _basePath;
 
-        public HttpListenerServer(Uri binding, NetworkCredential credential, IController[] controllers)
+        public HttpListenerServer(Uri binding, NetworkCredential credential, string basePath)
         {
-            _controllers = controllers;
-
             _binding = binding;
+            _basePath = basePath;
 
             _httpListener = new System.Net.HttpListener();
             _httpListener.Prefixes.Add(binding.ToString());
@@ -28,10 +27,6 @@ namespace Hadouken.Common.Http.HttpListener
 
             _credential = new HttpListenerBasicIdentity(credential.UserName, credential.Password);            
         }
-
-        public FileLocationType FileLocationType { get; set; }
-
-        public string FileLocationBase { get; set; }
 
         public void Start()
         {
@@ -62,87 +57,10 @@ namespace Hadouken.Common.Http.HttpListener
 
         private void OnHttpRequest(IHttpContext context)
         {
-            ActionResult result;
-
-            if (GetFile(context, out result))
-            {
-                result.Execute(context);
-            }
-
-            // Check the file location for the specified type.
-
-            // If file is found, return the result we got
-
-            // Else, check if we have a matching controller
-
-            // If we do, return that result
-
-            // Else, return HttpNotFound
+            // Check file system for file
 
             context.Response.OutputStream.Close();
             context.Response.Close();
-        }
-
-        private bool GetFile(IHttpContext context, out ActionResult result)
-        {
-            result = new HttpNotFoundResult();
-            byte[] data = null;
-
-            switch (FileLocationType)
-            {
-                case FileLocationType.EmbeddedResource:
-                    data = GetFileFromEmbeddedResource(context);
-                    break;
-                
-                case FileLocationType.FileSystem:
-                    //data = GetFileFromFileSystem();
-                    break;
-            }
-
-            if (data != null)
-            {
-                result = new ContentResult(data, GetContentType(Path.GetExtension(context.Request.Url.PathAndQuery)));
-                return true;
-            }
-
-            return false;
-        }
-
-        private byte[] GetFileFromEmbeddedResource(IHttpContext context)
-        {
-            // Base = HdknPlugins.AutoAdd.UI
-            // Path = /plugins/autoadd/boot.js
-            // Result = Hadouken.Plugins.AutoAdd.UI.boot.js
-
-            // Base = HdknPlugins.AutoAdd.UI
-            // Path = /plugins/autoadd/js/foo.js
-            // Result = HdknPlugins.AutoAdd.UI.js.foo.js
-
-            var bindingPath = _binding.PathAndQuery;
-            var requestPath = context.Request.Url.PathAndQuery;
-
-            var path = requestPath.Substring(bindingPath.Length);
-            path = path.Replace("/", ".");
-            path = String.Concat(FileLocationBase, ".", path);
-
-            var asm = (from a in AppDomain.CurrentDomain.GetAssemblies()
-                       from r in a.GetManifestResourceNames()
-                       where r == path
-                       select a).FirstOrDefault();
-
-            if (asm == null)
-                return null;
-
-            using (var ms = new MemoryStream())
-            using (var stream = asm.GetManifestResourceStream(path))
-            {
-                if (stream == null)
-                    return null;
-
-                stream.CopyTo(ms);
-
-                return ms.ToArray();
-            }
         }
 
         private bool IsAuthenticated(HttpListenerBasicIdentity identity)
