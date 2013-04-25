@@ -16,6 +16,7 @@ namespace Hadouken.Plugins.PluginEngine
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IFileSystem _fileSystem;
+        private readonly IKeyValueStore _keyValueStore;
         private readonly IMessageBus _messageBus;
         private readonly IPluginLoader[] _pluginLoaders;
 
@@ -23,10 +24,12 @@ namespace Hadouken.Plugins.PluginEngine
             new Dictionary<string, PluginInfo>(StringComparer.InvariantCultureIgnoreCase); 
 
         public DefaultPluginEngine(IFileSystem fileSystem,
+                                   IKeyValueStore keyValueStore,
                                    IMessageBusFactory messageBusFactory,
                                    IPluginLoader[] pluginLoaders)
         {
             _fileSystem = fileSystem;
+            _keyValueStore = keyValueStore;
             _messageBus = messageBusFactory.Create("hdkn");
             _pluginLoaders = pluginLoaders;
         }
@@ -70,6 +73,13 @@ namespace Hadouken.Plugins.PluginEngine
             }
 
             _plugins.Add(manifest.Name, new PluginInfo(manifest.Name, manifest.Version));
+
+            var blacklist = _keyValueStore.Get("plugins.blacklist", new string[] { });
+            if (blacklist.Contains(manifest.Name))
+            {
+                Logger.Error("Plugin {0} is blacklisted. Skipping.", manifest.Name);
+                return;
+            }
 
             Logger.Debug("Loaded {0} assemblies from path", assemblies.Count);
 
