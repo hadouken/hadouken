@@ -61,9 +61,11 @@ namespace Hadouken.Plugins.PluginEngine
 
             Kernel.BindToFunc(() =>
                 {
+                    var env = Kernel.Get<IEnvironment>();
                     var factory = Kernel.Get<IHttpServerFactory>();
-                    return factory.Create(new Uri(String.Format("http://localhost:8081/plugins/{0}/", manifest.Name)),
-                                          new NetworkCredential("hdkn", "hdkn"),
+
+                    return factory.Create(env.HttpBinding,
+                                          env.HttpCredentials,
                                           AppDomain.CurrentDomain.GetAssemblies());
                 });
 
@@ -74,7 +76,9 @@ namespace Hadouken.Plugins.PluginEngine
 
                     var env = new PluginEnvironment()
                         {
-                            ConnectionString = String.Format("Data Source={0};", databasePath)
+                            ConnectionString = String.Format("Data Source={0};", databasePath),
+                            HttpBinding = new Uri("http://localhost:8081/api/plugins/" + manifest.Name.ToLowerInvariant()),
+                            HttpCredentials = new NetworkCredential("hdkn", "hdkn")
                         };
 
                     return env;

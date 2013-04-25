@@ -44,5 +44,7 @@ namespace Hadouken.Impl
         }
 
         public Uri HttpBinding { get; private set; }
+
+        public NetworkCredential HttpCredentials { get; private set; }
     }
 }

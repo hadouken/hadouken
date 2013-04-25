@@ -10,5 +10,6 @@ namespace Hadouken.Common
     {
         string ConnectionString { get; }
         Uri HttpBinding { get; }
+        NetworkCredential HttpCredentials { get; }
     }
 }
