@@ -72,16 +72,16 @@ namespace Hadouken.Impl.BitTorrent
             switch(message.Key)
             {
                 case "bandwidth.globalMaxConnections":
-                    _clientEngine.Settings.GlobalMaxConnections = Convert.ToInt32(message.NewValue);
+                    _clientEngine.Settings.GlobalMaxConnections = _kvs.Get<int>(message.Key);
                     break;
 
                 case "bt.listenPort":
-                    var newPort = Convert.ToInt32(message.NewValue);
+                    var newPort = _kvs.Get<int>(message.Key);
                     _clientEngine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, newPort));
                     break;
 
                 case "paths.defaultSavePath":
-                    _clientEngine.Settings.SavePath = message.NewValue.ToString();
+                    _clientEngine.Settings.SavePath = _kvs.Get<string>(message.Key);
                     break;
             }
         }

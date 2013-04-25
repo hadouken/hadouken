@@ -42,15 +42,10 @@ namespace Hadouken.Plugins.PluginEngine
             if (!String.Equals("plugins.blacklist", message.Key))
                 return;
 
-            var oldBlacklist = message.OldValue as string[];
-            var newBlacklist = message.NewValue as string[];
+            var blacklist = _keyValueStore.Get(message.Key, new string[] {});
+            var unblacklistedItems = _plugins.Keys.Except(blacklist );
 
-            if (oldBlacklist == null) oldBlacklist = new string[] {};
-            if (newBlacklist == null) newBlacklist = new string[] {};
-
-            var unblacklistedItems = oldBlacklist.Except(newBlacklist);
-
-            foreach (var item in newBlacklist)
+            foreach (var item in blacklist)
             {
                 if (_plugins.ContainsKey(item) && _plugins[item].State == PluginState.Loaded)
                     Unload(item);
