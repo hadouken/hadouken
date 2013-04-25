@@ -78,7 +78,6 @@
     <Compile Include="Configuration\Options.cs" />
     <Compile Include="Configuration\Permissions.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
-    <Compile Include="Data\Models\PluginInfo.cs" />
     <Compile Include="Data\Models\Setting.cs" />
     <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
