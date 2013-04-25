@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 using Hadouken.Common;
@@ -18,6 +19,8 @@ namespace Hadouken.Plugins.PluginEngine
         private readonly IMessageBus _messageBus;
         private readonly IPluginLoader[] _pluginLoaders;
 
+        private IList<PluginInfo> _pluginInfos = new List<PluginInfo>();
+
         public DefaultPluginEngine(IFileSystem fileSystem,
                                    IMessageBusFactory messageBusFactory,
                                    IPluginLoader[] pluginLoaders)
@@ -26,6 +29,11 @@ namespace Hadouken.Plugins.PluginEngine
             _messageBus = messageBusFactory.Create("hdkn");
             _pluginLoaders = pluginLoaders;
         }
+
+        public IEnumerable<PluginInfo> Plugins
+        {
+            get { return _pluginInfos; }
+        } 
 
         public void Load()
         {
@@ -80,6 +88,11 @@ namespace Hadouken.Plugins.PluginEngine
             }
 
             _messageBus.Publish(new PluginLoadedMessage {Name = manifest.Name, Version = manifest.Version});
+        }
+
+        public void Unload(string name)
+        {
+            
         }
 
         public void UnloadAll()

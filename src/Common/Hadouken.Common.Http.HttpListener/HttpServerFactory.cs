@@ -26,6 +26,7 @@ namespace Hadouken.Common.Http.HttpListener
         public IHttpWebApiServer Create(Uri baseAddress, NetworkCredential credential, Assembly[] assemblies)
         {
             var config = new HttpSelfHostConfiguration(baseAddress);
+            config.DependencyResolver = new KernelDependencyResolver();
 
             // Set up authentication
             config.ClientCredentialType = HttpClientCredentialType.Basic;
@@ -47,7 +48,7 @@ namespace Hadouken.Common.Http.HttpListener
             config.Routes.MapHttpRoute(
                 "API default",
                 "{controller}/{id}",
-                new {id = RouteParameter.Optional}
+                new {controller ="System", id = RouteParameter.Optional}
             );
 
             return new SelfHostedWebApiServer(config);

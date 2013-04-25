@@ -25,10 +25,20 @@ namespace Hadouken.Common.DI.Ninject
             return _kernel.Get<T>();
         }
 
+        public object Get(Type serviceType)
+        {
+            return _kernel.TryGet(serviceType);
+        }
+
         public IEnumerable<T> GetAll<T>()
         {
             return _kernel.GetAll<T>();
         }
+
+        public IEnumerable<object> GetAll(Type serviceType)
+        {
+            return _kernel.GetAll(serviceType);
+        } 
 
         public void BindToFunc<T>(Func<T> factory)
         {

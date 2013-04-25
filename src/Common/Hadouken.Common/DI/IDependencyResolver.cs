@@ -13,5 +13,9 @@ namespace Hadouken.Common.DI
         void BindToFunc<T>(Func<T> factory);
 
         void BindToInstance<T>(T instance);
+
+        object Get(Type serviceType);
+
+        IEnumerable<object> GetAll(Type serviceType);
     }
 }

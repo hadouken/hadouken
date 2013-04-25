@@ -23,10 +23,20 @@ namespace Hadouken.Common
             return _dependencyResolver.Get<T>();
         }
 
+        public static object Get(Type serviceType)
+        {
+            return _dependencyResolver.Get(serviceType);
+        }
+
         public static IEnumerable<T> GetAll<T>()
         {
             return _dependencyResolver.GetAll<T>();
         }
+
+        public static IEnumerable<object> GetAll(Type serviceType)
+        {
+            return _dependencyResolver.GetAll(serviceType);
+        } 
 
         public static void BindToFunc<T>(Func<T> factory)
         {
