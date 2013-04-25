@@ -5,7 +5,7 @@ using System.Net.Http.Formatting;
 using System.ServiceModel;
 using System.Text;
 using System.Web.Http;
-using Hadouken.Common.Http.Mvc;
+
 using System.Net;
 using System.Reflection;
 using System.Web.Http.SelfHost;

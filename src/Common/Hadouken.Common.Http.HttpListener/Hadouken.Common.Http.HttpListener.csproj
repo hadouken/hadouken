@@ -59,11 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpContext.cs" />
     <Compile Include="HttpListenerServer.cs" />
     <Compile Include="HttpServerFactory.cs" />
-    <Compile Include="HttpRequest.cs" />
-    <Compile Include="HttpResponse.cs" />
     <Compile Include="IdentityValidator.cs" />
     <Compile Include="LocalizedAssembliesResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

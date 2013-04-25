@@ -8,7 +8,6 @@ using Hadouken.Common.Http;
 using Hadouken.Hosting;
 
 using Hadouken.Data;
-using Hadouken.Impl.Http;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;

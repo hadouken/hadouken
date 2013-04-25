@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Hadouken.Common.Http.Mvc;
+
 
 namespace Hadouken.Common.Http.HttpListener
 {
@@ -45,7 +45,7 @@ namespace Hadouken.Common.Http.HttpListener
                 if (!IsAuthenticated(context.User.Identity as HttpListenerBasicIdentity))
                     return;
 
-                Task.Factory.StartNew(() => OnHttpRequest(new HttpContext(context)));
+                Task.Factory.StartNew(() => OnHttpRequest(context));
 
                 _httpListener.BeginGetContext(BeginGetContext, null);
             }
@@ -55,7 +55,7 @@ namespace Hadouken.Common.Http.HttpListener
             }
         }
 
-        private void OnHttpRequest(IHttpContext context)
+        private void OnHttpRequest(HttpListenerContext context)
         {
             // Check file system for file
 
