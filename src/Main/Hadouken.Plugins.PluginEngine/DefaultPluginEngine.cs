@@ -164,7 +164,10 @@ namespace Hadouken.Plugins.PluginEngine
             var sandbox = _plugins[name].Sandbox;
 
             if (sandbox != null)
+            {
                 sandbox.Unload();
+                AppDomain.Unload(sandbox.AppDomain);
+            }
 
             _plugins[name].Sandbox = null;
             _plugins[name].State = PluginState.Unloaded;

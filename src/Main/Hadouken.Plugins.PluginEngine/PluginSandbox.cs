@@ -25,6 +25,11 @@ namespace Hadouken.Plugins.PluginEngine
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
+        public AppDomain AppDomain
+        {
+            get { return AppDomain.CurrentDomain; }
+        }
+
         System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             return (from asm in AppDomain.CurrentDomain.GetAssemblies()
