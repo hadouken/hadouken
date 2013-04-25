@@ -32,6 +32,12 @@ namespace Hadouken.Plugins.PluginEngine
 
         internal static PluginSandbox CreatePluginSandbox(PluginManifest manifest, IEnumerable<byte[]> assemblies)
         {
+            if (manifest == null)
+                throw new ArgumentNullException("manifest");
+
+            if (assemblies == null)
+                throw new ArgumentNullException("assemblies");
+
             var setup = new AppDomainSetup
                 {
                     ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
