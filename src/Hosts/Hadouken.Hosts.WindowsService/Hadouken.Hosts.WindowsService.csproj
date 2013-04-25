@@ -113,6 +113,10 @@
       <Project>{3f2758d7-b296-41c4-b2b8-8f11aafd5b8b}</Project>
       <Name>Hadouken.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Http.Api\Hadouken.Http.Api.csproj">
+      <Project>{0A098B4B-FFE5-4336-B9C3-2BDF0D5E7128}</Project>
+      <Name>Hadouken.Http.Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
       <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>
       <Name>Hadouken.Impl.BitTorrent</Name>

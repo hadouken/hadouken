@@ -26,7 +26,9 @@ namespace Hadouken.Impl.Hosting
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMigrationRunner _migratorRunner;
         private readonly IPluginEngine _pluginEngine;
+
         private readonly IHttpFileSystemServer _httpServer;
+        private readonly IHttpWebApiServer _webApiServer;
 
         public DefaultHadoukenHost(IEnvironment environment,
                                    IKeyValueStore keyValueStore,
@@ -48,6 +50,10 @@ namespace Hadouken.Impl.Hosting
             _httpServer = httpServerFactory.Create(environment.HttpBinding,
                                                    new NetworkCredential(httpUser, httpPass),
                                                    "C:\\temp\\webui");
+
+            _webApiServer = httpServerFactory.Create(new Uri(environment.HttpBinding, "api"),
+                                                     new NetworkCredential(httpUser, httpPass),
+                                                     AppDomain.CurrentDomain.GetAssemblies());
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -71,6 +77,9 @@ namespace Hadouken.Impl.Hosting
             _pluginEngine.Load();
 
             Logger.Debug("Starting the HTTP API server");
+            _webApiServer.Start();
+            
+            Logger.Debug("Starting the HTTP UI server");
             _httpServer.Start();
         }
 
@@ -83,6 +92,8 @@ namespace Hadouken.Impl.Hosting
             _torrentEngine.Unload();
 
             _httpServer.Stop();
+
+            _webApiServer.Stop();
         }
     }
 }
