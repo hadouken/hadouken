@@ -22,7 +22,8 @@ namespace Hadouken.Http.Api
                     select new
                         {
                             plugin.Name,
-                            plugin.Version
+                            plugin.Version,
+                            plugin.State
                         });
         } 
     }

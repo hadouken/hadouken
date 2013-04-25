@@ -58,6 +58,7 @@
     <Compile Include="Loaders\DirectoryPluginLoader.cs" />
     <Compile Include="Loaders\ZipPluginLoader.cs" />
     <Compile Include="PluginEnvironment.cs" />
+    <Compile Include="PluginInfo.cs" />
     <Compile Include="PluginManifest.cs" />
     <Compile Include="PluginManifestReader.cs" />
     <Compile Include="PluginSandbox.cs" />

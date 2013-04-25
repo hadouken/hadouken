@@ -7,7 +7,7 @@ namespace Hadouken.Plugins
 {
     public interface IPluginEngine
     {
-        IEnumerable<PluginInfo> Plugins { get; } 
+        IEnumerable<IPluginInfo> Plugins { get; } 
 
         /// <summary>
         /// Load all plugins in the default plugin folder.
