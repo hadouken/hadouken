@@ -81,7 +81,7 @@ namespace Hadouken.Impl.BitTorrent
                     break;
 
                 case "paths.defaultSavePath":
-                    _clientEngine.Settings.SavePath = message.NewValue;
+                    _clientEngine.Settings.SavePath = message.NewValue.ToString();
                     break;
             }
         }

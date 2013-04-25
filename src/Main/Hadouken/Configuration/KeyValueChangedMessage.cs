@@ -9,7 +9,7 @@ namespace Hadouken.Configuration
     public class KeyValueChangedMessage : Message   
     {
         public string Key { get; set; }
-        public string OldValue { get; set; }
-        public string NewValue { get; set; }
+        public object OldValue { get; set; }
+        public object NewValue { get; set; }
     }
 }

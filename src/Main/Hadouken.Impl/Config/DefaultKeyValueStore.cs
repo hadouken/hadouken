@@ -169,12 +169,15 @@ namespace Hadouken.Impl.Config
             if (!setting.Permissions.HasFlag(Permissions.Write))
                 throw new UnauthorizedAccessException("No write permissions on key " + key);
 
+            var oldValue = (String.IsNullOrEmpty(setting.Value)
+                                ? null
+                                : _serializer.Deserialize(setting.Value, Type.GetType(setting.Type)));
             setting.Value = _serializer.Serialize(setting.Options.HasFlag(Options.Hashed) ? Hash.Generate(value.ToString()) : value);
 
             _data.SaveOrUpdate(setting);
 
             // Send ISettingChanged message
-            _bus.Publish(new KeyValueChangedMessage { Key = setting.Key, NewValue = value.ToString()});
+            _bus.Publish(new KeyValueChangedMessage { Key = setting.Key, NewValue = value, OldValue = oldValue });
         }
     }
 }
