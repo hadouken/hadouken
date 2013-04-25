@@ -10,5 +10,7 @@ namespace Hadouken.Plugins.PluginEngine
     {
         public string Name { get; set; }
         public Version Version { get; set; }
+
+        public Dictionary<string,string> Resources { get; set; } 
     }
 }
