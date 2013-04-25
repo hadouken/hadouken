@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NLog;
 using Hadouken.Common;
@@ -32,6 +33,34 @@ namespace Hadouken.Plugins.PluginEngine
             _keyValueStore = keyValueStore;
             _messageBus = messageBusFactory.Create("hdkn");
             _pluginLoaders = pluginLoaders;
+
+            _messageBus.Subscribe<KeyValueChangedMessage>(OnBlacklistChanged);
+        }
+
+        private void OnBlacklistChanged(KeyValueChangedMessage message)
+        {
+            if (!String.Equals("plugins.blacklist", message.Key))
+                return;
+
+            var oldBlacklist = message.OldValue as string[];
+            var newBlacklist = message.NewValue as string[];
+
+            if (oldBlacklist == null) oldBlacklist = new string[] {};
+            if (newBlacklist == null) newBlacklist = new string[] {};
+
+            var unblacklistedItems = oldBlacklist.Except(newBlacklist);
+
+            foreach (var item in newBlacklist)
+            {
+                if (_plugins.ContainsKey(item) && _plugins[item].State == PluginState.Loaded)
+                    Unload(item);
+            }
+
+            foreach (var item in unblacklistedItems)
+            {
+                if (_plugins.ContainsKey(item) && _plugins[item].State == PluginState.Unloaded)
+                    LoadSandbox(item);
+            }
         }
 
         public IEnumerable<IPluginInfo> Plugins
@@ -64,6 +93,15 @@ namespace Hadouken.Plugins.PluginEngine
             }
 
             var assemblies = pluginLoader.Load(path);
+            // Add common assemblies to list
+            foreach (
+                var file in
+                    _fileSystem.GetFiles(Path.GetDirectoryName(typeof(Kernel).Assembly.Location),
+                                         "Hadouken.Common.**.dll"))
+            {
+                assemblies.Add(_fileSystem.ReadAllBytes(file));
+            }
+
             var manifest = Sandbox.ReadManifest(assemblies);
 
             if (_plugins.ContainsKey(manifest.Name))
@@ -72,7 +110,11 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
             }
 
-            _plugins.Add(manifest.Name, new PluginInfo(manifest.Name, manifest.Version));
+            var info = new PluginInfo(manifest.Name, manifest.Version);
+            info.Assemblies.AddRange(assemblies);
+            info.Manifest = manifest;
+
+            _plugins.Add(info.Name, info);
 
             var blacklist = _keyValueStore.Get("plugins.blacklist", new string[] { });
             if (blacklist.Contains(manifest.Name))
@@ -81,40 +123,40 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
             }
 
-            Logger.Debug("Loaded {0} assemblies from path", assemblies.Count);
+            LoadSandbox(info.Name);
+        }
 
-            // Add common assemblies to list
-            foreach (
-                var file in
-                    _fileSystem.GetFiles(System.IO.Path.GetDirectoryName(typeof (Kernel).Assembly.Location),
-                                         "Hadouken.Common.**.dll"))
+        /// <summary>
+        /// Loads the sandbox for a plugin present in the _plugin dictionary.
+        /// </summary>
+        /// <param name="name">The name of the plugin to load the sandbox for.</param>
+        internal void LoadSandbox(string name)
+        {
+            var info = _plugins[name];
+
+            if (info.Sandbox != null)
             {
-                assemblies.Add(_fileSystem.ReadAllBytes(file));
+                Logger.Error("Sandbox already exists for plugin {0}", info.Name);
             }
 
             try
             {
                 Logger.Debug("Creating plugin sandbox");
 
-                var sandbox = Sandbox.CreatePluginSandbox(manifest, assemblies);
-                sandbox.Load(manifest);
+                var sandbox = Sandbox.CreatePluginSandbox(info.Manifest, info.Assemblies);
+                sandbox.Load(info.Manifest);
 
-                _plugins[manifest.Name].Sandbox = sandbox;
+                info.Sandbox = sandbox;
             }
             catch (Exception e)
             {
-                Logger.ErrorException(String.Format("Could not load plugin {0}.", manifest.Name), e);
+                Logger.ErrorException(String.Format("Could not load plugin {0}.", info.Name), e);
 
                 return;
             }
 
-            _plugins[manifest.Name].State = PluginState.Loaded;
-            _messageBus.Publish(new PluginLoadedMessage {Name = manifest.Name, Version = manifest.Version});
-        }
-
-        internal void Load(PluginManifest manifest)
-        {
-            
+            _plugins[name].State = PluginState.Loaded;
+            _messageBus.Publish(new PluginLoadedMessage { Name = info.Name, Version = info.Version });
         }
 
         public void Unload(string name)
@@ -135,7 +177,10 @@ namespace Hadouken.Plugins.PluginEngine
 
         public void UnloadAll()
         {
-            //
+            foreach (var key in _plugins.Keys)
+            {
+                Unload(key);
+            }
         }
     }
 }

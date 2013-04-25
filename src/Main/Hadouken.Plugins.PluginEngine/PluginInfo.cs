@@ -12,6 +12,8 @@ namespace Hadouken.Plugins.PluginEngine
             Name = name;
             Version = version;
             State = PluginState.Unloaded;
+
+            Assemblies = new List<byte[]>();
         }
 
         public string Name { get; private set; }
@@ -23,5 +25,7 @@ namespace Hadouken.Plugins.PluginEngine
         public PluginSandbox Sandbox { get; set; }
 
         public PluginManifest Manifest { get; set; }
+
+        public List<byte[]> Assemblies { get; private set; } 
     }
 }
