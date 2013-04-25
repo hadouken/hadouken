@@ -34,6 +34,9 @@ namespace Hadouken.Common.Messaging.Msmq
                 b.ReceiveFrom(_queuePath);
                 b.SetCreateMissingQueues(true);
                 b.SetPurgeOnStartup(true);
+                
+                // Use dat json
+                b.UseJsonSerializer();
 
                 b.Subscribe(sbc => sbc.LoadHandlers());
             });
