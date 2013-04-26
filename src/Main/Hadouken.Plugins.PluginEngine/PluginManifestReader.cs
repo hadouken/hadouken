@@ -26,7 +26,10 @@ namespace Hadouken.Plugins.PluginEngine
                                       {
                                           Assembly = asm,
                                           Name = name
-                                      }).First();
+                                      }).FirstOrDefault();
+
+            if (pluginAssembly == null)
+                return null;
 
             using (var stream = pluginAssembly.Assembly.GetManifestResourceStream(pluginAssembly.Name))
             {

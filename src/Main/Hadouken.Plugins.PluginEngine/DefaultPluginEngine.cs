@@ -99,6 +99,12 @@ namespace Hadouken.Plugins.PluginEngine
 
             var manifest = Sandbox.ReadManifest(assemblies);
 
+            if (manifest == null)
+            {
+                Logger.Error("Found no plugin manifest.");
+                return;
+            }
+
             if (_plugins.ContainsKey(manifest.Name))
             {
                 Logger.Error("Plugin {0} already loaded. Ignoring.", manifest.Name);
