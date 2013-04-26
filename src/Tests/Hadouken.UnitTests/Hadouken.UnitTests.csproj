@@ -101,18 +101,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
+    <Compile Include="BitTorrent\Handlers\AddTorrentHandlerTests.cs" />
     <Compile Include="Data\DataRepositoryTests.cs" />
-    <Compile Include="Http\Api\AddFileTests.cs" />
-    <Compile Include="Http\Api\GetTorrentsTests.cs" />
-    <Compile Include="Http\Api\PauseTorrentTests.cs" />
-    <Compile Include="Http\Api\StopTorrentTests.cs" />
-    <Compile Include="Http\Api\StartTorrentTests.cs" />
-    <Compile Include="Http\HttpContextHelper.cs" />
-    <Compile Include="Http\HttpServerTests.cs" />
     <Compile Include="IO\LocalFileSystemTests.cs" />
-    <Compile Include="KernelTests.cs" />
     <Compile Include="MemoryConfigManager.cs" />
-    <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
@@ -122,6 +114,18 @@
     <EmbeddedResource Include="Resources\ubuntu.torrent" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj">
+      <Project>{8252AB50-901E-436C-9B06-ABD32E50A692}</Project>
+      <Name>Hadouken.Common.Data.FluentNHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.IO.Local\Hadouken.Common.IO.Local.csproj">
+      <Project>{5926E8BA-144B-4B88-93D5-56C2D5CA6573}</Project>
+      <Name>Hadouken.Common.IO.Local</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.DI.Ninject\Hadouken.DI.Ninject.csproj">
       <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
       <Name>Hadouken.DI.Ninject</Name>

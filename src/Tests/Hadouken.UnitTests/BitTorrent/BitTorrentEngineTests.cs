@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using Hadouken.Common.Data;
+using Hadouken.Common.IO;
+using Hadouken.Common.Messaging;
 using NUnit.Framework;
 using Hadouken.Impl.BitTorrent;
 using Moq;
-using Hadouken.IO;
-using Hadouken.Messaging;
-using Hadouken.Data;
 using Hadouken.Data.Models;
 using Hadouken.Configuration;
 
@@ -28,7 +28,7 @@ namespace Hadouken.UnitTests.BitTorrent
         [SetUp]
         public void SetUp()
         {
-            engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
+            //engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
         }
 
         [TearDown]
