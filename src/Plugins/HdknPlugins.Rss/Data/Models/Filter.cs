@@ -1,12 +1,7 @@
-﻿using Hadouken.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Hadouken.Common.Data;
 
 namespace HdknPlugins.Rss.Data.Models
 {
-    [Table("plugin_Rss_Filters")]
     public class Filter : Model
     {
         public virtual Feed Feed { get; set; }
