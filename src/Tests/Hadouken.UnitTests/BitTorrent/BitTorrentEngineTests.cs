@@ -15,6 +15,7 @@ namespace Hadouken.UnitTests.BitTorrent
     {
         private readonly Mock<IFileSystem> fs = new Mock<IFileSystem>();    
         private readonly Mock<IMessageBus> bus = new Mock<IMessageBus>();
+        private readonly Mock<IMessageBusFactory> _factory = new Mock<IMessageBusFactory>();
         private readonly Mock<IDataRepository> repo = new Mock<IDataRepository>();
         private readonly Mock<IKeyValueStore> kvs = new Mock<IKeyValueStore>();
         private MonoTorrentEngine engine;
@@ -22,13 +23,14 @@ namespace Hadouken.UnitTests.BitTorrent
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            HdknConfig.ConfigManager = new MemoryConfigManager();            
+            HdknConfig.ConfigManager = new MemoryConfigManager();
+            _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(bus.Object);
         }
 
         [SetUp]
         public void SetUp()
         {
-            //engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
+            engine = new MonoTorrentEngine(fs.Object, _factory.Object, repo.Object, kvs.Object);
         }
 
         [TearDown]
