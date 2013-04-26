@@ -27,8 +27,9 @@ namespace Hadouken.Impl.Hosting
         private readonly IMigrationRunner _migratorRunner;
         private readonly IPluginEngine _pluginEngine;
 
-        private readonly IHttpFileSystemServer _httpServer;
-        private readonly IHttpWebApiServer _webApiServer;
+        private readonly IHttpServerFactory _serverFactory;
+        private IHttpFileSystemServer _httpServer;
+        private IHttpWebApiServer _webApiServer;
 
         public DefaultHadoukenHost(IEnvironment environment,
                                    IKeyValueStore keyValueStore,
@@ -40,20 +41,9 @@ namespace Hadouken.Impl.Hosting
             _environment = environment;
             _keyValueStore = keyValueStore;
             _torrentEngine = torrentEngine;
+            _serverFactory = httpServerFactory;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
-
-            var httpUser = _keyValueStore.Get("http.auth.username", "hdkn");
-            var httpPass = _keyValueStore.Get("http.auth.password", "hdkn");
-
-
-            _httpServer = httpServerFactory.Create(environment.HttpBinding,
-                                                   new NetworkCredential(httpUser, httpPass),
-                                                   "C:\\temp\\webui");
-
-            _webApiServer = httpServerFactory.Create(new Uri(environment.HttpBinding, "api"),
-                                                     new NetworkCredential(httpUser, httpPass),
-                                                     AppDomain.CurrentDomain.GetAssemblies());
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -75,6 +65,18 @@ namespace Hadouken.Impl.Hosting
 
             Logger.Debug("Loading the IPluginEngine implementation");
             _pluginEngine.Load();
+
+            var httpUser = _keyValueStore.Get("http.auth.username", "hdkn");
+            var httpPass = _keyValueStore.Get("http.auth.password", "hdkn");
+
+
+            _httpServer = _serverFactory.Create(_environment.HttpBinding,
+                                                   new NetworkCredential(httpUser, httpPass),
+                                                   "C:\\temp\\webui");
+
+            _webApiServer = _serverFactory.Create(new Uri(_environment.HttpBinding, "api"),
+                                                     new NetworkCredential(httpUser, httpPass),
+                                                     AppDomain.CurrentDomain.GetAssemblies());
 
             Logger.Debug("Starting the HTTP API server");
             _webApiServer.Start();
