@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Hadouken.Common.Data.FluentNHibernate;
 using Hadouken.Common.Messaging;
+using Hadouken.Hosts.WindowsService;
 using NUnit.Framework;
 using Hadouken.Impl.Data;
 using Moq;
@@ -20,6 +22,13 @@ namespace Hadouken.UnitTests.Data
         [TestFixtureSetUp]
         public void Setup()
         {
+            var startupPath = Path.GetDirectoryName(typeof(DataRepositoryTests).Assembly.Location);
+
+            foreach (string file in Directory.GetFiles(startupPath, "*.dll"))
+            {
+                Assembly.LoadFile(file);
+            }
+
             HdknConfig.ConfigManager = new MemoryConfigManager();
 
             if (File.Exists("test.db"))
