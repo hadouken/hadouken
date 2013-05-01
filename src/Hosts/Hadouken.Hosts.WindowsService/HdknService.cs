@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
+using System.Threading.Tasks;
 using Hadouken.Common;
 using Hadouken.Hosting;
 
@@ -28,8 +29,11 @@ namespace Hadouken.Hosts.WindowsService
 
         protected override void OnStart(string[] args)
         {
-            _host = Kernel.Get<IHadoukenHost>();
-            _host.Load();
+            Task.Factory.StartNew(() =>
+                {
+                    _host = Kernel.Get<IHadoukenHost>();
+                    _host.Load();
+                });
         }
 
         protected override void OnStop()
