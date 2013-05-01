@@ -8,14 +8,19 @@ using System.Configuration;
 using Hadouken.Common;
 using Hadouken.Common.DI.Ninject;
 using System.IO;
+using NLog;
 
 namespace Hadouken.Hosts.WindowsService
 {
     public static class Program
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static void Main()
         {
-            var startupPath = Path.GetDirectoryName(typeof (Program).Assembly.Location);
+            var startupPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
+            Logger.Info("Starting Hadouken in {0}", startupPath);
 
             foreach (string file in Directory.GetFiles(startupPath, "*.dll"))
             {
