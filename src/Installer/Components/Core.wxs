@@ -16,9 +16,33 @@
       <Component Win64="$(var.IsWin64)">
         <File Name="Hadouken.dll" />
       </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Hadouken.Common.dll" />
+      </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Hadouken.Common.Data.FluentNHibernate.dll" />
+      </Component>
 
       <Component Win64="$(var.IsWin64)">
-        <File Name="Hadouken.DI.Ninject.dll" />
+        <File Name="Hadouken.Common.DI.Ninject.dll" />
+      </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Hadouken.Common.Http.HttpListener.dll" />
+      </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Hadouken.Common.IO.Local.dll" />
+      </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Hadouken.Common.Messaging.Msmq.dll" />
+      </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Hadouken.Http.Api.dll" />
       </Component>
 
       <Component Win64="$(var.IsWin64)">
@@ -30,18 +54,13 @@
       </Component>
 
       <Component Win64="$(var.IsWin64)">
-        <File Name="Hadouken.Http.HttpServer.dll" />
-      </Component>
-
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Hadouken.Messages.dll" />
+        <File Name="Hadouken.Plugins.PluginEngine.dll" />
       </Component>
 
       <Component Win64="$(var.IsWin64)">
         <Condition><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
         <File Name="Hadouken.Hosts.WindowsService.exe" />
       </Component>
-
 
       <Component Win64="$(var.IsWin64)">
         <File Name="webui.zip" />
