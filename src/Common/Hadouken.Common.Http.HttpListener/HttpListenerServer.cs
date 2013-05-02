@@ -13,12 +13,10 @@ namespace Hadouken.Common.Http.HttpListener
     {
         private readonly System.Net.HttpListener _httpListener;
         private readonly HttpListenerBasicIdentity _credential;
-        private readonly string _binding;
         private readonly string _basePath;
 
         public HttpListenerServer(string binding, NetworkCredential credential, string basePath)
         {
-            _binding = binding;
             _basePath = basePath;
 
             _httpListener = new System.Net.HttpListener();
@@ -57,7 +55,11 @@ namespace Hadouken.Common.Http.HttpListener
 
         private void OnHttpRequest(HttpListenerContext context)
         {
+            var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
+            pathSegments.Insert(0, _basePath);
+
             // Check file system for file
+            string file = Path.Combine(pathSegments.ToArray());
 
             context.Response.OutputStream.Close();
             context.Response.Close();
