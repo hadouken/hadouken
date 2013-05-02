@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Common;
 using Hadouken.Hosting;
+using System.Threading;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -29,11 +30,13 @@ namespace Hadouken.Hosts.WindowsService
 
         protected override void OnStart(string[] args)
         {
-            Task.Factory.StartNew(() =>
-                {
-                    _host = Kernel.Get<IHadoukenHost>();
-                    _host.Load();
-                });
+            Load();
+        }
+
+        private void Load()
+        {
+            _host = Kernel.Get<IHadoukenHost>();
+            _host.Load();
         }
 
         protected override void OnStop()
