@@ -4,40 +4,55 @@ using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
-using Hadouken.Plugins;
-using Hadouken.Data;
+using Hadouken.Common.Data;
+using Hadouken.Common.Messaging;
+using Hadouken.Common.Plugins;
+using Migrator.Providers.SQLite;
 using NLog;
 using HdknPlugins.Rss.Timers;
 using HdknPlugins.Rss.Data.Models;
 using System.Xml;
 using System.Text.RegularExpressions;
 using HdknPlugins.Rss.Http;
-using Hadouken.BitTorrent;
+using Hadouken.Common.BitTorrent;
+using Hadouken.Common;
 
 namespace HdknPlugins.Rss
 {
-    [Plugin("rss", "1.0", ResourceBase = "HdknPlugins.Rss.UI")]
-    public class RssPlugin : IPlugin
+    public class RssPlugin : Plugin
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IBitTorrentEngine _torrentEngine;
+        private readonly IEnvironment _environment;
         private readonly IDataRepository _dataRepository;
         private readonly ITimer _timer;
         private readonly IWebClient _webClient;
 
         private int _ticks = -1;
 
-        public RssPlugin(IBitTorrentEngine torrentEngine, IDataRepository dataRepository, ITimerFactory timerFactory, IWebClient webClient)
+        public RssPlugin(IMessageBus messageBus,
+                         IEnvironment environment,
+                         IDataRepository dataRepository,
+                         ITimerFactory timerFactory,
+                         IWebClient webClient) : base(messageBus)
         {
-            _torrentEngine = torrentEngine;
+            _environment = environment;
             _dataRepository = dataRepository;
             _timer = timerFactory.CreateTimer();
             _webClient = webClient;
         }
 
-        public void Load()
+        public override void Load()
         {
+            var m =
+                new Migrator.Migrator(
+                    new SQLiteTransformationProvider(new SQLiteDialect(), _environment.ConnectionString),
+                    this.GetType().Assembly, false);
+
+            Logger.Debug("Updating all migrations in current assembly");
+
+            m.MigrateToLastVersion();
+
             _timer.SetCallback(1000, CheckFeeds);
             _timer.Start();
         }
@@ -105,16 +120,12 @@ namespace HdknPlugins.Rss
             if (data == null || data.Length <= 0)
                 return;
 
-            var manager = _torrentEngine.AddTorrent(data);
-
-            if (manager == null)
-            {
-                Logger.Error("Could not add torrent");
-                return;
-            }
-
-            if (filter.AutoStart)
-                manager.Start();
+            MessageBus.Publish(new AddTorrentMessage
+                {
+                    AutoStart = filter.AutoStart,
+                    Data = data,
+                    Label = filter.Label
+                });
 
             // Update feed with the last updated time of the downloaded item.
             // This will make sure we only check items newer than the last one we downloaded.
@@ -123,7 +134,7 @@ namespace HdknPlugins.Rss
             _dataRepository.Update(filter.Feed);
         }
 
-        public void Unload()
+        public override void Unload()
         {
             _timer.Stop();
         }

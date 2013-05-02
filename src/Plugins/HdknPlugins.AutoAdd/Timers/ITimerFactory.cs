@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HdknPlugins.AutoAdd.Timers
 {
-    public interface ITimerFactory : IComponent
+    public interface ITimerFactory
     {
         ITimer CreateTimer();
     }

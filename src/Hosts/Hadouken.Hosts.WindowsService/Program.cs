@@ -5,7 +5,10 @@ using System.ServiceProcess;
 using System.Text;
 using System.Reflection;
 using System.Configuration;
-using Hadouken.DI.Ninject;
+using Hadouken.Common;
+using Hadouken.Common.DI.Ninject;
+using System.IO;
+using NLog;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -13,19 +16,25 @@ namespace Hadouken.Hosts.WindowsService
     {
         public static void Main()
         {
-            var assemblies = new List<Assembly>();
+            var startupPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            foreach (string key in ConfigurationManager.AppSettings.Keys)
+            foreach (var file in Directory.GetFiles(startupPath, "*.dll"))
             {
-                if (key.StartsWith("Assembly."))
+                if (file.ToLowerInvariant().EndsWith("sqlite.interop.dll"))
+                    continue;
+
+                try
                 {
-                    assemblies.Add(AppDomain.CurrentDomain.Load(ConfigurationManager.AppSettings[key]));
+                    Assembly.LoadFile(file);
+                }
+                catch (Exception)
+                {
+                    return;
                 }
             }
 
             // register base types
             Kernel.SetResolver(new NinjectDependencyResolver());
-            Kernel.Register(assemblies.ToArray());
 
             if(Bootstrapper.RunAsConsoleIfRequested<HdknService>())
                 return;

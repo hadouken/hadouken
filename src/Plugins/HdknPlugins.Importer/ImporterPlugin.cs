@@ -6,8 +6,7 @@ using Hadouken.Plugins;
 
 namespace HdknPlugins.Importer
 {
-    [Plugin("importer", "1.0", ResourceBase = "HdknPlugins.Importer.UI")]
-    public class ImporterPlugin : IPlugin
+    public class ImporterPlugin
     {
         public void Load()
         {

@@ -6,14 +6,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
-
+using System.Threading.Tasks;
+using Hadouken.Common;
 using Hadouken.Hosting;
+using System.Threading;
 
 namespace Hadouken.Hosts.WindowsService
 {
     public class HdknService : ServiceBase
     {
-        private IHost _host;
+        private IHadoukenHost _host;
 
         public HdknService()
         {
@@ -28,7 +30,12 @@ namespace Hadouken.Hosts.WindowsService
 
         protected override void OnStart(string[] args)
         {
-            _host = Kernel.Resolver.Get<IHost>();
+            Load();
+        }
+
+        private void Load()
+        {
+            _host = Kernel.Get<IHadoukenHost>();
             _host.Load();
         }
 

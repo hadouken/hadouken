@@ -2,22 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hadouken.Common.Plugins;
 using Hadouken.Plugins;
 using NLog;
+using Hadouken.Common.Messaging;
 
 namespace HdknPlugins.CreateTorrent
 {
-    [Plugin("createtorrent", "1.0", ResourceBase = "HdknPlugins.CreateTorrent.UI")]
-    public class CreateTorrentPlugin : IPlugin
+    public class CreateTorrentPlugin : Plugin
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        
+        public CreateTorrentPlugin(IMessageBus messageBus) : base(messageBus)
+        {
+        }
 
-        public void Load()
+        public override void Load()
         {
             Logger.Trace("Loading CreateTorrentPlugin");
         }
 
-        public void Unload()
+        public override void Unload()
         {
             Logger.Trace("Unloading CreateTorrentPlugin");
         }

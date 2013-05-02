@@ -26,7 +26,6 @@ namespace Hadouken.Hosts.WindowsService
             var onstart = service.GetType().GetMethod("OnStart", BindingFlags.Instance | BindingFlags.NonPublic);
             onstart.Invoke(service, new object[] { args });
 
-            Console.WriteLine("Your service named '" + service.GetType().FullName + "' is up and running.\r\nPress 'ENTER' to stop it.");
             Console.ReadLine();
 
             var onstop = service.GetType().GetMethod("OnStop", BindingFlags.Instance | BindingFlags.NonPublic);

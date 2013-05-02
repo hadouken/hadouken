@@ -2,29 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hadouken.Common.Data;
+using Hadouken.Common.Messaging;
 using Hadouken.Configuration;
 using Hadouken.Data;
 using Hadouken.Data.Models;
 using System.Web.Script.Serialization;
 using System.Linq.Expressions;
-using Hadouken.Messaging;
-using Hadouken.Messages;
+
 using Hadouken.Security;
 
 using Microsoft.Win32;
+using Hadouken.Common;
 
 namespace Hadouken.Impl.Config
 {
+    [Component]
     public class DefaultKeyValueStore : IKeyValueStore
     {
         private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
         private readonly IDataRepository _data;
         private readonly IMessageBus _bus;
 
-        public DefaultKeyValueStore(IDataRepository data, IMessageBus bus)
+        public DefaultKeyValueStore(IDataRepository data, IMessageBusFactory busFactory)
         {
             _data = data;
-            _bus = bus;
+            _bus = busFactory.Create("hdkn");
         }
 
         public object Get(string key)
@@ -171,11 +174,7 @@ namespace Hadouken.Impl.Config
             _data.SaveOrUpdate(setting);
 
             // Send ISettingChanged message
-            _bus.Send<ISettingChanged>(msg =>
-            {
-                msg.Key = setting.Key;
-                msg.NewValue = value;
-            });
+            _bus.Publish(new KeyValueChangedMessage { Key = setting.Key });
         }
     }
 }

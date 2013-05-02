@@ -66,7 +66,13 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=2.0.1.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -86,13 +92,33 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Main\Hadouken.DI.Ninject\Hadouken.DI.Ninject.csproj">
-      <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
-      <Name>Hadouken.DI.Ninject</Name>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj">
+      <Project>{8252ab50-901e-436c-9b06-abd32e50a692}</Project>
+      <Name>Hadouken.Common.Data.FluentNHibernate</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Main\Hadouken.Http.HttpServer\Hadouken.Http.HttpServer.csproj">
-      <Project>{71DB95DE-C310-4165-A4BA-2C23A250CDB1}</Project>
-      <Name>Hadouken.Http.HttpServer</Name>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.DI.Ninject\Hadouken.Common.DI.Ninject.csproj">
+      <Project>{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}</Project>
+      <Name>Hadouken.Common.DI.Ninject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Http.HttpListener\Hadouken.Common.Http.HttpListener.csproj">
+      <Project>{25eb6288-005f-42a3-ae45-78730f63fd6a}</Project>
+      <Name>Hadouken.Common.Http.HttpListener</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.IO.Local\Hadouken.Common.IO.Local.csproj">
+      <Project>{5926e8ba-144b-4b88-93d5-56c2d5ca6573}</Project>
+      <Name>Hadouken.Common.IO.Local</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Messaging.Msmq\Hadouken.Common.Messaging.Msmq.csproj">
+      <Project>{45144e7e-d412-468f-857f-3d7665cc971f}</Project>
+      <Name>Hadouken.Common.Messaging.Msmq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3f2758d7-b296-41c4-b2b8-8f11aafd5b8b}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Http.Api\Hadouken.Http.Api.csproj">
+      <Project>{0A098B4B-FFE5-4336-B9C3-2BDF0D5E7128}</Project>
+      <Name>Hadouken.Http.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
       <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>
@@ -102,6 +128,10 @@
       <Project>{28B6D10B-1CA2-43A9-B247-FAA7DD2155FA}</Project>
       <Name>Hadouken.Impl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Plugins.PluginEngine\Hadouken.Plugins.PluginEngine.csproj">
+      <Project>{4c688a37-172c-41a1-8664-9661917fa0f2}</Project>
+      <Name>Hadouken.Plugins.PluginEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken\Hadouken.csproj">
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
       <Name>Hadouken</Name>
@@ -109,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />

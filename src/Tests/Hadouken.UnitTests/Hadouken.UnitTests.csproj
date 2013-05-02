@@ -101,18 +101,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitTorrent\BitTorrentEngineTests.cs" />
+    <Compile Include="BitTorrent\Handlers\AddTorrentHandlerTests.cs" />
     <Compile Include="Data\DataRepositoryTests.cs" />
-    <Compile Include="Http\Api\AddFileTests.cs" />
-    <Compile Include="Http\Api\GetTorrentsTests.cs" />
-    <Compile Include="Http\Api\PauseTorrentTests.cs" />
-    <Compile Include="Http\Api\StopTorrentTests.cs" />
-    <Compile Include="Http\Api\StartTorrentTests.cs" />
-    <Compile Include="Http\HttpContextHelper.cs" />
-    <Compile Include="Http\HttpServerTests.cs" />
     <Compile Include="IO\LocalFileSystemTests.cs" />
-    <Compile Include="KernelTests.cs" />
     <Compile Include="MemoryConfigManager.cs" />
-    <Compile Include="Messaging\MessageBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
@@ -122,13 +114,37 @@
     <EmbeddedResource Include="Resources\ubuntu.torrent" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Main\Hadouken.DI.Ninject\Hadouken.DI.Ninject.csproj">
-      <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
-      <Name>Hadouken.DI.Ninject</Name>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj">
+      <Project>{8252AB50-901E-436C-9B06-ABD32E50A692}</Project>
+      <Name>Hadouken.Common.Data.FluentNHibernate</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Main\Hadouken.Http.HttpServer\Hadouken.Http.HttpServer.csproj">
-      <Project>{71DB95DE-C310-4165-A4BA-2C23A250CDB1}</Project>
-      <Name>Hadouken.Http.HttpServer</Name>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.DI.Ninject\Hadouken.Common.DI.Ninject.csproj">
+      <Project>{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}</Project>
+      <Name>Hadouken.Common.DI.Ninject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Http.HttpListener\Hadouken.Common.Http.HttpListener.csproj">
+      <Project>{25EB6288-005F-42A3-AE45-78730F63FD6A}</Project>
+      <Name>Hadouken.Common.Http.HttpListener</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.IO.Local\Hadouken.Common.IO.Local.csproj">
+      <Project>{5926E8BA-144B-4B88-93D5-56C2D5CA6573}</Project>
+      <Name>Hadouken.Common.IO.Local</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Messaging.Msmq\Hadouken.Common.Messaging.Msmq.csproj">
+      <Project>{45144E7E-D412-468F-857F-3D7665CC971F}</Project>
+      <Name>Hadouken.Common.Messaging.Msmq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Hosts\Hadouken.Hosts.WindowsService\Hadouken.Hosts.WindowsService.csproj">
+      <Project>{4B1A745B-8F9D-4986-93CC-E9AD2A193041}</Project>
+      <Name>Hadouken.Hosts.WindowsService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Http.Api\Hadouken.Http.Api.csproj">
+      <Project>{0A098B4B-FFE5-4336-B9C3-2BDF0D5E7128}</Project>
+      <Name>Hadouken.Http.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
       <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>
@@ -138,13 +154,17 @@
       <Project>{28B6D10B-1CA2-43A9-B247-FAA7DD2155FA}</Project>
       <Name>Hadouken.Impl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Main\Hadouken.Messages\Hadouken.Messages.csproj">
-      <Project>{DEA098A4-8A50-4A2D-A19B-D457ABA1FEE8}</Project>
-      <Name>Hadouken.Messages</Name>
+    <ProjectReference Include="..\..\Main\Hadouken.Plugins.PluginEngine\Hadouken.Plugins.PluginEngine.csproj">
+      <Project>{4C688A37-172C-41A1-8664-9661917FA0F2}</Project>
+      <Name>Hadouken.Plugins.PluginEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken\Hadouken.csproj">
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
       <Name>Hadouken</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Plugins\HdknPlugins.AutoAdd\HdknPlugins.AutoAdd.csproj">
+      <Project>{A7C38FA3-CAD6-4743-A758-82FB587DCDB4}</Project>
+      <Name>HdknPlugins.AutoAdd</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

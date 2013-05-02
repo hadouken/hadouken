@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using Hadouken.Configuration;
 using Microsoft.Win32;
+using Hadouken.Common;
 
 namespace Hadouken.Impl.Config
 {
+    [Component(ComponentType.Singleton)]
     public class DefaultRegistryReader : IRegistryReader
     {
         private readonly RegistryKey _registryKey = Registry.LocalMachine.OpenSubKey("Software\\Hadouken");

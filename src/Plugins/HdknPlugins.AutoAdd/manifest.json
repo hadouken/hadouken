@@ -1,0 +1,10 @@
+﻿{
+    "Name": "autoadd",
+    "Version": "1.0",
+
+    "Resources":
+    {
+        "~/boot.js":         "HdknPlugins.AutoAdd.UI.boot.js",
+        "~/img/autoadd.png": "HdknPlugins.AutoAdd.UI.img.autoadd.png"
+    }
+}
