@@ -29,6 +29,8 @@ namespace Hadouken.Impl.BitTorrent
     [Component(ComponentType.Singleton)]
     public class MonoTorrentEngine : IBitTorrentEngine
     {
+        private readonly object _addLock = new object();
+
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IKeyValueStore _kvs;
@@ -157,15 +159,13 @@ namespace Hadouken.Impl.BitTorrent
 
         private void SaveState()
         {
-            var infoList = _data.List<TorrentInfo>();
+            var infoList = _data.List<TorrentInfo>().ToList();
+            var managers = _torrents.Values;
 
-            foreach (var m in _torrents.Values)
+            foreach (var m in managers)
             {
-                HdknTorrentManager manager = (HdknTorrentManager)m;
-                TorrentInfo info = infoList.SingleOrDefault(i => i.InfoHash == manager.InfoHash);
-
-                if (info == null)
-                    info = new TorrentInfo();
+                var manager = (HdknTorrentManager)m;
+                var info = infoList.SingleOrDefault(i => i.InfoHash == manager.InfoHash) ?? new TorrentInfo();
 
                 Logger.Debug("Saving state for torrent {0}", manager.Torrent.Name);
 
@@ -209,7 +209,7 @@ namespace Hadouken.Impl.BitTorrent
 
         public IDictionary<string, ITorrentManager> Managers
         {
-            get { return (IDictionary<string, ITorrentManager>)_torrents; }
+            get { return _torrents; }
         }
 
         private void CreateTorrentInfo(HdknTorrentManager manager, TorrentInfo info)
@@ -283,20 +283,24 @@ namespace Hadouken.Impl.BitTorrent
 
         public ITorrentManager AddTorrent(byte[] data, string savePath)
         {
-            if (data == null || data.Length == 0)
-                return null;
-
-            Torrent t = null;
-
-            if (Torrent.TryLoad(data, out t))
+            lock (_addLock)
             {
-                if (String.IsNullOrEmpty(savePath))
-                    savePath = _clientEngine.Settings.SavePath;
+                if (data == null || data.Length == 0)
+                    return null;
 
-                return RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()), data); ;
+                Torrent t = null;
+
+                if (Torrent.TryLoad(data, out t))
+                {
+                    if (String.IsNullOrEmpty(savePath))
+                        savePath = _clientEngine.Settings.SavePath;
+
+                    return RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()), data);
+                    ;
+                }
+
+                return null;
             }
-
-            return null;
         }
 
         private HdknTorrentManager RegisterTorrentManager(TorrentManager manager, byte[] data = null)
