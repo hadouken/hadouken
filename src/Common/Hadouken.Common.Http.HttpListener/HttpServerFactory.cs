@@ -52,6 +52,8 @@ namespace Hadouken.Common.Http.HttpListener
             config.Formatters.Clear();
             config.Formatters.Add(formatter);
 
+            config.MaxReceivedMessageSize = 1048576;
+
             // Map routes
             config.Routes.MapHttpRoute(
                 "API default",
