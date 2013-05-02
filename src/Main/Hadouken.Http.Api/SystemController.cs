@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Http;
+using Hadouken.Common;
 
 namespace Hadouken.Http.Api
 {
@@ -10,8 +11,10 @@ namespace Hadouken.Http.Api
     {
         public object Get()
         {
-            return (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                    select asm.FullName);
+            return new
+                {
+                    version = typeof (Kernel).Assembly.GetName().Version
+                };
         }
     }
 }
