@@ -61,7 +61,7 @@ namespace Hadouken.UnitTests.Data
 
             // Deleting
             repo.Delete(s);
-            Assert.IsTrue(!repo.List<Setting>(st => st.Key == "test").Any());
+            Assert.IsTrue(repo.Single<Setting>(st => st.Key == "test2") == null);
         }
     }
 }
