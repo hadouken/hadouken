@@ -12,15 +12,23 @@ using System.Web.Http.SelfHost;
 using System.Web.Http.Dispatcher;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Hadouken.Common.IO;
 
 namespace Hadouken.Common.Http.HttpListener
 {
     [Component]
     public class HttpServerFactory : IHttpServerFactory
     {
+        private readonly IFileSystem _fileSystem;
+
+        public HttpServerFactory(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         public IHttpFileSystemServer Create(string baseAddress, NetworkCredential credential, string path)
         {
-            return new HttpListenerServer(baseAddress, credential, path);
+            return new HttpListenerServer(_fileSystem, baseAddress, credential, path);
         }
 
         public IHttpWebApiServer Create(string baseAddress, NetworkCredential credential, Assembly[] assemblies)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hadouken.Common.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,8 +16,18 @@ namespace Hadouken.Common.Http.HttpListener
         private readonly HttpListenerBasicIdentity _credential;
         private readonly string _basePath;
 
-        public HttpListenerServer(string binding, NetworkCredential credential, string basePath)
+        private readonly IFileSystem _fileSystem;
+
+        private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
+            {
+                {".css", "text/css"},
+                {".js",  "text/javascript"},
+                {".html", "text/html"}
+            };
+
+        public HttpListenerServer(IFileSystem fileSystem, string binding, NetworkCredential credential, string basePath)
         {
+            _fileSystem = fileSystem;
             _basePath = basePath;
 
             _httpListener = new System.Net.HttpListener();
@@ -59,7 +70,25 @@ namespace Hadouken.Common.Http.HttpListener
             pathSegments.Insert(0, _basePath);
 
             // Check file system for file
-            string file = Path.Combine(pathSegments.ToArray());
+            var file = Path.Combine(pathSegments.ToArray());
+
+            if (_fileSystem.FileExists(file))
+            {
+                var contentType = "";
+
+                if (MimeTypes.ContainsKey(Path.GetExtension(file)))
+                    contentType = MimeTypes[Path.GetExtension(file)];
+
+                var data = _fileSystem.ReadAllBytes(file);
+
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = contentType;
+                context.Response.OutputStream.Write(data, 0, data.Length);
+            }
+            else
+            {
+                context.Response.StatusCode = 404;
+            }
 
             context.Response.OutputStream.Close();
             context.Response.Close();
@@ -71,20 +100,6 @@ namespace Hadouken.Common.Http.HttpListener
                 return false;
 
             return (identity.Name == _credential.Name && identity.Password == _credential.Password);
-        }
-
-        private static string GetContentType(string extension)
-        {
-            switch (extension)
-            {
-                case ".js":
-                    return "text/javascript";
-
-                case ".css":
-                    return "text/css";
-            }
-
-            return "text/html";
         }
 
         public void Stop()
