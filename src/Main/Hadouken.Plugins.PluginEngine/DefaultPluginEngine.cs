@@ -171,8 +171,15 @@ namespace Hadouken.Plugins.PluginEngine
 
             if (sandbox != null)
             {
-                sandbox.Unload();
-                AppDomain.Unload(sandbox.AppDomain);
+                try
+                {
+                    sandbox.Unload();
+                    AppDomain.Unload(sandbox.AppDomain);
+                }
+                catch (Exception e)
+                {
+                    Logger.ErrorException("Error when unloading plugin sandbox", e);
+                }
             }
 
             _plugins[name].Sandbox = null;
