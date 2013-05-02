@@ -82,6 +82,7 @@ namespace Hadouken.Common.Http.HttpListener
                 var data = _fileSystem.ReadAllBytes(file);
 
                 context.Response.StatusCode = 200;
+                context.Response.ContentEncoding = Encoding.UTF8;
                 context.Response.ContentType = contentType;
                 context.Response.OutputStream.Write(data, 0, data.Length);
             }
