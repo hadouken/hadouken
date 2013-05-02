@@ -82,7 +82,7 @@ namespace Hadouken.Plugins.PluginEngine
                     var env = new PluginEnvironment()
                         {
                             ConnectionString = String.Format("Data Source={0};", databasePath),
-                            HttpBinding = new Uri("http://localhost:8081/api/plugins/" + manifest.Name.ToLowerInvariant()),
+                            HttpBinding = "http://localhost:8081/api/plugins/" + manifest.Name.ToLowerInvariant(),
                             HttpCredentials = new NetworkCredential("hdkn", "hdkn")
                         };
 

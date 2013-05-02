@@ -13,16 +13,16 @@ namespace Hadouken.Common.Http.HttpListener
     {
         private readonly System.Net.HttpListener _httpListener;
         private readonly HttpListenerBasicIdentity _credential;
-        private readonly Uri _binding;
+        private readonly string _binding;
         private readonly string _basePath;
 
-        public HttpListenerServer(Uri binding, NetworkCredential credential, string basePath)
+        public HttpListenerServer(string binding, NetworkCredential credential, string basePath)
         {
             _binding = binding;
             _basePath = basePath;
 
             _httpListener = new System.Net.HttpListener();
-            _httpListener.Prefixes.Add(binding.ToString());
+            _httpListener.Prefixes.Add(binding);
             _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
 
             _credential = new HttpListenerBasicIdentity(credential.UserName, credential.Password);            

@@ -18,14 +18,14 @@ namespace Hadouken.Common.Http.HttpListener
     [Component]
     public class HttpServerFactory : IHttpServerFactory
     {
-        public IHttpFileSystemServer Create(Uri baseAddress, NetworkCredential credential, string path)
+        public IHttpFileSystemServer Create(string baseAddress, NetworkCredential credential, string path)
         {
             return new HttpListenerServer(baseAddress, credential, path);
         }
 
-        public IHttpWebApiServer Create(Uri baseAddress, NetworkCredential credential, Assembly[] assemblies)
+        public IHttpWebApiServer Create(string baseAddress, NetworkCredential credential, Assembly[] assemblies)
         {
-            var config = new HttpSelfHostConfiguration(baseAddress);
+            var config = new HttpSelfHostConfiguration(baseAddress.Replace("+", "localhost"));
             config.DependencyResolver = new KernelDependencyResolver();
 
             // Set up authentication

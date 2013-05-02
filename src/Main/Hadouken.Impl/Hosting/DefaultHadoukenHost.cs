@@ -74,7 +74,7 @@ namespace Hadouken.Impl.Hosting
                                                    new NetworkCredential(httpUser, httpPass),
                                                    "C:\\temp\\webui");
 
-            _webApiServer = _serverFactory.Create(new Uri(_environment.HttpBinding, "api"),
+            _webApiServer = _serverFactory.Create(_environment.HttpBinding + "api",
                                                      new NetworkCredential(httpUser, httpPass),
                                                      AppDomain.CurrentDomain.GetAssemblies());
 

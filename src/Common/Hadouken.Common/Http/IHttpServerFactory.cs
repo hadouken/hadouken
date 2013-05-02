@@ -9,7 +9,7 @@ namespace Hadouken.Common.Http
 {
     public interface IHttpServerFactory
     {
-        IHttpFileSystemServer Create(Uri baseAddress, NetworkCredential credential, string path);
-        IHttpWebApiServer Create(Uri baseAddress, NetworkCredential credential, Assembly[] controllerAssemblies);
+        IHttpFileSystemServer Create(string baseAddress, NetworkCredential credential, string path);
+        IHttpWebApiServer Create(string baseAddress, NetworkCredential credential, Assembly[] controllerAssemblies);
     }
 }

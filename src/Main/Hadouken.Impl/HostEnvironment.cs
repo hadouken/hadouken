@@ -3,12 +3,15 @@ using System.Linq;
 using Hadouken.Common;
 using Hadouken.Configuration;
 using System.Net;
+using NLog;
 
 namespace Hadouken.Impl
 {
     [Component]
     public class HostEnvironment : IEnvironment
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly IRegistryReader _registryReader;
 
         public HostEnvironment(IRegistryReader registryReader)
@@ -23,10 +26,12 @@ namespace Hadouken.Impl
             HttpBinding = GetBinding();
         }
 
-        private Uri GetBinding()
+        private string GetBinding()
         {
-            var binding = _registryReader.ReadString("http.binding", "http://localhost:{port}/");
-            var port = _registryReader.ReadInt("http.port", 8081);
+            Logger.Trace("Building Uri binding.");
+
+            var binding = "http://+:{port}/";
+            var port = _registryReader.ReadInt("webui.port", 8080);
 
             // Allow overriding from application configuration file.
             if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Binding"))
@@ -35,15 +40,19 @@ namespace Hadouken.Impl
             if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Port"))
                 port = Convert.ToInt32(HdknConfig.ConfigManager["WebUI.Port"]);
 
-            return new Uri(binding.Replace("{port}", port.ToString()));
+            binding = binding.Replace("{port}", port.ToString());
+
+            Logger.Debug("Built binding {0}", binding);
+
+            return binding;
         }
 
         public string ConnectionString
         {
-            get { return HdknConfig.ConnectionString; }
+            get { return HdknConfig.ConnectionString.Replace("$Paths.Data$", HdknConfig.GetPath("Paths.Data")); }
         }
 
-        public Uri HttpBinding { get; private set; }
+        public string HttpBinding { get; private set; }
 
         public NetworkCredential HttpCredentials { get; private set; }
     }
