@@ -14,17 +14,23 @@ namespace Hadouken.Hosts.WindowsService
 {
     public static class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public static void Main()
         {
             var startupPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            Logger.Info("Starting Hadouken in {0}", startupPath);
-
-            foreach (string file in Directory.GetFiles(startupPath, "*.dll"))
+            foreach (var file in Directory.GetFiles(startupPath, "*.dll"))
             {
-                Assembly.LoadFile(file);
+                if (file.ToLowerInvariant().EndsWith("sqlite.interop.dll"))
+                    continue;
+
+                try
+                {
+                    Assembly.LoadFile(file);
+                }
+                catch (Exception)
+                {
+                    return;
+                }
             }
 
             // register base types
