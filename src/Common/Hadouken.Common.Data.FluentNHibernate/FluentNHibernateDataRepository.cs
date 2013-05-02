@@ -52,25 +52,21 @@ namespace Hadouken.Common.Data.FluentNHibernate
         public void Save<TModel>(TModel model) where TModel : Model, new()
         {
             _session.Save(model);
-            _session.Flush();
         }
 
         public void SaveOrUpdate<TModel>(TModel model) where TModel : Model, new()
         {
             _session.SaveOrUpdate(model);
-            _session.Flush();
         }
 
         public void Update<TModel>(TModel model) where TModel : Model, new()
         {
             _session.Update(model);
-            _session.Flush();
         }
 
         public void Delete<TModel>(TModel model) where TModel : Model, new()
         {
             _session.Delete(model);
-            _session.Flush();
         }
 
         public TModel Single<TModel>(int id) where TModel : Model, new()
