@@ -130,6 +130,22 @@
 	background-image: url(./images/label.png);
 }
 
+/**************************************************
+ * DIALOG: First Time Setup
+ **************************************************/
+
+#dlgFirstTime {
+    width: 40em;
+}
+
+#dlgFirstTime-head {
+    background-image: url(./images/wrench.png);
+}
+
+#dlgFirstTime .firsttime-info {
+    margin-bottom: 20px;
+}
+
 
 /**************************************************
  * DIALOG: About

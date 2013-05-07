@@ -677,8 +677,9 @@ function setupDialogManager() {
 
 	DialogManager.init();
 
-	["About", "Add", "AddURL", "AddLabel", "Props", "Delete", "Settings"].each(function(k) {
-		var isModal = ["Props"].contains(k);
+	["About", "Add", "AddURL", "AddLabel", "FirstTime", "Props", "Delete", "Settings"].each(function(k) {
+		var isModal = ["Props", "FirstTime"].contains(k);
+		
 		DialogManager.add(k, isModal, {
 			  "Add": function() { utWebUI.getDirectoryList(); }
 			, "AddURL": function() { utWebUI.getDirectoryList(); }
@@ -686,6 +687,22 @@ function setupDialogManager() {
 		}[k]);
 	});
 
+}
+
+function setupFirstTimeDialog() {
+	$("FIRST_TIME_SUBMIT").addEvent('click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.disabled = true;
+
+		utWebUI.setFirstTimeData();
+		DialogManager.hide("FirstTime");
+
+		this.disabled = false;
+	});
+
+	$("dlgFirstTime-form").addEvent("submit", Function.from(false));
 }
 
 function setupAddTorrentDialog() {
@@ -1016,6 +1033,7 @@ function setupUserInterface() {
 	setupNonGuest();
 	setupToolbar();
 	setupDialogManager();
+	setupFirstTimeDialog();
 	setupAddTorrentDialog();
 	setupPropertiesDialog();
 	setupDeleteTorrentDialog();

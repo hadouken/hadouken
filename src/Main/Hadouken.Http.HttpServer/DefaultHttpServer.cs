@@ -150,6 +150,8 @@ namespace Hadouken.Http.HttpServer
                     context.Response.Unauthorized();
                 }
 
+                context.Response.OutputStream.Flush();
+                context.Response.OutputStream.Close();
                 context.Response.Close();
             }
             catch(Exception e)

@@ -7,232 +7,258 @@ found in the LICENSE file.
 
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title></title>
-		<link href="./images/hdkn_small.png" rel="icon" type="image/png" />
-		<link href="./main.css" rel="stylesheet" type="text/css" />
-		<link href="./dialogs.css" rel="stylesheet" type="text/css" />
-		<link href="./stable.css" rel="stylesheet" type="text/css" />
-		<!--[if IE]>
-		<script type="text/javascript" src="./ie.js"></script>
-		<script type="text/javascript" src="./excanvas.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-		<div id="cover">
-			<div id="msgout"><div id="msgmid"><div id="msg">
-				<img src="./images/snake.gif" alt="Loading..." />
-				Loading...
-			</div></div></div>
-		</div>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <link href="./images/hdkn_small.png" rel="icon" type="image/png" />
+        <link href="./main.css" rel="stylesheet" type="text/css" />
+        <link href="./dialogs.css" rel="stylesheet" type="text/css" />
+        <link href="./stable.css" rel="stylesheet" type="text/css" />
+        <!--[if IE]>
+        <script type="text/javascript" src="./ie.js"></script>
+        <script type="text/javascript" src="./excanvas.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div id="cover">
+            <div id="msgout"><div id="msgmid"><div id="msg">
+                <img src="./images/snake.gif" alt="Loading..." />
+                Loading...
+            </div></div></div>
+        </div>
 
-		<div id="modalbg"></div>
+        <div id="modalbg"></div>
 
-		<!-- /* About Dialog -->
-		<div id="dlgAbout" class="dlg-window">
-			<a href="#" class="dlg-close"></a>
-			<div id="dlgAbout-head" class="dlg-head">About</div>
-			<div class="dlg-body">
-				<img id="dlgAbout-logo" src="./images/hdkn.png" alt="uTorrent" />
-				<span id="dlgAbout-name">Hadouken</span><br />
-				<span id="dlgAbout-version"></span>
+        <!-- /* First Time Setup Dialog -->
+        <div id="dlgFirstTime" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgFirstTime-head" class="dlg-head">First time setup</div>
+            <form id="dlgFirstTime-form" action="">
+                <div class="dlg-body">
+                    <div class="firsttime-info">
+                        Hadouken does not seem to be configured just yet.
+                        Begin using Hadouken by filling in the below fields.
+                    </div>
 
-				<div id="dlgAbout-credits">
-					<div><strong>Developers:</strong>
-						<div>
-							Viktor Elofsson (<a href="//vktr.se" target="_blank">vktr.se</a>)
-						</div>
-					</div>
-					<div><strong>Sources:</strong>
-						<div><a href="https://github.com/bittorrent/webui" target="_blank">&micro;Torrent WebUI</a></div>
-					</div>
-					<div><strong>Artwork:</strong>
-						<div>(Flags) <a href="http://forum.utorrent.com/viewtopic.php?id=2070" target="_blank">Flags</a> by eng</div>
-						<div>(Icons) <a href="http://www.famfamfam.com/lab/icons/silk/" target="_blank">Silk</a> by Mark James</div>
-					</div>
-					<div id="mootools"><a href="http://www.mootools.net/" target="_blank"><img src="./images/mootools.png" alt="MooTools" /></a></div>
-				</div>
-			</div>
-		</div>
-		<!-- About Dialog */ -->
+                    <fieldset>
+                        <legend>Download directory</legend>
+                        
+                        <div class="line-cont">
+                            <input type="text" id="firstTime.defaultSavePath" class="tbox wide" />
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="FIRST_TIME_SUBMIT" class="btn" value="OK" />
+                </div>
+            </form>
+        </div>
+        <!-- First Time Setup Dialog */ -->
 
-		<!-- /* Torrent Add Dialog -->
-		<div id="dlgAdd" class="dlg-window">
-			<a href="#" class="dlg-close"></a>
-			<div id="dlgAdd-head" class="dlg-head"></div>
-			<form id="dlgAdd-form" action="./api?action=addfile" method="post" enctype="multipart/form-data">
-				<div class="dlg-body">
-					<div class="line-cont">
-						<input type="file" id="dlgAdd-file" name="torrent_file" multiple="multiple" class="fbox flr" />
-						<label for="dlgAdd-file">Torrent file:</label>
-					</div>
+        <!-- /* About Dialog -->
+        <div id="dlgAbout" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgAbout-head" class="dlg-head">About</div>
+            <div class="dlg-body">
+                <img id="dlgAbout-logo" src="./images/hdkn.png" alt="uTorrent" />
+                <span id="dlgAbout-name">Hadouken</span><br />
+                <span id="dlgAbout-version"></span>
 
-					<fieldset><!-- TODO: Localize -->
-						<legend>Options</legend>
-						<div id="dlgAdd-basePathDiv" class="line-cont">
-							<select id="dlgAdd-basePath" class="tbox flr">
-								<option value="0">Default download directory</option>
-							</select>
-							<label for="dlgAdd-basePath">Path:</label>
-						</div>
-						<div class="line-cont">
-							<input type="text" id="dlgAdd-subPath" class="tbox flr" />
-							<label for="dlgAdd-subPath">Sub-path:</label>
-						</div>
-					</fieldset>
-				</div>
-				<div class="dlg-foot">
-					<input type="submit" id="ADD_FILE_OK" class="btn" />
-					<input type="button" id="ADD_FILE_CANCEL" class="btn" />
-				</div>
-			</form>
-		</div>
-		<!-- Torrent Add Dialog */ -->
+                <div id="dlgAbout-credits">
+                    <div><strong>Developers:</strong>
+                        <div>
+                            Viktor Elofsson (<a href="//vktr.se" target="_blank">vktr.se</a>)
+                        </div>
+                    </div>
+                    <div><strong>Sources:</strong>
+                        <div><a href="https://github.com/bittorrent/webui" target="_blank">&micro;Torrent WebUI</a></div>
+                    </div>
+                    <div><strong>Artwork:</strong>
+                        <div>(Flags) <a href="http://forum.utorrent.com/viewtopic.php?id=2070" target="_blank">Flags</a> by eng</div>
+                        <div>(Icons) <a href="http://www.famfamfam.com/lab/icons/silk/" target="_blank">Silk</a> by Mark James</div>
+                    </div>
+                    <div id="mootools"><a href="http://www.mootools.net/" target="_blank"><img src="./images/mootools.png" alt="MooTools" /></a></div>
+                </div>
+            </div>
+        </div>
+        <!-- About Dialog */ -->
 
-		<!-- /* Torrent Delete Dialog -->
-		<div id="dlgDelete" class="dlg-window">
-			<a href="#" class="dlg-close"></a>
-			<div id="dlgDelete-head" class="dlg-head">Delete Torrents</div>
-			<form id="dlgDelete-form" action="">
-				<div class="dlg-body">
-					<h4 id="dlgDelete-caption">Are you sure you want to remove <span class="count">1</span> torrent<span class="plural">s</span>?</h4>
-					<div class="line-cont">
-						<input type="radio" name="dlgDelete-torrent" id="dlgDelete-no-data" value="torrent" checked="checked" />
-						<label for="dlgDelete-no-data">Just delete torrent</label>
-					</div>
-					<div class="line-cont">
-						<input type="radio" name="dlgDelete-torrent" id="dlgDelete-data" value="delete_data" />
-						<label for="dlgDelete-data">Also delete torrent data</label>
-					</div>
-					<!-- <div class="line-cont">
-						<input type="radio" name="dlgDelete-torrent" id="dlgDelete-data" value="keep_torrent" />
-						<label for="dlgDelete-data">Only delete data</label>
-					</div> -->
-				</div>
-				<div class="dlg-foot">
-					<input type="submit" id="DELETE_TORRENT_OK" class="btn" value="OK" />
-					<input type="button" id="DELETE_TORRENT_CANCEL" class="btn" value="Cancel" />
-				</div>
-			</form>
-		</div>
-		<!-- Torrent Delete Dialog */ -->
+        <!-- /* Torrent Add Dialog -->
+        <div id="dlgAdd" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgAdd-head" class="dlg-head"></div>
+            <form id="dlgAdd-form" action="./api?action=addfile" method="post" enctype="multipart/form-data">
+                <div class="dlg-body">
+                    <div class="line-cont">
+                        <input type="file" id="dlgAdd-file" name="torrent_file" multiple="multiple" class="fbox flr" />
+                        <label for="dlgAdd-file">Torrent file:</label>
+                    </div>
 
-		<!-- /* Torrent Add URL Dialog -->
-		<div id="dlgAddURL" class="dlg-window">
-			<a href="#" class="dlg-close"></a>
-			<div id="dlgAddURL-head" class="dlg-head"></div>
-			<form id="dlgAddURL-form" action="">
-				<div class="dlg-body">
-					<div class="line-cont">
-						<input type="text" id="dlgAddURL-url" class="tbox flr" />
-						<label for="dlgAddURL-url">Torrent URL:</label>
-					</div>
-					<div class="line-cont">
-						<input type="text" id="dlgAddURL-cookie" class="tbox flr" />
-						<label for="dlgAddURL-cookie">Cookies:</label>
-					</div>
+                    <fieldset><!-- TODO: Localize -->
+                        <legend>Options</legend>
+                        <div id="dlgAdd-basePathDiv" class="line-cont">
+                            <select id="dlgAdd-basePath" class="tbox flr">
+                                <option value="0">Default download directory</option>
+                            </select>
+                            <label for="dlgAdd-basePath">Path:</label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" id="dlgAdd-subPath" class="tbox flr" />
+                            <label for="dlgAdd-subPath">Sub-path:</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="ADD_FILE_OK" class="btn" />
+                    <input type="button" id="ADD_FILE_CANCEL" class="btn" />
+                </div>
+            </form>
+        </div>
+        <!-- Torrent Add Dialog */ -->
 
-					<fieldset><!-- TODO: Localize -->
-						<legend>Options</legend>
-						<div id="dlgAddURL-basePathDiv" class="line-cont">
-							<select id="dlgAddURL-basePath" class="tbox flr">
-								<option value="0">Default download directory</option>
-							</select>
-							<label for="dlgAddURL-basePath">Path:</label>
-						</div>
-						<div class="line-cont">
-							<input type="text" id="dlgAddURL-subPath" class="tbox flr" />
-							<label for="dlgAddURL-subPath">Sub-path:</label>
-						</div>
-					</fieldset>
-				</div>
-				<div class="dlg-foot">
-					<input type="submit" id="ADD_URL_OK" class="btn" />
-					<input type="button" id="ADD_URL_CANCEL" class="btn" />
-				</div>
-			</form>
-		</div>
-		<!-- Torrent Add URL Dialog */ -->
+        <!-- /* Torrent Delete Dialog -->
+        <div id="dlgDelete" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgDelete-head" class="dlg-head">Delete Torrents</div>
+            <form id="dlgDelete-form" action="">
+                <div class="dlg-body">
+                    <h4 id="dlgDelete-caption">Are you sure you want to remove <span class="count">1</span> torrent<span class="plural">s</span>?</h4>
+                    <div class="line-cont">
+                        <input type="radio" name="dlgDelete-torrent" id="dlgDelete-no-data" value="torrent" checked="checked" />
+                        <label for="dlgDelete-no-data">Just delete torrent</label>
+                    </div>
+                    <div class="line-cont">
+                        <input type="radio" name="dlgDelete-torrent" id="dlgDelete-data" value="delete_data" />
+                        <label for="dlgDelete-data">Also delete torrent data</label>
+                    </div>
+                    <!-- <div class="line-cont">
+                        <input type="radio" name="dlgDelete-torrent" id="dlgDelete-data" value="keep_torrent" />
+                        <label for="dlgDelete-data">Only delete data</label>
+                    </div> -->
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="DELETE_TORRENT_OK" class="btn" value="OK" />
+                    <input type="button" id="DELETE_TORRENT_CANCEL" class="btn" value="Cancel" />
+                </div>
+            </form>
+        </div>
+        <!-- Torrent Delete Dialog */ -->
 
-		<!-- /* Torrent Properties Dialog -->
-		<div id="dlgProps" class="dlg-window">
-			<a href="#" class="dlg-close"></a>
-			<div id="dlgProps-head" class="dlg-head"></div>
-			<form id="dlgProps-form" action="">
-				<div class="dlg-body">
-					<fieldset>
-						<legend id="DLG_TORRENTPROP_1_GEN_01"></legend>
-						<div class="textarea_wrap"><textarea id="prop-trackers" rows="" cols="" wrap="off" class="wide"></textarea></div>
-					</fieldset>
+        <!-- /* Torrent Add URL Dialog -->
+        <div id="dlgAddURL" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgAddURL-head" class="dlg-head"></div>
+            <form id="dlgAddURL-form" action="">
+                <div class="dlg-body">
+                    <div class="line-cont">
+                        <input type="text" id="dlgAddURL-url" class="tbox flr" />
+                        <label for="dlgAddURL-url">Torrent URL:</label>
+                    </div>
+                    <div class="line-cont">
+                        <input type="text" id="dlgAddURL-cookie" class="tbox flr" />
+                        <label for="dlgAddURL-cookie">Cookies:</label>
+                    </div>
 
-					<fieldset>
-						<legend id="DLG_TORRENTPROP_1_GEN_03"></legend>
-						<div class="line-cont">
-							<input type="text" class="tbox num flr" id="prop-ulrate" />
-							<label for="prop-ulrate" id="DLG_TORRENTPROP_1_GEN_04"></label>
-						</div>
-						<div class="line-cont">
-							<input type="text" class="tbox num flr" id="prop-dlrate" />
-							<label for="prop-dlrate" id="DLG_TORRENTPROP_1_GEN_06"></label>
-						</div>
-						<div class="line-cont">
-							<input type="text" class="tbox num flr" id="prop-ulslots" />
-							<label for="prop-ulslots" id="DLG_TORRENTPROP_1_GEN_08"></label>
-						</div>
-					</fieldset>
+                    <fieldset><!-- TODO: Localize -->
+                        <legend>Options</legend>
+                        <div id="dlgAddURL-basePathDiv" class="line-cont">
+                            <select id="dlgAddURL-basePath" class="tbox flr">
+                                <option value="0">Default download directory</option>
+                            </select>
+                            <label for="dlgAddURL-basePath">Path:</label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" id="dlgAddURL-subPath" class="tbox flr" />
+                            <label for="dlgAddURL-subPath">Sub-path:</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="ADD_URL_OK" class="btn" />
+                    <input type="button" id="ADD_URL_CANCEL" class="btn" />
+                </div>
+            </form>
+        </div>
+        <!-- Torrent Add URL Dialog */ -->
 
-					<fieldset>
-						<legend id="DLG_TORRENTPROP_1_GEN_10"></legend>
-						<div class="line-cont">
-							<input type="checkbox" id="prop-seed_override" />
-							<label id="DLG_TORRENTPROP_1_GEN_11" for="prop-seed_override"></label>
-						</div>
-						<div class="line-cont">
-							<input type="text" id="prop-seed_ratio" class="tbox num flr" />
-							<label for="prop-seed_ratio" id="DLG_TORRENTPROP_1_GEN_12"></label>
-						</div>
-						<div class="line-cont">
-							<input type="text" id="prop-seed_time" class="tbox num flr" />
-							<label for="prop-seed_time" id="DLG_TORRENTPROP_1_GEN_14"></label>
-						</div>
-						<div class="line-cont">
-							<input type="text" id="prop-seed_num" class="tbox num flr" />
-							<label for="prop-seed_num" id="DLG_TORRENTPROP_1_GEN_20"></label>
-						</div>
-					</fieldset>
+        <!-- /* Torrent Properties Dialog -->
+        <div id="dlgProps" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgProps-head" class="dlg-head"></div>
+            <form id="dlgProps-form" action="">
+                <div class="dlg-body">
+                    <fieldset>
+                        <legend id="DLG_TORRENTPROP_1_GEN_01"></legend>
+                        <div class="textarea_wrap"><textarea id="prop-trackers" rows="" cols="" wrap="off" class="wide"></textarea></div>
+                    </fieldset>
 
-					<fieldset>
-						<legend id="DLG_TORRENTPROP_1_GEN_16"></legend>
-						<div class="line-cont">
-							<div class="fll">
-								<input type="checkbox" id="prop-superseed" />
-								<label for="prop-superseed" id="DLG_TORRENTPROP_1_GEN_17"></label>
-							</div>
-							<div class="half flr">
-								<input type="checkbox" id="prop-pex" />
-								<label for="prop-pex" id="DLG_TORRENTPROP_1_GEN_19"></label>
-							</div>
-						</div>
-						<div class="line-cont">
-							<div class="fll">
-								<input type="checkbox" id="prop-dht" />
-								<label for="prop-dht" id="DLG_TORRENTPROP_1_GEN_18"></label>
-							</div>
-							<div class="half flr">
-							</div>
-						</div>
-					</fieldset>
-				</div>
-				<div class="dlg-foot">
-					<input type="submit" id="DLG_TORRENTPROP_01" class="btn" />
-					<input type="button" id="DLG_TORRENTPROP_02" class="btn" />
-				</div>
-			</form>
-		</div>
-		<!-- Torrent Properties Dialog */ -->
+                    <fieldset>
+                        <legend id="DLG_TORRENTPROP_1_GEN_03"></legend>
+                        <div class="line-cont">
+                            <input type="text" class="tbox num flr" id="prop-ulrate" />
+                            <label for="prop-ulrate" id="DLG_TORRENTPROP_1_GEN_04"></label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" class="tbox num flr" id="prop-dlrate" />
+                            <label for="prop-dlrate" id="DLG_TORRENTPROP_1_GEN_06"></label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" class="tbox num flr" id="prop-ulslots" />
+                            <label for="prop-ulslots" id="DLG_TORRENTPROP_1_GEN_08"></label>
+                        </div>
+                    </fieldset>
 
-		<!-- /* Settings Dialog -->
+                    <fieldset>
+                        <legend id="DLG_TORRENTPROP_1_GEN_10"></legend>
+                        <div class="line-cont">
+                            <input type="checkbox" id="prop-seed_override" />
+                            <label id="DLG_TORRENTPROP_1_GEN_11" for="prop-seed_override"></label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" id="prop-seed_ratio" class="tbox num flr" />
+                            <label for="prop-seed_ratio" id="DLG_TORRENTPROP_1_GEN_12"></label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" id="prop-seed_time" class="tbox num flr" />
+                            <label for="prop-seed_time" id="DLG_TORRENTPROP_1_GEN_14"></label>
+                        </div>
+                        <div class="line-cont">
+                            <input type="text" id="prop-seed_num" class="tbox num flr" />
+                            <label for="prop-seed_num" id="DLG_TORRENTPROP_1_GEN_20"></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend id="DLG_TORRENTPROP_1_GEN_16"></legend>
+                        <div class="line-cont">
+                            <div class="fll">
+                                <input type="checkbox" id="prop-superseed" />
+                                <label for="prop-superseed" id="DLG_TORRENTPROP_1_GEN_17"></label>
+                            </div>
+                            <div class="half flr">
+                                <input type="checkbox" id="prop-pex" />
+                                <label for="prop-pex" id="DLG_TORRENTPROP_1_GEN_19"></label>
+                            </div>
+                        </div>
+                        <div class="line-cont">
+                            <div class="fll">
+                                <input type="checkbox" id="prop-dht" />
+                                <label for="prop-dht" id="DLG_TORRENTPROP_1_GEN_18"></label>
+                            </div>
+                            <div class="half flr">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="DLG_TORRENTPROP_01" class="btn" />
+                    <input type="button" id="DLG_TORRENTPROP_02" class="btn" />
+                </div>
+            </form>
+        </div>
+        <!-- Torrent Properties Dialog */ -->
+
+        <!-- /* Settings Dialog -->
 
   <div id="dlgSettings" class="dlg-window">
     <a href="#" class="dlg-close"></a>
@@ -403,132 +429,132 @@ found in the LICENSE file.
     </form>
   </div><!-- Settings Dialog */ -->
 
-		<!-- /* Toolbar -->
-		<div id="mainToolbar">
-			<div id="mainToolbar-searchbar">
-				<input type="text" id="query" /><a href="#" id="search"></a><a href="#" id="searchsel"></a>
-			</div>
-			<a href="#" id="tbchevron">&raquo;</a>
+        <!-- /* Toolbar -->
+        <div id="mainToolbar">
+            <div id="mainToolbar-searchbar">
+                <input type="text" id="query" /><a href="#" id="search"></a><a href="#" id="searchsel"></a>
+            </div>
+            <a href="#" id="tbchevron">&raquo;</a>
 
-			<a href="#" id="add" class="tbbutton inchev"></a>
-			<a href="#" id="addurl" class="tbbutton inchev"></a>
+            <a href="#" id="add" class="tbbutton inchev"></a>
+            <a href="#" id="addurl" class="tbbutton inchev"></a>
 
-			<div class="separator inchev"></div>
+            <div class="separator inchev"></div>
 
-			<a href="#" id="remove" class="tbbutton inchev"></a>
+            <a href="#" id="remove" class="tbbutton inchev"></a>
 
-			<div class="separator inchev"></div>
+            <div class="separator inchev"></div>
 
-			<a href="#" id="start" class="tbbutton inchev"></a>
-			<a href="#" id="pause" class="tbbutton inchev"></a>
-			<a href="#" id="stop" class="tbbutton inchev"></a>
+            <a href="#" id="start" class="tbbutton inchev"></a>
+            <a href="#" id="pause" class="tbbutton inchev"></a>
+            <a href="#" id="stop" class="tbbutton inchev"></a>
 
-			<div class="separator inchev"></div>
+            <div class="separator inchev"></div>
 
-			<a href="#" id="queueup" class="tbbutton inchev"></a>
-			<a href="#" id="queuedown" class="tbbutton inchev"></a>
+            <a href="#" id="queueup" class="tbbutton inchev"></a>
+            <a href="#" id="queuedown" class="tbbutton inchev"></a>
 
-			<div class="separator inchev"></div>
+            <div class="separator inchev"></div>
 
-			<a href="#" id="setting" class="tbbutton inchev"></a>
-		</div>
-		<!-- Toolbar */ -->
+            <a href="#" id="setting" class="tbbutton inchev"></a>
+        </div>
+        <!-- Toolbar */ -->
 
-		<!-- /* Category/Label List -->
-		<div id="mainCatList"><div class="fll">
-			<ul id="mainCatList-categories">
-				<li id="cat_all"><span class="icon"></span> <span id="OV_CAT_ALL"></span>&nbsp;(<span id="cat_all_c">0</span>)</li>
-				<li id="cat_dls"><span class="icon"></span> <span id="OV_CAT_DL"></span>&nbsp;(<span id="cat_dls_c">0</span>)</li>
-				<li id="cat_com"><span class="icon"></span> <span id="OV_CAT_COMPL"></span>&nbsp;(<span id="cat_com_c">0</span>)</li>
-				<li id="cat_act"><span class="icon"></span> <span id="OV_CAT_ACTIVE"></span>&nbsp;(<span id="cat_act_c">0</span>)</li>
-				<li id="cat_iac"><span class="icon"></span> <span id="OV_CAT_INACTIVE"></span>&nbsp;(<span id="cat_iac_c">0</span>)</li>
-			</ul>
+        <!-- /* Category/Label List -->
+        <div id="mainCatList"><div class="fll">
+            <ul id="mainCatList-categories">
+                <li id="cat_all"><span class="icon"></span> <span id="OV_CAT_ALL"></span>&nbsp;(<span id="cat_all_c">0</span>)</li>
+                <li id="cat_dls"><span class="icon"></span> <span id="OV_CAT_DL"></span>&nbsp;(<span id="cat_dls_c">0</span>)</li>
+                <li id="cat_com"><span class="icon"></span> <span id="OV_CAT_COMPL"></span>&nbsp;(<span id="cat_com_c">0</span>)</li>
+                <li id="cat_act"><span class="icon"></span> <span id="OV_CAT_ACTIVE"></span>&nbsp;(<span id="cat_act_c">0</span>)</li>
+                <li id="cat_iac"><span class="icon"></span> <span id="OV_CAT_INACTIVE"></span>&nbsp;(<span id="cat_iac_c">0</span>)</li>
+            </ul>
 
-			<hr />
+            <hr />
 
-			<ul id="mainCatList-labels">
-				<li id="cat_nlb"><span id="OV_CAT_NOLABEL"></span>&nbsp;(<span id="cat_nlb_c">0</span>)</li>
-			</ul>
-		</div></div>
-		<!-- Category/Label List */ -->
+            <ul id="mainCatList-labels">
+                <li id="cat_nlb"><span id="OV_CAT_NOLABEL"></span>&nbsp;(<span id="cat_nlb_c">0</span>)</li>
+            </ul>
+        </div></div>
+        <!-- Category/Label List */ -->
 
-		<!-- /* Main List -->
-		<div id="mainTorList"></div>
-		<!-- Main List */ -->
+        <!-- /* Main List -->
+        <div id="mainTorList"></div>
+        <!-- Main List */ -->
 
-		<!-- /* Detailed Info Pane -->
-		<div id="mainInfoPane">
-			<ul id="mainInfoPane-tabs" class="folder-tabs icon"></ul>
-			<div id="mainInfoPane-content">
-				<div id="mainInfoPane-generalTab">
-					<table cellpadding="5" cellspacing="2">
-						<tbody>
-							<tr>
-								<td colspan="3" class="header" id="GN_TRANSFER"></td>
-							</tr>
-							<tr>
-								<td style="width: 34%"><label id="GN_TP_04"></label><span id="rm"></span></td>
-								<td style="width: 33%"><label id="GN_TP_01"></label><span id="dl"></span></td>
-								<td style="width: 33%"><label id="GN_TP_02"></label><span id="ul"></span></td>
-							</tr>
-							<tr>
-								<td><label id="GN_TP_08"></label><span id="ra"></span></td>
-								<td><label id="GN_TP_05"></label><span id="ds"></span></td>
-								<td><label id="GN_TP_06"></label><span id="us"></span></td>
-							</tr>
-							<tr>
-								<td><label id="GN_TP_03"></label><span id="se"></span></td>
-								<td><label id="GN_TP_07"></label><span id="pe"></span></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td colspan="3" class="header" id="GN_GENERAL"></td>
-							</tr>
-							<tr>
-								<td colspan="3"><label id="GN_TP_09"></label><span id="sa"></span></td>
-							</tr>
-							<tr>
-								<td colspan="3"><label id="GN_TP_10"></label><span id="hs"></span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div id="mainInfoPane-peersTab"></div>
-				<div id="mainInfoPane-filesTab"></div>
-				<div id="mainInfoPane-speedTab"></div>
-				<div id="mainInfoPane-loggerTab"></div>
-			</div>
-		</div>
-		<!-- Detailed Info Pane */ -->
+        <!-- /* Detailed Info Pane -->
+        <div id="mainInfoPane">
+            <ul id="mainInfoPane-tabs" class="folder-tabs icon"></ul>
+            <div id="mainInfoPane-content">
+                <div id="mainInfoPane-generalTab">
+                    <table cellpadding="5" cellspacing="2">
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="header" id="GN_TRANSFER"></td>
+                            </tr>
+                            <tr>
+                                <td style="width: 34%"><label id="GN_TP_04"></label><span id="rm"></span></td>
+                                <td style="width: 33%"><label id="GN_TP_01"></label><span id="dl"></span></td>
+                                <td style="width: 33%"><label id="GN_TP_02"></label><span id="ul"></span></td>
+                            </tr>
+                            <tr>
+                                <td><label id="GN_TP_08"></label><span id="ra"></span></td>
+                                <td><label id="GN_TP_05"></label><span id="ds"></span></td>
+                                <td><label id="GN_TP_06"></label><span id="us"></span></td>
+                            </tr>
+                            <tr>
+                                <td><label id="GN_TP_03"></label><span id="se"></span></td>
+                                <td><label id="GN_TP_07"></label><span id="pe"></span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="header" id="GN_GENERAL"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><label id="GN_TP_09"></label><span id="sa"></span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><label id="GN_TP_10"></label><span id="hs"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="mainInfoPane-peersTab"></div>
+                <div id="mainInfoPane-filesTab"></div>
+                <div id="mainInfoPane-speedTab"></div>
+                <div id="mainInfoPane-loggerTab"></div>
+            </div>
+        </div>
+        <!-- Detailed Info Pane */ -->
 
-		<!-- /* Status Bar -->
-		<div id="mainStatusBar">
-			<div id="mainStatusBar-menu"></div>
-			<div id="mainStatusBar-upload" class="section"></div>
-			<div id="mainStatusBar-download" class="section"></div>
-		</div>
-		<!-- Status Bar */ -->
+        <!-- /* Status Bar -->
+        <div id="mainStatusBar">
+            <div id="mainStatusBar-menu"></div>
+            <div id="mainStatusBar-upload" class="section"></div>
+            <div id="mainStatusBar-download" class="section"></div>
+        </div>
+        <!-- Status Bar */ -->
 
-		<div id="mainVDivider"></div>
-		<div id="mainHDivider"></div>
+        <div id="mainVDivider"></div>
+        <div id="mainHDivider"></div>
 
-		<!-- [jscompact] -->
-		<script type="text/javascript" src="./mootools.js"></script>
-		<script type="text/javascript" src="./flotr.js"></script>
-		<script type="text/javascript" src="./utils.js"></script>
+        <!-- [jscompact] -->
+        <script type="text/javascript" src="./mootools.js"></script>
+        <script type="text/javascript" src="./flotr.js"></script>
+        <script type="text/javascript" src="./utils.js"></script>
         <script type="text/javascript" src="./hdkn.js"></script>
 
-		<script type="text/javascript" src="./constants.js"></script>
-		<script type="text/javascript" src="./lang/_.js"></script>
+        <script type="text/javascript" src="./constants.js"></script>
+        <script type="text/javascript" src="./lang/_.js"></script>
         <script type="text/javascript" src="./lang/fallback.js"></script>
-		<script type="text/javascript" src="./logger.js"></script>
-		<script type="text/javascript" src="./speedgraph.js"></script>
-		<script type="text/javascript" src="./stable.js"></script>
-		<script type="text/javascript" src="./tabs.js"></script>
-		<script type="text/javascript" src="./webui.js"></script>
-		<script type="text/javascript" src="./contextmenu.js"></script>
-		<script type="text/javascript" src="./dialogmanager.js"></script>
-		<script type="text/javascript" src="./main.js"></script>
-		<!-- [/jscompact] -->
-	</body>
+        <script type="text/javascript" src="./logger.js"></script>
+        <script type="text/javascript" src="./speedgraph.js"></script>
+        <script type="text/javascript" src="./stable.js"></script>
+        <script type="text/javascript" src="./tabs.js"></script>
+        <script type="text/javascript" src="./webui.js"></script>
+        <script type="text/javascript" src="./contextmenu.js"></script>
+        <script type="text/javascript" src="./dialogmanager.js"></script>
+        <script type="text/javascript" src="./main.js"></script>
+        <!-- [/jscompact] -->
+    </body>
 </html>
