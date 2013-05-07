@@ -677,8 +677,9 @@ function setupDialogManager() {
 
 	DialogManager.init();
 
-	["About", "Add", "AddURL", "AddLabel", "Props", "Delete", "Settings"].each(function(k) {
-		var isModal = ["Props"].contains(k);
+	["About", "Add", "AddURL", "AddLabel", "FirstTime", "Props", "Delete", "Settings"].each(function(k) {
+		var isModal = ["Props", "FirstTime"].contains(k);
+		
 		DialogManager.add(k, isModal, {
 			  "Add": function() { utWebUI.getDirectoryList(); }
 			, "AddURL": function() { utWebUI.getDirectoryList(); }

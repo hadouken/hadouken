@@ -318,8 +318,8 @@ var utWebUI = {
         // Load settings
         this.getSettings((function() {
 
-            if(this.settings["paths.defaultSavePath"] === undefined) {
-                console.log("first time setup");
+            if(this.settings["webui.isConfigured"] === undefined) {
+                DialogManager.show("FirstTime");
             }
 
             this.getPlugins((function() {
