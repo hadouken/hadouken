@@ -51,39 +51,21 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Migrator, Version=0.9.1.29113, Culture=neutral, PublicKeyToken=3b3586e9632ecfce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\MigratorDotNet.0.9.1\lib\net35\Migrator.dll</HintPath>
+    <Reference Include="Migrator">
+      <HintPath>..\..\..\lib\MigratorDotNet.0.9.0.33276\lib\NET40\Migrator.dll</HintPath>
     </Reference>
-    <Reference Include="Migrator.Framework, Version=0.9.1.29113, Culture=neutral, PublicKeyToken=3b3586e9632ecfce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\MigratorDotNet.0.9.1\lib\net35\Migrator.Framework.dll</HintPath>
+    <Reference Include="Migrator.Framework">
+      <HintPath>..\..\..\lib\MigratorDotNet.0.9.0.33276\lib\NET40\Migrator.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Migrator.Providers, Version=0.9.1.29113, Culture=neutral, PublicKeyToken=3b3586e9632ecfce, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\MigratorDotNet.0.9.1\lib\net35\Migrator.Providers.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\lib\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Migrator.Providers">
+      <HintPath>..\..\..\lib\MigratorDotNet.0.9.0.33276\lib\NET40\Migrator.Providers.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
       <HintPath>..\..\..\lib\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\lib\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\lib\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\lib\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\lib\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,7 +77,9 @@
     <Compile Include="Data\Migrations\Create\CreateFilterTable_001.cs" />
     <Compile Include="Data\Models\Feed.cs" />
     <Compile Include="Data\Models\Filter.cs" />
-    <Compile Include="Http\Api\FeedsController.cs" />
+    <Compile Include="Http\Api\RemoveFeeds.cs" />
+    <Compile Include="Http\Api\SetFeeds.cs" />
+    <Compile Include="Http\Api\GetFeeds.cs" />
     <Compile Include="Http\DefaultWebClient.cs" />
     <Compile Include="Http\IWebClient.cs" />
     <Compile Include="RssPlugin.cs" />
@@ -106,16 +90,15 @@
     <Compile Include="Timers\ThreadedTimer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
-      <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
-      <Name>Hadouken.Common</Name>
+    <ProjectReference Include="..\..\Main\Hadouken\Hadouken.csproj">
+      <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
+      <Name>Hadouken</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="manifest.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

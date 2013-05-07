@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HdknPlugins.Rss.Http
 {
-    public interface IWebClient
+    public interface IWebClient : IComponent
     {
         byte[] DownloadData(Uri uri);
     }

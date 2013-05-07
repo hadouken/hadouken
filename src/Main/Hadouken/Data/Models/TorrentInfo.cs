@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using Hadouken.BitTorrent;
-using Hadouken.Common.Data;
 
 namespace Hadouken.Data.Models
 {

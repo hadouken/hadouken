@@ -1,7 +1,5 @@
-﻿using Hadouken.Common;
-namespace HdknPlugins.Rss.Timers
+﻿namespace HdknPlugins.Rss.Timers
 {
-    [Component]
     public class DefaultTimerFactory : ITimerFactory
     {
         public ITimer CreateTimer()

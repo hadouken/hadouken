@@ -12,12 +12,12 @@ namespace HdknPlugins.Rss.Data.Migrations.Create
     {
         public override void Down()
         {
-            Database.RemoveTable("Filter");
+            Database.RemoveTable("plugin_Rss_Filters");
         }
 
         public override void Up()
         {
-            Database.AddTable("Filter",
+            Database.AddTable("plugin_Rss_Filters",
                 new Column("Id", DbType.Int32, ColumnProperty.PrimaryKeyWithIdentity),
                 new Column("Feed_Id", DbType.Int32, ColumnProperty.NotNull),
                 new Column("Label", DbType.String),

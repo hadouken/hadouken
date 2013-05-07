@@ -14,6 +14,10 @@
   <Fragment>
     <ComponentGroup Id="LibComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component Win64="$(var.IsWin64)">
+        <File Name="Castle.Core.dll" />
+      </Component>
+
+      <Component Win64="$(var.IsWin64)">
         <File Name="FluentNHibernate.dll" />
       </Component>
 
@@ -24,19 +28,7 @@
       <Component Win64="$(var.IsWin64)">
         <File Name="Ionic.Zip.dll" />
       </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Magnum.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="MassTransit.dll" />
-      </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="MassTransit.Transports.Msmq.dll" />
-      </Component>
-      
       <Component Win64="$(var.IsWin64)">
         <File Name="Migrator.dll" />
       </Component>
@@ -52,10 +44,6 @@
       <Component Win64="$(var.IsWin64)">
         <File Name="MonoTorrent.dll" />
       </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Newtonsoft.Json.dll" />
-      </Component>
 
       <Component Win64="$(var.IsWin64)">
         <File Name="NHibernate.dll" />
@@ -63,10 +51,6 @@
 
       <Component Win64="$(var.IsWin64)">
         <File Name="Ninject.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Ninject.Extensions.Conventions.dll" />
       </Component>
 
       <Component Win64="$(var.IsWin64)">
@@ -79,22 +63,6 @@
 
       <Component Win64="$(var.IsWin64)">
         <File Name="SQLite.Interop.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="System.Net.Http.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="System.Net.Http.Formatting.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="System.Web.Http.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="System.Web.Http.SelfHost.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

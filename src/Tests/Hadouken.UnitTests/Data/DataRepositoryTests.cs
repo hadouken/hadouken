@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Hadouken.Common.Data.FluentNHibernate;
-using Hadouken.Common.Messaging;
-using Hadouken.Hosts.WindowsService;
 using NUnit.Framework;
 using Hadouken.Impl.Data;
 using Moq;
+using Hadouken.Messaging;
 using Hadouken.Data.Models;
 using System.IO;
 using Hadouken.Configuration;
-using Hadouken.Common;
 
 namespace Hadouken.UnitTests.Data
 {
@@ -22,13 +18,6 @@ namespace Hadouken.UnitTests.Data
         [TestFixtureSetUp]
         public void Setup()
         {
-            var startupPath = Path.GetDirectoryName(typeof(DataRepositoryTests).Assembly.Location);
-
-            foreach (string file in Directory.GetFiles(startupPath, "*.dll"))
-            {
-                Assembly.LoadFile(file);
-            }
-
             HdknConfig.ConfigManager = new MemoryConfigManager();
 
             if (File.Exists("test.db"))
@@ -43,14 +32,12 @@ namespace Hadouken.UnitTests.Data
         [Test]
         public void Can_CRUD_records()
         {
-            var env = new Mock<IEnvironment>();
-            env.SetupGet(e => e.ConnectionString).Returns("Data Source=test.db; Version=3;");
-
-            var repo = new FluentNHibernateDataRepository(env.Object);
+            var mbus = new Mock<IMessageBus>();
+            var repo = new FluentNhibernateDataRepository(mbus.Object);
 
             // Saving
             repo.Save(new Setting() { Key = "test", Value = "test" });
-            Assert.IsTrue(repo.List<Setting>(st => st.Key == "test").Count() == 1);
+            Assert.IsTrue(repo.List<Setting>(st => st.Key == "test").Count == 1);
 
             // Updating
             var s = repo.Single<Setting>(q => q.Key == "test");
@@ -61,7 +48,7 @@ namespace Hadouken.UnitTests.Data
 
             // Deleting
             repo.Delete(s);
-            Assert.IsTrue(repo.Single<Setting>(st => st.Key == "test2") == null);
+            Assert.IsTrue(!repo.List<Setting>(st => st.Key == "test").Any());
         }
     }
 }

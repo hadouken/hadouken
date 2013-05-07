@@ -2,121 +2,125 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Hadouken.Common;
-using Hadouken.Common.Plugins;
-using Hadouken.Common.Messaging;
-using Hadouken.Common.Data;
-
+using Hadouken.Plugins;
+using Hadouken.Data;
+using Hadouken.BitTorrent;
+using Hadouken.IO;
 using HdknPlugins.AutoAdd.Timers;
+using Hadouken.Configuration;
 using HdknPlugins.AutoAdd.Data.Models;
-using Hadouken.Common.IO;
-using Hadouken.Common.BitTorrent;
-using Migrator.Providers.SQLite;
-using NLog;
 using System.Text.RegularExpressions;
+using System.IO;
+using NLog;
 
 namespace HdknPlugins.AutoAdd
 {
-    public class AutoAddPlugin : Plugin
+    [Plugin("autoadd", "1.0", ResourceBase = "HdknPlugins.AutoAdd.UI")]
+    public class AutoAddPlugin : IPlugin
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IEnvironment _environment;
+        private readonly IKeyValueStore _keyValueStore;
         private readonly IDataRepository _dataRepository;
+        private readonly IBitTorrentEngine _bitTorrentEngine;
         private readonly IFileSystem _fileSystem;
-        private readonly ITimer _timer;
+        private readonly ITimerFactory _timerFactory;
 
-        public AutoAddPlugin(IEnvironment environment,
-                             IMessageBus messageBus,
+        private ITimer _timer;
+
+        public AutoAddPlugin(IKeyValueStore keyValueStore,
                              IDataRepository dataRepository,
+                             IBitTorrentEngine bitTorrentEngine,
                              IFileSystem fileSystem,
                              ITimerFactory timerFactory)
-            : base(messageBus)
         {
-            _environment = environment;
+            _keyValueStore = keyValueStore;
             _dataRepository = dataRepository;
+            _bitTorrentEngine = bitTorrentEngine;
             _fileSystem = fileSystem;
-            _timer = timerFactory.CreateTimer();
+            _timerFactory = timerFactory;
         }
 
-        public override void Load()
+        public void Load()
         {
-            Logger.Trace("Load()");
+            int interval = _keyValueStore.Get("plugins.autoadd.updateInterval", 3000);
 
-            var m =
-                new Migrator.Migrator(
-                    new SQLiteTransformationProvider(new SQLiteDialect(), _environment.ConnectionString),
-                    this.GetType().Assembly, false);
+            Logger.Info("Starting timer with {0}ms update interval", interval);
 
-            Logger.Debug("Updating all migrations in current assembly");
-
-            m.MigrateToLastVersion();
-
-            _timer.SetCallback(5000, CheckFolders);
+            _timer = _timerFactory.CreateTimer();
+            _timer.SetCallback(interval, CheckFolders);
             _timer.Start();
         }
 
-        private void CheckFolders()
+        internal void CheckFolders()
         {
-            var folders = _dataRepository.List<Folder>();
+            var folders = _dataRepository.List<WatchedFolder>();
 
-            foreach (var folder in folders)
+            if(folders == null)
+                return;
+
+            foreach(var folder in folders)
             {
                 CheckFolder(folder);
             }
         }
 
-        internal void CheckFolder(Folder folder)
+        internal void CheckFolder(WatchedFolder folder)
         {
-            var files = _fileSystem.GetFiles(folder.Path, "*.torrent");
+            string[] files = _fileSystem.GetFiles(folder.Path, "*.torrent");
 
-            foreach (var file in files)
+            foreach(var file in files)
             {
-                string fileName = System.IO.Path.GetFileName(file);
+                string fileName = Path.GetFileName(file);
 
-                if (String.IsNullOrEmpty(fileName))
+                if(String.IsNullOrEmpty(fileName))
                     continue;
 
-                if (!String.IsNullOrEmpty(folder.IncludeFilter) || !String.IsNullOrEmpty(folder.ExcludeFilter))
+                if(!String.IsNullOrEmpty(folder.IncludeFilter) || !String.IsNullOrEmpty(folder.ExcludeFilter))
                 {
-                    bool include =
-                        !(!String.IsNullOrEmpty(folder.IncludeFilter) && !Regex.IsMatch(fileName, folder.IncludeFilter));
+                    bool excludeAdd = !(!String.IsNullOrEmpty(folder.ExcludeFilter) && !Regex.IsMatch(fileName, folder.ExcludeFilter));
+                    bool includeAdd = !(!String.IsNullOrEmpty(folder.IncludeFilter) && !Regex.IsMatch(fileName, folder.IncludeFilter));
 
-                    bool exclude =
-                        !(!String.IsNullOrEmpty(folder.ExcludeFilter) && !Regex.IsMatch(fileName, folder.ExcludeFilter));
-
-                    if (include && exclude)
+                    if(excludeAdd && includeAdd)
                     {
-                        AddFile(file, folder.Label, folder.AutoStart);
+                        AddFile(folder, file);
                     }
                 }
                 else
                 {
-                    AddFile(file, folder.Label, folder.AutoStart);
+                    AddFile(folder, file);
                 }
             }
         }
 
-        internal void AddFile(string file, string label, bool autoStart)
+        internal void AddFile(WatchedFolder folder, string file)
         {
-            var data = _fileSystem.ReadAllBytes(file);
+            try
+            {
+                // No filter, just add
+                byte[] data = _fileSystem.ReadAllBytes(file);
+                var manager = _bitTorrentEngine.AddTorrent(data);
 
-            var msg = new AddTorrentMessage
-                {
-                    AutoStart = autoStart,
-                    Data = data,
-                    Label = label
-                };
+                if(manager == null)
+                    return;
 
-            MessageBus.Publish(msg);
+                if (folder.AutoStart)
+                    manager.Start();
 
-            _fileSystem.DeleteFile(file);
+                _fileSystem.DeleteFile(file);
+            }
+            catch(FileNotFoundException fileNotFoundException)
+            {
+                Logger.ErrorException(String.Format("File {0} not found", file), fileNotFoundException);
+            }
+            catch(IOException ioException)
+            {
+                Logger.ErrorException(String.Format("I/O exception when reading file {0}", file), ioException);
+            }
         }
 
-        public override void Unload()
+        public void Unload()
         {
-            Logger.Trace("Unload()");
-
             _timer.Stop();
         }
     }

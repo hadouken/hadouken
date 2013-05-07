@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.BitTorrent
 {
-    public interface IBitTorrentEngine
+    public interface IBitTorrentEngine : IComponent
     {
         void Load();
         void Unload();

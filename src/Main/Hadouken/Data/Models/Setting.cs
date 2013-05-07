@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Hadouken.Common.Data;
+
 using Hadouken.Configuration;
 
 namespace Hadouken.Data.Models

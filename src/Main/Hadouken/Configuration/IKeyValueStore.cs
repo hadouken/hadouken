@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Hadouken.Configuration
 {
-    public interface IKeyValueStore
+    public interface IKeyValueStore : IComponent
     {
         object Get(string key);
         object Get(string key, object defaultValue);

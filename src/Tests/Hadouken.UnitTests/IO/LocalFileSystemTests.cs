@@ -1,5 +1,8 @@
-﻿using Hadouken.Common.IO.Local;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Hadouken.Impl.IO;
 using NUnit.Framework;
 
 namespace Hadouken.UnitTests.IO
