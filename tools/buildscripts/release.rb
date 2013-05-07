@@ -17,7 +17,7 @@ namespace :release do
     version = SemVer.find
     
     ensure_msi_packages(version.format("%M.%m.%p"))
-    ensure_version_available(version.to_s)
+    #ensure_version_available(version.to_s)
     
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x86.msi", version.format("%M.%m"))
     copy_to_server("build/msi/hdkn-#{version.format("%M.%m.%p")}.4000-x64.msi", version.format("%M.%m"))
