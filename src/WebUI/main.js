@@ -689,6 +689,22 @@ function setupDialogManager() {
 
 }
 
+function setupFirstTimeDialog() {
+	$("FIRST_TIME_SUBMIT").addEvent('click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.disabled = true;
+
+		utWebUI.setFirstTimeData();
+		DialogManager.hide("FirstTime");
+
+		this.disabled = false;
+	});
+
+	$("dlgFirstTime-form").addEvent("submit", Function.from(false));
+}
+
 function setupAddTorrentDialog() {
 	//--------------------------------------------------
 	// ADD TORRENT DIALOG
@@ -1017,6 +1033,7 @@ function setupUserInterface() {
 	setupNonGuest();
 	setupToolbar();
 	setupDialogManager();
+	setupFirstTimeDialog();
 	setupAddTorrentDialog();
 	setupPropertiesDialog();
 	setupDeleteTorrentDialog();

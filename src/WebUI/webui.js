@@ -1928,6 +1928,18 @@ var utWebUI = {
         this.toggleSearchBar();
         resizeUI();
     },
+
+    "setFirstTimeData": function() {
+        var data = {};
+        data["paths.defaultSavePath"] = $("firstTime.defaultSavePath").get('value');
+        data["webui.isConfigured"] = true;
+
+        this.request("post", "action=setsetting", data, Function.from());
+
+        this.settings["paths.defaultSavePath"] = data["paths.defaultSavePath"];
+
+        this.loadSettings();
+    },
     
     "showAbout": function() {
         DialogManager.show("About");

@@ -33,9 +33,25 @@ found in the LICENSE file.
         <div id="dlgFirstTime" class="dlg-window">
             <a href="#" class="dlg-close"></a>
             <div id="dlgFirstTime-head" class="dlg-head">First time setup</div>
-            <div class="dlg-body">
-                <p>This appears to be your first time starting Hadouken. Begin by entering your default save path below.</p>
-            </div>
+            <form id="dlgFirstTime-form" action="">
+                <div class="dlg-body">
+                    <div class="firsttime-info">
+                        Hadouken does not seem to be configured just yet.
+                        Begin using Hadouken by filling in the below fields.
+                    </div>
+
+                    <fieldset>
+                        <legend>Download directory</legend>
+                        
+                        <div class="line-cont">
+                            <input type="text" id="firstTime.defaultSavePath" class="tbox wide" />
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="FIRST_TIME_SUBMIT" class="btn" value="OK" />
+                </div>
+            </form>
         </div>
         <!-- First Time Setup Dialog */ -->
 
