@@ -119,22 +119,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hadouken.Messages\Hadouken.Messages.csproj">
-      <Project>{DEA098A4-8A50-4A2D-A19B-D457ABA1FEE8}</Project>
-      <Name>Hadouken.Messages</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hadouken\Hadouken.csproj">
-      <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>
-      <Name>Hadouken</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hadouken.Messages\Hadouken.Messages.csproj">
+      <Project>{dea098a4-8a50-4a2d-a19b-d457aba1fee8}</Project>
+      <Name>Hadouken.Messages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hadouken\Hadouken.csproj">
+      <Project>{483bdd2e-74e7-4047-bab4-99c7a25bb56d}</Project>
+      <Name>Hadouken</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />
