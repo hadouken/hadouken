@@ -29,27 +29,22 @@ namespace Hadouken.Impl.Config
 
         public object Get(string key)
         {
-            return InternalGet(key, null, false);
+            var value = GetFromDatabase(key);
+
+            if (value == null)
+                throw new Exception("No key with given value: " + key);
+
+            return value;
         }
 
         public object Get(string key, object defaultValue)
         {
-            return InternalGet(key, defaultValue, true);
-        }
+            var value = GetFromDatabase(key);
 
-        private object InternalGet(string key, object defaultValue, bool userProvidedDefaultValue)
-        {
-            object v;
+            if (value == null)
+                Set(key, defaultValue);
 
-            if (TryGet(key, out v))
-            {
-                return v;
-            }
-
-            if (userProvidedDefaultValue)
-                return defaultValue;
-
-            throw new Exception("Key does not exist: " + key);
+            return Get(key);
         }
 
         public bool TryGet(string key, out object value)
@@ -81,16 +76,6 @@ namespace Hadouken.Impl.Config
             return _serializer.Deserialize(setting.Value, type);
         }
 
-        private T GetFromDatabase<T>(string key)
-        {
-            var setting = GetSettingFromDatabase(key);
-
-            if (setting == null)
-                return default(T);
-
-            return _serializer.Deserialize<T>(setting.Value);
-        }
-
         private Setting GetSettingFromDatabase(string key)
         {
             var setting = _data.Single<Setting>(s => s.Key == key);
@@ -106,39 +91,35 @@ namespace Hadouken.Impl.Config
 
         public T Get<T>(string key)
         {
-            return InternalGet<T>(key, default(T), false);
+            var value = GetFromDatabase(key);
+
+            if (value == null)
+                throw new Exception("No key with given value: " + key);
+
+            return (T)value;
         }
 
         public T Get<T>(string key, T defaultValue)
         {
-            return InternalGet<T>(key, defaultValue, true);
-        }
+            var value = GetFromDatabase(key);
 
-        public T InternalGet<T>(string key, T defaultValue, bool userProvidedDefaultValue)
-        {
-            T v;
+            if (value == null)
+                Set(key, defaultValue);
 
-            if (TryGet<T>(key, out v))
-            {
-                return v;
-            }
-
-            if (userProvidedDefaultValue)
-                return defaultValue;
-
-            throw new Exception("Key does not exist: " + key);
+            return Get<T>(key);
         }
 
         public bool TryGet<T>(string key, out T value)
         {
-            T internalValue = GetFromDatabase<T>(key);
-            bool hasValue = !EqualityComparer<T>.Default.Equals(internalValue, default(T));
+            var internalValue = GetFromDatabase(key); ;
 
-            value = internalValue;
-
-            if (hasValue)
+            if (internalValue != null)
+            {
+                value = (T)internalValue;
                 return true;
+            }
 
+            value = default(T);
             return false;
         }
 
