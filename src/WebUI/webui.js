@@ -319,6 +319,9 @@ var utWebUI = {
         this.getSettings((function() {
 
             if(this.settings["webui.isConfigured"] === undefined) {
+                if(this.settings["paths.defaultSavePath"] !== undefined)
+                    $("firstTime.defaultSavePath").set('value', this.settings["paths.defaultSavePath"]);
+                
                 DialogManager.show("FirstTime");
             }
 
