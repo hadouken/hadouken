@@ -1,0 +1,5 @@
+Hadouken Changelog
+
+v1.3.4
+    FIX: The HTTP server did not load the UI.
+    FIX: The default key/value store now creates keys with default values (if specified).
