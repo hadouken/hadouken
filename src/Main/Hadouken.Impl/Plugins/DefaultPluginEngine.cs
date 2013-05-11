@@ -11,40 +11,38 @@ using Hadouken.IO;
 using Hadouken.Reflection;
 using NLog;
 using System.Reflection;
+using Hadouken.Messages;
 
 namespace Hadouken.Impl.Plugins
 {
-    [Component]
+    [Component(ComponentLifestyle.Singleton)]
     public class DefaultPluginEngine : IPluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Dictionary<string, IPluginManager> _managers = new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
 
-        private IFileSystem _fs;
-        private IDataRepository _repo;
-        private IMessageBus _mbus;
-        private IMigrationRunner _runner;
-        private IPluginLoader[] _loaders;
+        private readonly IFileSystem _fileSystem;
+        private readonly IMessageBus _messageBus;
+        private readonly IMigrationRunner _migrationRunner;
+        private readonly IPluginLoader[] _pluginLoaders;
 
-        public DefaultPluginEngine(IFileSystem fs,
-                                   IDataRepository repo,
-                                   IMessageBus mbus,
-                                   IMigrationRunner runner,
-                                   IPluginLoader[] loaders)
+        public DefaultPluginEngine(IFileSystem fileSystem,
+                                   IMessageBus messageBus,
+                                   IMigrationRunner migrationRunner,
+                                   IPluginLoader[] pluginLoaders)
         {
-            _fs = fs;
-            _repo = repo;
-            _mbus = mbus;
-            _runner = runner;
-            _loaders = loaders;
+            _fileSystem = fileSystem;
+            _messageBus = messageBus;
+            _migrationRunner = migrationRunner;
+            _pluginLoaders = pluginLoaders;
         }
 
         public void Load()
         {
             var path = HdknConfig.GetPath("Paths.Plugins");
 
-            foreach (var info in _fs.GetFileSystemInfos(path)
+            foreach (var info in _fileSystem.GetFileSystemInfos(path)
                                     .Select(i => i.FullName))
             {
                 Load(info);
@@ -54,7 +52,7 @@ namespace Hadouken.Impl.Plugins
         public void Load(string path)
         {
             // Do we have a IPluginLoader for this path?
-            var loader = _loaders.FirstOrDefault(l => l.CanLoad(path));
+            var loader = _pluginLoaders.FirstOrDefault(l => l.CanLoad(path));
 
             if (loader == null)
             {
@@ -73,16 +71,36 @@ namespace Hadouken.Impl.Plugins
             // Run migrations
             foreach (var asm in assemblies)
             {
-                _runner.Up(asm);
+                _migrationRunner.Up(asm);
             }
 
             var childResolver = Kernel.Resolver.CreateChildResolver(assemblies);
             var plugin = childResolver.Get<IPlugin>();
-
             var manager = new DefaultPluginManager(plugin);
-            manager.Load();
+
+            _messageBus.Send<IPluginLoading>(msg =>
+                {
+                    msg.Assemblies = assemblies.ToArray();
+                    msg.Name = manager.Name;
+                    msg.Version = manager.Version;
+                }).Wait();
+
+            try
+            {
+                manager.Load();
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorException(String.Format("Error when loading plugin '{0}'.", manager.Name), e);
+                return;
+            }
 
             _managers.Add(manager.Name, manager);
+
+            _messageBus.Send<IPluginLoaded>(msg =>
+                {
+                    msg.Manager = manager;
+                });
         }
 
         public void UnloadAll()

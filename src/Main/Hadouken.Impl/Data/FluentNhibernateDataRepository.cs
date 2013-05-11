@@ -77,10 +77,10 @@ namespace Hadouken.Impl.Data
             _modelAssemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(asm => asm.GetName().Name.StartsWith("Hadouken")));
 
             mbus.Subscribe<IPluginLoading>(msg =>
-            {
-                _modelAssemblies.Add(msg.PluginType.Assembly);
-                RebuildSessionFactory();
-            });
+                {
+                    _modelAssemblies.AddRange(msg.Assemblies);
+                    RebuildSessionFactory();
+                });
             
             RebuildSessionFactory();
         }
@@ -94,16 +94,12 @@ namespace Hadouken.Impl.Data
             string connectionString = HdknConfig.ConnectionString.Replace("$Paths.Data$", dataPath);
 
             _sessionFactory = Fluently.Configure()
-                .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
-                .Mappings(m =>
-                {
-                    m.AutoMappings.Add(
-                        AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
-                            .Conventions.Add(new EnumMappingConvention())
-                            .Conventions.Add(new TableNameConvention())
-                    );
-                })
-                .BuildSessionFactory();
+                                      .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
+                                      .Mappings(m => m.AutoMappings.Add(
+                                          AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
+                                                 .Conventions.Add(new EnumMappingConvention())
+                                                 .Conventions.Add(new TableNameConvention())))
+                                      .BuildSessionFactory();
 
             lock (_lock)
             {
