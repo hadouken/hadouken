@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Configuration
 {
-    public interface IRegistryReader : IComponent
+    public interface IRegistryReader
     {
         string ReadString(string key, string defaultValue = null);
         int ReadInt(string key, int defaultValue = -1);

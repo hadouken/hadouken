@@ -25,7 +25,7 @@ namespace Hadouken.Hosts.WindowsService
 
             // register base types
             Kernel.SetResolver(new NinjectDependencyResolver());
-            Kernel.Register(assemblies.ToArray());
+            //Kernel.Register(assemblies.ToArray());
 
             if(Bootstrapper.RunAsConsoleIfRequested<HdknService>())
                 return;

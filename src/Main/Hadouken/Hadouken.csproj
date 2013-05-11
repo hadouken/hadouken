@@ -131,7 +131,6 @@
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="IComponent.cs" />
     <Compile Include="Reflection\BuildCommitAttribute.cs" />
     <Compile Include="Reflection\BuildDateAttribute.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />

@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Hadouken.IO
 {
-    public interface IFileSystem : IComponent
+    public interface IFileSystem
     {
         bool IsDirectory(string path);
 

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Hadouken.Data
 {
-    public interface IDataRepository : IComponent
+    public interface IDataRepository
     {
         void Save<TModel>(TModel instance) where TModel : Model, new();
         void SaveOrUpdate<TModel>(TModel instance) where TModel : Model, new();

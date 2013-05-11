@@ -38,7 +38,7 @@ namespace Hadouken.Impl.Plugins
             _logger.Info("Loading plugin {0} [version {1}]", attr.Name, attr.Version);
 
             // register types in plugin assembly
-            Kernel.Register(_pluginType.Assembly);
+            //Kernel.Register(_pluginType.Assembly);
 
             // send IPluginLoading
             _mbus.Send<IPluginLoading>(msg =>
