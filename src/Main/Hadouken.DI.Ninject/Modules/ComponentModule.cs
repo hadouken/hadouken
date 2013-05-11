@@ -38,11 +38,11 @@ namespace Hadouken.DI.Ninject.Modules
                 switch (style)
                 {
                     case ComponentLifestyle.Singleton:
-                        binding.InTransientScope();
+                        binding.InSingletonScope();
                         break;
 
                     case ComponentLifestyle.Transient:
-                        binding.InSingletonScope();
+                        binding.InTransientScope();
                         break;
                 }
             }
