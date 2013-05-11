@@ -14,6 +14,7 @@ using Hadouken.Security;
 
 namespace Hadouken.Http.HttpServer
 {
+    [Component]
     public class DefaultHttpServer : IHttpServer
     {
         private static readonly int DefaultPort = 8081;

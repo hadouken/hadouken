@@ -11,6 +11,7 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class ZipPluginLoader : IPluginLoader
     {
         private IFileSystem _fileSystem;
@@ -33,9 +34,9 @@ namespace Hadouken.Impl.Plugins
             return (header == 0x04034b50 && !_fileSystem.IsDirectory(path) && path.EndsWith(".zip"));
         }
 
-        public IEnumerable<Type> Load(string path)
+        public IEnumerable<byte[]> Load(string path)
         {
-            List<Assembly> assemblies = new List<Assembly>();
+            List<byte[]> assemblies = new List<byte[]>();
 
             using (ZipFile file = ZipFile.Read(_fileSystem.OpenRead(path)))
             {
@@ -44,16 +45,12 @@ namespace Hadouken.Impl.Plugins
                     using (var ms = new MemoryStream())
                     {
                         entry.Extract(ms);
-                        assemblies.Add(AppDomain.CurrentDomain.Load(ms.ToArray()));
+                        assemblies.Add(ms.ToArray());
                     }
                 }
             }
 
-            return from asm in assemblies
-                   from type in asm.GetTypes()
-                   where type.IsClass && !type.IsAbstract && type.HasAttribute<PluginAttribute>()
-                   where typeof(IPlugin).IsAssignableFrom(type)
-                   select type;
+            return assemblies;
         }
     }
 }

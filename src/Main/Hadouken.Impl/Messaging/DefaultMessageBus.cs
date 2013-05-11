@@ -10,6 +10,7 @@ using NLog;
 
 namespace Hadouken.Impl.Messaging
 {
+    [Component]
     public class DefaultMessageBus : IMessageBus
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();

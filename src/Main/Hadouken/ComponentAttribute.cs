@@ -5,9 +5,13 @@ using System.Text;
 
 namespace Hadouken
 {
-    [AttributeUsage(AttributeTargets.Interface)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class ComponentAttribute : Attribute
     {
+        public ComponentAttribute() : this(ComponentLifestyle.Singleton)
+        {
+        }
+
         public ComponentAttribute(ComponentLifestyle lifestyle)
         {
             Lifestyle = lifestyle;

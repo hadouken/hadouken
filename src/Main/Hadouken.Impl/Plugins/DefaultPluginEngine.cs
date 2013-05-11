@@ -10,39 +10,40 @@ using Hadouken.Configuration;
 using Hadouken.IO;
 using Hadouken.Reflection;
 using NLog;
+using System.Reflection;
+using Hadouken.Messages;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component(ComponentLifestyle.Singleton)]
     public class DefaultPluginEngine : IPluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Dictionary<string, IPluginManager> _managers = new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
 
-        private IFileSystem _fs;
-        private IDataRepository _repo;
-        private IMessageBus _mbus;
-        private IMigrationRunner _runner;
-        private IPluginLoader[] _loaders;
+        private readonly IFileSystem _fileSystem;
+        private readonly IMessageBus _messageBus;
+        private readonly IMigrationRunner _migrationRunner;
+        private readonly IPluginLoader[] _pluginLoaders;
 
-        public DefaultPluginEngine(IFileSystem fs, IDataRepository repo, IMessageBus mbus, IMigrationRunner runner, IPluginLoader[] loaders)
+        public DefaultPluginEngine(IFileSystem fileSystem,
+                                   IMessageBus messageBus,
+                                   IMigrationRunner migrationRunner,
+                                   IPluginLoader[] pluginLoaders)
         {
-            _fs = fs;
-            _repo = repo;
-            _mbus = mbus;
-            _runner = runner;
-            _loaders = loaders;
+            _fileSystem = fileSystem;
+            _messageBus = messageBus;
+            _migrationRunner = migrationRunner;
+            _pluginLoaders = pluginLoaders;
         }
 
         public void Load()
         {
-            var pluginInfos = _repo.List<PluginInfo>();
             var path = HdknConfig.GetPath("Paths.Plugins");
 
-            foreach (var info in _fs.GetFileSystemInfos(path)
-                                    .Select(i => i.FullName)
-                                    .Union(pluginInfos.Select(pi => pi.Path))
-                                    .Distinct())
+            foreach (var info in _fileSystem.GetFileSystemInfos(path)
+                                    .Select(i => i.FullName))
             {
                 Load(info);
             }
@@ -50,9 +51,8 @@ namespace Hadouken.Impl.Plugins
 
         public void Load(string path)
         {
-            
             // Do we have a IPluginLoader for this path?
-            var loader = _loaders.FirstOrDefault(l => l.CanLoad(path));
+            var loader = _pluginLoaders.FirstOrDefault(l => l.CanLoad(path));
 
             if (loader == null)
             {
@@ -60,74 +60,47 @@ namespace Hadouken.Impl.Plugins
                 return;
             }
 
-            var pluginTypes = loader.Load(path);
-
-            foreach (var pluginType in pluginTypes)
-            {
-                Load(path, pluginType);
-            }
+            var assemblies = loader.Load(path);
+            Load(assemblies);
         }
 
-        internal void Load(string path, Type pluginType)
+        public void Load(IEnumerable<byte[]> rawAssemblies)
         {
-            var attr = pluginType.GetAttribute<PluginAttribute>();
+            var assemblies = rawAssemblies.Select(Assembly.Load).ToList();
 
-            // Plugin not marked with attribute, should
-            // not happen since the IPluginLoader should've
-            // checked that it exists.
-            if (attr == null)
-                return;
-
-            // We have already loaded this plugin, do nothing
-            if (_managers.ContainsKey(attr.Name))
-                return;
-
-            var manager = new DefaultPluginManager(pluginType, _mbus, _runner);
-            manager.Initialize();
-
-            // Check if we have a PluginInfo for this plugin.
-            // If we don't, add one and run Install()
-            // If we do, and versions are NOT equal, run Install()
-            // If we do, and versions are equal, do nothing
-
-            var pluginInfo = _repo.Single<PluginInfo>(p => p.Name == attr.Name);
-
-            if (pluginInfo == null)
+            // Run migrations
+            foreach (var asm in assemblies)
             {
-                _repo.Save(new PluginInfo
+                _migrationRunner.Up(asm);
+            }
+
+            var childResolver = Kernel.Resolver.CreateChildResolver(assemblies);
+            var plugin = childResolver.Get<IPlugin>();
+            var manager = new DefaultPluginManager(plugin);
+
+            _messageBus.Send<IPluginLoading>(msg =>
                 {
-                    Name = attr.Name,
-                    Version = attr.Version.ToString(),
-                    Path = path
-                });
+                    msg.Assemblies = assemblies.ToArray();
+                    msg.Name = manager.Name;
+                    msg.Version = manager.Version;
+                }).Wait();
 
-                manager.Install();
-
-                Logger.Info("Found new plugin ({0} [{1}])", attr.Name, attr.Version);
-            }
-            else if (new Version(pluginInfo.Version) < attr.Version || String.IsNullOrEmpty(pluginInfo.Version))
+            try
             {
-                string oldVersion = pluginInfo.Version;
-
-                manager.Install();
-
-                pluginInfo.Name = manager.Name;
-                pluginInfo.Version = manager.Version.ToString();
-
-                _repo.Update(pluginInfo);
-
-                Logger.Info("Plugin {0} upgraded from [{1}] to [{2}]", manager.Name, oldVersion, attr.Version);
+                manager.Load();
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorException(String.Format("Error when loading plugin '{0}'.", manager.Name), e);
+                return;
             }
 
-            Load(manager);
-        }
-
-        internal void Load(IPluginManager manager)
-        {
-            manager.Load();
             _managers.Add(manager.Name, manager);
 
-            Logger.Info("{0} [{1}] loaded", manager.Name, manager.Version);
+            _messageBus.Send<IPluginLoaded>(msg =>
+                {
+                    msg.Manager = manager;
+                });
         }
 
         public void UnloadAll()

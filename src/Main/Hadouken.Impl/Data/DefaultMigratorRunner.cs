@@ -14,6 +14,7 @@ using NLog;
 
 namespace Hadouken.Impl.Data
 {
+    [Component]
     public class DefaultMigratorRunner : IMigrationRunner
     {
         public void Up(Assembly target)

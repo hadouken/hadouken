@@ -7,6 +7,7 @@ using Microsoft.Win32;
 
 namespace Hadouken.Impl.Config
 {
+    [Component]
     public class DefaultRegistryReader : IRegistryReader
     {
         private readonly RegistryKey _registryKey = Registry.LocalMachine.OpenSubKey("Software\\Hadouken");

@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Hadouken.Http
 {
-    [Component(ComponentLifestyle.Transient)]
-    public interface IApiAction : IComponent
+    public interface IApiAction
     {
         IHttpContext Context { get; set; }
 

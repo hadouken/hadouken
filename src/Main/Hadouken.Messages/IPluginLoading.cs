@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 
 using Hadouken.Messaging;
+using System.Reflection;
 
 namespace Hadouken.Messages
 {
     public interface IPluginLoading : IMessage
     {
-        string PluginName { get; set; }
-        Version PluginVersion { get; set; }
-        Type PluginType { get; set; }
+        string Name { get; set; }
+        Version Version { get; set; }
+        Assembly[] Assemblies { get; set; }
     }
 }
