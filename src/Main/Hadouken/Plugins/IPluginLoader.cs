@@ -9,6 +9,6 @@ namespace Hadouken.Plugins
     public interface IPluginLoader
     {
         bool CanLoad(string path);
-        IEnumerable<Type> Load(string path);
+        IEnumerable<byte[]> Load(string path);
     }
 }
