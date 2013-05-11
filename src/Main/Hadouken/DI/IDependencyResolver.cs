@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace Hadouken.DI
 {
     public interface IDependencyResolver
     {
+        IDependencyResolver CreateChildResolver(IList<Assembly> assemblies);
+
         object Get(Type t);
         object Get(Type t, string name);
 
