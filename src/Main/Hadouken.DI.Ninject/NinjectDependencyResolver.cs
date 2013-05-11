@@ -19,7 +19,7 @@ namespace Hadouken.DI.Ninject
             _kernel = new StandardKernel();
         }
 
-        public NinjectDependencyResolver(IKernel kernel)
+        private NinjectDependencyResolver(IKernel kernel)
         {
             _kernel = kernel;
         }
