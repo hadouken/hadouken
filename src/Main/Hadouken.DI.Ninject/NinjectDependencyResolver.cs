@@ -16,7 +16,9 @@ namespace Hadouken.DI.Ninject
 
         public NinjectDependencyResolver()
         {
-            _kernel = new StandardKernel();
+            _kernel = new StandardKernel(new ApiActionModule(),
+                                         new ComponentModule(),
+                                         new PluginModule());
         }
 
         private NinjectDependencyResolver(IKernel kernel)
