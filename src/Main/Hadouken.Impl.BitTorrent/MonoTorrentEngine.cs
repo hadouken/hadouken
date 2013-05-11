@@ -24,6 +24,7 @@ using EncryptionTypes = MonoTorrent.Client.Encryption.EncryptionTypes;
 
 namespace Hadouken.Impl.BitTorrent
 {
+    [Component]
     public class MonoTorrentEngine : IBitTorrentEngine
     {
         private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();

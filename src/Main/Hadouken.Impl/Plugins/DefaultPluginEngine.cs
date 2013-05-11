@@ -13,6 +13,7 @@ using NLog;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class DefaultPluginEngine : IPluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();

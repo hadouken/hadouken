@@ -9,25 +9,26 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class DirectoryPluginLoader : IPluginLoader
     {
-        private IFileSystem _fs;
+        private readonly IFileSystem _fileSystem;
 
-        public DirectoryPluginLoader(IFileSystem fs)
+        public DirectoryPluginLoader(IFileSystem fileSystem)
         {
-            _fs = fs;
+            _fileSystem = fileSystem;
         }
 
         public bool CanLoad(string path)
         {
-            return _fs.IsDirectory(path);
+            return _fileSystem.IsDirectory(path);
         }
 
         public IEnumerable<byte[]> Load(string path)
         {
-            var assemblies = (from f in _fs.GetFiles(path)
+            var assemblies = (from f in _fileSystem.GetFiles(path)
                               where f.EndsWith(".dll")
-                              select _fs.ReadAllBytes(f));
+                              select _fileSystem.ReadAllBytes(f));
 
             return assemblies;
         }

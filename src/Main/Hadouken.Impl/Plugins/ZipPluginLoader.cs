@@ -11,6 +11,7 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class ZipPluginLoader : IPluginLoader
     {
         private IFileSystem _fileSystem;

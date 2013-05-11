@@ -8,6 +8,7 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class AssemblyPluginLoader : IPluginLoader
     {
         private IFileSystem _fs;

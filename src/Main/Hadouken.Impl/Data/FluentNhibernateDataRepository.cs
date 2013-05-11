@@ -55,6 +55,7 @@ namespace Hadouken.Impl.Data
         }
     }
 
+    [Component]
     public class FluentNhibernateDataRepository : IDataRepository
     {
 #pragma warning disable 0169
