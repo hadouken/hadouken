@@ -16,12 +16,7 @@ namespace Hadouken.Hosts.WindowsService
         {
             var workingDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            foreach (var file in Directory.GetFiles(workingDirectory, "*.dll"))
-            {
-                Assembly.LoadFile(file);
-            }
-
-            // register base types
+            Kernel.Bootstrap(workingDirectory);
             Kernel.SetResolver(new NinjectDependencyResolver());
 
             if(Bootstrapper.RunAsConsoleIfRequested<HdknService>())
