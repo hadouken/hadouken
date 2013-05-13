@@ -13,7 +13,13 @@
     <ComponentGroup Id="FirewallComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component Id="FirewallExceptions" Guid="{60E1CAFD-D119-4394-A9E5-61EB789157BB}" Win64="$(var.IsWin64)">
 		<CreateFolder />
-        <fw:FirewallException Id="HadoukenFirewallException" Name="Hadouken" Scope="any" Protocol="tcp" Profile="all" Port="[HDKN_WEBUI_PORT]" IgnoreFailure="no" />
+        <fw:FirewallException Id="HadoukenFirewallException"
+                              Name="Hadouken"
+                              Scope="any"
+                              Protocol="tcp"
+                              Profile="all"
+                              Port="[HDKN_WEBUI_PORT]"
+                              IgnoreFailure="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>
