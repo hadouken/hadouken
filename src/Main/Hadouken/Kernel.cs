@@ -20,7 +20,13 @@ namespace Hadouken
 
             foreach (var file in Directory.GetFiles(workingDirectory, "*.dll"))
             {
-                Assembly.LoadFile(file);
+                try
+                {
+                    Assembly.LoadFile(file);
+                }
+                catch
+                {
+                }
             }
         }
 
