@@ -22,7 +22,13 @@ namespace Hadouken
             {
                 try
                 {
-                    Assembly.LoadFile(file);
+                    var asmName = AssemblyName.GetAssemblyName(file);
+                    var a = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                             where asm.GetName().FullName == asmName.FullName
+                             select asm).FirstOrDefault();
+
+                    if (a == null)
+                        Assembly.LoadFile(file);
                 }
                 catch
                 {
