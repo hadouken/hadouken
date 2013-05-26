@@ -7,6 +7,7 @@ using System.IO;
 
 namespace Hadouken.Impl.IO
 {
+    [Component]
     public class LocalFileSystem : IFileSystem
     {
         public bool IsDirectory(string path)

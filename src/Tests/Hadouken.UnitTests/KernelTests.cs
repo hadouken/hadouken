@@ -6,6 +6,7 @@ using Hadouken.Configuration;
 using Hadouken.DI.Ninject;
 using NUnit.Framework;
 using Hadouken.Hosting;
+using System.IO;
 
 namespace Hadouken.UnitTests
 {
@@ -20,9 +21,11 @@ namespace Hadouken.UnitTests
         [Test]
         public void Can_register_and_resolve_components()
         {
-            Kernel.SetResolver(new NinjectDependencyResolver());
-            Kernel.Register(AppDomain.CurrentDomain.Load("Hadouken.Impl"), AppDomain.CurrentDomain.Load("Hadouken.Impl.BitTorrent"), AppDomain.CurrentDomain.Load("Hadouken.Http.HttpServer"));
+            var path = Path.GetFullPath(".");
 
+            Kernel.Bootstrap(path);
+            Kernel.SetResolver(new NinjectDependencyResolver());
+            
             var host = Kernel.Resolver.Get<IHost>();
 
             Assert.IsNotNull(host);

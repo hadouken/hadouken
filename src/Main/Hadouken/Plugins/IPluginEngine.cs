@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Plugins
 {
-    public interface IPluginEngine : IComponent
+    public interface IPluginEngine
     {
         void Load();
         void Load(string path);

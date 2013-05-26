@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Messaging
 {
-    public interface IMessageBus : IComponent
+    public interface IMessageBus
     {
         Task Send<TMessage>(Action<TMessage> builder) where TMessage : class, IMessage;
 

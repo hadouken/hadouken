@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Hadouken.DI;
@@ -12,34 +13,25 @@ namespace Hadouken
     {
         private static IDependencyResolver _resolver;
 
-        public static void Register(params Assembly[] assemblies)
+        public static void Bootstrap(string workingDirectory)
         {
-            // get all interface types which are assignable from IComponent (but not IComponent itself)
+            if(String.IsNullOrEmpty(workingDirectory))
+                throw new ArgumentNullException("workingDirectory");
 
-            var componentTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                                  from type in asm.GetTypes()
-                                  where typeof(IComponent).IsAssignableFrom(type)
-                                  where type != typeof(IComponent) && type.IsInterface
-                                  select type);
-
-            foreach (var component in componentTypes)
+            foreach (var file in Directory.GetFiles(workingDirectory, "*.dll"))
             {
-                var lifestyle = ComponentLifestyle.Singleton;
-
-                if (component.HasAttribute<ComponentAttribute>())
-                    lifestyle = component.GetAttribute<ComponentAttribute>().Lifestyle;
-
-                // register all types that inherit the component type
-
-                var implementationTypes = (from asm in assemblies
-                                           from type in asm.GetTypes()
-                                           where component.IsAssignableFrom(type)
-                                           where type.IsClass && !type.IsAbstract
-                                           select type);
-
-                foreach (var implementation in implementationTypes)
+                try
                 {
-                    _resolver.Register(component, implementation, lifestyle);
+                    var asmName = AssemblyName.GetAssemblyName(file);
+                    var a = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                             where asm.GetName().FullName == asmName.FullName
+                             select asm).FirstOrDefault();
+
+                    if (a == null)
+                        Assembly.LoadFile(file);
+                }
+                catch
+                {
                 }
             }
         }

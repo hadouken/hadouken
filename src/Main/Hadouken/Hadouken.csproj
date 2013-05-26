@@ -81,7 +81,6 @@
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\IMigrationRunner.cs" />
     <Compile Include="Data\Model.cs" />
-    <Compile Include="Data\Models\PluginInfo.cs" />
     <Compile Include="Data\Models\Setting.cs" />
     <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
@@ -131,7 +130,6 @@
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="IComponent.cs" />
     <Compile Include="Reflection\BuildCommitAttribute.cs" />
     <Compile Include="Reflection\BuildDateAttribute.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />

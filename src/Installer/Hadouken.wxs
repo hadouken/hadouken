@@ -10,7 +10,9 @@
     <?define IsWin64     = "no"?>
 <?endif?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+
   <Product
     Id="*"
     Name="Hadouken"
@@ -32,6 +34,13 @@
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
     <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." />
+
+    <!-- Check for .NET4Full -->
+    <PropertyRef Id="NETFRAMEWORK40FULL"/>
+
+    <Condition Message="Hadouken requires the full .NET Framework 4. Please install it and then run the installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
+    </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.InstallDir)" Name="PFiles">

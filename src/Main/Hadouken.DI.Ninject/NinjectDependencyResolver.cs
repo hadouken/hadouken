@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hadouken.DI.Ninject.Modules;
 using Ninject;
 using Ninject.Activation;
 using Ninject.Extensions.ChildKernel;
+using System.Reflection;
 
 namespace Hadouken.DI.Ninject
 {
@@ -14,7 +16,24 @@ namespace Hadouken.DI.Ninject
 
         public NinjectDependencyResolver()
         {
-            _kernel = new StandardKernel();
+            _kernel = new StandardKernel(new ApiActionModule(),
+                                         new ComponentModule(),
+                                         new PluginModule());
+        }
+
+        private NinjectDependencyResolver(IKernel kernel)
+        {
+            _kernel = kernel;
+        }
+
+        public IDependencyResolver CreateChildResolver(IList<Assembly> assemblies)
+        {
+            var childKernel = new ChildKernel(_kernel,
+                                              new ApiActionModule(assemblies),
+                                              new ComponentModule(assemblies),
+                                              new PluginModule(assemblies));
+
+            return new NinjectDependencyResolver(childKernel);
         }
 
         public object Get(Type t)

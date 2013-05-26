@@ -8,6 +8,7 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class AssemblyPluginLoader : IPluginLoader
     {
         private IFileSystem _fs;
@@ -22,14 +23,11 @@ namespace Hadouken.Impl.Plugins
             return path.EndsWith(".dll");
         }
 
-        public IEnumerable<Type> Load(string path)
+        public IEnumerable<byte[]> Load(string path)
         {
-            var asm = AppDomain.CurrentDomain.Load(_fs.ReadAllBytes(path));
+            var asm = _fs.ReadAllBytes(path);
 
-            return (from t in asm.GetTypes()
-                    where typeof(IPlugin).IsAssignableFrom(t)
-                    where t.IsClass && !t.IsAbstract && t.HasAttribute<PluginAttribute>()
-                    select t);
+            return new[] {asm};
         }
     }
 }

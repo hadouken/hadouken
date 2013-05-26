@@ -1,5 +1,9 @@
 Hadouken Changelog
 
+v1.3.6
+    FIX: Installer checks for .NET4 (full) when installing.
+    FIX: Installer puts values in registry as strings to avoid '#'-padding.
+
 v1.3.5
     WORKAROUND: Disabled the GitHub API check when releasing a new version.
 

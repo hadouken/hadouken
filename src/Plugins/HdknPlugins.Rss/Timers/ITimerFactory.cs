@@ -2,7 +2,7 @@
 
 namespace HdknPlugins.Rss.Timers
 {
-    public interface ITimerFactory : IComponent
+    public interface ITimerFactory
     {
         ITimer CreateTimer();
     }

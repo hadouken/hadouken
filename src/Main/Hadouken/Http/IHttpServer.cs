@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hadouken.Http
 {
-    public interface IHttpServer : IComponent
+    public interface IHttpServer
     {
         void Start();
         void Stop();

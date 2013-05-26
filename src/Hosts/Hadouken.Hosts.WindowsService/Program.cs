@@ -6,6 +6,7 @@ using System.Text;
 using System.Reflection;
 using System.Configuration;
 using Hadouken.DI.Ninject;
+using System.IO;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -13,19 +14,10 @@ namespace Hadouken.Hosts.WindowsService
     {
         public static void Main()
         {
-            var assemblies = new List<Assembly>();
+            var workingDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            foreach (string key in ConfigurationManager.AppSettings.Keys)
-            {
-                if (key.StartsWith("Assembly."))
-                {
-                    assemblies.Add(AppDomain.CurrentDomain.Load(ConfigurationManager.AppSettings[key]));
-                }
-            }
-
-            // register base types
+            Kernel.Bootstrap(workingDirectory);
             Kernel.SetResolver(new NinjectDependencyResolver());
-            Kernel.Register(assemblies.ToArray());
 
             if(Bootstrapper.RunAsConsoleIfRequested<HdknService>())
                 return;

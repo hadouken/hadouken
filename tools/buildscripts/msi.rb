@@ -11,7 +11,7 @@ namespace :msi do
             :Platform => :x86,
             :BuildVersion => BUILD_VERSION
         )
-        cndl.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension ]
+        cndl.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension, :WiXNetFxExtension ]
         cndl.sources =  [
                             "src/Installer/Hadouken.wxs",
                             "src/Installer/Components/Config.wxs",
@@ -27,7 +27,7 @@ namespace :msi do
     
     light :x86_light => "msi:x86_candle" do |lght|
         lght.command = "tools/wix-3.7/light.exe"
-        lght.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension ]
+        lght.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension, :WiXNetFxExtension ]
         lght.pdbout = "src/Installer/obj/x86/pdb/Hadouken.wixpdb"
         lght.sources = Dir.glob("src/Installer/obj/x86/*.wixobj")
         lght.out = "build/msi/hdkn-#{BUILD_VERSION}-x86.msi"
@@ -47,7 +47,7 @@ namespace :msi do
             :Platform => :x64,
             :BuildVersion => BUILD_VERSION
         )
-        cndl.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension ]
+        cndl.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension, :WiXNetFxExtension ]
         cndl.sources =  [
                             "src/Installer/Hadouken.wxs",
                             "src/Installer/Components/Config.wxs",
@@ -64,7 +64,7 @@ namespace :msi do
     
     light :x64_light => "msi:x64_candle" do |lght|
         lght.command = "tools/wix-3.7/light.exe"
-        lght.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension ]
+        lght.extensions = [ :WixFirewallExtension, :WixUtilExtension, :WixUIExtension, :WiXNetFxExtension ]
         lght.pdbout = "src/Installer/obj/x64/pdb/Hadouken.wixpdb"
         lght.sources = Dir.glob("src/Installer/obj/x64/*.wixobj")
         lght.out = "build/msi/hdkn-#{BUILD_VERSION}-x64.msi"

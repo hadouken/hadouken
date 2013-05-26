@@ -11,6 +11,7 @@ using NLog;
 
 namespace Hadouken.Impl.Hosting
 {
+    [Component]
     public class DefaultHost : IHost
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
