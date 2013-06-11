@@ -1,5 +1,9 @@
 Hadouken Changelog
 
+v1.4.1
+    FIX: Made Hadouken dependant on .NET 4.5 to avoid mismatch between developer machines and build servers.
+    FIX: Installer now cannot install as a service.
+
 v1.3.6
     FIX: Installer checks for .NET4 (full) when installing.
     FIX: Installer puts values in registry as strings to avoid '#'-padding.

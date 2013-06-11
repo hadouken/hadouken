@@ -36,10 +36,10 @@
     <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." />
 
     <!-- Check for .NET4Full -->
-    <PropertyRef Id="NETFRAMEWORK40FULL"/>
+    <PropertyRef Id="NETFRAMEWORK45"/>
 
-    <Condition Message="Hadouken requires the full .NET Framework 4. Please install it and then run the installer again.">
-      <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
+    <Condition Message="Hadouken requires the full .NET Framework 4.5. Please install it and then run the installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK45]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -78,10 +78,6 @@
     <!-- Search for webui.port in registry -->
     <Property Id="HDKN_WEBUI_PORT" Value="8080">
       <RegistrySearch Id="SearchWebUIPortRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="webui.port" Win64="$(var.IsWin64)" />
-    </Property>
-    
-    <Property Id="HDKN_SRV_ENABLE" Value="1">
-      <RegistrySearch Id="SearchServiceEnabledRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="service.enabled" Win64="$(var.IsWin64)" />    
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />

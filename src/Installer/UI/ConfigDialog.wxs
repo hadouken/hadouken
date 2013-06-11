@@ -10,7 +10,7 @@
           <Text>{\WixUI_Font_Title}Configuration</Text>
         </Control>
         <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes">
-          <Text>Configure the web UI and Windows Service settings.</Text>
+          <Text>Configure the web UI settings.</Text>
         </Control>
         <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
 
@@ -21,13 +21,6 @@
         <Control Id="Port" Type="Edit" X="80" Y="78" Width="30" Height="17" Property="HDKN_WEBUI_PORT" Indirect="no" Integer="yes" Text="[HDKN_WEBUI_PORT]" />
         <!-- // Web UI -->
 
-        <!-- Service -->
-        <Control Id="WinSrvGroup" Type="GroupBox" X="20" Y="125" Width="330" Height="45" Text="Windows Service" />
-
-        <!-- Service Enable -->
-        <Control Id="WinSrvEnableLabel" Type="Text" X="30" Y="145" Width="40" Height="15" Text="Install:" />
-        <Control Id="WinSrvEnable" Type="CheckBox" X="80" Y="144" Width="20" Height="15" Indirect="no" Property="HDKN_SRV_ENABLE" CheckBoxValue="1" />
-        
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
                  
         <!-- back -->
