@@ -25,12 +25,6 @@
           <RegistryValue Type="string" Name="webui.port" Value="[HDKN_WEBUI_PORT]"/>
         </RegistryKey>
       </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <RegistryKey Root="HKLM" Key="Software\Hadouken">
-          <RegistryValue Type="string" Name="service.enabled" Value="[HDKN_SRV_ENABLE]"/>
-        </RegistryKey>
-      </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>

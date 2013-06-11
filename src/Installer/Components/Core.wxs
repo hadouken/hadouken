@@ -38,12 +38,6 @@
       </Component>
 
       <Component Win64="$(var.IsWin64)">
-        <Condition><![CDATA[HDKN_SRV_ENABLE <> 1]]></Condition>
-        <File Name="Hadouken.Hosts.WindowsService.exe" />
-      </Component>
-
-
-      <Component Win64="$(var.IsWin64)">
         <File Name="webui.zip" />
       </Component>
     </ComponentGroup>
