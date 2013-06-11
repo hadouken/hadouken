@@ -52,6 +52,10 @@
       <Component Win64="$(var.IsWin64)">
         <File Name="Ninject.dll" />
       </Component>
+      
+      <Component Win64="$(var.IsWin64)">
+        <File Name="Ninject.Extensions.ChildKernel.dll" />
+      </Component>
 
       <Component Win64="$(var.IsWin64)">
         <File Name="NLog.dll" />
