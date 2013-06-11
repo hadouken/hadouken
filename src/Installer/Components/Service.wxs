@@ -12,7 +12,6 @@
   <Fragment>
     <ComponentGroup Id="ServiceComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component Id="HadoukenService" Guid="{AFDC9F44-F9F3-4DBC-BBE0-8A49E272F9CE}" Win64="$(var.IsWin64)">
-        <Condition><![CDATA[HDKN_SRV_ENABLE = 1]]></Condition>
         <File Id="HadoukenServiceExecutable" Name="Hadouken.Hosts.WindowsService.exe" />
 
         <ServiceInstall Id="ServiceInstaller"
