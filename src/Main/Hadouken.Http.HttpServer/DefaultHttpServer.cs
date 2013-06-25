@@ -60,7 +60,7 @@ namespace Hadouken.Http.HttpServer
 
             ReceiveLoop();
 
-            Logger.Info("HTTP server up and running on address " + ListenUri);
+            Logger.Info("HTTP server up and running on address " + binding);
         }
 
         public void Stop()
@@ -70,19 +70,6 @@ namespace Hadouken.Http.HttpServer
             _listener.Stop();
             _listener.Close();
             _listener = null;
-        }
-
-        public Uri ListenUri
-        {
-            get
-            {
-                if (_listener.IsListening)
-                {
-                    return new Uri(_listener.Prefixes.First());
-                }
-
-                return null;
-            }
         }
 
         private string GetBinding()
