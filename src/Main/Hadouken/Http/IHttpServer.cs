@@ -9,7 +9,5 @@ namespace Hadouken.Http
     {
         void Start();
         void Stop();
-
-        Uri ListenUri { get; }
     }
 }

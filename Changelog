@@ -1,5 +1,9 @@
 Hadouken Changelog
 
+v1.4.2
+    FIX: The default for Hadouken is now to listen on all available addresses.
+    FIX: A bug when using the '+' character in the binding has been resolved.
+
 v1.4.1
     FIX: Made Hadouken dependant on .NET 4.5 to avoid mismatch between developer machines and build servers.
     FIX: Installer now cannot install as a service.
