@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Hadouken.Plugins;
@@ -38,7 +39,23 @@ namespace Hadouken.Impl.Plugins
 
         public byte[] GetResource(string name)
         {
-            throw new NotImplementedException();
+            if (String.IsNullOrEmpty(_attribute.ResourceBase))
+                return null;
+
+            var resourceName = String.Concat(_attribute.ResourceBase, ".", name);
+
+            using (var stream = _instance.GetType().Assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null)
+                    return null;
+
+                using (var ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+
+                    return ms.ToArray();
+                }
+            }
         }
 
         public void Load()
