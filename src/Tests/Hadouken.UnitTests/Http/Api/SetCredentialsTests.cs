@@ -19,7 +19,7 @@ namespace Hadouken.UnitTests.Http.Api
         {
             var context = HttpContextHelper.CreateMockWithPostData(new
                 {
-                    oldPassword = "invalid-password"
+                    currentPassword = "invalid-password"
                 });
 
             var keyValueStore = new Mock<IKeyValueStore>();
@@ -39,7 +39,7 @@ namespace Hadouken.UnitTests.Http.Api
         {
             var context = HttpContextHelper.CreateMockWithPostData(new
             {
-                oldPassword = "hdkn",
+                currentPassword = "hdkn",
                 password = "new-password"
             });
 
@@ -58,7 +58,7 @@ namespace Hadouken.UnitTests.Http.Api
         {
             var context = HttpContextHelper.CreateMockWithPostData(new
             {
-                oldPassword = "hdkn",
+                currentPassword = "hdkn",
                 username = "new-username"
             });
 

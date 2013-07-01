@@ -22,13 +22,13 @@ namespace Hadouken.Http.Api
         {
             var model = BindModel<Dictionary<string, string>>();
 
-            if (!model.ContainsKey("oldPassword"))
+            if (!model.ContainsKey("currentPassword"))
                 return Json(false);
 
-            var oldPassword = Hash.Generate(model["oldPassword"]);
+            var providedPassword = Hash.Generate(model["currentPassword"]);
             var currentPassword = _keyValueStore.Get<string>("auth.password");
 
-            if (!String.Equals(oldPassword, currentPassword, StringComparison.InvariantCultureIgnoreCase))
+            if (!String.Equals(providedPassword, currentPassword, StringComparison.InvariantCultureIgnoreCase))
                 return Json(false);
 
             if (model.ContainsKey("username"))
@@ -38,8 +38,7 @@ namespace Hadouken.Http.Api
 
             if (model.ContainsKey("password"))
             {
-                var hashedPassword = Hash.Generate(model["password"]);
-                _keyValueStore.Set("auth.password", hashedPassword);
+                _keyValueStore.Set("auth.password", model["password"]);
             }
 
             return Json(true);
