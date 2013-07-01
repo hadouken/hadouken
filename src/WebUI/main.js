@@ -677,8 +677,8 @@ function setupDialogManager() {
 
 	DialogManager.init();
 
-	["About", "Add", "AddURL", "AddLabel", "FirstTime", "Props", "Delete", "Settings"].each(function(k) {
-		var isModal = ["Props", "FirstTime"].contains(k);
+	["About", "Add", "AddURL", "AddLabel", "FirstTime", "ChangeCredentials", "Props", "Delete", "Settings"].each(function(k) {
+		var isModal = ["Props", "FirstTime", "ChangeCredentials"].contains(k);
 		
 		DialogManager.add(k, isModal, {
 			  "Add": function() { utWebUI.getDirectoryList(); }
@@ -703,6 +703,26 @@ function setupFirstTimeDialog() {
 	});
 
 	$("dlgFirstTime-form").addEvent("submit", Function.from(false));
+}
+
+function setupChangeCredentialsDialog() {
+	$("CHANGE_CREDENTIALS_SUBMIT").addEvent('click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		this.disabled = true;
+
+		utWebUI.changeCredentials();
+		DialogManager.hide("ChangeCredentials");
+
+		this.disabled = false;
+	});
+
+	$("dlgChangeCredentials-form").addEvent("submit", Function.from(false));
+
+	$("BTN_CHANGE_CREDENTIALS").addEvent("click", function(e) {
+		utWebUI.showChangeCredentials();
+	});
 }
 
 function setupAddTorrentDialog() {
@@ -1034,6 +1054,7 @@ function setupUserInterface() {
 	setupToolbar();
 	setupDialogManager();
 	setupFirstTimeDialog();
+	setupChangeCredentialsDialog();
 	setupAddTorrentDialog();
 	setupPropertiesDialog();
 	setupDeleteTorrentDialog();

@@ -146,6 +146,18 @@
     margin-bottom: 20px;
 }
 
+/**************************************************
+ * DIALOG: First Time Setup
+ **************************************************/
+
+#dlgChangeCredentials {
+    width: 40em;
+}
+
+#dlgChangeCredentials-head {
+    background-image: url(./images/key.png);
+}
+
 
 /**************************************************
  * DIALOG: About

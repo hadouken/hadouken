@@ -55,6 +55,43 @@ found in the LICENSE file.
         </div>
         <!-- First Time Setup Dialog */ -->
 
+        <!-- Change credentials dialog -->
+        <div id="dlgChangeCredentials" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgChangeCredentials-head" class="dlg-head">Change username/password</div>
+            <form id="dlgChangeCredentials-form" action="">
+                <div class="dlg-body">
+                    <fieldset>
+                        <legend>Current password</legend>
+
+                        <div class="line-cont">
+                            <input type="password" id="changecred.currentPassword" class="tbox wide" />
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>New username/password</legend>
+
+                        <div class="line-cont">
+                            <input type="text" id="changecred.username" class="tbox half flr" />
+                            <label>Username</label>
+                        </div>
+
+                        <br />
+
+                        <div class="line-cont">
+                            <input type="password" id="changecred.password" class="tbox half flr" />
+                            <label>Password</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="CHANGE_CREDENTIALS_SUBMIT" class="btn" value="OK" />
+                </div>
+            </form>
+        </div>
+        <!-- ^^^ Change credentials dialog -->
+
         <!-- /* About Dialog -->
         <div id="dlgAbout" class="dlg-window">
             <a href="#" class="dlg-close"></a>
@@ -307,22 +344,11 @@ found in the LICENSE file.
           </fieldset>
 
           <fieldset>
-            <legend id="DLG_SETTINGS_1_GENERAL_17"></legend>
+            <legend>Username/password</legend>
 
             <div class="line-cont">
-              <div class="fll">
-                <input type="checkbox" id="append_incomplete" /><label for="append_incomplete" id="DLG_SETTINGS_1_GENERAL_18"></label>
-              </div>
-
-              <div class="half flr">
-                <input type="checkbox" id="prealloc_space" /><label for="prealloc_space" id="DLG_SETTINGS_1_GENERAL_19"></label>
-              </div>
+              <input type="button" id="BTN_CHANGE_CREDENTIALS" value="Change" class="btn" />
             </div>
-
-            <div class="line-cont">
-              <input type="checkbox" id="sys.prevent_standby" /><label for="sys.prevent_standby" id="DLG_SETTINGS_1_GENERAL_20"></label>
-            </div>
-          </fieldset>
         </div>
         
         <div id="dlgSettings-Connection" class="settings-pane">
