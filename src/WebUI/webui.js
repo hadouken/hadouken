@@ -1959,8 +1959,12 @@ var utWebUI = {
         if(data.password == "")
             return;
 
-        this.request("post", "action=setcredentials", data, function() {
-            location.reload();
+        this.request("post", "action=setcredentials", data, function(success) {
+            if(success) {
+                location.reload();                
+            } else {
+                alert("Could not change username/password");
+            }
         });
     },
     
