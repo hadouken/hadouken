@@ -106,6 +106,7 @@
     <Compile Include="Http\Api\ListDirectories.cs" />
     <Compile Include="Http\Api\PauseTorrent.cs" />
     <Compile Include="Http\Api\RemoveTorrent.cs" />
+    <Compile Include="Http\Api\SetCredentials.cs" />
     <Compile Include="Http\Api\SetProperties.cs" />
     <Compile Include="Http\Api\SetSetting.cs" />
     <Compile Include="Http\Api\StartTorrent.cs" />

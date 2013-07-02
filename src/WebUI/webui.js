@@ -1943,6 +1943,30 @@ var utWebUI = {
 
         this.loadSettings();
     },
+
+    "changeCredentials": function() {
+        var data = {};
+        data["currentPassword"] = $("changecred.currentPassword").get("value");
+        data["username"] = $("changecred.username").get("value");
+        data["password"] = $("changecred.password").get("value");
+
+        if(data.currentPassword == "")
+            return;
+
+        if(data.username == "")
+            return;
+
+        if(data.password == "")
+            return;
+
+        this.request("post", "action=setcredentials", data, function(success) {
+            if(success) {
+                location.reload();                
+            } else {
+                alert("Could not change username/password");
+            }
+        });
+    },
     
     "showAbout": function() {
         DialogManager.show("About");
@@ -1963,6 +1987,10 @@ var utWebUI = {
     "showSettings": function() {
         //this.animateToggle(true);
         DialogManager.show("Settings");
+    },
+
+    "showChangeCredentials": function() {
+        DialogManager.show("ChangeCredentials");
     },
     
     "hideSettings": function(load_settings) {
