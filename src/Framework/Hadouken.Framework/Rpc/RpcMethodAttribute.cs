@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    class RpcMethodAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class RpcMethodAttribute : Attribute
     {
+        private readonly string _name;
+
+        public RpcMethodAttribute(string name)
+        {
+            _name = name;
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
     }
 }

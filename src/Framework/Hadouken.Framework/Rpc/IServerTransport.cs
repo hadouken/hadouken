@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IJsonRpcServer
+    public interface IServerTransport
     {
-        void Start();
+        void SetRequestCallback(Action<IRequest> callback);
 
-        void Stop();
+        void Open();
+
+        void Close();
     }
 }

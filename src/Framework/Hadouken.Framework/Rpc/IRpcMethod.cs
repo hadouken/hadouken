@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    interface IRpcMethod
+    public interface IRpcMethod
     {
     }
 }

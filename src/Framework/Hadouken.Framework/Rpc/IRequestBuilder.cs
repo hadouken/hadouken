@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    interface IRequestBuilder
+    public interface IRequestBuilder
     {
+        IRequest Build(string json);
     }
 }

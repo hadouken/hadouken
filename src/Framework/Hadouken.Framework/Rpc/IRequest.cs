@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    interface IRequest
+    public interface IRequest
     {
+        object Id { get; }
+
+        string Method { get; }
+
+        string Protocol { get; }
+
+        string GetParametersAsJson();
     }
 }

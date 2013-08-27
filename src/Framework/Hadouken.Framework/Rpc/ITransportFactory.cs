@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IJsonRpcServer
+    public interface ITransportFactory
     {
-        void Start();
+        IServerTransport CreateServerTransport(Uri uri);
 
-        void Stop();
+        IClientTransport CreateClientTransport(Uri uri);
     }
 }

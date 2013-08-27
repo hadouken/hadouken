@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    interface ITransport
+    public interface IClientTransport
     {
+        void Write(string json);
     }
 }
