@@ -10,6 +10,8 @@ namespace Hadouken.Framework
     {
         void Register<TService>(Type implementation);
 
+        void RegisterAll<TService>();
+
         void Register<TService, TImplementation>() where TImplementation : TService;
 
         void Register<TService>(Func<TService> factory);

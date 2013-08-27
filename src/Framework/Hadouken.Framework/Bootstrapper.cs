@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Plugins;
 
 namespace Hadouken.Framework
@@ -21,7 +22,10 @@ namespace Hadouken.Framework
             get { return _config; }
         }
 
-        public abstract void RegisterComponents(IDependencyResolver resolver);
+        public virtual void RegisterComponents(IDependencyResolver resolver)
+        {
+            resolver.Register<IEventService, EventService>();
+        }
 
         public virtual void RegisterPlugin(IDependencyResolver resolver)
         {
