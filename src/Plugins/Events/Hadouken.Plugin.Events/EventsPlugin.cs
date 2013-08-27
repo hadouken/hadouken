@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Hadouken.Plugin.Events
+using Hadouken.Framework.Plugins;
+
+namespace Hadouken.Plugins.Events
 {
-    public class EventsPlugin
+    public class EventsPlugin : Plugin
     {
+        public override void Load()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

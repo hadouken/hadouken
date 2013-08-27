@@ -7,8 +7,8 @@
     <ProjectGuid>{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hadouken.Plugin.Events</RootNamespace>
-    <AssemblyName>Hadouken.Plugin.Events</AssemblyName>
+    <RootNamespace>Hadouken.Plugins.Events</RootNamespace>
+    <AssemblyName>Hadouken.Plugins.Events</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,6 +41,17 @@
   <ItemGroup>
     <Compile Include="EventsPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
+      <Project>{9BD61B3C-6D93-4A2B-AA59-4BB87F817834}</Project>
+      <Name>Hadouken.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

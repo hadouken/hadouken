@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DE2675
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{1221041A-9B18-4E0B-B88F-8383164C8819}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugin.Events", "src\Plugins\Events\Hadouken.Plugin.Events\Hadouken.Plugin.Events.csproj", "{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Events", "src\Plugins\Events\Hadouken.Plugin.Events\Hadouken.Plugins.Events.csproj", "{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Main\Hadouken\Hadouken.csproj", "{1FE7DB08-4B4F-4A13-8453-2703984E32D5}"
 EndProject
