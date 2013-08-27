@@ -1,6 +1,0 @@
-﻿source "http://rubygems.org"
-gem "rake"
-gem "albacore"
-gem "semver2"
-gem "httparty"
-gem "net-sftp"
