@@ -39,7 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventsBootstrapper.cs" />
+    <Compile Include="EventServer.cs" />
     <Compile Include="EventsPlugin.cs" />
+    <Compile Include="IEventServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
