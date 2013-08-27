@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DE2675
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{1221041A-9B18-4E0B-B88F-8383164C8819}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugin.Events", "src\Plugins\Events\Hadouken.Plugin.Events\Hadouken.Plugin.Events.csproj", "{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Main\Hadouken\Hadouken.csproj", "{1FE7DB08-4B4F-4A13-8453-2703984E32D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +40,14 @@ Global
 		{2310B11A-F3F5-48C3-9D84-1B9CFE7B530A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2310B11A-F3F5-48C3-9D84-1B9CFE7B530A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2310B11A-F3F5-48C3-9D84-1B9CFE7B530A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,5 +55,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9BD61B3C-6D93-4A2B-AA59-4BB87F817834} = {B464F418-0F85-4269-A055-33F965D8A697}
 		{2310B11A-F3F5-48C3-9D84-1B9CFE7B530A} = {B464F418-0F85-4269-A055-33F965D8A697}
+		{1FE7DB08-4B4F-4A13-8453-2703984E32D5} = {D7487F5B-8D94-4384-8650-F15A998F4346}
+		{1221041A-9B18-4E0B-B88F-8383164C8819} = {E327D611-9404-4C1D-9695-0D42EBC96483}
+		{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0} = {1221041A-9B18-4E0B-B88F-8383164C8819}
 	EndGlobalSection
 EndGlobal
