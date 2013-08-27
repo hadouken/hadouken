@@ -10,6 +10,6 @@ namespace Hadouken.Framework.Events
     {
         void Subscribe<T>(string eventName, Action<T> callback);
 
-        void Publish(string eventName, object data);
+        Task Publish(string eventName, object data);
     }
 }

@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AspNet.SignalR.Client">
+      <HintPath>..\..\..\packages\Microsoft.AspNet.SignalR.Client.1.1.3\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -39,21 +45,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\EventService.cs" />
     <Compile Include="Events\IEventService.cs" />
     <Compile Include="Http\IHttpServer.cs" />
-    <Compile Include="Plugins\IPluginConfiguration.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\IClientTransport.cs" />
     <Compile Include="Rpc\IJsonRpcClient.cs" />
     <Compile Include="Rpc\IJsonRpcServer.cs" />
     <Compile Include="Rpc\IRequest.cs" />
     <Compile Include="Rpc\IRequestBuilder.cs" />
     <Compile Include="Rpc\IResponse.cs" />
     <Compile Include="Rpc\IRpcMethod.cs" />
-    <Compile Include="Rpc\ITransport.cs" />
+    <Compile Include="Rpc\IServerTransport.cs" />
+    <Compile Include="Rpc\ITransportFactory.cs" />
     <Compile Include="Rpc\RpcMethodAttribute.cs" />
-    <Compile Include="Rpc\Transports\HttpTransport.cs" />
+    <Compile Include="Rpc\Transports\HttpServerTransport.cs" />
+    <Compile Include="Rpc\Transports\ServerTransport.cs" />
     <Compile Include="Rpc\Transports\Wcf\WcfTransport.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

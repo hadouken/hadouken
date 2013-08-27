@@ -24,3 +24,4 @@ src/Shared/CommonAssemblyInfo.cs
 
 #Config
 config/config.yml
+packages/
