@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Plugins
 {
-    public interface IPluginLoader
+    public class PluginLoader : IPluginLoader
     {
-        IPluginManager Load(string path);
+        public IPluginManager Load(string path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

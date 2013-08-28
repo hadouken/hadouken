@@ -8,5 +8,10 @@ namespace Hadouken.Plugins
 {
     public interface IPluginEngine
     {
+        IEnumerable<IPluginManager> PluginManagers { get; } 
+
+        void Load();
+
+        void Unload();
     }
 }

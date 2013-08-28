@@ -41,7 +41,20 @@
   <ItemGroup>
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
+    <Compile Include="Plugins\IPluginManager.cs" />
+    <Compile Include="Plugins\PluginLoader.cs" />
+    <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
+      <Project>{9bd61b3c-6d93-4a2b-aa59-4bb87f817834}</Project>
+      <Name>Hadouken.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Sandbox\Hadouken.Sandbox.csproj">
+      <Project>{D762E365-CBB8-40EC-BA73-2A39E0101713}</Project>
+      <Name>Hadouken.Sandbox</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

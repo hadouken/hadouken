@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Plugins
 {
-    public interface IPluginLoader
+    public interface IPluginManager
     {
-        IPluginManager Load(string path);
+        string Name { get; }
+
+        Version Version { get; }
+
+        void Load();
+
+        void Unload();
     }
 }
