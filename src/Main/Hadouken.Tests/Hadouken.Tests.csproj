@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\..\..\packages\Moq.4.1.1308.2321\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -45,12 +48,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Plugins\PluginManagerTests.cs" />
+    <Compile Include="Plugins\Rpc\PluginsListTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
+      <Project>{9bd61b3c-6d93-4a2b-aa59-4bb87f817834}</Project>
+      <Name>Hadouken.Framework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{1FE7DB08-4B4F-4A13-8453-2703984E32D5}</Project>
       <Name>Hadouken</Name>
