@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domo.DI;
-using Domo.DI.Activation;
-using Hadouken.Framework;
+﻿using Domo.DI;
 using Domo.DI.Registration;
+using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 
 namespace Hadouken.Plugins.Events

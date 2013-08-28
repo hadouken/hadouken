@@ -17,12 +17,12 @@ namespace Hadouken.Plugins.Events
 
         public void Start()
         {
-            throw new NotImplementedException();
+            //TODO: Implementation
         }
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            //TODO: Implementation
         }
     }
 }
