@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domo.DI;
+using Domo.DI.Activation;
 using Hadouken.Framework;
+using Domo.DI.Registration;
+using Hadouken.Framework.Plugins;
 
 namespace Hadouken.Plugins.Events
 {
     public class EventsBootstrapper : Bootstrapper
     {
-        public EventsBootstrapper(IConfig config) : base(config) {}
-
-        public override void RegisterComponents(IDependencyResolver resolver)
+        public override Plugin Load(IBootConfig config)
         {
-            var endpoint = String.Format("http://{0}:{1}/events", Config.HostBinding, Config.Port);
+            var container = Container.Create(_ => RegisterComponents(config, _));
+            return container.ServiceLocator.Resolve<Plugin>();
+        }
 
-            resolver.Register<IEventServer>(() => new EventServer(endpoint));
+        private static void RegisterComponents(IBootConfig bootConfig, IContainerConfiguration cfg)
+        {
+            cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(bootConfig.HostBinding));
+            cfg.Register<Plugin>().AsTransient().UsingConcreteType<EventsPlugin>();
         }
     }
 }
