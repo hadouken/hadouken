@@ -44,7 +44,11 @@
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\Rpc\PluginsLoad.cs" />
+    <Compile Include="Plugins\Rpc\PluginsReload.cs" />
+    <Compile Include="Plugins\Rpc\PluginsUnload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Plugins\Rpc\PluginsList.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
