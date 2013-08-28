@@ -47,7 +47,7 @@ namespace Hadouken.Sandbox
             _plugin.Load();
         }
 
-        public void Unload()
+        private void Unload()
         {
             _plugin.Unload();
         }
