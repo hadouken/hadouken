@@ -30,6 +30,11 @@ namespace Hadouken.Plugins
             get { throw new NotImplementedException(); }
         }
 
+        public PluginState State
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public void Load()
         {
             var setupInfo = new AppDomainSetup

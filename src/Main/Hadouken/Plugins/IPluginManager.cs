@@ -12,6 +12,8 @@ namespace Hadouken.Plugins
 
         Version Version { get; }
 
+        PluginState State { get; }
+
         void Load();
 
         void Unload();
