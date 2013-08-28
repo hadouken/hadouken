@@ -19,9 +19,7 @@ namespace Hadouken.Plugins.Rpc
 
         public void Execute(string name)
         {
-            var plugin =
-                _pluginEngine.PluginManagers.SingleOrDefault(
-                    p => String.Equals(p.Name, name, StringComparison.InvariantCultureIgnoreCase));
+            var plugin = _pluginEngine.Get(name);
 
             if (plugin != null)
                 plugin.Load();

@@ -16,7 +16,7 @@ namespace Hadouken.Tests.Plugins.Rpc
         public void Execute_WithNoPlugins_ReturnsEmptyList()
         {
             var engine = new Mock<IPluginEngine>();
-            engine.SetupGet(e => e.PluginManagers).Returns(new IPluginManager[] {});
+            engine.Setup(e => e.GetAll()).Returns(new IPluginManager[] {});
 
             var pluginsList = new PluginsList(engine.Object);
             var result = pluginsList.Execute();
@@ -29,7 +29,7 @@ namespace Hadouken.Tests.Plugins.Rpc
         {
             var plugin = new Mock<IPluginManager>();
             var engine = new Mock<IPluginEngine>();
-            engine.SetupGet(e => e.PluginManagers).Returns(new[] {plugin.Object});
+            engine.Setup(e => e.GetAll()).Returns(new[] {plugin.Object});
 
             var pluginsList = new PluginsList(engine.Object);
             var result = pluginsList.Execute();

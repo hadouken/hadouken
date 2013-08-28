@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Plugins\PluginManagerTests.cs" />
     <Compile Include="Plugins\Rpc\PluginsListTests.cs" />
+    <Compile Include="Plugins\Rpc\PluginsLoadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

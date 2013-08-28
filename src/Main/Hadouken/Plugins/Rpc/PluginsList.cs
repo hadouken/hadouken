@@ -16,7 +16,7 @@ namespace Hadouken.Plugins.Rpc
 
         public PluginListDto[] Execute()
         {
-            return _pluginEngine.PluginManagers.Select(pm => new PluginListDto
+            return _pluginEngine.GetAll().Select(pm => new PluginListDto
                 {
                     Name = pm.Name,
                     Version = pm.Version
