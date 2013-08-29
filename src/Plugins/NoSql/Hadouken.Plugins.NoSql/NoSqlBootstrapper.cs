@@ -12,7 +12,7 @@ namespace Hadouken.Plugins.NoSql
     {
         public override Plugin Load(IBootConfig config)
         {
-            throw new NotImplementedException();
+            return new NoSqlPlugin();
         }
     }
 }

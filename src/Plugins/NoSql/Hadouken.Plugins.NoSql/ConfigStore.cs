@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Linq;
 using Hadouken.Plugins.NoSql.Models;
 using Newtonsoft.Json;
 using Raven.Client.Document;
@@ -33,7 +33,7 @@ namespace Hadouken.Plugins.NoSql
         {
             using (var session = _documentStore.Value.OpenSession())
             {
-                var dto = session.Load<Config>("configs/" + key);
+                var dto = session.Load<Config>(key);
 
                 if (dto == null || String.IsNullOrEmpty(dto.Value))
                     return null;
@@ -47,12 +47,12 @@ namespace Hadouken.Plugins.NoSql
             using (var session = _documentStore.Value.OpenSession())
             {
                 var serializedValue = JsonConvert.SerializeObject(value);
-                var dto = session.Load<Config>("configs/" + key);
+                var dto = session.Load<Config>(key);
 
                 if (dto == null)
                 {
-                    dto = new Config {Key = key, Value = serializedValue};
-                    session.Store(dto, key);
+                    dto = new Config {Id = key, Value = serializedValue};
+                    session.Store(dto);
                 }
                 else
                 {

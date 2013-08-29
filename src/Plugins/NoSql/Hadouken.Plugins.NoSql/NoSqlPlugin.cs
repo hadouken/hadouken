@@ -11,7 +11,6 @@ namespace Hadouken.Plugins.NoSql
     {
         public override void Load()
         {
-            throw new NotImplementedException();
         }
     }
 }

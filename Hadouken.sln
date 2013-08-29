@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NoSql", "NoSql", "{BB857434
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.NoSql", "src\Plugins\NoSql\Hadouken.Plugins.NoSql\Hadouken.Plugins.NoSql.csproj", "{BB57C8FC-76DC-4B5A-A0A7-8256CBF21D25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.NoSql.Tests", "src\Plugins\NoSql\Hadouken.Plugins.NoSql.Tests\Hadouken.Plugins.NoSql.Tests.csproj", "{00910705-B417-4402-ACE0-4952CC155B93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{BB57C8FC-76DC-4B5A-A0A7-8256CBF21D25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB57C8FC-76DC-4B5A-A0A7-8256CBF21D25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB57C8FC-76DC-4B5A-A0A7-8256CBF21D25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00910705-B417-4402-ACE0-4952CC155B93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00910705-B417-4402-ACE0-4952CC155B93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00910705-B417-4402-ACE0-4952CC155B93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00910705-B417-4402-ACE0-4952CC155B93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,5 +95,6 @@ Global
 		{A134189A-AB8D-4DB6-AEE0-6CFAD4F688F0} = {1221041A-9B18-4E0B-B88F-8383164C8819}
 		{01421497-8085-4DB5-B2B6-17A84CAA28E1} = {1221041A-9B18-4E0B-B88F-8383164C8819}
 		{BB57C8FC-76DC-4B5A-A0A7-8256CBF21D25} = {BB857434-EB5A-49A4-A61D-0E324DD4C21B}
+		{00910705-B417-4402-ACE0-4952CC155B93} = {BB857434-EB5A-49A4-A61D-0E324DD4C21B}
 	EndGlobalSection
 EndGlobal
