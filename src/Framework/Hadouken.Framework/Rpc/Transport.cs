@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hadouken.Framework.Rpc.Transports
+namespace Hadouken.Framework.Rpc
 {
-    public abstract class ServerTransport : IServerTransport
+    public abstract class Transport : ITransport
     {
         private readonly object _callbackLock = new object();
         private Action<IRequest> _callback;
@@ -24,6 +24,8 @@ namespace Hadouken.Framework.Rpc.Transports
                 _callback(request);
             }
         }
+
+        public abstract bool SupportsScheme(string scheme);
 
         public abstract void Open();
 

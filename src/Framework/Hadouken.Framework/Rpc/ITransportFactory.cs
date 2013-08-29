@@ -8,8 +8,6 @@ namespace Hadouken.Framework.Rpc
 {
     public interface ITransportFactory
     {
-        IServerTransport CreateServerTransport(Uri uri);
-
-        IClientTransport CreateClientTransport(Uri uri);
+        ITransport CreateTransport(string uri);
     }
 }

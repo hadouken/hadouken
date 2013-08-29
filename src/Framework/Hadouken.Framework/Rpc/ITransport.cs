@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IServerTransport
+    public interface ITransport
     {
+        bool SupportsScheme(string scheme);
+
         void SetRequestCallback(Action<IRequest> callback);
 
         void Open();

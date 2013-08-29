@@ -7,16 +7,21 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc.Transports
 {
-    public class HttpServerTransport : ServerTransport
+    public class HttpTransport : Transport
     {
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly string _listenUri;
         private readonly IRequestBuilder _requestBuilder;
 
-        public HttpServerTransport(string listenUri, IRequestBuilder requestBuilder)
+        public HttpTransport(string listenUri, IRequestBuilder requestBuilder)
         {
             _listenUri = listenUri;
             _requestBuilder = requestBuilder;
+        }
+
+        public override bool SupportsScheme(string scheme)
+        {
+            return String.Equals(scheme, "http", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override void Open()
