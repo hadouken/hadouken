@@ -69,6 +69,7 @@
     <Compile Include="Rpc\TransportFactory.cs" />
     <Compile Include="Rpc\Transports\HttpServerTransport.cs" />
     <Compile Include="Rpc\Transport.cs" />
+    <Compile Include="Rpc\Transports\JsonRpcServer.cs" />
     <Compile Include="Rpc\Transports\Wcf\WcfTransport.cs" />
   </ItemGroup>
   <ItemGroup>
