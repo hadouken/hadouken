@@ -14,6 +14,6 @@ namespace Hadouken.Framework.Rpc
 
         string Protocol { get; }
 
-        string GetParametersAsJson();
+        T GetParameterObject<T>();
     }
 }

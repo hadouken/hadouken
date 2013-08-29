@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IJsonRpcServer
+    public class RequestBuilder : IRequestBuilder
     {
-        void Start(string listenUri);
-
-        void Stop();
+        public IRequest Build(string json)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

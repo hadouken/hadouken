@@ -63,6 +63,8 @@
     <Compile Include="Rpc\IRpcMethod.cs" />
     <Compile Include="Rpc\ITransport.cs" />
     <Compile Include="Rpc\ITransportFactory.cs" />
+    <Compile Include="Rpc\Request.cs" />
+    <Compile Include="Rpc\RequestBuilder.cs" />
     <Compile Include="Rpc\RpcMethodAttribute.cs" />
     <Compile Include="Rpc\TransportFactory.cs" />
     <Compile Include="Rpc\Transports\HttpServerTransport.cs" />

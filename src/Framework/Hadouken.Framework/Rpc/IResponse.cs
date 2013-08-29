@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    interface IResponse
+    public interface IResponse
     {
     }
 }
