@@ -21,7 +21,7 @@ namespace Hadouken.Framework.Rpc.Transports
             _rpcMethods = rpcMethods;
         }
 
-        public void Start()
+        public void Start(string listenUri)
         {
             throw new NotImplementedException();
         }
