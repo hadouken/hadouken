@@ -1,14 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Hosting;
+using Owin;
 
 namespace Hadouken.Plugins.Events
 {
     public class EventServer : IEventServer
     {
+        private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener __ref__;
+
         private readonly string _listenUri;
+        private IDisposable _server;
 
         public EventServer(string listenUri)
         {
@@ -17,12 +21,13 @@ namespace Hadouken.Plugins.Events
 
         public void Start()
         {
-            //TODO: Implementation
+            _server = WebApp.Start<SignalRStartup>(_listenUri);
         }
 
         public void Stop()
         {
-            //TODO: Implementation
+            if (_server != null)
+                _server.Dispose();
         }
     }
 }

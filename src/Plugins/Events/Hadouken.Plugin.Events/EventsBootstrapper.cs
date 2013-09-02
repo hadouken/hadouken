@@ -1,7 +1,7 @@
-﻿using Domo.DI;
-using Domo.DI.Registration;
-using Hadouken.Framework;
+﻿using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
+using InjectMe;
+using InjectMe.Registration;
 
 namespace Hadouken.Plugins.Events
 {
@@ -9,14 +9,24 @@ namespace Hadouken.Plugins.Events
     {
         public override Plugin Load(IBootConfig config)
         {
-            var container = Container.Create(_ => RegisterComponents(config, _));
+            var container = BuildContainer(config);
             return container.ServiceLocator.Resolve<Plugin>();
         }
 
-        private static void RegisterComponents(IBootConfig bootConfig, IContainerConfiguration cfg)
+        private static IContainer BuildContainer(IBootConfig config)
         {
-            cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(bootConfig.HostBinding));
-            cfg.Register<Plugin>().AsTransient().UsingConcreteType<EventsPlugin>();
+            return
+                Container.Create(
+                    containerConfiguration => BuildContainerConfiguration(containerConfiguration, config));
+        }
+
+        private static void BuildContainerConfiguration(IContainerConfiguration containerConfiguration, IBootConfig config)
+        {
+            containerConfiguration.Register<IEventServer>()
+                .AsSingleton()
+                .UsingFactory(() => new EventServer(config.HostBinding));
+
+            containerConfiguration.Register<Plugin>().AsTransient().UsingConcreteType<EventsPlugin>();
         }
     }
 }

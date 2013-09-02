@@ -1,6 +1,4 @@
-﻿using System;
-
-using Hadouken.Framework.Plugins;
+﻿using Hadouken.Framework.Plugins;
 
 namespace Hadouken.Plugins.Events
 {
