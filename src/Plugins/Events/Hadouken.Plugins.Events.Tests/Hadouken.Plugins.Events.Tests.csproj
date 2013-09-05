@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="EventsBootstrapperTests.cs" />
     <Compile Include="EventServerTests.cs" />
+    <Compile Include="EventsPluginTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

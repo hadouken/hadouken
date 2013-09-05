@@ -14,14 +14,13 @@ namespace Hadouken.Framework.Rpc.Wcf
         private readonly IRequestBuilder _requestBuilder;
         private readonly IRequestHandler _requestHandler;
 
-        public WcfJsonRpcServer(string address, IRequestBuilder requestBuilder, IRequestHandler requestHandler)
+        public WcfJsonRpcServer(IUriFactory uriFactory, IRequestBuilder requestBuilder, IRequestHandler requestHandler)
         {
             _requestBuilder = requestBuilder;
             _requestHandler = requestHandler;
 
             _serviceHost = new ServiceHost(new WcfRpcHost(HandleRequest));
-            _serviceHost.AddServiceEndpoint(typeof (IWcfRpcHost), new NetNamedPipeBinding(),
-                "net.pipe://localhost/" + address);
+            _serviceHost.AddServiceEndpoint(typeof (IWcfRpcHost), new NetNamedPipeBinding(), uriFactory.GetListenUri());
         }
 
         public void Start()

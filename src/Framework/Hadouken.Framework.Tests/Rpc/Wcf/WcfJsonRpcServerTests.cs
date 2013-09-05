@@ -18,7 +18,7 @@ namespace Hadouken.Framework.Tests.Rpc.Wcf
             var requestBuilder = new Mock<IRequestBuilder>();
             var requestHandler = new Mock<IRequestHandler>();
 
-            var server = new WcfJsonRpcServer("test", requestBuilder.Object, requestHandler.Object);
+            var server = new WcfJsonRpcServer(new UriFactory("net.tcp://localhost/test"), requestBuilder.Object, requestHandler.Object);
 
             Assert.DoesNotThrow(() =>
             {
@@ -30,12 +30,14 @@ namespace Hadouken.Framework.Tests.Rpc.Wcf
         [Test]
         public void Call_WithValidRequest_ReturnsValidResponse()
         {
-            var server = new WcfJsonRpcServer("test", new RequestBuilder(),
+            var server = new WcfJsonRpcServer(new UriFactory("net.tcp://localhost/test"), new RequestBuilder(),
                 new RequestHandler(new[] {new StringReverser()}));
             server.Start();
 
             var client = new JsonRpcClient(new WcfClientTransport("net.pipe://localhost/test"));
             var result = client.Call<string>("stringreverser", "foobar").Result;
+
+            server.Stop();
 
             Assert.AreEqual("raboof", result);
         }

@@ -15,7 +15,7 @@ namespace Hadouken.Framework.Rpc.Http
         private readonly IRequestHandler _requestHandler;
         private readonly HttpListener _httpListener = new HttpListener();
 
-        public HttpJsonRpcServer(IHttpUriFactory uriFactory, IRequestBuilder requestBuilder, IRequestHandler requestHandler)
+        public HttpJsonRpcServer(IUriFactory uriFactory, IRequestBuilder requestBuilder, IRequestHandler requestHandler)
         {
             _httpListener.Prefixes.Add(uriFactory.GetListenUri());
 

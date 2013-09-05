@@ -12,7 +12,7 @@ namespace Hadouken.Plugins.Events
                 EnableDetailedErrors = true
             };
 
-            appBuilder.MapSignalR(hubConfiguration);
+            appBuilder.MapSignalR("/events", hubConfiguration);
         }
     }
 }

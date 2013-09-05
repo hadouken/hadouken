@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc.Wcf
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = true)]
     public class WcfRpcHost : IWcfRpcHost
     {
         private readonly Func<string, string> _callback;

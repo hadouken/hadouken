@@ -3,6 +3,7 @@ using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Http;
+using Hadouken.Framework.Rpc.Wcf;
 using Hadouken.Plugins.Events.Rpc;
 using InjectMe;
 using InjectMe.Registration;
@@ -28,10 +29,12 @@ namespace Hadouken.Plugins.Events
         {
             string baseUri = String.Concat("http://", config.HostBinding, ":", config.Port);
 
-            cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(baseUri + "/events"));
+            cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(baseUri));
 
-            cfg.Register<IJsonRpcServer>().AsTransient().UsingConcreteType<HttpJsonRpcServer>();
-            cfg.Register<IHttpUriFactory>().AsTransient().UsingFactory(() => new HttpUriFactory(baseUri + "/"));
+            cfg.Register<IJsonRpcServer>().AsTransient().UsingConcreteType<WcfJsonRpcServer>();
+            cfg.Register<IUriFactory>()
+                .AsTransient()
+                .UsingFactory(() => new UriFactory("net.pipe://localhost/hdkn.rpc.events"));
 
             cfg.Register<IRequestBuilder>().AsTransient().UsingConcreteType<RequestBuilder>();
 

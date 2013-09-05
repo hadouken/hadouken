@@ -12,22 +12,35 @@ namespace Hadouken.Plugins.Events.Rpc
     [RpcMethod("events.publish")]
     public class EventsPublish : IRpcMethod
     {
-        private readonly string _signalrUri;
+        private readonly HubConnection _hubConnection;
+        private readonly Lazy<IHubProxy> _proxy; 
 
         public EventsPublish(string signalrUri)
         {
-            _signalrUri = signalrUri;
+            _hubConnection = new HubConnection(signalrUri, false);
+            _proxy = new Lazy<IHubProxy>(CreateProxy);
         }
 
-        public void Execute(string eventName, object data)
+        public bool Execute(EventsPublishDto dto)
         {
-            using (var connection = new HubConnection(_signalrUri))
-            {
-                connection.Start();
+            _proxy.Value.Invoke("publish", dto.EventName, dto.Data);
 
-                var proxy = connection.CreateHubProxy("events");
-                proxy.Invoke("publish", eventName, data).Wait();
-            }
+            return true;
         }
+
+        private IHubProxy CreateProxy()
+        {
+            var proxy = _hubConnection.CreateHubProxy("events");
+            _hubConnection.Start().Wait();
+
+            return proxy;
+        }
+    }
+
+    public class EventsPublishDto
+    {
+        public string EventName { get; set; }
+
+        public object Data { get; set; }
     }
 }

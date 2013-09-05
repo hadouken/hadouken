@@ -59,8 +59,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\ErrorResponse.cs" />
     <Compile Include="Rpc\Http\HttpJsonRpcServer.cs" />
-    <Compile Include="Rpc\Http\HttpUriFactory.cs" />
-    <Compile Include="Rpc\Http\IHttpUriFactory.cs" />
+    <Compile Include="Rpc\HttpUriFactory.cs" />
+    <Compile Include="Rpc\IHttpUriFactory.cs" />
     <Compile Include="Rpc\IClientTransport.cs" />
     <Compile Include="Rpc\IJsonRpcClient.cs" />
     <Compile Include="Rpc\IJsonRpcServer.cs" />
