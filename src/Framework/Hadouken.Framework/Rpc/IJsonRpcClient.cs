@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IJsonRpcClient
+    public interface IJsonRpcClient : IDisposable
     {
         Task<TResult> Call<TResult>(string method, object parameters);
     }

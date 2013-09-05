@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hadouken.Framework.Rpc.Transports.Wcf
+namespace Hadouken.Framework.Rpc
 {
-    class WcfTransport
+    public interface IClientTransport : IDisposable
     {
+        Task<string> Send(string data);
     }
 }

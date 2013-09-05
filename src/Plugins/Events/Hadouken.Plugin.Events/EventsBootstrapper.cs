@@ -1,5 +1,9 @@
-﻿using Hadouken.Framework;
+﻿using System;
+using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
+using Hadouken.Framework.Rpc;
+using Hadouken.Framework.Rpc.Http;
+using Hadouken.Plugins.Events.Rpc;
 using InjectMe;
 using InjectMe.Registration;
 
@@ -20,13 +24,23 @@ namespace Hadouken.Plugins.Events
                     containerConfiguration => BuildContainerConfiguration(containerConfiguration, config));
         }
 
-        private static void BuildContainerConfiguration(IContainerConfiguration containerConfiguration, IBootConfig config)
+        private static void BuildContainerConfiguration(IContainerConfiguration cfg, IBootConfig config)
         {
-            containerConfiguration.Register<IEventServer>()
-                .AsSingleton()
-                .UsingFactory(() => new EventServer(config.HostBinding));
+            string baseUri = String.Concat("http://", config.HostBinding, ":", config.Port);
 
-            containerConfiguration.Register<Plugin>().AsTransient().UsingConcreteType<EventsPlugin>();
+            cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(baseUri + "/events"));
+
+            cfg.Register<IJsonRpcServer>().AsTransient().UsingConcreteType<HttpJsonRpcServer>();
+            cfg.Register<IHttpUriFactory>().AsTransient().UsingFactory(() => new HttpUriFactory(baseUri + "/"));
+
+            cfg.Register<IRequestBuilder>().AsTransient().UsingConcreteType<RequestBuilder>();
+
+            cfg.Register<IRequestHandler>().AsTransient().UsingConcreteType<RequestHandler>();
+
+            // Register RPC methods
+            cfg.Register<IRpcMethod>().AsTransient().UsingFactory(() => new EventsPublish(baseUri + "/events"));
+
+            cfg.Register<Plugin>().AsTransient().UsingConcreteType<EventsPlugin>();
         }
     }
 }

@@ -35,6 +35,10 @@
     <Reference Include="InjectMe">
       <HintPath>..\..\..\..\packages\InjectMe.0.9.2\lib\net45\InjectMe.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.SignalR.Client.2.0.0-rc1\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.SignalR.Core.2.0.0-rc1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
@@ -73,8 +77,10 @@
     <Compile Include="EventServer.cs" />
     <Compile Include="EventsPlugin.cs" />
     <Compile Include="Hubs\EventHub.cs" />
+    <Compile Include="Hubs\IEventHub.cs" />
     <Compile Include="IEventServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\EventsPublish.cs" />
     <Compile Include="SignalRStartup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +95,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

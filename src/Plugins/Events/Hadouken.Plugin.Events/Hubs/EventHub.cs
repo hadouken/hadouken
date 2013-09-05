@@ -9,7 +9,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 namespace Hadouken.Plugins.Events.Hubs
 {
     [HubName("events")]
-    public class EventHub : Hub
+    public class EventHub : Hub, IEventHub
     {
         [HubMethodName("publish")]
         public void Publish(string eventName, object data)

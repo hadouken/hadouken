@@ -8,7 +8,7 @@ namespace Hadouken.Framework.Rpc
 {
     public interface IJsonRpcServer
     {
-        void Start(string listenUri);
+        void Start();
 
         void Stop();
     }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hadouken.Framework.Rpc
+namespace Hadouken.Plugins.Events.Hubs
 {
-    public interface ITransportFactory
+    public interface IEventHub
     {
-        ITransport CreateTransport(string uri);
+        void Publish(string eventName, object data);
     }
 }

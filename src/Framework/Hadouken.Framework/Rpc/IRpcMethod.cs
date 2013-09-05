@@ -9,4 +9,9 @@ namespace Hadouken.Framework.Rpc
     public interface IRpcMethod
     {
     }
+
+    public interface IRpcMethod<in T> : IRpcMethod
+    {
+        object Execute(T parameter);
+    }
 }

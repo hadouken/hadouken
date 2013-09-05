@@ -9,22 +9,23 @@ namespace Hadouken.Framework.Rpc
 {
     public class Request : IRequest
     {
-        private readonly string _parameterAsJson;
+        [JsonProperty("id")]
+        public int? Id { get; set; }
 
-        public Request(string parameterAsJson)
-        {
-            _parameterAsJson = parameterAsJson;
-        }
-
-        public object Id { get; set; }
-
+        [JsonProperty("method", Required = Required.Always)]
         public string Method { get; set; }
 
+        [JsonProperty("jsonrpc", Required = Required.Always)]
         public string Protocol { get; set; }
 
-        public T GetParameterObject<T>()
+        public string ParameterAsJson { get; set; }
+
+        public object GetParameterObject(Type type)
         {
-            return JsonConvert.DeserializeObject<T>(_parameterAsJson);
+            if (String.IsNullOrEmpty(ParameterAsJson))
+                return null;
+
+            return JsonConvert.DeserializeObject(ParameterAsJson, type);
         }
     }
 }

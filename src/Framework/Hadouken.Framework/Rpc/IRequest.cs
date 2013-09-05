@@ -8,12 +8,12 @@ namespace Hadouken.Framework.Rpc
 {
     public interface IRequest
     {
-        object Id { get; }
+        int? Id { get; }
 
         string Method { get; }
 
         string Protocol { get; }
 
-        T GetParameterObject<T>();
+        object GetParameterObject(Type type);
     }
 }

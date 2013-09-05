@@ -48,7 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\TransportFactoryTests.cs" />
+    <Compile Include="Rpc\RequestHandlerTests.cs" />
+    <Compile Include="Rpc\Wcf\WcfJsonRpcServerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

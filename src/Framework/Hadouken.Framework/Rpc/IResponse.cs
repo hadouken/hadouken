@@ -8,5 +8,8 @@ namespace Hadouken.Framework.Rpc
 {
     public interface IResponse
     {
+        int? Id { get; }
+
+        string Protocol { get; }
     }
 }
