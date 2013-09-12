@@ -21,8 +21,9 @@ namespace Hadouken.Service
         [STAThread]
         public static void Main()
         {
-            var container = BuildContainer();
-            var serviceHost = container.Resolve<HostingService>();
+            BuildContainer();
+
+            var serviceHost = Container.Resolve<HostingService>();
 
             if (Bootstrapper.RunAsConsoleIfRequested(serviceHost))
                 return;
@@ -30,7 +31,7 @@ namespace Hadouken.Service
             ServiceBase.Run(new ServiceBase[] {serviceHost});
         }
 
-        private static IContainer BuildContainer()
+        private static void BuildContainer()
         {
             var builder = new ContainerBuilder();
 
@@ -56,9 +57,11 @@ namespace Hadouken.Service
             builder.RegisterApiControllers(typeof (PluginsController).Assembly);
 
             // Register dep resolver
-            
+            builder.Register<IDependencyResolver>(c => new AutofacWebApiDependencyResolver(Container));
 
-            return builder.Build();
+            Container = builder.Build();
         }
+
+        private static IContainer Container { get; set; }
     }
 }

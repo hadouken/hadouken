@@ -23,7 +23,11 @@ namespace Hadouken.Http
 
         public Task OpenAsync()
         {
-            var cfg = new HttpSelfHostConfiguration("http://localhost:8989");
+            var cfg = new HttpSelfHostConfiguration("http://localhost:8989")
+            {
+                DependencyResolver = _dependencyResolver
+            };
+
             cfg.Routes.MapHttpRoute("Default", "api/{controller}/{id}", new {id = RouteParameter.Optional});
 
             _selfHostServer = new HttpSelfHostServer(cfg);
