@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Framework;
 using Hadouken.Sandbox;
 using System.Security;
 
@@ -13,6 +14,7 @@ namespace Hadouken.Plugins
     public sealed class PluginManager : IPluginManager
     {
         private readonly string _path;
+        private IBootConfig _bootConfig;
         private SandboxedEnvironment _sandboxedEnvironment;
 
         public PluginManager(string path)
@@ -35,6 +37,11 @@ namespace Hadouken.Plugins
             get { throw new NotImplementedException(); }
         }
 
+        public void SetBootConfig(IBootConfig bootConfig)
+        {
+            _bootConfig = bootConfig;
+        }
+
         public void Load()
         {
             var setupInfo = new AppDomainSetup
@@ -48,7 +55,7 @@ namespace Hadouken.Plugins
             var domain = AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setupInfo);
 
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
-            _sandboxedEnvironment.Load();
+            _sandboxedEnvironment.Load(_bootConfig);
         }
 
         public void Unload()

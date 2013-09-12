@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework
 {
+    [Serializable]
     public sealed class BootConfig : IBootConfig
     {
         public int Port { get; set; }

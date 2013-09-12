@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Framework;
 using Hadouken.IO;
 
 namespace Hadouken.Plugins
@@ -58,11 +59,19 @@ namespace Hadouken.Plugins
                     continue;
 
                 var manager = loader.Load(entry);
+                var config = new BootConfig
+                {
+                    HostBinding = "localhost",
+                    Port = 4567,
+                    ApiBaseUri = "api/" + manager.Name
+                };
+
+                manager.SetBootConfig(config);
+                manager.Load();
 
                 lock (_lock)
                 {
                     _pluginManagers.Add(manager.Name, manager);
-                    manager.Load();
                 }
             }
         }
