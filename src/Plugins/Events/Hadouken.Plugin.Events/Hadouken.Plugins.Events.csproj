@@ -80,7 +80,6 @@
     <Compile Include="Hubs\IEventHub.cs" />
     <Compile Include="IEventServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\EventsPublish.cs" />
     <Compile Include="SignalRStartup.cs" />
   </ItemGroup>
   <ItemGroup>

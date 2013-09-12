@@ -11,5 +11,7 @@ namespace Hadouken.Framework
         public int Port { get; set; }
 
         public string HostBinding { get; set; }
+
+        public string ApiBaseUri { get; set; }
     }
 }

@@ -82,10 +82,7 @@
     <Compile Include="NoSqlBootstrapper.cs" />
     <Compile Include="NoSqlPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\ConfigDelete.cs" />
     <Compile Include="Models\Config.cs" />
-    <Compile Include="Rpc\ConfigGet.cs" />
-    <Compile Include="Rpc\ConfigSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
