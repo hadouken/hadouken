@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Plugins.Http.Models
 {
-    public class PluginListDto
+    public class PutPluginDto
     {
-        public string Name { get; set; }
+        public PluginAction Action { get; set; }
+    }
 
-        public Version Version { get; set; }
+    public enum PluginAction
+    {
+        Load,
+        Unload
     }
 }

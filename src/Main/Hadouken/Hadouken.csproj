@@ -53,11 +53,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IConfiguration.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Plugins\Http\Controllers\PluginsController.cs" />
     <Compile Include="Plugins\Http\Models\PluginListDto.cs" />
+    <Compile Include="Plugins\Http\Models\PutPluginDto.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
+    <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\PluginState.cs" />

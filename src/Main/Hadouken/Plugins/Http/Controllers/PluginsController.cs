@@ -24,10 +24,41 @@ namespace Hadouken.Plugins.Http.Controllers
             var dtos = (from plugin in _pluginEngine.GetAll()
                 select new PluginListDto
                 {
-                    Name = plugin.Name
+                    Name = plugin.Name,
+                    Version = plugin.Version
                 }).ToList();
 
             return Request.CreateResponse(HttpStatusCode.OK, dtos);
+        }
+
+        public HttpResponseMessage Put(string id, PutPluginDto dto)
+        {
+            if (String.IsNullOrEmpty(id) || dto == null)
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
+            var plugin = _pluginEngine.Get(id);
+
+            if (plugin == null)
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
+            switch (dto.Action)
+            {
+                case PluginAction.Load:
+                    if (plugin.State == PluginState.Loaded || plugin.State == PluginState.Loading)
+                        return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
+                    plugin.Load();
+                    break;
+
+                case PluginAction.Unload:
+                    if (plugin.State == PluginState.Unloaded || plugin.State == PluginState.Unloading)
+                        return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
+                    plugin.Unload();
+                    break;
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.NoContent);
         }
     }
 }
