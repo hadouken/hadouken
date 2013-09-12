@@ -22,6 +22,16 @@ namespace Hadouken
             get { return GetPath("Path.Plugins"); }
         }
 
+        public string HostBinding
+        {
+            get { return ConfigurationManager.AppSettings["HostBinding"]; }
+        }
+
+        public int Port
+        {
+            get { return Convert.ToInt32(ConfigurationManager.AppSettings["Port"]); }
+        }
+
         private string GetPath(string key)
         {
             var value = ConfigurationManager.AppSettings[key];

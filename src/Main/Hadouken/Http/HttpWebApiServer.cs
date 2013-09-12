@@ -23,7 +23,9 @@ namespace Hadouken.Http
 
         public Task OpenAsync()
         {
-            var cfg = new HttpSelfHostConfiguration("http://localhost:8989")
+            var uri = String.Format("http://{0}:{1}/", _configuration.HostBinding, _configuration.Port);
+
+            var cfg = new HttpSelfHostConfiguration(uri)
             {
                 DependencyResolver = _dependencyResolver
             };

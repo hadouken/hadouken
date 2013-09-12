@@ -9,5 +9,9 @@ namespace Hadouken
     public interface IConfiguration
     {
         string PluginsPath { get; }
+
+        string HostBinding { get; }
+
+        int Port { get; }
     }
 }
