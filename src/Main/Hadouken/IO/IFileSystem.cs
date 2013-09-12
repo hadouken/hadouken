@@ -8,6 +8,8 @@ namespace Hadouken.IO
 {
     public interface IFileSystem
     {
+        void CreateDirectory(string path);
+
         string[] GetDirectoryEntries(string path);
 
         bool IsDirectory(string path);

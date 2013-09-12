@@ -47,7 +47,7 @@ namespace Hadouken.Plugins
 
         public void Load()
         {
-            var entries = _fileSystem.GetDirectoryEntries(_configuration.PluginPath);
+            var entries = _fileSystem.GetDirectoryEntries(_configuration.PluginsPath);
 
             foreach (var entry in entries)
             {

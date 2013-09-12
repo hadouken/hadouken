@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hadouken
+namespace Hadouken.Http
 {
-    public interface IConfiguration
+    public interface IHttpWebApiServer
     {
-        string PluginsPath { get; }
+        Task OpenAsync();
+
+        Task CloseAsync();
     }
 }
