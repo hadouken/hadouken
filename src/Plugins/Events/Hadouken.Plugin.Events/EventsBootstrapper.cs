@@ -23,7 +23,9 @@ namespace Hadouken.Plugins.Events
 
         private static void BuildContainerConfiguration(IContainerConfiguration cfg, IBootConfig config)
         {
-            string baseUri = String.Concat("http://", config.HostBinding, ":", config.Port);
+            int port = config.Port + 1;
+
+            string baseUri = String.Concat("http://", config.HostBinding, ":", port + "/events");
 
             cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(baseUri));
 
