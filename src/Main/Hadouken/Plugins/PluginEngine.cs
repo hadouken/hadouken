@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Configuration;
 using Hadouken.Framework;
 using Hadouken.IO;
 
@@ -47,7 +48,11 @@ namespace Hadouken.Plugins
 
         public void Load()
         {
-            var entries = _fileSystem.GetDirectoryEntries(_configuration.PluginsPath);
+            var entries = new List<string>((from PluginElement element
+                                                in _configuration.Plugins
+                                            select element.Path));
+
+            // Add manually added entries
 
             foreach (var entry in entries)
             {

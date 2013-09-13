@@ -21,7 +21,7 @@ namespace Hadouken.IO
 
         public bool IsDirectory(string path)
         {
-            return false;
+            return File.GetAttributes(path).HasFlag(FileAttributes.Directory);
         }
     }
 }

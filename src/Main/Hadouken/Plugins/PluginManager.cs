@@ -24,12 +24,12 @@ namespace Hadouken.Plugins
 
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return ""; }
         }
 
         public Version Version
         {
-            get { throw new NotImplementedException(); }
+            get { return new Version("1.0"); }
         }
 
         public PluginState State

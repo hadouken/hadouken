@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Integration.WebApi;
+using Hadouken.Configuration;
 using Hadouken.Http;
 using Hadouken.IO;
 using Hadouken.Plugins;
@@ -48,7 +49,7 @@ namespace Hadouken.Service
             builder.RegisterType<FileSystem>().As<IFileSystem>();
 
             // Register configuration
-            builder.RegisterType<Configuration>().As<IConfiguration>();
+            builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
 
             // Register Web API server
             builder.RegisterType<HttpWebApiServer>().As<IHttpWebApiServer>();
