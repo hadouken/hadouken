@@ -13,6 +13,8 @@ namespace Hadouken.Plugins
 
         Version Version { get; }
 
+        string[] DependsOn { get; }
+
         PluginState State { get; }
 
         void SetBootConfig(IBootConfig bootConfig);

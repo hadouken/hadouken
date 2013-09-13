@@ -66,8 +66,8 @@ namespace Hadouken.Plugins
                 var manager = loader.Load(entry);
                 var config = new BootConfig
                 {
-                    HostBinding = "localhost",
-                    Port = 4567,
+                    HostBinding = _configuration.Http.HostBinding,
+                    Port = _configuration.Http.Port,
                     ApiBaseUri = "api/" + manager.Name
                 };
 

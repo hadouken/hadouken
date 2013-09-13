@@ -23,5 +23,10 @@ namespace Hadouken.IO
         {
             return File.GetAttributes(path).HasFlag(FileAttributes.Directory);
         }
+
+        public Stream OpenRead(string path)
+        {
+            return File.OpenRead(path);
+        }
     }
 }

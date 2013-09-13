@@ -20,7 +20,7 @@ namespace Hadouken.Plugins
         public IPluginManager Load(string path)
         {
             // Check if path has valid manifest
-            return new PluginManager(path);
+            return new PluginManager(path, _fileSystem);
         }
     }
 }
