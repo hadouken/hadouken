@@ -38,7 +38,7 @@ namespace Hadouken.Http
 
         public Task OpenAsync()
         {
-            var uri = String.Format("http://{0}:{1}/", _configuration.Http.HostBinding, _configuration.Http.Port);
+            var uri = String.Format("http://{0}:{1}/api", _configuration.Http.HostBinding, _configuration.Http.Port);
 
             var cfg = new HttpSelfHostConfiguration(uri)
             {
@@ -49,7 +49,7 @@ namespace Hadouken.Http
             cfg.Formatters.Clear();
             cfg.Formatters.Add(new JsonMediaTypeFormatter() {SerializerSettings = SerializerSettings});
 
-            cfg.Routes.MapHttpRoute("Default", "api/{controller}/{id}", new {id = RouteParameter.Optional});
+            cfg.Routes.MapHttpRoute("Default", "{controller}/{id}", new {id = RouteParameter.Optional});
 
             _selfHostServer = new HttpSelfHostServer(cfg);
 
