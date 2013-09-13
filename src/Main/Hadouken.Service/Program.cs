@@ -40,19 +40,19 @@ namespace Hadouken.Service
             builder.RegisterType<DefaultHostingService>().As<HostingService>();
 
             // Register plugin engine
-            builder.RegisterType<PluginEngine>().As<IPluginEngine>();
+            builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
 
             // Register plugin loaders
             builder.RegisterType<DirectoryPluginLoader>().As<IPluginLoader>();
 
             // Register file system
-            builder.RegisterType<FileSystem>().As<IFileSystem>();
+            builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 
             // Register configuration
             builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
 
             // Register Web API server
-            builder.RegisterType<HttpWebApiServer>().As<IHttpWebApiServer>();
+            builder.RegisterType<HttpWebApiServer>().As<IHttpWebApiServer>().SingleInstance();
 
             // Register controllers
             builder.RegisterApiControllers(typeof (PluginsController).Assembly);
