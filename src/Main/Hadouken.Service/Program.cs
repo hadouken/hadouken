@@ -9,6 +9,7 @@ using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.IO;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
+using Hadouken.Rpc;
 
 namespace Hadouken.Service
 {
@@ -45,7 +46,7 @@ namespace Hadouken.Service
 
             // Register RPC services
             builder.RegisterType<PluginsService>().As<IJsonRpcService>();
-            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
+            builder.RegisterType<WcfProxyJsonRpcHandler>().As<IJsonRpcHandler>();
 
             // Register JSONRPC server
             builder.Register<IJsonRpcServer>(c =>
