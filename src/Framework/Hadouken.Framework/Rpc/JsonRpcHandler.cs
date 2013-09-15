@@ -112,14 +112,7 @@ namespace Hadouken.Framework.Rpc
                 };
 
 
-                using (var ms = new MemoryStream())
-                using (var writer = new StreamWriter(ms))
-                {
-                    Serializer.Serialize(writer, result);
-                    writer.Flush();
-
-                    return Encoding.UTF8.GetString(ms.ToArray());
-                }
+                return Serialize(result);
             }
             else
             {
@@ -136,14 +129,19 @@ namespace Hadouken.Framework.Rpc
                     result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
                 };
 
-                using (var ms = new MemoryStream())
-                using (var writer = new StreamWriter(ms))
-                {
-                    Serializer.Serialize(writer, result);
-                    writer.Flush();
+                return Serialize(result);
+            }
+        }
 
-                    return Encoding.UTF8.GetString(ms.ToArray());
-                }
+        private static string Serialize(object data)
+        {
+            using (var ms = new MemoryStream())
+            using (var writer = new StreamWriter(ms))
+            {
+                Serializer.Serialize(writer, data);
+                writer.Flush();
+
+                return Encoding.UTF8.GetString(ms.ToArray());
             }
         }
     }
