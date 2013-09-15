@@ -53,6 +53,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Events\EventService.cs" />
     <Compile Include="Events\IEventService.cs" />
+    <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
     <Compile Include="IBootConfig.cs" />
     <Compile Include="Plugins\Plugin.cs" />
