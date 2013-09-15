@@ -57,6 +57,13 @@
     <Compile Include="IBootConfig.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\IJsonRpcHandler.cs" />
+    <Compile Include="Rpc\IJsonRpcService.cs" />
+    <Compile Include="Rpc\IMethodInvoker.cs" />
+    <Compile Include="Rpc\JsonRpcHandler.cs" />
+    <Compile Include="Rpc\JsonRpcMethodAttribute.cs" />
+    <Compile Include="Rpc\JsonRpcRequest.cs" />
+    <Compile Include="Rpc\MethodInvoker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
