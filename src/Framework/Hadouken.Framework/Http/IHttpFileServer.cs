@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Http
 {
-    interface IHttpServer
+    public interface IHttpFileServer
     {
+        void Open();
+
+        void Close();
     }
 }

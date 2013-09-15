@@ -59,6 +59,11 @@ namespace Hadouken.Framework.Rpc
             return result;
         }
 
+        protected virtual string OnMethodMissing(string methodName, string rawRequest)
+        {
+            return null;
+        }
+
         private string Execute(string jsonRpc)
         {
             JsonRpcRequest request;
@@ -73,7 +78,8 @@ namespace Hadouken.Framework.Rpc
 
             if (!_services.TryGetValue(request.Method, out invoker))
             {
-                throw new Exception();
+                var data = OnMethodMissing(request.Method, jsonRpc);
+                return data;
             }
 
             var param = request.Parameters as JContainer;
