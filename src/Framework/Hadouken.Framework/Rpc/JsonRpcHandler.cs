@@ -1,17 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Framework.Rpc
 {
     public class JsonRpcHandler : IJsonRpcHandler
     {
+        private static readonly JsonSerializer Serializer = new JsonSerializer();
         private readonly IDictionary<string, IMethodInvoker> _services;
+
+        static JsonRpcHandler()
+        {
+            Serializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            Serializer.Converters.Add(new VersionConverter());
+            Serializer.Converters.Add(new StringEnumConverter());
+        }
 
         public JsonRpcHandler(IEnumerable<IJsonRpcService> services)
         {
@@ -81,12 +92,12 @@ namespace Hadouken.Framework.Rpc
                     case JTokenType.Array:
                         p.AddRange(param.Select(
                             (t, i) =>
-                                t.ToObject(invoker.ParameterTypes[i]))
+                                t.ToObject(invoker.ParameterTypes[i], Serializer))
                             .ToArray());
                         break;
 
                     case JTokenType.Object:
-                        p.Add(param.ToObject(invoker.ParameterTypes[0]));
+                        p.Add(param.ToObject(invoker.ParameterTypes[0], Serializer));
                         break;
 
                     default:
@@ -100,7 +111,15 @@ namespace Hadouken.Framework.Rpc
                     result = invoker.Invoke(p.ToArray())
                 };
 
-                return JsonConvert.SerializeObject(result);
+
+                using (var ms = new MemoryStream())
+                using (var writer = new StreamWriter(ms))
+                {
+                    Serializer.Serialize(writer, result);
+                    writer.Flush();
+
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
             }
             else
             {
@@ -117,7 +136,14 @@ namespace Hadouken.Framework.Rpc
                     result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
                 };
 
-                return JsonConvert.SerializeObject(result);
+                using (var ms = new MemoryStream())
+                using (var writer = new StreamWriter(ms))
+                {
+                    Serializer.Serialize(writer, result);
+                    writer.Flush();
+
+                    return Encoding.UTF8.GetString(ms.ToArray());
+                }
             }
         }
     }

@@ -69,7 +69,8 @@ namespace Hadouken.Plugins.Rpc
                 select new PluginDto()
                 {
                     Name = plugin.Name,
-                    Version = plugin.Version
+                    Version = plugin.Version,
+                    State = plugin.State
                 }).ToArray();
         }
     }
@@ -79,5 +80,7 @@ namespace Hadouken.Plugins.Rpc
         public string Name { get; set; }
 
         public Version Version { get; set; }
+
+        public PluginState  State { get; set; }
     }
 }
