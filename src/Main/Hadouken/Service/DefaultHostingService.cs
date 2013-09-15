@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hadouken.Http;
+﻿using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.Plugins;
 
 namespace Hadouken.Service
@@ -11,25 +6,23 @@ namespace Hadouken.Service
     public class DefaultHostingService : HostingService
     {
         private readonly IPluginEngine _pluginEngine;
-        private readonly IHttpWebApiServer _webApiServer;
+        private readonly IJsonRpcServer _rpcServer;
 
-        public DefaultHostingService(IPluginEngine pluginEngine, IHttpWebApiServer webApiServer)
+        public DefaultHostingService(IPluginEngine pluginEngine, IJsonRpcServer rpcServer)
         {
             _pluginEngine = pluginEngine;
-            _webApiServer = webApiServer;
+            _rpcServer = rpcServer;
         }
 
         protected override void OnStart(string[] args)
         {
             _pluginEngine.Load();
-
-            _webApiServer.OpenAsync().Wait();
+            _rpcServer.Open();
         }
 
         protected override void OnStop()
         {
-            _webApiServer.CloseAsync().Wait();
-
+            _rpcServer.Close();
             _pluginEngine.Unload();
         }
     }

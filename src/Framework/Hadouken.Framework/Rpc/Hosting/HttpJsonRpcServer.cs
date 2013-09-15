@@ -47,7 +47,9 @@ namespace Hadouken.Framework.Rpc.Hosting
 
                 using (var writer = new StreamWriter(context.Response.OutputStream))
                 {
+                    context.Response.ContentType = "application/json";
                     context.Response.StatusCode = 200;
+
                     writer.Write(response);
                 }
             }

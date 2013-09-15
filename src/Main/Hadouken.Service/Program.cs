@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.ServiceProcess;
-using System.Threading.Tasks;
-using System.Web.Http.Dependencies;
-using System.Windows.Forms;
+
 using Autofac;
-using Autofac.Builder;
-using Autofac.Integration.WebApi;
+
 using Hadouken.Configuration;
-using Hadouken.Http;
+using Hadouken.Framework.Rpc;
+using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.IO;
 using Hadouken.Plugins;
-using Hadouken.Plugins.Http.Controllers;
+using Hadouken.Plugins.Rpc;
 
 namespace Hadouken.Service
 {
@@ -48,17 +43,22 @@ namespace Hadouken.Service
             // Register file system
             builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 
+            // Register RPC services
+            builder.RegisterType<PluginsService>().As<IJsonRpcService>();
+            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
+
+            // Register JSONRPC server
+            builder.Register<IJsonRpcServer>(c =>
+            {
+                var handler = c.Resolve<IJsonRpcHandler>();
+                var conf = c.Resolve<IConfiguration>();
+                var uri = String.Format("http://{0}:{1}/jsonrpc/", conf.Http.HostBinding, conf.Http.Port);
+
+                return new HttpJsonRpcServer(uri, handler);
+            });
+
             // Register configuration
             builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
-
-            // Register Web API server
-            builder.RegisterType<HttpWebApiServer>().As<IHttpWebApiServer>().SingleInstance();
-
-            // Register controllers
-            builder.RegisterApiControllers(typeof (PluginsController).Assembly);
-
-            // Register dep resolver
-            builder.Register<IDependencyResolver>(c => new AutofacWebApiDependencyResolver(Container));
 
             Container = builder.Build();
         }

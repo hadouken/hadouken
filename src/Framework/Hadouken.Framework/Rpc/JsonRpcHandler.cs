@@ -104,7 +104,8 @@ namespace Hadouken.Framework.Rpc
             }
             else
             {
-                if (request.Parameters.GetType() != invoker.ParameterTypes[0])
+                if (invoker.ParameterTypes.Length > 0
+                    && request.Parameters.GetType() != invoker.ParameterTypes[0])
                 {
                     throw new Exception();
                 }
@@ -113,13 +114,11 @@ namespace Hadouken.Framework.Rpc
                 {
                     id = request.Id,
                     jsonrpc = "2.0",
-                    result = invoker.Invoke(request.Parameters)
+                    result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
                 };
 
                 return JsonConvert.SerializeObject(result);
             }
-
-            return null;
         }
     }
 }

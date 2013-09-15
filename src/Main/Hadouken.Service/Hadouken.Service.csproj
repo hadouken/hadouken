@@ -34,11 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Autofac.Integration.WebApi">
-      <HintPath>..\..\..\packages\Autofac.WebApi.3.1.0\lib\net40\Autofac.Integration.WebApi.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -58,12 +56,16 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
+      <Project>{9BD61B3C-6D93-4A2B-AA59-4BB87F817834}</Project>
+      <Name>Hadouken.Framework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{1FE7DB08-4B4F-4A13-8453-2703984E32D5}</Project>
       <Name>Hadouken</Name>
