@@ -32,8 +32,15 @@ namespace Hadouken.Framework.Rpc.Hosting
 
         private void GetContext(IAsyncResult ar)
         {
-            var context = _httpListener.EndGetContext(ar);
-            Task.Run(() => ProcessContext(context));
+            try
+            {
+                var context = _httpListener.EndGetContext(ar);
+                Task.Run(() => ProcessContext(context));
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
 
             _httpListener.BeginGetContext(GetContext, null);
         }
@@ -41,16 +48,25 @@ namespace Hadouken.Framework.Rpc.Hosting
         private void ProcessContext(HttpListenerContext context)
         {
             using (var reader = new StreamReader(context.Request.InputStream))
+            using (var writer = new StreamWriter(context.Response.OutputStream))
             {
                 var content = reader.ReadToEnd();
-                var response = _rpcHandler.HandleAsync(content).Result;
 
-                using (var writer = new StreamWriter(context.Response.OutputStream))
+                try
                 {
+                    var response = _rpcHandler.HandleAsync(content).Result;
+
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = 200;
 
                     writer.Write(response);
+                }
+                catch (Exception e)
+                {
+                    context.Response.ContentType = "text/plain";
+                    context.Response.StatusCode = 500;
+
+                    writer.Write(e.ToString());
                 }
             }
 
