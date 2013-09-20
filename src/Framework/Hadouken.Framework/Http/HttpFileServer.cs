@@ -15,7 +15,10 @@ namespace Hadouken.Framework.Http
         {
             {".html", "text/html"},
             {".css", "text/css"},
-            {".js", "text/javascript"}
+            {".js", "text/javascript"},
+            {".woff", "application/octet-stream"},
+            {".ttf", "application/octet-stream"},
+            {".svg", "application/octet-stream"}
         };
 
         public HttpFileServer(string listenUri, string baseDirectory)
