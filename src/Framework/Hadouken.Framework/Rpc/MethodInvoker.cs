@@ -4,11 +4,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 
 namespace Hadouken.Framework.Rpc
 {
     public class MethodInvoker : IMethodInvoker
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly object _target;
         private readonly MethodInfo _method;
 
@@ -34,6 +37,8 @@ namespace Hadouken.Framework.Rpc
 
         public object Invoke(params object[] args)
         {
+            Logger.Debug("Invoking method with {0} arguments", args.Length);
+
             if (args.Length != ParameterTypes.Length)
                 throw new ArgumentException("Mismatch in argument and parameter length");
 

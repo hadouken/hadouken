@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Hadouken.Configuration;
 using Hadouken.Framework;
 using Hadouken.IO;
+using NLog;
 
 namespace Hadouken.Plugins
 {
     public class PluginEngine : IPluginEngine
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
         private readonly IEnumerable<IPluginLoader> _pluginLoaders;
@@ -56,12 +59,17 @@ namespace Hadouken.Plugins
 
             foreach (var entry in entries)
             {
+                Logger.Info("Loading plugin from {0}", entry);
+
                 var loader = (from p in _pluginLoaders
                     where p.CanLoad(entry)
                     select p).FirstOrDefault();
 
                 if (loader == null)
+                {
+                    Logger.Warn("Could not find a plugin loader for path {0}", entry);
                     continue;
+                }
 
                 var manager = loader.Load(entry);
                 var config = new BootConfig
@@ -78,6 +86,8 @@ namespace Hadouken.Plugins
                 {
                     _pluginManagers.Add(manager.Name, manager);
                 }
+
+                Logger.Info("Plugin {0}[v{1}] loaded", manager.Name, manager.Version);
             }
         }
 
@@ -87,6 +97,7 @@ namespace Hadouken.Plugins
             {
                 foreach (var manager in _pluginManagers.Values)
                 {
+                    Logger.Info("Unloading plugin {0}", manager.Name);
                     manager.Unload();
                 }
 

@@ -9,11 +9,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using NLog;
 
 namespace Hadouken.Framework.Rpc
 {
     public class JsonRpcHandler : IJsonRpcHandler
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly JsonSerializer Serializer = new JsonSerializer();
         private readonly IDictionary<string, IMethodInvoker> _services;
 
@@ -36,6 +38,8 @@ namespace Hadouken.Framework.Rpc
 
         private IDictionary<string, IMethodInvoker> BuildServiceCache(IEnumerable<IJsonRpcService> services)
         {
+            Logger.Info("Building service cache");
+
             var result = new Dictionary<string, IMethodInvoker>();
 
             foreach (var service in services)
@@ -52,6 +56,7 @@ namespace Hadouken.Framework.Rpc
 
                     var methodName = attribute.MethodName;
 
+                    Logger.Debug("Adding MethodInvoker for {0}", methodName);
                     result.Add(methodName, new MethodInvoker(service, method));
                 }
             }
@@ -66,18 +71,23 @@ namespace Hadouken.Framework.Rpc
 
         private string Execute(string jsonRpc)
         {
+            Logger.Debug("Executing JSONRPC request");
+
             JsonRpcRequest request;
             Exception requestParseException;
 
             if (!JsonRpcRequest.TryParse(jsonRpc, out request, out requestParseException))
             {
-                throw new Exception();
+                Logger.ErrorException("Could not parse request", requestParseException);
+                throw new Exception(); // TODO: return JSONRPC Error Response object
             }
 
             IMethodInvoker invoker;
 
             if (!_services.TryGetValue(request.Method, out invoker))
             {
+                Logger.Info("Could not find method in cache.");
+
                 var data = OnMethodMissing(request.Method, jsonRpc);
                 return data;
             }

@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Hadouken.Framework.Rpc;
+using NLog;
 
 namespace Hadouken.Plugins.Rpc
 {
     public class PluginsService : IJsonRpcService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IPluginEngine _pluginEngine;
 
         public PluginsService(IPluginEngine pluginEngine)
@@ -19,6 +19,8 @@ namespace Hadouken.Plugins.Rpc
         [JsonRpcMethod("plugins.load")]
         public bool Load(string name)
         {
+            Logger.Trace("Trying to load plugin {0}", name);
+
             var plugin = _pluginEngine.Get(name);
 
             if (plugin == null)
@@ -32,8 +34,9 @@ namespace Hadouken.Plugins.Rpc
                 plugin.Load();
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logger.ErrorException(String.Format("Could not load plugin {0}", name), e);
                 return false;
             }
         }
@@ -41,6 +44,8 @@ namespace Hadouken.Plugins.Rpc
         [JsonRpcMethod("plugins.unload")]
         public bool Unload(string name)
         {
+            Logger.Trace("Trying to unload plugin {0}", name);
+
             var plugin = _pluginEngine.Get(name);
 
             if (plugin == null)
@@ -54,8 +59,9 @@ namespace Hadouken.Plugins.Rpc
                 plugin.Unload();
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Logger.ErrorException(String.Format("Could not unload plugin {0}", name), e);
                 return false;
             }
         }
