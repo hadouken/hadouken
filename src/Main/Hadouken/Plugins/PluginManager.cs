@@ -6,11 +6,14 @@ using Hadouken.IO;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace Hadouken.Plugins
 {
     public sealed class PluginManager : IPluginManager
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly string _path;
         private readonly IFileSystem _fileSystem;
         private IBootConfig _bootConfig;
@@ -27,7 +30,11 @@ namespace Hadouken.Plugins
 
         private void LoadManifest()
         {
-            using(var stream = _fileSystem.OpenRead(Path.Combine(_path, "manifest.json")))
+            var manifestPath = Path.Combine(_path, "manifest.json");
+
+            Logger.Info("Loading manifest from {0}", manifestPath);
+
+            using(var stream = _fileSystem.OpenRead(manifestPath))
             using(var reader = new StreamReader(stream))
             {
                 var manifest = JObject.Parse(reader.ReadToEnd());
@@ -52,6 +59,8 @@ namespace Hadouken.Plugins
 
         public void Load()
         {
+            Logger.Info("Loading plugin {0}", Name);
+
             State = PluginState.Loading;
 
             var setupInfo = new AppDomainSetup
@@ -64,7 +73,9 @@ namespace Hadouken.Plugins
 
             var domain = AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setupInfo);
 
+            Logger.Debug("Creating sandboxed environment");
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
+            Logger.Debug("Loading {0} in sandboxed environment", Name);
             _sandboxedEnvironment.Load(_bootConfig);
 
             State = PluginState.Loaded;
@@ -77,6 +88,7 @@ namespace Hadouken.Plugins
             if (_sandboxedEnvironment == null) return;
 
             var domain = _sandboxedEnvironment.GetAppDomain();
+            Logger.Debug("Unloading AppDomain for plugin {0}", Name);
             AppDomain.Unload(domain);
 
             State = PluginState.Unloaded;

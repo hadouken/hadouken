@@ -10,6 +10,7 @@ using Hadouken.IO;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
+using NLog;
 
 namespace Hadouken.Service
 {
