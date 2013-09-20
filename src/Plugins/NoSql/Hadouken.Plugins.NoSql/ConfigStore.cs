@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Linq;
-using Hadouken.Plugins.NoSql.Models;
 using Newtonsoft.Json;
 using Raven.Client.Document;
 using Raven.Client.Embedded;
 
 namespace Hadouken.Plugins.NoSql
 {
+    public class ConfigDto
+    {
+        public string Data { get; set; }
+    }
+
     public class ConfigStore : IConfigStore
     {
         private readonly Lazy<DocumentStore> _documentStore;
@@ -33,12 +36,12 @@ namespace Hadouken.Plugins.NoSql
         {
             using (var session = _documentStore.Value.OpenSession())
             {
-                var dto = session.Load<Config>(key);
+                var dto = session.Load<ConfigDto>(key);
 
-                if (dto == null || String.IsNullOrEmpty(dto.Value))
+                if (dto == null || String.IsNullOrEmpty(dto.Data))
                     return null;
 
-                return JsonConvert.DeserializeObject(dto.Value);
+                return JsonConvert.DeserializeObject(dto.Data);
             }
         }
 
@@ -46,19 +49,7 @@ namespace Hadouken.Plugins.NoSql
         {
             using (var session = _documentStore.Value.OpenSession())
             {
-                var serializedValue = JsonConvert.SerializeObject(value);
-                var dto = session.Load<Config>(key);
-
-                if (dto == null)
-                {
-                    dto = new Config {Id = key, Value = serializedValue};
-                    session.Store(dto);
-                }
-                else
-                {
-                    dto.Value = JsonConvert.SerializeObject(value);
-                }
-
+                session.Store(new ConfigDto {Data = JsonConvert.SerializeObject(value)}, key);
                 session.SaveChanges();
             }
         }
@@ -67,12 +58,6 @@ namespace Hadouken.Plugins.NoSql
         {
             using (var session = _documentStore.Value.OpenSession())
             {
-                var dto = session.Load<Config>("configs/" + key);
-
-                if (dto == null) return;
-
-                session.Delete(dto);
-                session.SaveChanges();
             }
         }
     }

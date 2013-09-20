@@ -17,11 +17,25 @@ namespace Hadouken.Rpc
 
         protected override string OnMethodMissing(string methodName, string rawRequest)
         {
+            var parts = methodName.Split('.');
+            var plugin = parts[0];
+
+            switch (plugin)
+            {
+                case "config":
+                    plugin = "core.nosql";
+                    break;
+
+                case "events":
+                    plugin = "core.events";
+                    break;
+            }
+
             if (!_proxyList.ContainsKey(methodName))
             {
                 // Create proxy
                 var factory = new ChannelFactory<IWcfJsonRpcServer>(new NetNamedPipeBinding(),
-                    "net.pipe://localhost/hdkn.plugins.core.events");
+                    "net.pipe://localhost/hdkn.plugins." + plugin);
                 var proxy = factory.CreateChannel();
 
                 try
