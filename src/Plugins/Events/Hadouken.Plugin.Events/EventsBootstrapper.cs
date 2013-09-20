@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Web.Http.Dependencies;
 using Autofac;
-using Autofac.Integration.WebApi;
 using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
-using Hadouken.Plugins.Events.Hubs;
 using Hadouken.Plugins.Events.Rpc;
 
 namespace Hadouken.Plugins.Events
@@ -31,8 +26,6 @@ namespace Hadouken.Plugins.Events
             builder.RegisterType<EventsPlugin>().As<Plugin>();
 
             builder.Register<IEventServer>(c => new EventServer(baseUri)).SingleInstance();
-
-            builder.RegisterType<EventHub>().As<IEventHub>().SingleInstance();
 
             // Register WCF json rpc server
             builder.Register<IJsonRpcServer>(c =>

@@ -1,26 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Events.Hubs;
+using Microsoft.AspNet.SignalR;
 
 namespace Hadouken.Plugins.Events.Rpc
 {
     public class EventsService : IJsonRpcService
     {
-        private readonly IEventHub _eventHub;
-
-        public EventsService(IEventHub eventHub)
-        {
-            _eventHub = eventHub;
-        }
+        private static readonly Lazy<IHubContext> HubInstance = new Lazy<IHubContext>(
+            () => GlobalHost.ConnectionManager.GetHubContext<EventsHub>());
 
         [JsonRpcMethod("events.publish")]
         public bool Publish(string name, object data)
         {
-            _eventHub.Publish(name, data);
+            HubInstance.Value.Clients.All.eventPublished(name, data);
+
             return true;
         }
     }

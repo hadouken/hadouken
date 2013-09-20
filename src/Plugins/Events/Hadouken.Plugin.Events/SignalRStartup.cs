@@ -9,10 +9,10 @@ namespace Hadouken.Plugins.Events
         {
             var hubConfiguration = new HubConfiguration
             {
-                EnableDetailedErrors = true
+                EnableDetailedErrors = true,
             };
 
-            appBuilder.MapSignalR("/events", hubConfiguration);
+            appBuilder.MapSignalR(hubConfiguration);
         }
     }
 }
