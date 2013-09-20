@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Hadouken.Plugins.NoSql.Tests")]
+[assembly: AssemblyTitle("Hadouken.Plugins.Config")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Hadouken.Plugins.NoSql.Tests")]
+[assembly: AssemblyProduct("Hadouken.Plugins.Config")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("aaf67b3d-766a-4085-af22-1cb986196115")]
+[assembly: Guid("583dcf0d-ab3a-441a-a2b1-f66434a711b0")]
 
 // Version information for an assembly consists of the following four values:
 //

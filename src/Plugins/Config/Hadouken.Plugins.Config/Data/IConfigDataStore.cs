@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hadouken.Plugins.NoSql
+namespace Hadouken.Plugins.Config.Data
 {
-    public interface IConfigStore
+    public interface IConfigDataStore
     {
         object Get(string key);
 

@@ -23,7 +23,7 @@ namespace Hadouken.Rpc
             switch (plugin)
             {
                 case "config":
-                    plugin = "core.nosql";
+                    plugin = "core.config";
                     break;
 
                 case "events":

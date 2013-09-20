@@ -1,38 +1,39 @@
-﻿using System;
+﻿using Hadouken.Framework.Rpc;
+using Hadouken.Plugins.Config.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Hadouken.Framework.Rpc;
 
-namespace Hadouken.Plugins.NoSql.Rpc
+namespace Hadouken.Plugins.Config.Rpc
 {
     public class ConfigService : IJsonRpcService
     {
-        private readonly IConfigStore _configStore;
+        private readonly IConfigDataStore _dataStore;
 
-        public ConfigService(IConfigStore configStore)
+        public ConfigService(IConfigDataStore dataStore)
         {
-            _configStore = configStore;
+            _dataStore = dataStore;
         }
 
         [JsonRpcMethod("config.get")]
         public object Get(string key)
         {
-            return _configStore.Get(key);
+            return _dataStore.Get(key);
         }
 
         [JsonRpcMethod("config.set")]
-        public bool Set(string key, object value)
+        public bool Set(string key, object val)
         {
-            _configStore.Set(key, value);
+            _dataStore.Set(key, val);
             return true;
         }
 
         [JsonRpcMethod("config.delete")]
         public bool Delete(string key)
         {
-            _configStore.Delete(key);
+            _dataStore.Delete(key);
             return true;
         }
     }
