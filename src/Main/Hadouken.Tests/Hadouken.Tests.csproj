@@ -47,9 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Plugins\PluginEngineTests.cs" />
     <Compile Include="Plugins\PluginManagerTests.cs" />
-    <Compile Include="Plugins\Rpc\PluginsListTests.cs" />
-    <Compile Include="Plugins\Rpc\PluginsLoadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

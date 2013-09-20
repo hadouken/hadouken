@@ -8,6 +8,8 @@ namespace Hadouken.Plugins
 {
     public interface IPluginLoader
     {
+        bool CanLoad(string path);
+
         IPluginManager Load(string path);
     }
 }

@@ -9,7 +9,9 @@ namespace Hadouken.Plugins.Events
 {
     public class EventServer : IEventServer
     {
+#pragma warning disable 0169
         private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener __ref__;
+#pragma warning restore 0169
 
         private readonly string _listenUri;
         private IDisposable _server;

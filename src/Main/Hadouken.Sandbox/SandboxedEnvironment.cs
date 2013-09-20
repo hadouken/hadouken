@@ -28,7 +28,7 @@ namespace Hadouken.Sandbox
             return AppDomain.CurrentDomain;
         }
 
-        public void Load()
+        public void Load(IBootConfig bootConfig)
         {
             var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
                                       .Select(File.ReadAllBytes)
@@ -43,7 +43,7 @@ namespace Hadouken.Sandbox
 
             var bootstrapper = (Bootstrapper)Activator.CreateInstance(bootstrapperType);
 
-            _plugin = bootstrapper.Load(new BootConfig());
+            _plugin = bootstrapper.Load(bootConfig);
             _plugin.Load();
         }
 

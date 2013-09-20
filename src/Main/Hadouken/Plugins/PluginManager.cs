@@ -1,42 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
+
+using Hadouken.Framework;
 using Hadouken.Sandbox;
-using System.Security;
+using Hadouken.IO;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hadouken.Plugins
 {
     public sealed class PluginManager : IPluginManager
     {
         private readonly string _path;
+        private readonly IFileSystem _fileSystem;
+        private IBootConfig _bootConfig;
         private SandboxedEnvironment _sandboxedEnvironment;
 
-        public PluginManager(string path)
+        public PluginManager(string path, IFileSystem fileSystem)
         {
+            State = PluginState.Unknown;
+
             _path = path;
+            _fileSystem = fileSystem;
+            LoadManifest();
         }
 
-        public string Name
+        private void LoadManifest()
         {
-            get { throw new NotImplementedException(); }
+            using(var stream = _fileSystem.OpenRead(Path.Combine(_path, "manifest.json")))
+            using(var reader = new StreamReader(stream))
+            {
+                var manifest = JObject.Parse(reader.ReadToEnd());
+
+                Name = manifest["name"].Value<string>();
+                Version = new Version(manifest["version"].Value<string>());
+            }
         }
 
-        public Version Version
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string Name { get; private set; }
 
-        public PluginState State
+        public Version Version { get; private set; }
+
+        public string[] DependsOn { get; private set; }
+
+        public PluginState State { get; private set; }
+
+        public void SetBootConfig(IBootConfig bootConfig)
         {
-            get { throw new NotImplementedException(); }
+            _bootConfig = bootConfig;
         }
 
         public void Load()
         {
+            State = PluginState.Loading;
+
             var setupInfo = new AppDomainSetup
                 {
                     ApplicationBase = _path
@@ -48,15 +65,21 @@ namespace Hadouken.Plugins
             var domain = AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setupInfo);
 
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
-            _sandboxedEnvironment.Load();
+            _sandboxedEnvironment.Load(_bootConfig);
+
+            State = PluginState.Loaded;
         }
 
         public void Unload()
         {
+            State = PluginState.Unloading;
+
             if (_sandboxedEnvironment == null) return;
 
             var domain = _sandboxedEnvironment.GetAppDomain();
             AppDomain.Unload(domain);
+
+            State = PluginState.Unloaded;
         }
     }
 }

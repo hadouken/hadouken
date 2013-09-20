@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Net.Http.Headers;
+using System.Reflection;
+using System.Web.Http.Dependencies;
+using Autofac;
+using Autofac.Integration.WebApi;
 using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
-using Hadouken.Framework.Rpc.Http;
-using Hadouken.Framework.Rpc.Wcf;
+using Hadouken.Framework.Rpc.Hosting;
+using Hadouken.Plugins.Events.Hubs;
 using Hadouken.Plugins.Events.Rpc;
-using InjectMe;
-using InjectMe.Registration;
 
 namespace Hadouken.Plugins.Events
 {
@@ -14,36 +17,36 @@ namespace Hadouken.Plugins.Events
     {
         public override Plugin Load(IBootConfig config)
         {
-            var container = BuildContainer(config);
-            return container.ServiceLocator.Resolve<Plugin>();
+            BuildContainer(config);
+            return Container.Resolve<Plugin>();
         }
 
-        private static IContainer BuildContainer(IBootConfig config)
+        private static void BuildContainer(IBootConfig config)
         {
-            return
-                Container.Create(
-                    containerConfiguration => BuildContainerConfiguration(containerConfiguration, config));
+            int port = config.Port + 1;
+            string baseUri = String.Concat("http://", config.HostBinding, ":", port + "/events");
+
+            var builder = new ContainerBuilder();
+
+            builder.RegisterType<EventsPlugin>().As<Plugin>();
+
+            builder.Register<IEventServer>(c => new EventServer(baseUri)).SingleInstance();
+
+            builder.RegisterType<EventHub>().As<IEventHub>().SingleInstance();
+
+            // Register WCF json rpc server
+            builder.Register<IJsonRpcServer>(c =>
+            {
+                var handler = c.Resolve<IJsonRpcHandler>();
+                return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.events", handler);
+            });
+
+            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
+            builder.RegisterType<EventsService>().As<IJsonRpcService>().SingleInstance();
+
+            Container = builder.Build();
         }
 
-        private static void BuildContainerConfiguration(IContainerConfiguration cfg, IBootConfig config)
-        {
-            string baseUri = String.Concat("http://", config.HostBinding, ":", config.Port);
-
-            cfg.Register<IEventServer>().AsSingleton().UsingFactory(() => new EventServer(baseUri));
-
-            cfg.Register<IJsonRpcServer>().AsTransient().UsingConcreteType<WcfJsonRpcServer>();
-            cfg.Register<IUriFactory>()
-                .AsTransient()
-                .UsingFactory(() => new UriFactory("net.pipe://localhost/hdkn.rpc.events"));
-
-            cfg.Register<IRequestBuilder>().AsTransient().UsingConcreteType<RequestBuilder>();
-
-            cfg.Register<IRequestHandler>().AsTransient().UsingConcreteType<RequestHandler>();
-
-            // Register RPC methods
-            cfg.Register<IRpcMethod>().AsTransient().UsingFactory(() => new EventsPublish(baseUri + "/events"));
-
-            cfg.Register<Plugin>().AsTransient().UsingConcreteType<EventsPlugin>();
-        }
+        private static IContainer Container { get; set; }
     }
 }

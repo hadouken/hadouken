@@ -13,15 +13,6 @@ namespace Hadouken.Tests.Plugins
         [Test]
         public void Load_WithValidPluginPath_CreatesSandbox()
         {
-            var manager =
-                new PluginManager(
-                    @"../../../../Plugins/Events/Hadouken.Plugin.Events/bin/Debug");
-
-            Assert.DoesNotThrow(() =>
-                {
-                    manager.Load();
-                    manager.Unload();
-                });
         }
     }
 }
