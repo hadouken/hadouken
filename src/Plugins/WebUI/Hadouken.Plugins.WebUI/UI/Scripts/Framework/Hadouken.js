@@ -1,0 +1,4 @@
+﻿var Hadouken = {
+    init: function() {
+    }
+};

@@ -17,5 +17,5 @@
 
 // Real setup below
 window.addEvent('domready', function() {
-    alert("ready");
+    Hadouken.init();
 });
