@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using MonoTorrent.Client;
 
-namespace Hadouken.Plugins.Torrents
+namespace Hadouken.Plugins.Torrents.BitTorrent
 {
     public interface IBitTorrentEngine
     {

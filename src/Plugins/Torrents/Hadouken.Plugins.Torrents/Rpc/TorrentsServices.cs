@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Framework.Rpc;
+using Hadouken.Plugins.Torrents.BitTorrent;
 
 namespace Hadouken.Plugins.Torrents.Rpc
 {

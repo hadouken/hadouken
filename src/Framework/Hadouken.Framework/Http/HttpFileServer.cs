@@ -10,6 +10,7 @@ namespace Hadouken.Framework.Http
     {
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly string _baseDirectory;
+        private readonly string _uriPrefix;
 
         private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
         {
@@ -22,8 +23,14 @@ namespace Hadouken.Framework.Http
         };
 
         public HttpFileServer(string listenUri, string baseDirectory)
+            : this(listenUri, baseDirectory, String.Empty)
+        {
+        }
+
+        public HttpFileServer(string listenUri, string baseDirectory, string uriPrefix)
         {
             _baseDirectory = baseDirectory;
+            _uriPrefix = uriPrefix;
             _httpListener.Prefixes.Add(listenUri);
         }
 
@@ -47,7 +54,11 @@ namespace Hadouken.Framework.Http
 
         private void ProcessContext(HttpListenerContext context)
         {
-            var path = _baseDirectory + context.Request.Url.AbsolutePath;
+            var path = _baseDirectory +
+                       context.Request.Url.AbsolutePath.Substring(_uriPrefix.EndsWith("/")
+                           ? _uriPrefix.Length - 1
+                           : _uriPrefix.Length);
+
             var extension = Path.GetExtension(path);
 
             if (File.Exists(path))
