@@ -11,7 +11,7 @@ namespace Hadouken.Plugins.Torrents
     {
         public override void Load()
         {
-            throw new NotImplementedException();
+            //
         }
     }
 }

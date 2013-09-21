@@ -9,7 +9,7 @@ namespace Hadouken.Plugins.Torrents
     {
         public override Plugin Load(IBootConfig config)
         {
-            throw new NotImplementedException();
+            return new TorrentsPlugin();
         }
     }
 }
