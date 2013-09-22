@@ -19,7 +19,7 @@ var TorrentsListPage = new Class({
             delay: 2000,
             limit: 15000,
             onSuccess: function (data) {
-                this.handleResponse(data.result);
+                this.handleResponse(data);
             }.bind(this)
         });
 
@@ -37,8 +37,9 @@ var TorrentsListPage = new Class({
         this.request.stopTimer();
     },
     
-    handleResponse: function(torrentsList) {
-        console.log(torrentsList);
+    handleResponse: function(response) {
+        // If response is error response, show error
+        // else, handle torrents in response.result
     }
 });
 
