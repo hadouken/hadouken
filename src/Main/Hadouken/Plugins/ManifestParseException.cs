@@ -2,9 +2,9 @@
 
 namespace Hadouken.Plugins
 {
-    internal class PluginManifestParseException : Exception
+    internal class ManifestParseException : Exception
     {
-        public PluginManifestParseException(Exception innerException)
+        public ManifestParseException(Exception innerException)
             : base("Could not load plugin manifest file", innerException)
         {
         }

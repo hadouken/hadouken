@@ -2,7 +2,7 @@
 
 namespace Hadouken.Plugins
 {
-    internal class PluginManifestNotFoundException : Exception
+    internal class ManifestNotFoundException : Exception
     {
     }
 }

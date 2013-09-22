@@ -63,11 +63,12 @@
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
+    <Compile Include="Plugins\Manifest.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\DirectoryPluginLoader.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
-    <Compile Include="Plugins\PluginManifestNotFoundException.cs" />
-    <Compile Include="Plugins\PluginManifestParseException.cs" />
+    <Compile Include="Plugins\ManifestNotFoundException.cs" />
+    <Compile Include="Plugins\ManifestParseException.cs" />
     <Compile Include="Plugins\PluginState.cs" />
     <Compile Include="Plugins\Rpc\PluginsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
