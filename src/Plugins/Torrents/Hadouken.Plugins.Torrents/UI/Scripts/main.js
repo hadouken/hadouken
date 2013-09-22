@@ -1,5 +1,19 @@
 ﻿console.log("Loading Torrents plugin");
 
+var AddTorrentDialog = new Class({
+    Extends: Dialog,
+
+    initialize: function() {
+        this.parent('/plugins/core.torrents/dialogs/add.html');
+    },
+
+    load: function() {
+        this.element.getElement('#btn-submit').addEvent('click', function(e) {
+            alert("add torrents woho!");
+        });
+    }
+});
+
 var TorrentsListPage = new Class({
     Extends: Page,
     
@@ -12,6 +26,17 @@ var TorrentsListPage = new Class({
     load: function() {
         console.log("TorrentsListPage::load()");
 
+        this.setupRequestTimer();
+        this.setupButtons();
+    },
+    
+    unload: function() {
+        console.log("TorrentsListPage::unload()");
+
+        this.request.stopTimer();
+    },
+    
+    setupRequestTimer: function() {
         this.request = new Request.JSON({            
             method: 'post',
             url: '/jsonrpc',
@@ -31,10 +56,12 @@ var TorrentsListPage = new Class({
         }));
     },
     
-    unload: function() {
-        console.log("TorrentsListPage::unload()");
+    setupButtons: function() {
+        $("btn-add-torrents").addEvent('click', function(e) {
+            e.preventDefault();
 
-        this.request.stopTimer();
+            Dialogs.show(new AddTorrentDialog());
+        });
     },
     
     handleResponse: function(response) {
