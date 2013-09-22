@@ -29,6 +29,10 @@ namespace Hadouken.Rpc
                 case "events":
                     plugin = "core.events";
                     break;
+
+                case "torrents":
+                    plugin = "core.torrents";
+                    break;
             }
 
             if (!_proxyList.ContainsKey(methodName))
