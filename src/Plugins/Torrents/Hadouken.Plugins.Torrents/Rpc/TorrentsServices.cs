@@ -42,5 +42,18 @@ namespace Hadouken.Plugins.Torrents.Rpc
 
             return true;
         }
+
+        [JsonRpcMethod("torrents.list")]
+        public object List()
+        {
+            var torrents = _torrentEngine.TorrentManagers;
+
+            return (from t in torrents
+                select new
+                {
+                    t.Torrent.Name,
+                    t.Torrent.Size
+                }).ToList();
+        }
     }
 }

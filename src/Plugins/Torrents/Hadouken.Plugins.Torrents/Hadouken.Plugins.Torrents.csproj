@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="InjectMe">
+      <HintPath>..\..\..\..\packages\InjectMe.0.9.4\lib\net45\InjectMe.dll</HintPath>
+    </Reference>
     <Reference Include="MonoTorrent">
       <HintPath>..\..\..\..\packages\MonoTorrent.0.9.0\lib\net20\MonoTorrent.dll</HintPath>
     </Reference>
@@ -45,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
+    <Compile Include="BitTorrent\MonoTorrentEngine.cs" />
     <Compile Include="Rpc\TorrentsServices.cs" />
     <Compile Include="TorrentsBootstrapper.cs" />
     <Compile Include="TorrentsPlugin.cs" />
