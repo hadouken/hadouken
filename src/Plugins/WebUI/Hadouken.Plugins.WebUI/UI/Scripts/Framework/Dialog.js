@@ -15,6 +15,13 @@
                     'class': 'modal-container',
                     html: html
                 });
+
+                var closeFunction = function(e) {
+                    this.close();
+                }.bind(this);
+
+                var closeIcon = this.element.getElement("button.close");
+                closeIcon.addEvent('click', closeFunction);
                 
                 callback();
             }.bind(this)
@@ -44,11 +51,7 @@ var Dialogs = {
     currentDialog: null,
     
     show: function(dialog) {
-        if (this.currentDialog != null) {
-            this.currentDialog.hide();
-            this.currentDialog.element.destroy();
-            this.currentDialog = null;
-        }
+        this.close();
 
         this.currentDialog = dialog;
 
@@ -57,5 +60,13 @@ var Dialogs = {
             this.currentDialog.load();
             this.currentDialog.show();
         }.bind(this));
+    },
+    
+    close: function() {
+        if (this.currentDialog != null) {
+            this.currentDialog.close();
+            this.currentDialog.element.destroy();
+            this.currentDialog = null;
+        }
     }
 }
