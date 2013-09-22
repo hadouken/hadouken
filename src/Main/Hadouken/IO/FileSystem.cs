@@ -28,5 +28,10 @@ namespace Hadouken.IO
         {
             return File.OpenRead(path);
         }
+
+        public bool FileExists(string path)
+        {
+            return File.Exists(path);
+        }
     }
 }

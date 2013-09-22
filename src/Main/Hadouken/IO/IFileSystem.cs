@@ -16,5 +16,7 @@ namespace Hadouken.IO
         bool IsDirectory(string path);
 
         Stream OpenRead(string path);
+
+        bool FileExists(string path);
     }
 }

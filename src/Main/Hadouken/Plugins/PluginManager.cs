@@ -5,6 +5,7 @@ using Hadouken.Sandbox;
 using Hadouken.IO;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -13,11 +14,17 @@ namespace Hadouken.Plugins
     public sealed class PluginManager : IPluginManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
 
         private readonly string _path;
         private readonly IFileSystem _fileSystem;
         private IBootConfig _bootConfig;
         private SandboxedEnvironment _sandboxedEnvironment;
+
+        static PluginManager()
+        {
+            SerializerSettings.Converters.Add(new VersionConverter());
+        }
 
         public PluginManager(string path, IFileSystem fileSystem)
         {
@@ -32,15 +39,28 @@ namespace Hadouken.Plugins
         {
             var manifestPath = Path.Combine(_path, "manifest.json");
 
+            if (!_fileSystem.FileExists(manifestPath))
+                throw new ManifestNotFoundException();
+
             Logger.Info("Loading manifest from {0}", manifestPath);
 
             using(var stream = _fileSystem.OpenRead(manifestPath))
             using(var reader = new StreamReader(stream))
             {
-                var manifest = JObject.Parse(reader.ReadToEnd());
+                try
+                {
+                    var manifest = JsonConvert.DeserializeObject<Manifest>(
+                        reader.ReadToEnd(),
+                        SerializerSettings);
 
-                Name = manifest["name"].Value<string>();
-                Version = new Version(manifest["version"].Value<string>());
+                    Name = manifest.Name;
+                    Version = manifest.Version;
+                }
+                catch (Exception e)
+                {
+                    Logger.ErrorException(String.Format("Could not parse manifest file {0}", manifestPath), e);
+                    throw new ManifestParseException(e);
+                }
             }
         }
 
@@ -88,6 +108,9 @@ namespace Hadouken.Plugins
             if (_sandboxedEnvironment == null) return;
 
             var domain = _sandboxedEnvironment.GetAppDomain();
+
+            if (domain == null) return;
+
             Logger.Debug("Unloading AppDomain for plugin {0}", Name);
             AppDomain.Unload(domain);
 
