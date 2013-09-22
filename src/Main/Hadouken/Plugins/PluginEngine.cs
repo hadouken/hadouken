@@ -55,8 +55,6 @@ namespace Hadouken.Plugins
                                                 in _configuration.Plugins
                                             select element.Path));
 
-            // Add manually added entries
-
             foreach (var entry in entries)
             {
                 Logger.Info("Loading plugin from {0}", entry);
@@ -71,24 +69,51 @@ namespace Hadouken.Plugins
                     continue;
                 }
 
-                var manager = loader.Load(entry);
-                var config = new BootConfig
-                {
-                    HostBinding = _configuration.Http.HostBinding,
-                    Port = _configuration.Http.Port,
-                    ApiBaseUri = "api/" + manager.Name
-                };
+                IPluginManager manager;
 
-                manager.SetBootConfig(config);
-                manager.Load();
-
-                lock (_lock)
+                try
                 {
-                    _pluginManagers.Add(manager.Name, manager);
+                    manager = loader.Load(entry);
+                }
+                catch (Exception e)
+                {
+                    Logger.ErrorException(String.Format("Could not load plugin from path {0}", entry), e);
+                    return;
                 }
 
-                Logger.Info("Plugin {0}[v{1}] loaded", manager.Name, manager.Version);
+                LoadPluginManager(manager);
             }
+        }
+
+        private void LoadPluginManager(IPluginManager manager)
+        {
+            var config = new BootConfig
+            {
+                HostBinding = _configuration.Http.HostBinding,
+                Port = _configuration.Http.Port,
+                ApiBaseUri = "api/" + manager.Name
+            };
+
+            manager.SetBootConfig(config);
+
+            try
+            {
+                manager.Load();
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorException(String.Format("Could not load plugin {0}", manager.Name), e);
+                
+                manager.Unload();
+                return;
+            }
+
+            lock (_lock)
+            {
+                _pluginManagers.Add(manager.Name, manager);
+            }
+
+            Logger.Info("Plugin {0}[v{1}] loaded", manager.Name, manager.Version);
         }
 
         public void Unload()
@@ -98,7 +123,15 @@ namespace Hadouken.Plugins
                 foreach (var manager in _pluginManagers.Values)
                 {
                     Logger.Info("Unloading plugin {0}", manager.Name);
-                    manager.Unload();
+
+                    try
+                    {
+                        manager.Unload();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Name), e);
+                    }
                 }
 
                 _pluginManagers.Clear();
