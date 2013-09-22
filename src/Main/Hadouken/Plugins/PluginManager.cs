@@ -32,15 +32,26 @@ namespace Hadouken.Plugins
         {
             var manifestPath = Path.Combine(_path, "manifest.json");
 
+            if (!_fileSystem.FileExists(manifestPath))
+                throw new PluginManifestNotFoundException();
+
             Logger.Info("Loading manifest from {0}", manifestPath);
 
             using(var stream = _fileSystem.OpenRead(manifestPath))
             using(var reader = new StreamReader(stream))
             {
-                var manifest = JObject.Parse(reader.ReadToEnd());
+                try
+                {
+                    var manifest = JObject.Parse(reader.ReadToEnd());
 
-                Name = manifest["name"].Value<string>();
-                Version = new Version(manifest["version"].Value<string>());
+                    Name = manifest["name"].Value<string>();
+                    Version = new Version(manifest["version"].Value<string>());
+                }
+                catch (Exception e)
+                {
+                    Logger.ErrorException(String.Format("Could not parse manifest file {0}", manifestPath), e);
+                    throw new PluginManifestParseException(e);
+                }
             }
         }
 
@@ -88,6 +99,9 @@ namespace Hadouken.Plugins
             if (_sandboxedEnvironment == null) return;
 
             var domain = _sandboxedEnvironment.GetAppDomain();
+
+            if (domain == null) return;
+
             Logger.Debug("Unloading AppDomain for plugin {0}", Name);
             AppDomain.Unload(domain);
 
