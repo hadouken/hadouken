@@ -57,14 +57,15 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             if (!Torrent.TryLoad(data, out torrent))
                 return null;
 
-            if (!Directory.Exists(_torrentsPath))
-                Directory.CreateDirectory(_torrentsPath);
-
-            // Save torrent to data path
-            string torrentFile = Path.Combine(_dataPath, "Torrents", torrent.Name + ".torrent");
-
-            if (!File.Exists(torrentFile))
-                File.WriteAllBytes(torrentFile, data);
+            try
+            {
+                SaveTorrentFile(data, torrent.Name + ".torrent");
+            }
+            catch (Exception)
+            {
+                // TODO: Log exception here
+                return null;
+            }
 
             if (String.IsNullOrEmpty(savePath))
                 savePath = _engine.Settings.SavePath;
@@ -75,6 +76,18 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             _engine.Register(manager);
 
             return manager;
+        }
+
+        private void SaveTorrentFile(byte[] data, string fileName)
+        {
+            if (!Directory.Exists(_torrentsPath))
+                Directory.CreateDirectory(_torrentsPath);
+
+            // Save torrent to data path
+            string torrentFile = Path.Combine(_dataPath, "Torrents", fileName);
+
+            if (!File.Exists(torrentFile))
+                File.WriteAllBytes(torrentFile, data);
         }
 
         public void Delete(string infoHash)
