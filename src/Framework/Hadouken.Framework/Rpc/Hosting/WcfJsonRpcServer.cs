@@ -18,7 +18,16 @@ namespace Hadouken.Framework.Rpc.Hosting
             _rpcHandler = rpcHandler;
 
             _serviceHost = new ServiceHost(this);
-            _serviceHost.AddServiceEndpoint(typeof(IWcfJsonRpcServer), new NetNamedPipeBinding(), listenUri);
+
+            var binding = new NetNamedPipeBinding
+                {
+                    MaxBufferPoolSize = 10485760,
+                    MaxBufferSize = 10485760,
+                    MaxConnections = 10,
+                    MaxReceivedMessageSize = 10485760
+                };
+
+            _serviceHost.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, listenUri);
         }
 
         public void Open()
