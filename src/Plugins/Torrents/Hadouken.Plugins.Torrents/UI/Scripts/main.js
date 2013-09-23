@@ -41,7 +41,7 @@ var TorrentsListPage = new Class({
         torrentsListItem: Handlebars.compile('<tr data-id="{{torrent.id}}">' +
                               '<td>{{torrent.name}}</td>' +
                               '<td>Stopped</td>' +
-                              '<td>{{torrent.size}}</td>' +
+                              '<td>{{fileSize torrent.size}}</td>' +
                               '<td>' +
                                   '<button type="button" class="btn btn-primary btn-xs">Details</button>' +
                               '</td>' +
@@ -54,6 +54,11 @@ var TorrentsListPage = new Class({
 
     load: function() {
         console.log("TorrentsListPage::load()");
+
+        Handlebars.registerHelper('fileSize', function(size) {
+            var i = Math.floor(Math.log(size) / Math.log(1024));
+            return (size / Math.pow(1024, i)).toFixed(2) * 1 + '' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        });
 
         this.setupRequestTimer();
         this.setupButtons();
