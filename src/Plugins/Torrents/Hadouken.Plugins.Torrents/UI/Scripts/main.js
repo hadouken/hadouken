@@ -8,9 +8,27 @@ var AddTorrentDialog = new Class({
     },
 
     load: function() {
-        this.element.getElement('#btn-submit').addEvent('click', function(e) {
-            alert("add torrents woho!");
-        });
+        this.element.getElement('#btn-add-torrents').addEvent('click', function (e) {
+            e.preventDefault();
+            
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                // Data
+                var d = [
+                    ev.target.result.split(',')[1],
+                    '',
+                    ''
+                ];
+
+                // Add file
+                var rpcClient = new JsonRpcClient();
+                rpcClient.call("torrents.addFile", d, function(result) {
+                    console.log("Added!");
+                });
+            };
+
+            reader.readAsDataURL(this.element.getElement("#torrent-files").files[0]);
+        }.bind(this));
     }
 });
 
