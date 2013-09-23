@@ -35,7 +35,7 @@ namespace Hadouken.Rpc
                     break;
             }
 
-            if (!_proxyList.ContainsKey(methodName))
+            if (!_proxyList.ContainsKey(plugin))
             {
                 // Create proxy
                 var factory = new ChannelFactory<IWcfJsonRpcServer>(new NetNamedPipeBinding(),
@@ -48,17 +48,17 @@ namespace Hadouken.Rpc
 
                     if (!String.IsNullOrEmpty(result))
                     {
-                        _proxyList.Add(methodName, proxy);
+                        _proxyList.Add(plugin, proxy);
                         return result;
                     }
                     
-                    _proxyList.Add(methodName, null);
+                    _proxyList.Add(plugin, null);
                 }
                 catch(Exception) {}
             }
-            else if(_proxyList[methodName] != null)
+            else if(_proxyList[plugin] != null)
             {
-                var wcfProxy = _proxyList[methodName];
+                var wcfProxy = _proxyList[plugin];
                 return wcfProxy.Call(rawRequest);
             }
 
