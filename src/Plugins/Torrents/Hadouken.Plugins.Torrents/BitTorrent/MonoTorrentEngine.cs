@@ -3,15 +3,24 @@ using System.Collections.Generic;
 using MonoTorrent.Client;
 using MonoTorrent.Client.Encryption;
 using MonoTorrent.Common;
+using System.IO;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
     public class MonoTorrentEngine : IBitTorrentEngine
     {
+        private readonly string _dataPath;
+        private readonly string _torrentsPath;
         private ClientEngine _engine;
 
         private readonly IDictionary<string, TorrentManager> _torrentManagers =
-            new Dictionary<string, TorrentManager>(StringComparer.InvariantCultureIgnoreCase); 
+            new Dictionary<string, TorrentManager>(StringComparer.InvariantCultureIgnoreCase);
+
+        public MonoTorrentEngine(string dataPath)
+        {
+            _dataPath = dataPath;
+            _torrentsPath = Path.Combine(dataPath, "Torrents");
+        }
 
         public void Load()
         {
@@ -47,6 +56,15 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
             if (!Torrent.TryLoad(data, out torrent))
                 return null;
+
+            if (!Directory.Exists(_torrentsPath))
+                Directory.CreateDirectory(_torrentsPath);
+
+            // Save torrent to data path
+            string torrentFile = Path.Combine(_dataPath, "Torrents", torrent.Name + ".torrent");
+
+            if (!File.Exists(torrentFile))
+                File.WriteAllBytes(torrentFile, data);
 
             if (String.IsNullOrEmpty(savePath))
                 savePath = _engine.Settings.SavePath;

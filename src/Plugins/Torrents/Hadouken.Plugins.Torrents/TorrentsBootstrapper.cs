@@ -34,7 +34,9 @@ namespace Hadouken.Plugins.Torrents
                     return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.torrents", handler);
                 });
 
-                cfg.Register<IBitTorrentEngine>().AsSingleton().UsingConcreteType<MonoTorrentEngine>();
+                cfg.Register<IBitTorrentEngine>()
+                   .AsSingleton()
+                   .UsingFactory(() => new MonoTorrentEngine(config.DataPath));
 
                 cfg.Register<Plugin>().AsSingleton().UsingConcreteType<TorrentsPlugin>();
             });

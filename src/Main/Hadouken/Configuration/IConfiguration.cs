@@ -8,6 +8,8 @@ namespace Hadouken.Configuration
 {
     public interface IConfiguration
     {
+        string ApplicationDataPath { get; set; }
+
         string InstanceName { get; set; }
 
         PluginsCollection Plugins { get; }

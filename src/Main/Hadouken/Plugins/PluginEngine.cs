@@ -7,6 +7,7 @@ using Hadouken.Configuration;
 using Hadouken.Framework;
 using Hadouken.IO;
 using NLog;
+using System.IO;
 
 namespace Hadouken.Plugins
 {
@@ -89,6 +90,7 @@ namespace Hadouken.Plugins
         {
             var config = new BootConfig
             {
+                DataPath = Path.Combine(_configuration.ApplicationDataPath, "Plugins", manager.Name),
                 HostBinding = _configuration.Http.HostBinding,
                 Port = _configuration.Http.Port,
                 ApiBaseUri = "api/" + manager.Name
