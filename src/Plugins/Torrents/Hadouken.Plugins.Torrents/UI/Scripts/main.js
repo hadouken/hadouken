@@ -43,7 +43,7 @@ var TorrentsListPage = new Class({
                               '<td>Stopped</td>' +
                               '<td>{{fileSize torrent.size}}</td>' +
                               '<td>' +
-                                  '<button type="button" class="btn btn-primary btn-xs">Details</button>' +
+                                  '<div class="pull-right"><button type="button" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-info-sign"></i></button></div>' +
                               '</td>' +
                           '</tr>')
     },
