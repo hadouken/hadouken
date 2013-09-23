@@ -36,6 +36,17 @@ var TorrentsListPage = new Class({
     Extends: Page,
     
     request: null,
+    torrents: {},
+    templates: {
+        torrentsListItem: Handlebars.compile('<tr data-id="{{torrent.id}}">' +
+                              '<td>{{torrent.name}}</td>' +
+                              '<td>Stopped</td>' +
+                              '<td>{{torrent.size}}</td>' +
+                              '<td>' +
+                                  '<button type="button" class="btn btn-primary btn-xs">Details</button>' +
+                              '</td>' +
+                          '</tr>')
+    },
     
     initialize: function() {
         this.parent("/plugins/core.torrents/list.html");
@@ -85,6 +96,28 @@ var TorrentsListPage = new Class({
     handleResponse: function(response) {
         // If response is error response, show error
         // else, handle torrents in response.result
+
+        if (response.result == null || response.result === undefined)
+            return;
+
+        for (var i = 0; i < response.result.length; i++) {
+            var torrent = response.result[i];
+            var element = $$('tr[data-id=' + torrent.id + ']');
+            
+            if (element == null || element.length == 0) {
+
+                // do stuff
+                var itemHtml = this.templates.torrentsListItem({ torrent: torrent });
+                var els = Elements.from(itemHtml);
+
+                $("tbody-torrents-list").adopt(els);
+
+            } else {
+                console.log("row exists");
+            }
+
+            this.torrents[torrent.id] = torrent;
+        }
     }
 });
 
