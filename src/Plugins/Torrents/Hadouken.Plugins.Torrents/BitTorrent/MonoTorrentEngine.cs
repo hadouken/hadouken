@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MonoTorrent.Client;
 using MonoTorrent.Client.Encryption;
+using MonoTorrent.Common;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
@@ -42,7 +43,20 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         public TorrentManager Add(byte[] data, string savePath = null, string label = null)
         {
-            throw new System.NotImplementedException();
+            Torrent torrent;
+
+            if (!Torrent.TryLoad(data, out torrent))
+                return null;
+
+            if (String.IsNullOrEmpty(savePath))
+                savePath = _engine.Settings.SavePath;
+
+            var manager = new TorrentManager(torrent, savePath, new TorrentSettings());
+
+            _torrentManagers.Add(manager.InfoHash.ToString(), manager);
+            _engine.Register(manager);
+
+            return manager;
         }
 
         public void Delete(string infoHash)

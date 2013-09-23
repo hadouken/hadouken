@@ -55,5 +55,12 @@ namespace Hadouken.Plugins.Torrents.Rpc
                     t.Torrent.Size
                 }).ToList();
         }
+
+        [JsonRpcMethod("torrents.addFile")]
+        public object AddFile(byte[] data, string savePath, string label)
+        {
+            var torrent = _torrentEngine.Add(data, savePath, label);
+            return torrent;
+        }
     }
 }
