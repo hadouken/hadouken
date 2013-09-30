@@ -26,6 +26,7 @@ namespace Hadouken.Plugins.Config
             // Register JSON RPC services and handlers
             containerConfiguration.Register<IJsonRpcService>().AsSingleton().UsingConcreteType<ConfigService>();
             containerConfiguration.Register<IJsonRpcHandler>().AsSingleton().UsingConcreteType<JsonRpcHandler>();
+            containerConfiguration.Register<IRequestHandler>().AsSingleton().UsingConcreteType<RequestHandler>();
 
             // Register WCF json rpc server
             containerConfiguration.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>

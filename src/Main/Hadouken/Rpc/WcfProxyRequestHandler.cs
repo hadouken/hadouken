@@ -6,18 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
+using Newtonsoft.Json;
 
 namespace Hadouken.Rpc
 {
-    public class WcfProxyJsonRpcHandler : JsonRpcHandler
+    public class WcfProxyRequestHandler : RequestHandler
     {
         private readonly IDictionary<string, IWcfJsonRpcServer> _proxyList = new Dictionary<string, IWcfJsonRpcServer>();
- 
-        public WcfProxyJsonRpcHandler(IEnumerable<IJsonRpcService> services) : base(services) {}
 
-        protected override string OnMethodMissing(string methodName, string rawRequest)
+        public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services) : base(services) { }
+
+        protected override JsonRpcResponse OnMethodMissing(JsonRpcRequest request)
         {
-            var parts = methodName.Split('.');
+            var parts = request.Method.Split('.');
             var plugin = parts[0];
 
             switch (plugin)
@@ -44,12 +45,12 @@ namespace Hadouken.Rpc
 
                 try
                 {
-                    var result = proxy.Call(rawRequest);
+                    var result = proxy.Call(JsonConvert.SerializeObject(request));
 
                     if (!String.IsNullOrEmpty(result))
                     {
                         _proxyList.Add(plugin, proxy);
-                        return result;
+                        return JsonConvert.DeserializeObject<JsonRpcResponse>(result);
                     }
                     
                     _proxyList.Add(plugin, null);
@@ -59,7 +60,8 @@ namespace Hadouken.Rpc
             else if(_proxyList[plugin] != null)
             {
                 var wcfProxy = _proxyList[plugin];
-                return wcfProxy.Call(rawRequest);
+                var result = wcfProxy.Call(JsonConvert.SerializeObject(request));
+                return JsonConvert.DeserializeObject<JsonRpcResponse>(result);
             }
 
             return null;
