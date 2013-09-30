@@ -136,37 +136,28 @@ namespace Hadouken.Framework.Rpc
                             });
                 }
 
-                var result = new
-                {
-                    id = request.Id,
-                    jsonrpc = "2.0",
-                    result = invoker.Invoke(p.ToArray())
-                };
-
-
-                return Serialize(result);
-            }
-            else
-            {
-                if (invoker.ParameterTypes.Length > 0
-                    && request.Parameters.GetType() != invoker.ParameterTypes[0])
-                {
-                    return Serialize(new JsonRpcResponse
+                return Serialize(new JsonRpcResponse
                     {
                         Id = request.Id,
-                        Error = new InvalidParamsError()
+                        Result = invoker.Invoke(p.ToArray())
                     });
-                }
-
-                var result = new
-                {
-                    id = request.Id,
-                    jsonrpc = "2.0",
-                    result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
-                };
-
-                return Serialize(result);
             }
+
+            if (invoker.ParameterTypes.Length > 0
+                && request.Parameters.GetType() != invoker.ParameterTypes[0])
+            {
+                return Serialize(new JsonRpcResponse
+                {
+                    Id = request.Id,
+                    Error = new InvalidParamsError()
+                });
+            }
+
+            return Serialize(new JsonRpcResponse
+                {
+                    Id = request.Id,
+                    Result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
+                });
         }
 
         private static string Serialize(object data)
