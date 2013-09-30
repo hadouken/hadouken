@@ -9,6 +9,11 @@ namespace Hadouken.Framework.Rpc
 {
     public sealed class JsonRpcResponse
     {
+        public JsonRpcResponse()
+        {
+            Protocol = "2.0";
+        }
+
         [JsonProperty("id", Required = Required.Always)]
         public object Id { get; set; }
 

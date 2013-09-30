@@ -66,7 +66,13 @@ namespace Hadouken.Framework.Rpc
 
         protected virtual string OnMethodMissing(string methodName, string rawRequest)
         {
-            return null;
+            return Serialize(new JsonRpcResponse
+                {
+                    Error = new MethodNotFoundError
+                        {
+                            Data = String.Format("Method {0} not found.", methodName)
+                        }
+                });
         }
 
         private string Execute(string jsonRpc)
@@ -79,7 +85,11 @@ namespace Hadouken.Framework.Rpc
             if (!JsonRpcRequest.TryParse(jsonRpc, out request, out requestParseException))
             {
                 Logger.ErrorException("Could not parse request", requestParseException);
-                throw new Exception(); // TODO: return JSONRPC Error Response object
+
+                return Serialize(new JsonRpcResponse
+                    {
+                        Error = new InvalidRequestError()
+                    });
             }
 
             IMethodInvoker invoker;
@@ -87,9 +97,7 @@ namespace Hadouken.Framework.Rpc
             if (!_services.TryGetValue(request.Method, out invoker))
             {
                 Logger.Info("Could not find method in cache.");
-
-                var data = OnMethodMissing(request.Method, jsonRpc);
-                return data;
+                return OnMethodMissing(request.Method, jsonRpc);
             }
 
             var param = request.Parameters as JContainer;
@@ -98,7 +106,11 @@ namespace Hadouken.Framework.Rpc
             {
                 if (param.Count != invoker.ParameterTypes.Length)
                 {
-                    throw new Exception();
+                    return Serialize(new JsonRpcResponse
+                        {
+                            Id = request.Id,
+                            Error = new InvalidParamsError()
+                        });
                 }
 
                 var p = new List<object>();
@@ -117,7 +129,11 @@ namespace Hadouken.Framework.Rpc
                         break;
 
                     default:
-                        throw new NotSupportedException();
+                        return Serialize(new JsonRpcResponse
+                            {
+                                Id = request.Id,
+                                Error = new InternalRpcError()
+                            });
                 }
 
                 var result = new
@@ -135,7 +151,11 @@ namespace Hadouken.Framework.Rpc
                 if (invoker.ParameterTypes.Length > 0
                     && request.Parameters.GetType() != invoker.ParameterTypes[0])
                 {
-                    throw new Exception();
+                    return Serialize(new JsonRpcResponse
+                    {
+                        Id = request.Id,
+                        Error = new InvalidParamsError()
+                    });
                 }
 
                 var result = new
