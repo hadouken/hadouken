@@ -71,6 +71,7 @@
     <Compile Include="Rpc\JsonRpcHandler.cs" />
     <Compile Include="Rpc\JsonRpcMethodAttribute.cs" />
     <Compile Include="Rpc\JsonRpcRequest.cs" />
+    <Compile Include="Rpc\JsonRpcResponse.cs" />
     <Compile Include="Rpc\MethodInvoker.cs" />
   </ItemGroup>
   <ItemGroup>
