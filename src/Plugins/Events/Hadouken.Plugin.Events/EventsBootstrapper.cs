@@ -26,7 +26,7 @@ namespace Hadouken.Plugins.Events
             builder.RegisterType<EventsPlugin>().As<Plugin>();
 
             builder.Register<IEventServer>(c => new EventServer(baseUri)).SingleInstance();
-
+            
             // Register WCF json rpc server
             builder.Register<IJsonRpcServer>(c =>
             {
@@ -35,6 +35,7 @@ namespace Hadouken.Plugins.Events
             });
 
             builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
+            builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
             builder.RegisterType<EventsService>().As<IJsonRpcService>().SingleInstance();
 
             Container = builder.Build();

@@ -48,7 +48,7 @@ namespace Hadouken.Framework.Tests.Rpc
         public void HandleAsync_WithSingleParameterCall_Succeeds()
         {
             var data = GenerateRequest(new {id = 1, method = "echo", @params = "foobar", jsonrpc = "2.0"});
-            var handler = new JsonRpcHandler(new[] {new EchoService()});
+            var handler = new JsonRpcHandler(new RequestHandler(new[] {new EchoService()}));
 
             var result = GetResponseData<string>(handler.HandleAsync(data).Result);
 
@@ -59,7 +59,7 @@ namespace Hadouken.Framework.Tests.Rpc
         public void HandleAsync_WithTwoParametersMethodCall_ReturnsExpectedResult()
         {
             var data = GenerateRequest(new {id = 1, method = "add", @params = new[] {2, 2}, jsonrpc = "2.0"});
-            var handler = new JsonRpcHandler(new[] {new CalculatorService()});
+            var handler = new JsonRpcHandler(new RequestHandler(new[] {new CalculatorService()}));
 
             var result = GetResponseData<int>(handler.HandleAsync(data).Result);
 
@@ -71,7 +71,7 @@ namespace Hadouken.Framework.Tests.Rpc
         {
             var data =
                 GenerateRequest(new {id = 1, method = "object.input", @params = new {Test = "foobar"}, jsonrpc = "2.0"});
-            var handler = new JsonRpcHandler(new[] {new ObjectService()});
+            var handler = new JsonRpcHandler(new RequestHandler(new[] {new ObjectService()}));
 
             var result = GetResponseData<bool>(handler.HandleAsync(data).Result);
 

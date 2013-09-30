@@ -47,7 +47,8 @@ namespace Hadouken.Service
 
             // Register RPC services
             builder.RegisterType<PluginsService>().As<IJsonRpcService>();
-            builder.RegisterType<WcfProxyJsonRpcHandler>().As<IJsonRpcHandler>();
+            builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>();
+            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
 
             // Register JSONRPC server
             builder.Register<IJsonRpcServer>(c =>

@@ -27,6 +27,7 @@ namespace Hadouken.Plugins.Torrents
 
                 cfg.Register<IJsonRpcService>().AsSingleton().UsingConcreteType<TorrentsServices>();
                 cfg.Register<IJsonRpcHandler>().AsSingleton().UsingConcreteType<JsonRpcHandler>();
+                cfg.Register<IRequestHandler>().AsSingleton().UsingConcreteType<RequestHandler>();
 
                 cfg.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>
                 {
