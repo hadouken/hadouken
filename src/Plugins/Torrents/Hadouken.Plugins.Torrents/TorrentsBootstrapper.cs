@@ -27,6 +27,7 @@ namespace Hadouken.Plugins.Torrents
 
                 cfg.Register<IJsonRpcService>().AsSingleton().UsingConcreteType<TorrentsServices>();
                 cfg.Register<IJsonRpcHandler>().AsSingleton().UsingConcreteType<JsonRpcHandler>();
+                cfg.Register<IRequestHandler>().AsSingleton().UsingConcreteType<RequestHandler>();
 
                 cfg.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>
                 {
@@ -34,7 +35,9 @@ namespace Hadouken.Plugins.Torrents
                     return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.torrents", handler);
                 });
 
-                cfg.Register<IBitTorrentEngine>().AsSingleton().UsingConcreteType<MonoTorrentEngine>();
+                cfg.Register<IBitTorrentEngine>()
+                   .AsSingleton()
+                   .UsingFactory(() => new MonoTorrentEngine(config.DataPath));
 
                 cfg.Register<Plugin>().AsSingleton().UsingConcreteType<TorrentsPlugin>();
             });

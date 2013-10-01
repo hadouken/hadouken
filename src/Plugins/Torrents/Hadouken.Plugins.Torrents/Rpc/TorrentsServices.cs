@@ -48,12 +48,24 @@ namespace Hadouken.Plugins.Torrents.Rpc
         {
             var torrents = _torrentEngine.TorrentManagers;
 
-            return (from t in torrents
-                select new
+            return torrents.Select(t => new
                 {
-                    t.Torrent.Name,
-                    t.Torrent.Size
-                }).ToList();
+                    id = t.InfoHash.ToString().Replace("-", "").ToLowerInvariant(),
+                    name = t.Torrent.Name,
+                    size = t.Torrent.Size
+                });
+
+        }
+
+        [JsonRpcMethod("torrents.addFile")]
+        public object AddFile(byte[] data, string savePath, string label)
+        {
+            var manager = _torrentEngine.Add(data, savePath, label);
+            return new
+                {
+                    manager.Torrent.Name,
+                    manager.Torrent.Size
+                };
         }
     }
 }

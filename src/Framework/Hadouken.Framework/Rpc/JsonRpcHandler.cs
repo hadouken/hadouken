@@ -15,9 +15,9 @@ namespace Hadouken.Framework.Rpc
 {
     public class JsonRpcHandler : IJsonRpcHandler
     {
+        private readonly IRequestHandler _requestHandler;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly JsonSerializer Serializer = new JsonSerializer();
-        private readonly IDictionary<string, IMethodInvoker> _services;
 
         static JsonRpcHandler()
         {
@@ -26,47 +26,14 @@ namespace Hadouken.Framework.Rpc
             Serializer.Converters.Add(new StringEnumConverter());
         }
 
-        public JsonRpcHandler(IEnumerable<IJsonRpcService> services)
+        public JsonRpcHandler(IRequestHandler requestHandler)
         {
-            _services = BuildServiceCache(services);
+            _requestHandler = requestHandler;
         }
 
         public Task<string> HandleAsync(string jsonRpc, object state = null)
         {
             return Task.Run(() => Execute(jsonRpc));
-        }
-
-        private IDictionary<string, IMethodInvoker> BuildServiceCache(IEnumerable<IJsonRpcService> services)
-        {
-            Logger.Info("Building service cache");
-
-            var result = new Dictionary<string, IMethodInvoker>();
-
-            foreach (var service in services)
-            {
-                var type = service.GetType();
-                var methods = type.GetMethods();
-
-                foreach (var method in methods)
-                {
-                    var attribute = method.GetCustomAttribute<JsonRpcMethodAttribute>();
-
-                    if (attribute == null)
-                        continue;
-
-                    var methodName = attribute.MethodName;
-
-                    Logger.Debug("Adding MethodInvoker for {0}", methodName);
-                    result.Add(methodName, new MethodInvoker(service, method));
-                }
-            }
-
-            return result;
-        }
-
-        protected virtual string OnMethodMissing(string methodName, string rawRequest)
-        {
-            return null;
         }
 
         private string Execute(string jsonRpc)
@@ -79,74 +46,15 @@ namespace Hadouken.Framework.Rpc
             if (!JsonRpcRequest.TryParse(jsonRpc, out request, out requestParseException))
             {
                 Logger.ErrorException("Could not parse request", requestParseException);
-                throw new Exception(); // TODO: return JSONRPC Error Response object
+
+                return Serialize(new JsonRpcResponse
+                    {
+                        Error = new InvalidRequestError()
+                    });
             }
 
-            IMethodInvoker invoker;
-
-            if (!_services.TryGetValue(request.Method, out invoker))
-            {
-                Logger.Info("Could not find method in cache.");
-
-                var data = OnMethodMissing(request.Method, jsonRpc);
-                return data;
-            }
-
-            var param = request.Parameters as JContainer;
-
-            if (param != null)
-            {
-                if (param.Count != invoker.ParameterTypes.Length)
-                {
-                    throw new Exception();
-                }
-
-                var p = new List<object>();
-
-                switch (param.Type)
-                {
-                    case JTokenType.Array:
-                        p.AddRange(param.Select(
-                            (t, i) =>
-                                t.ToObject(invoker.ParameterTypes[i], Serializer))
-                            .ToArray());
-                        break;
-
-                    case JTokenType.Object:
-                        p.Add(param.ToObject(invoker.ParameterTypes[0], Serializer));
-                        break;
-
-                    default:
-                        throw new NotSupportedException();
-                }
-
-                var result = new
-                {
-                    id = request.Id,
-                    jsonrpc = "2.0",
-                    result = invoker.Invoke(p.ToArray())
-                };
-
-
-                return Serialize(result);
-            }
-            else
-            {
-                if (invoker.ParameterTypes.Length > 0
-                    && request.Parameters.GetType() != invoker.ParameterTypes[0])
-                {
-                    throw new Exception();
-                }
-
-                var result = new
-                {
-                    id = request.Id,
-                    jsonrpc = "2.0",
-                    result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
-                };
-
-                return Serialize(result);
-            }
+            var result = _requestHandler.Execute(request);
+            return Serialize(result);
         }
 
         private static string Serialize(object data)

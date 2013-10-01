@@ -27,3 +27,4 @@ config/config.yml
 packages/
 src/**/**/**/obj
 src/**/**/**/bin
+docs/_build

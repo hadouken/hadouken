@@ -1,25 +1,19 @@
 ﻿var Page = new Class({
     url: '',
-    html: '',
     
     initialize: function(url) {
         this.url = url;
     },
     
     preload: function(callback) {
-        new Request({            
+        new Request.HTML({            
             url: this.url,
             method: 'get',
-            onSuccess: function(html) {
-                this.html = html;
+            update: $('page-container'),
+            onSuccess: function() {
                 callback();
             }.bind(this)
         }).send();
-    },
-    
-    render: function(target) {
-        $(target).empty();
-        $(target).set('html', this.html);
     },
     
     load: Function.from(),
@@ -39,7 +33,6 @@ var Pages = {
         this.currentPage = page;
 
         this.currentPage.preload(function() {
-            this.currentPage.render('page-container');
             this.currentPage.load();
         }.bind(this));
     }

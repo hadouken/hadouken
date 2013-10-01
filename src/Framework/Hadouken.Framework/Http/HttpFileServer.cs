@@ -69,11 +69,7 @@ namespace Hadouken.Framework.Http
                     writer.Write(reader.ReadToEnd());
                 }
 
-                context.Response.ContentType = "text/plain";
-
-                if (MimeTypes.ContainsKey(extension))
-                    context.Response.ContentType = MimeTypes[extension];
-
+                context.Response.ContentType = MimeTypes.ContainsKey(extension) ? MimeTypes[extension] : "text/plain";
                 context.Response.StatusCode = 200;
             }
             else
