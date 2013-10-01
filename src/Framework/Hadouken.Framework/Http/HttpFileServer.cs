@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Http
@@ -11,6 +12,9 @@ namespace Hadouken.Framework.Http
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly string _baseDirectory;
         private readonly string _uriPrefix;
+
+        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+        private readonly Task _workerTask;
 
         private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
         {
@@ -32,24 +36,38 @@ namespace Hadouken.Framework.Http
             _baseDirectory = baseDirectory;
             _uriPrefix = uriPrefix;
             _httpListener.Prefixes.Add(listenUri);
+
+            _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
         }
 
         public void Open()
         {
-            _httpListener.Start();
-            _httpListener.BeginGetContext(GetContext, null);
+            _workerTask.Start();
         }
 
         public void Close()
         {
-            _httpListener.Close();
+            _cancellationToken.Cancel();
+            _workerTask.Wait();
         }
 
-        private void GetContext(IAsyncResult ar)
+        private async void Run(CancellationToken cancellationToken)
         {
-            var context = _httpListener.EndGetContext(ar);
-            Task.Run(() => ProcessContext(context));
-            _httpListener.BeginGetContext(GetContext, null);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            _httpListener.Start();
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var context = await _httpListener.GetContextAsync();
+
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                ProcessContext(context);
+            }
+
+            _httpListener.Close();
         }
 
         private void ProcessContext(HttpListenerContext context)
