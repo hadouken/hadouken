@@ -4,11 +4,13 @@ using System.ServiceModel;
 
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
+using NLog;
 
 namespace Hadouken.Rpc
 {
     public class WcfProxyRequestHandler : RequestHandler
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IDictionary<string, IWcfJsonRpcServer> _proxyList = new Dictionary<string, IWcfJsonRpcServer>();
 
         public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services) : base(services) { }
@@ -74,10 +76,10 @@ namespace Hadouken.Rpc
 
                 if (JsonRpcResponse.TryParse(result, out response, out parseException)) return response;
 
-                // This proxy does not send valid responses.
-                _proxyList[plugin] = null;
-                //TODO: Log
+                // This proxy does not send valid responses. Remove it from our known proxies.
+                _proxyList.Remove(plugin);
 
+                Logger.Error("Received invalid response from proxy {0}", plugin);
                 return new JsonRpcResponse{Id = request.Id, Error = new InternalRpcError()};
             }
 
