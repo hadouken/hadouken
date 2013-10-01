@@ -56,6 +56,11 @@ namespace Hadouken.Plugins
                                                 in _configuration.Plugins
                                             select element.Path));
 
+            // Add entries from baseDirectory
+            entries.AddRange(
+                (from entry in _fileSystem.GetDirectoryEntries(_configuration.Plugins.BaseDirectory)
+                 select entry));
+
             foreach (var entry in entries)
             {
                 Logger.Info("Loading plugin from {0}", entry);
