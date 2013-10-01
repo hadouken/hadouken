@@ -21,8 +21,8 @@ namespace Hadouken.Framework.Http
             {".html", "text/html"},
             {".css", "text/css"},
             {".js", "text/javascript"},
-            {".woff", "application/octet-stream"},
-            {".ttf", "application/octet-stream"},
+            {".woff", "application/font-woff"},
+            {".ttf", "application/x-font-ttf"},
             {".svg", "application/octet-stream"}
         };
 
@@ -81,14 +81,14 @@ namespace Hadouken.Framework.Http
 
             if (File.Exists(path))
             {
+                context.Response.ContentType = MimeTypes.ContainsKey(extension) ? MimeTypes[extension] : "text/plain";
+                context.Response.StatusCode = 200;
+
                 using (var reader = new StreamReader(path))
                 using (var writer = new StreamWriter(context.Response.OutputStream))
                 {
                     writer.Write(reader.ReadToEnd());
                 }
-
-                context.Response.ContentType = MimeTypes.ContainsKey(extension) ? MimeTypes[extension] : "text/plain";
-                context.Response.StatusCode = 200;
             }
             else
             {
