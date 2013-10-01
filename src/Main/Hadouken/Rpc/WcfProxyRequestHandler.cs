@@ -62,7 +62,7 @@ namespace Hadouken.Rpc
                     return new JsonRpcResponse
                     {
                         Id = request.Id,
-                        Error = new InternalRpcError() {Data = exception.Message}
+                        Error = new InternalRpcError(exception)
                     };
                 }
             }

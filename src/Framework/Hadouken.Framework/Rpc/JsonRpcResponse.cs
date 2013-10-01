@@ -71,7 +71,7 @@ namespace Hadouken.Framework.Rpc
         public string Message { get; private set; }
 
         [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public string Data { get; set; }
+        public object Data { get; set; }
     }
 
     public sealed class RpcParseError : RpcError
@@ -100,7 +100,11 @@ namespace Hadouken.Framework.Rpc
 
     public sealed class InternalRpcError : RpcError
     {
-        public InternalRpcError()
-            : base(-32603, "Internal JSON-RPC error.") {}
+        public InternalRpcError(Exception exception = null)
+            : base(-32603, "Internal JSON-RPC error.")
+        {
+            if (exception != null)
+                Data = exception.ToString();
+        }
     }
 }
