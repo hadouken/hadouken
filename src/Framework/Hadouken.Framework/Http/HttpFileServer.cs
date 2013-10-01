@@ -93,6 +93,11 @@ namespace Hadouken.Framework.Http
             else
             {
                 context.Response.StatusCode = 404;
+
+                using (var writer = new StreamWriter(context.Response.OutputStream))
+                {
+                    writer.Write("404 - Not found");
+                }
             }
 
             context.Response.OutputStream.Close();
