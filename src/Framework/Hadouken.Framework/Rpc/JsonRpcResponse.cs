@@ -1,14 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Framework.Rpc
 {
     public sealed class JsonRpcResponse
     {
+        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
+
+        static JsonRpcResponse()
+        {
+            SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            SerializerSettings.Converters.Add(new StringEnumConverter());
+            SerializerSettings.Converters.Add(new VersionConverter());
+        }
+
         public JsonRpcResponse()
         {
             Protocol = "2.0";
@@ -25,6 +32,28 @@ namespace Hadouken.Framework.Rpc
 
         [JsonProperty("error", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public RpcError Error { get; set; }
+
+        public static bool TryParse(string json, out JsonRpcResponse response, out Exception exception)
+        {
+            response = null;
+            exception = null;
+
+            try
+            {
+                response = JsonConvert.DeserializeObject<JsonRpcResponse>(json);
+                return true;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return false;
+            }
+        }
+
+        public string Serialize()
+        {
+            return JsonConvert.SerializeObject(this, SerializerSettings);
+        }
     }
 
     public abstract class RpcError

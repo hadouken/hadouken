@@ -1,10 +1,22 @@
 ﻿using System;
+
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Framework.Rpc
 {
     public sealed class JsonRpcRequest
     {
+        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
+
+        static JsonRpcRequest()
+        {
+            SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            SerializerSettings.Converters.Add(new StringEnumConverter());
+            SerializerSettings.Converters.Add(new VersionConverter());
+        }
+
         [JsonProperty("id", Required = Required.Always)]
         public object Id { get; set; }
 
@@ -32,6 +44,11 @@ namespace Hadouken.Framework.Rpc
                 exception = e;
                 return false;
             }
+        }
+
+        public string Serialize()
+        {
+            return JsonConvert.SerializeObject(this, SerializerSettings);
         }
     }
 }

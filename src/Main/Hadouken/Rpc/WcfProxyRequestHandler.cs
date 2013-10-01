@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
+
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
-using Newtonsoft.Json;
 
 namespace Hadouken.Rpc
 {
@@ -45,26 +42,46 @@ namespace Hadouken.Rpc
 
                 try
                 {
-                    var result = proxy.Call(JsonConvert.SerializeObject(request));
+                    var result = proxy.Call(request.Serialize());
 
-                    if (!String.IsNullOrEmpty(result))
+                    Exception responseParseException;
+                    JsonRpcResponse response;
+
+                    if (JsonRpcResponse.TryParse(result, out response, out responseParseException))
                     {
                         _proxyList.Add(plugin, proxy);
-                        return JsonConvert.DeserializeObject<JsonRpcResponse>(result);
+                        return response;
                     }
-                    
+
                     _proxyList.Add(plugin, null);
                 }
-                catch(Exception) {}
+                catch (Exception exception)
+                {
+                    return new JsonRpcResponse
+                    {
+                        Id = request.Id,
+                        Error = new InternalRpcError() {Data = exception.Message}
+                    };
+                }
             }
             else if(_proxyList[plugin] != null)
             {
                 var wcfProxy = _proxyList[plugin];
-                var result = wcfProxy.Call(JsonConvert.SerializeObject(request));
-                return JsonConvert.DeserializeObject<JsonRpcResponse>(result);
+                var result = wcfProxy.Call(request.Serialize());
+
+                Exception parseException;
+                JsonRpcResponse response;
+
+                if (JsonRpcResponse.TryParse(result, out response, out parseException)) return response;
+
+                // This proxy does not send valid responses.
+                _proxyList[plugin] = null;
+                //TODO: Log
+
+                return new JsonRpcResponse{Id = request.Id, Error = new InternalRpcError()};
             }
 
-            return null;
+            return new JsonRpcResponse {Id = request.Id, Error = new MethodNotFoundError()};
         }
     }
 }

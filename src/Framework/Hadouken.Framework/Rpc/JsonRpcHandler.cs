@@ -15,16 +15,8 @@ namespace Hadouken.Framework.Rpc
 {
     public class JsonRpcHandler : IJsonRpcHandler
     {
-        private readonly IRequestHandler _requestHandler;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly JsonSerializer Serializer = new JsonSerializer();
-
-        static JsonRpcHandler()
-        {
-            Serializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            Serializer.Converters.Add(new VersionConverter());
-            Serializer.Converters.Add(new StringEnumConverter());
-        }
+        private readonly IRequestHandler _requestHandler;
 
         public JsonRpcHandler(IRequestHandler requestHandler)
         {
@@ -47,26 +39,14 @@ namespace Hadouken.Framework.Rpc
             {
                 Logger.ErrorException("Could not parse request", requestParseException);
 
-                return Serialize(new JsonRpcResponse
+                return new JsonRpcResponse
                     {
                         Error = new InvalidRequestError()
-                    });
+                    }.Serialize();
             }
 
             var result = _requestHandler.Execute(request);
-            return Serialize(result);
-        }
-
-        private static string Serialize(object data)
-        {
-            using (var ms = new MemoryStream())
-            using (var writer = new StreamWriter(ms))
-            {
-                Serializer.Serialize(writer, data);
-                writer.Flush();
-
-                return Encoding.UTF8.GetString(ms.ToArray());
-            }
+            return result.Serialize();
         }
     }
 }
