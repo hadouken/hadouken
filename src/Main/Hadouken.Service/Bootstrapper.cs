@@ -15,10 +15,10 @@ namespace Hadouken.Service
 
         public static bool RunAsConsoleIfRequested(ServiceBase service)
         {
-            if (!Environment.CommandLine.Contains("-console"))
+            if (!Environment.CommandLine.Contains("--console"))
                 return false;
 
-            var args = Environment.GetCommandLineArgs().Where(name => name != "-console").ToArray();
+            var args = Environment.GetCommandLineArgs().Where(name => name != "--console").ToArray();
 
             AllocConsole();
 
