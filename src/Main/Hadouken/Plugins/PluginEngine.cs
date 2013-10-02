@@ -80,19 +80,15 @@ namespace Hadouken.Plugins
                     continue;
                 }
 
-                IPluginManager manager;
-
                 try
                 {
-                    manager = loader.Load(entry);
+                    var manager = loader.Load(entry);
+                    LoadPluginManager(manager);
                 }
                 catch (Exception e)
                 {
                     Logger.ErrorException(String.Format("Could not load plugin from path {0}", entry), e);
-                    return;
                 }
-
-                LoadPluginManager(manager);
             }
         }
 
@@ -126,8 +122,7 @@ namespace Hadouken.Plugins
             {
                 DataPath = Path.Combine(_configuration.ApplicationDataPath, "Plugins", manager.Name),
                 HostBinding = _configuration.Http.HostBinding,
-                Port = _configuration.Http.Port,
-                ApiBaseUri = "api/" + manager.Name
+                Port = _configuration.Http.Port
             };
 
             manager.SetBootConfig(config);

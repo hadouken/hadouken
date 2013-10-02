@@ -63,7 +63,12 @@
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
-    <Compile Include="Plugins\Manifest.cs" />
+    <Compile Include="Plugins\Metadata\Dependency.cs" />
+    <Compile Include="Plugins\Metadata\IManifestReader.cs" />
+    <Compile Include="Plugins\Metadata\Manifest.cs" />
+    <Compile Include="Plugins\Metadata\ManifestParser.cs" />
+    <Compile Include="Plugins\Metadata\SemanticVersion.cs" />
+    <Compile Include="Plugins\Metadata\SemanticVersionRange.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\DirectoryPluginLoader.cs" />
     <Compile Include="Plugins\PluginManager.cs" />

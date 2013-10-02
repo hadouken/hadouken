@@ -49,12 +49,7 @@ namespace Hadouken.Plugins
             {
                 try
                 {
-                    var manifest = JsonConvert.DeserializeObject<Manifest>(
-                        reader.ReadToEnd(),
-                        SerializerSettings);
-
-                    Name = manifest.Name;
-                    Version = manifest.Version;
+                    // TODO: Get a manifest from here
                 }
                 catch (Exception e)
                 {
