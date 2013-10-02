@@ -123,6 +123,16 @@ namespace Hadouken.Plugins.Metadata
             return !(x == y);
         }
 
+        public static bool operator <=(SemanticVersion x, SemanticVersion y)
+        {
+            return (x == y || x < y);
+        }
+
+        public static bool operator >=(SemanticVersion x, SemanticVersion y)
+        {
+            return (x == y || x > y);
+        }
+
         public static implicit operator SemanticVersion(string semver)
         {
             return new SemanticVersion(semver);
