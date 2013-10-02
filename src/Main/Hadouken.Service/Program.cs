@@ -19,9 +19,9 @@ namespace Hadouken.Service
         [STAThread]
         public static void Main()
         {
-            BuildContainer();
+            IContainer container = BuildContainer();
 
-            var serviceHost = Container.Resolve<HostingService>();
+            var serviceHost = container.Resolve<HostingService>();
 
             if (Bootstrapper.RunAsConsoleIfRequested(serviceHost))
                 return;
@@ -29,7 +29,7 @@ namespace Hadouken.Service
             ServiceBase.Run(new ServiceBase[] {serviceHost});
         }
 
-        private static void BuildContainer()
+        private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
 
@@ -63,9 +63,7 @@ namespace Hadouken.Service
             // Register configuration
             builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
 
-            Container = builder.Build();
+            return builder.Build();
         }
-
-        private static IContainer Container { get; set; }
     }
 }
