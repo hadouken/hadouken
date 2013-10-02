@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Plugins.Metadata
 {
-    class SemanticVersion
+    public class SemanticVersion
     {
     }
 }
