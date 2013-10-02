@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace Hadouken.Plugins.Metadata
 {
-    public interface IManifestReader
+    public interface IManifest
     {
-        Manifest Read(JObject manifestObject);
+        string Name { get; }
+
+        SemanticVersion Version { get; }
+
+        Dependency[] Dependencies { get; }
     }
 }
