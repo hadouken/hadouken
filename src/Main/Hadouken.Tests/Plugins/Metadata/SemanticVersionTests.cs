@@ -92,5 +92,16 @@ namespace Hadouken.Tests.Plugins.Metadata
             var semver = new SemanticVersion("1.9.0-sweet.label");
             Assert.AreEqual("sweet.label", semver.Label);
         }
+
+        [Test]
+        public void DifferentInstancesWithSameVersionAreEqual()
+        {
+            var semver1 = new SemanticVersion("1.0.0-foo");
+            var semver2 = new SemanticVersion("1.0.0-foo");
+
+            Assert.AreEqual(semver1, semver2);
+            Assert.IsTrue(semver1 == semver2);
+            Assert.IsTrue(semver1.Equals(semver2));
+        }
     }
 }

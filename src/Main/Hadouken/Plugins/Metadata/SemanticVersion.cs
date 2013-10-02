@@ -106,6 +106,28 @@ namespace Hadouken.Plugins.Metadata
             return String.Compare(x.Label, y.Label, StringComparison.Ordinal) > 0;
         }
 
+        public static bool operator ==(SemanticVersion x, SemanticVersion y)
+        {
+            if (Object.ReferenceEquals(x, y))
+                return true;
+
+            if ((object)x == null)
+                return false;
+
+            if ((object)y == null)
+                return false;
+
+            return (x.Major == y.Major
+                    && x.Minor == y.Minor
+                    && x.Patch == y.Patch
+                    && x.Label == y.Label);
+        }
+
+        public static bool operator !=(SemanticVersion x, SemanticVersion y)
+        {
+            return !(x == y);
+        }
+
         public static implicit operator SemanticVersion(string semver)
         {
             return new SemanticVersion(semver);
@@ -117,6 +139,28 @@ namespace Hadouken.Plugins.Metadata
                 throw new ArgumentNullException("semver");
 
             return semver.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            var other = obj as SemanticVersion;
+            return Equals(other);
+        }
+
+        public bool Equals(SemanticVersion other)
+        {
+            if ((object) other == null)
+                return false;
+
+            return this == other;
         }
 
         public override string ToString()
