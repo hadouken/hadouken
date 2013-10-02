@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Plugins\Metadata\SemanticVersionTests.cs" />
     <Compile Include="Plugins\PluginEngineTests.cs" />
     <Compile Include="Plugins\PluginManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
