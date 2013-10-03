@@ -1,6 +1,7 @@
 ﻿using Hadouken.Configuration;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
 using NLog;
 using Owin;
@@ -45,6 +46,9 @@ namespace Hadouken.Events
     {
         public void Configuration(IAppBuilder appBuilder)
         {
+            // TODO: lockdown origin
+
+            appBuilder.UseCors(CorsOptions.AllowAll);
             appBuilder.MapSignalR();
         }
     }
