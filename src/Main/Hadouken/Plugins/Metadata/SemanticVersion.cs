@@ -63,42 +63,76 @@ namespace Hadouken.Plugins.Metadata
 
         public static bool operator <(SemanticVersion x, SemanticVersion y)
         {
-            if (x == null)
+            if ((object)x == null)
                 throw new ArgumentNullException("x");
 
-            if (y == null)
+            if ((object)y == null)
                 throw new ArgumentNullException("y");
 
             if (x.Major < y.Major)
                 return true;
 
-            if (x.Minor < y.Minor)
+            if (x.Major == y.Major
+                && x.Minor < y.Minor)
                 return true;
 
-            if (x.Patch < y.Patch)
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch < y.Patch)
                 return true;
 
-            return String.Compare(x.Label, y.Label, StringComparison.Ordinal) < 0;
+            // if left side (x) has a label and right side (y) does not, left side is smaller
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch == y.Patch
+                && !String.IsNullOrEmpty(x.Label)
+                && String.IsNullOrEmpty(y.Label))
+                return true;
+
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch == y.Patch
+                && String.Compare(x.Label, y.Label, StringComparison.Ordinal) < 0)
+                return true;
+
+            return false;
         }
 
         public static bool operator >(SemanticVersion x, SemanticVersion y)
         {
-            if (x == null)
+            if ((object)x == null)
                 throw new ArgumentNullException("x");
 
-            if (y == null)
+            if ((object)y == null)
                 throw new ArgumentNullException("y");
 
             if (x.Major > y.Major)
                 return true;
 
-            if (x.Minor > y.Minor)
+            if (x.Major == y.Major
+                && x.Minor > y.Minor)
                 return true;
 
-            if (x.Patch > y.Patch)
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch > y.Patch)
                 return true;
 
-            return String.Compare(x.Label, y.Label, StringComparison.Ordinal) > 0;
+            // if left side (x) has a no label and right side (y) does, left side is larger
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch == y.Patch
+                && String.IsNullOrEmpty(x.Label)
+                && !String.IsNullOrEmpty(y.Label))
+                return true;
+
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch == y.Patch
+                && String.Compare(x.Label, y.Label, StringComparison.Ordinal) > 0)
+                return true;
+
+            return false;
         }
 
         public static bool operator ==(SemanticVersion x, SemanticVersion y)

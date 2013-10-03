@@ -73,8 +73,17 @@ namespace Hadouken.Tests.Plugins.Metadata
         [Test]
         public void LessThanComparisonWithMajorMinorPatchLabelSucceeds()
         {
-            var lower = new SemanticVersion("1.1.123-label.1");
-            var upper = new SemanticVersion("1.1.123-label.2");
+            var lower = new SemanticVersion("0.1.123-label.1");
+            var upper = new SemanticVersion("1.1.2-label.2");
+
+            Assert.IsTrue(lower < upper);
+        }
+
+        [Test]
+        public void LessThanComparisonWithOneSideLabelSucceeds()
+        {
+            var lower = new SemanticVersion("1.1.1-abc");
+            var upper = new SemanticVersion("1.1.1");
 
             Assert.IsTrue(lower < upper);
         }
