@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Hadouken.Configuration;
-using Hadouken.Framework;
 using Hadouken.IO;
+using Hadouken.Plugins.Metadata;
 using NLog;
-using System.IO;
 
 namespace Hadouken.Plugins
 {
@@ -50,10 +49,10 @@ namespace Hadouken.Plugins
             }
         }
 
-        public void Load()
+        public void Scan()
         {
             var entries = new List<string>((from PluginElement element
-                                                in _configuration.Plugins
+                    in _configuration.Plugins
                                             select element.Path));
 
             // Add entries from baseDirectory
@@ -66,34 +65,180 @@ namespace Hadouken.Plugins
             if (!String.IsNullOrEmpty(extraPlugin))
                 entries.Add(extraPlugin);
 
-            foreach (var entry in entries)
+            var managers = (from entry in entries
+                            from loader in _pluginLoaders
+                            where loader.CanLoad(entry)
+                            select loader.Load(entry)).ToList();
+
+            lock (_lock)
             {
-                Logger.Info("Loading plugin from {0}", entry);
-
-                var loader = (from p in _pluginLoaders
-                    where p.CanLoad(entry)
-                    select p).FirstOrDefault();
-
-                if (loader == null)
+                foreach (var manager in managers)
                 {
-                    Logger.Warn("Could not find a plugin loader for path {0}", entry);
-                    continue;
-                }
+                    if (_pluginManagers.ContainsKey(manager.Manifest.Name))
+                        continue;
 
-                IPluginManager manager;
-
-                try
-                {
-                    manager = loader.Load(entry);
+                    _pluginManagers.Add(manager.Manifest.Name, manager);
                 }
-                catch (Exception e)
-                {
-                    Logger.ErrorException(String.Format("Could not load plugin from path {0}", entry), e);
-                    return;
-                }
-
-                LoadPluginManager(manager);
             }
+        }
+
+        public Task ScanAsync()
+        {
+            return Task.Factory.StartNew(Scan);
+        }
+
+        public void Load(string name)
+        {
+            // Load the plugin manager specified by the name.
+            // This will also load all of its dependencies.
+            IPluginManager managerToLoad = null;
+            
+            lock (_lock)
+            {
+                if (_pluginManagers.ContainsKey(name))
+                {
+                    managerToLoad = _pluginManagers[name];
+                }
+            }
+
+            if (managerToLoad == null || managerToLoad.State != PluginState.Unloaded)
+                return;
+
+            // Traverse all dependencies up to root objects and make sure all of them exist and are loaded.
+            if (managerToLoad.Manifest.Dependencies.Any())
+                LoadDependencies(managerToLoad);
+
+            managerToLoad.Load();
+        }
+
+        private void LoadDependencies(IPluginManager manager)
+        {
+            // For each dependency, find a suitable plugin manager
+            // and load those dependencies
+            foreach (var dependency in manager.Manifest.Dependencies)
+            {
+                IPluginManager managerDependency = null;
+
+                lock (_lock)
+                {
+                    if (_pluginManagers.ContainsKey(dependency.Name))
+                        managerDependency = _pluginManagers[dependency.Name];
+                }
+
+                // If we could not find this dependency at all, throw an error.
+                if (managerDependency == null)
+                {
+                    throw new Exception(String.Format("Plugin {0} depends on {1} which cannot be found.",
+                        manager.Manifest.Name, dependency.Name));
+                }
+
+                // If the dependency we found is the wrong version, throw an error.
+                if (!dependency.VersionRange.IsIncluded(managerDependency.Manifest.Version))
+                {
+                    throw new Exception(
+                        String.Format(
+                            "Plugin {0} depends on {1} which exists, but is of the wrong version {2}",
+                            manager.Manifest.Name, dependency.Name, managerDependency.Manifest.Version));
+                }
+
+                // If we got this far, load all dependencies for this plugin as well
+                if (managerDependency.Manifest.Dependencies.Any())
+                    LoadDependencies(managerDependency);
+
+                // Load the dependency
+                if (managerDependency.State == PluginState.Unloaded)
+                    managerDependency.Load();
+            }
+        }
+
+        public Task LoadAsync(string name)
+        {
+            return Task.Factory.StartNew(() => Load(name));
+        }
+
+        public void LoadAll()
+        {
+            string[] names = {};
+
+            lock (_lock)
+            {
+                names = _pluginManagers.Keys.ToArray();
+            }
+
+            foreach(var name in names)
+            {
+                Load(name);
+            }
+        }
+
+        public Task LoadAllAsync()
+        {
+            return Task.Factory.StartNew(LoadAll);
+        }
+
+        public void Unload(string name)
+        {
+            IPluginManager manager = null;
+
+            lock (_lock)
+            {
+                if (_pluginManagers.ContainsKey(name))
+                    manager = _pluginManagers[name];
+            }
+
+            if (manager == null)
+                return;
+
+            manager.Unload();
+        }
+
+        public Task UnloadAsync(string name)
+        {
+            return Task.Factory.StartNew(() => Unload(name));
+        }
+
+        public void UnloadAll()
+        {
+            string[] names = {};
+
+            lock (_lock)
+            {
+                names = _pluginManagers.Keys.ToArray();
+            }
+
+            foreach (var name in names)
+            {
+                Unload(name);
+            }
+        }
+
+        public Task UnloadAllAsync()
+        {
+            return Task.Factory.StartNew(UnloadAll);
+        }
+
+        public void Remove(string name)
+        {
+            IPluginManager manager = null;
+
+            lock (_lock)
+            {
+                if (_pluginManagers.ContainsKey(name))
+                    manager = _pluginManagers[name];
+            }
+
+            if (manager == null || manager.State != PluginState.Unloaded)
+                return;
+
+            lock (_lock)
+            {
+                _pluginManagers.Remove(name);
+            }
+        }
+
+        public Task RemoveAsync(string name)
+        {
+            return Task.Factory.StartNew(() => Remove(name));
         }
 
         private static string GetOptionalPluginArgument(string[] args)
@@ -120,45 +265,13 @@ namespace Hadouken.Plugins
             return args[position + 1];
         }
 
-        private void LoadPluginManager(IPluginManager manager)
-        {
-            var config = new BootConfig
-            {
-                DataPath = Path.Combine(_configuration.ApplicationDataPath, "Plugins", manager.Name),
-                HostBinding = _configuration.Http.HostBinding,
-                Port = _configuration.Http.Port,
-                ApiBaseUri = "api/" + manager.Name
-            };
-
-            manager.SetBootConfig(config);
-
-            try
-            {
-                manager.Load();
-            }
-            catch (Exception e)
-            {
-                Logger.ErrorException(String.Format("Could not load plugin {0}", manager.Name), e);
-                
-                manager.Unload();
-                return;
-            }
-
-            lock (_lock)
-            {
-                _pluginManagers.Add(manager.Name, manager);
-            }
-
-            Logger.Info("Plugin {0}[v{1}] loaded", manager.Name, manager.Version);
-        }
-
         public void Unload()
         {
             lock (_lock)
             {
                 foreach (var manager in _pluginManagers.Values)
                 {
-                    Logger.Info("Unloading plugin {0}", manager.Name);
+                    Logger.Info("Unloading plugin {0}", manager.Manifest.Name);
 
                     try
                     {
@@ -166,7 +279,7 @@ namespace Hadouken.Plugins
                     }
                     catch (Exception e)
                     {
-                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Name), e);
+                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Manifest.Name), e);
                     }
                 }
 

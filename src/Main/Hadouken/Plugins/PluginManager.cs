@@ -1,6 +1,8 @@
 ﻿using System;
-
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Hadouken.Framework;
+using Hadouken.Plugins.Metadata;
 using Hadouken.Sandbox;
 using Hadouken.IO;
 using System.IO;
@@ -17,8 +19,9 @@ namespace Hadouken.Plugins
         private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
 
         private readonly string _path;
+        private readonly IManifest _manifest;
         private readonly IFileSystem _fileSystem;
-        private IBootConfig _bootConfig;
+        private readonly IBootConfig _bootConfig;
         private SandboxedEnvironment _sandboxedEnvironment;
 
         static PluginManager()
@@ -26,60 +29,28 @@ namespace Hadouken.Plugins
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public PluginManager(string path, IFileSystem fileSystem)
+        public PluginManager(string path, IManifest manifest, IFileSystem fileSystem, IBootConfig bootConfig)
         {
-            State = PluginState.Unknown;
+            State = PluginState.Unloaded;
 
             _path = path;
+            _manifest = manifest;
             _fileSystem = fileSystem;
-            LoadManifest();
-        }
-
-        private void LoadManifest()
-        {
-            var manifestPath = Path.Combine(_path, "manifest.json");
-
-            if (!_fileSystem.FileExists(manifestPath))
-                throw new ManifestNotFoundException();
-
-            Logger.Info("Loading manifest from {0}", manifestPath);
-
-            using(var stream = _fileSystem.OpenRead(manifestPath))
-            using(var reader = new StreamReader(stream))
-            {
-                try
-                {
-                    var manifest = JsonConvert.DeserializeObject<Manifest>(
-                        reader.ReadToEnd(),
-                        SerializerSettings);
-
-                    Name = manifest.Name;
-                    Version = manifest.Version;
-                }
-                catch (Exception e)
-                {
-                    Logger.ErrorException(String.Format("Could not parse manifest file {0}", manifestPath), e);
-                    throw new ManifestParseException(e);
-                }
-            }
-        }
-
-        public string Name { get; private set; }
-
-        public Version Version { get; private set; }
-
-        public string[] DependsOn { get; private set; }
-
-        public PluginState State { get; private set; }
-
-        public void SetBootConfig(IBootConfig bootConfig)
-        {
             _bootConfig = bootConfig;
         }
 
+        public IManifest Manifest
+        {
+            get { return _manifest; }
+        }
+
+        public PluginState State { get; private set; }
+
+        public string Path { get { return _path; } }
+
         public void Load()
         {
-            Logger.Info("Loading plugin {0}", Name);
+            Logger.Info("Loading plugin {0}", _manifest.Name);
 
             State = PluginState.Loading;
 
@@ -95,7 +66,7 @@ namespace Hadouken.Plugins
 
             Logger.Debug("Creating sandboxed environment");
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
-            Logger.Debug("Loading {0} in sandboxed environment", Name);
+            Logger.Debug("Loading {0} in sandboxed environment", _manifest.Name);
             _sandboxedEnvironment.Load(_bootConfig);
 
             State = PluginState.Loaded;
@@ -111,7 +82,7 @@ namespace Hadouken.Plugins
 
             if (domain == null) return;
 
-            Logger.Debug("Unloading AppDomain for plugin {0}", Name);
+            Logger.Debug("Unloading AppDomain for plugin {0}", _manifest.Name);
             AppDomain.Unload(domain);
 
             State = PluginState.Unloaded;

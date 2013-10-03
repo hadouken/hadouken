@@ -2,6 +2,8 @@
 using System.Linq;
 
 using Hadouken.Framework.Rpc;
+using Hadouken.Framework.SemVer;
+using Hadouken.Plugins.Metadata;
 using NLog;
 
 namespace Hadouken.Plugins.Rpc
@@ -21,17 +23,9 @@ namespace Hadouken.Plugins.Rpc
         {
             Logger.Trace("Trying to load plugin {0}", name);
 
-            var plugin = _pluginEngine.Get(name);
-
-            if (plugin == null)
-                return false;
-
-            if (plugin.State != PluginState.Unloaded)
-                return false;
-
             try
             {
-                plugin.Load();
+                _pluginEngine.LoadAsync(name);
                 return true;
             }
             catch (Exception e)
@@ -46,17 +40,9 @@ namespace Hadouken.Plugins.Rpc
         {
             Logger.Trace("Trying to unload plugin {0}", name);
 
-            var plugin = _pluginEngine.Get(name);
-
-            if (plugin == null)
-                return false;
-
-            if (plugin.State != PluginState.Loaded)
-                return false;
-
             try
             {
-                plugin.Unload();
+                _pluginEngine.UnloadAsync(name);
                 return true;
             }
             catch (Exception e)
@@ -74,8 +60,8 @@ namespace Hadouken.Plugins.Rpc
             return (from plugin in plugins
                 select new PluginDto()
                 {
-                    Name = plugin.Name,
-                    Version = plugin.Version,
+                    Name = plugin.Manifest.Name,
+                    Version = plugin.Manifest.Version,
                     State = plugin.State
                 }).ToArray();
         }
@@ -85,7 +71,7 @@ namespace Hadouken.Plugins.Rpc
     {
         public string Name { get; set; }
 
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
         public PluginState  State { get; set; }
     }
