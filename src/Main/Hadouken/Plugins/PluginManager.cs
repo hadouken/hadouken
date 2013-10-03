@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Hadouken.Framework.Rpc;
 
 namespace Hadouken.Plugins
 {
@@ -48,7 +49,7 @@ namespace Hadouken.Plugins
 
         public string Path { get { return _path; } }
 
-        public void Load()
+        public async void Load()
         {
             Logger.Info("Loading plugin {0}", _manifest.Name);
 
@@ -70,6 +71,11 @@ namespace Hadouken.Plugins
             _sandboxedEnvironment.Load(_bootConfig);
 
             State = PluginState.Loaded;
+
+            var rpcClient =
+                new JsonRpcClient(
+                    new Uri(String.Format("http://{0}:{1}/jsonrpc", _bootConfig.HostBinding, _bootConfig.Port)));
+            await rpcClient.CallAsync<bool>("plugin.loaded", new {name = _manifest.Name, version = _manifest.Version});
         }
 
         public void Unload()

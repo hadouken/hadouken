@@ -54,8 +54,8 @@
   <ItemGroup>
     <Compile Include="BootConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Events\EventService.cs" />
-    <Compile Include="Events\IEventService.cs" />
+    <Compile Include="Events\EventListener.cs" />
+    <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
     <Compile Include="IBootConfig.cs" />
@@ -69,6 +69,7 @@
     <Compile Include="Rpc\IJsonRpcService.cs" />
     <Compile Include="Rpc\IMethodInvoker.cs" />
     <Compile Include="Rpc\IRequestHandler.cs" />
+    <Compile Include="Rpc\JsonRpcClient.cs" />
     <Compile Include="Rpc\JsonRpcHandler.cs" />
     <Compile Include="Rpc\JsonRpcMethodAttribute.cs" />
     <Compile Include="Rpc\JsonRpcRequest.cs" />

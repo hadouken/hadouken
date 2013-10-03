@@ -4,5 +4,20 @@ window.addEvent('domready', function () {
     
     Hadouken.init();
 
+    var host = location.hostname;
+    var port = parseInt(location.port) + 1;
+
+    var signalrConnection = jQuery.hubConnection('http://' + host + ':' + port);
+    var eventsProxy = signalrConnection.createHubProxy('events');
+
+    eventsProxy.on('publishEvent', function(event) {
+        if (event.name == "plugin.loaded" || event.name == "plugin.unloaded")
+            location.reload();
+
+        console.log(event.name);
+    });
+
+    signalrConnection.start().done(function() { console.log('connected') });
+
     $("overlay").hide();
 });
