@@ -1,6 +1,6 @@
 ﻿{
   "manifest_version": 1,
 
-  "name": "core.webui",
+  "id": "core.webui",
   "version": "0.1"
 }

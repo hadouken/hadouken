@@ -1,6 +1,6 @@
 ﻿{
   "manifest_version": 1,
 
-  "name": "core.config",
+  "id": "core.config",
   "version": "0.2"
 }
