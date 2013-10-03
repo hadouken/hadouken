@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hadouken.Configuration;
 using Hadouken.Framework;
 using Hadouken.IO;
+using Hadouken.Plugins.Metadata;
 using NLog;
 using System.IO;
 
@@ -69,13 +70,80 @@ namespace Hadouken.Plugins
             var managers = (from entry in entries
                 from loader in _pluginLoaders
                 where loader.CanLoad(entry)
-                select loader.Load(entry));
+                select loader.Load(entry)).ToList();
 
+            var availableManagers = new List<IPluginManager>();
+
+            // For each plugin, check that we can fulfill its dependencies.
             foreach (var manager in managers)
+            {
+                // Make sure we have all dependencies for this manager
+                if ((manager.Manifest.Dependencies == null
+                    || !manager.Manifest.Dependencies.Any())
+
+                    || (manager.Manifest.Dependencies != null
+                    && manager.Manifest.Dependencies.Any()
+                    && manager.Manifest.Dependencies.All(d => CheckDependency(d, managers))))
+                {
+                    availableManagers.Add(manager);
+                }
+                else
+                {
+                    Logger.Error("Not all dependencies are present for plugin {0}", manager.Manifest.Name);
+                }
+            }
+
+            // Order the list availableManagers by its dependenciess
+            var orderedManagers = OrderByDependencies(availableManagers);
+
+            foreach (var manager in orderedManagers)
             {
                 LoadPluginManager(manager);
             }
         }
+
+        private static bool CheckDependency(Dependency dependency, IEnumerable<IPluginManager> availableManagers)
+        {
+            return (from manager in availableManagers
+                let manifest = manager.Manifest
+                where dependency.Name == manifest.Name
+                where dependency.VersionRange.IsIncluded(manifest.Version)
+                select manager).Any();
+        }
+
+        private static IEnumerable<IPluginManager> OrderByDependencies(ICollection<IPluginManager> managers)
+        {
+            var nameToInstance = managers.ToDictionary(m => m.Manifest.Name, m => m);
+            var nameToDeps = managers.ToDictionary(m => m.Manifest.Name,
+                m => m.Manifest.Dependencies.Select(d => d.Name).ToArray());
+
+            var result = new List<IPluginManager>();
+
+            while (nameToDeps.Count > 0)
+            {
+                // Get all nodes with no dependencies
+                var ready = nameToDeps.Where(n => n.Value.Length == 0).Select(n => n.Key).ToList();
+
+                if (!ready.Any())
+                    throw new Exception("Circular graph. Plz fix.");
+
+                foreach (var name in ready)
+                {
+                    nameToDeps.Remove(name);
+                }
+
+                foreach (var key in nameToDeps.Keys.ToArray())
+                {
+                    var deps = nameToDeps[key];
+                    deps = deps.Except(ready).ToArray();
+                    nameToDeps[key] = deps;
+                }
+
+                result.AddRange(ready.Select(n => nameToInstance[n]));
+            }
+
+            return result;
+        } 
 
         private static string GetOptionalPluginArgument(string[] args)
         {

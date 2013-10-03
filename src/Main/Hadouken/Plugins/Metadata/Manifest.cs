@@ -17,6 +17,11 @@ namespace Hadouken.Plugins.Metadata
             ManifestReaders.Add(1, () => new ManifestV1Reader());
         }
 
+        public Manifest()
+        {
+            Dependencies = new Dependency[] {};
+        }
+
         public string Name { get; set; }
 
         public SemanticVersion Version { get; set; }
