@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+
 using Hadouken.Configuration;
 using Hadouken.IO;
-using Hadouken.Plugins.Metadata;
 using NLog;
 
 namespace Hadouken.Plugins
@@ -158,7 +157,7 @@ namespace Hadouken.Plugins
 
         public void LoadAll()
         {
-            string[] names = {};
+            string[] names;
 
             lock (_lock)
             {
@@ -199,7 +198,7 @@ namespace Hadouken.Plugins
 
         public void UnloadAll()
         {
-            string[] names = {};
+            string[] names;
 
             lock (_lock)
             {
