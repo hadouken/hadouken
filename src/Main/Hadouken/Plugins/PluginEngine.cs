@@ -90,24 +90,33 @@ namespace Hadouken.Plugins
         {
             // Load the plugin manager specified by the name.
             // This will also load all of its dependencies.
-            IPluginManager managerToLoad = null;
+            IPluginManager manager = null;
             
             lock (_lock)
             {
                 if (_pluginManagers.ContainsKey(name))
                 {
-                    managerToLoad = _pluginManagers[name];
+                    manager = _pluginManagers[name];
                 }
             }
 
-            if (managerToLoad == null || managerToLoad.State != PluginState.Unloaded)
+            if (manager == null || manager.State != PluginState.Unloaded)
                 return;
 
-            // Traverse all dependencies up to root objects and make sure all of them exist and are loaded.
-            if (managerToLoad.Manifest.Dependencies.Any())
-                LoadDependencies(managerToLoad);
+            try
+            {
+                // Traverse all dependencies up to root objects and make sure all of them exist and are loaded.
+                if (manager.Manifest.Dependencies.Any())
+                    LoadDependencies(manager);
 
-            managerToLoad.Load();
+                manager.Load();
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(
+                    String.Format("Error when loading plugin {0}[{1}].", manager.Manifest.Name, manager.Manifest.Version),
+                    exception);
+            }
         }
 
         private void LoadDependencies(IPluginManager manager)
@@ -188,7 +197,17 @@ namespace Hadouken.Plugins
             if (manager == null)
                 return;
 
-            manager.Unload();
+            try
+            {
+                manager.Unload();
+            }
+            catch (Exception exception)
+            {
+                Logger.ErrorException(
+                    String.Format("Error when unloading plugin {0}[{1}].", manager.Manifest.Name,
+                                  manager.Manifest.Version),
+                    exception);
+            }
         }
 
         public Task UnloadAsync(string name)
