@@ -1,17 +1,17 @@
-﻿namespace Hadouken.Plugins.Metadata
+﻿namespace Hadouken.Framework.SemVer
 {
-    public class LessThanRule : Rule
+    public class LessThanOrEqualsRule : Rule
     {
         private readonly SemanticVersion _version;
 
-        public LessThanRule(SemanticVersion version)
+        public LessThanOrEqualsRule(SemanticVersion version)
         {
             _version = version;
         }
 
         public override bool IsIncluded(SemanticVersion version)
         {
-            return version < _version;
+            return version <= _version;
         }
     }
 }

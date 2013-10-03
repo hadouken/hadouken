@@ -2,6 +2,8 @@
 using System.Linq;
 
 using Hadouken.Framework.Rpc;
+using Hadouken.Framework.SemVer;
+using Hadouken.Plugins.Metadata;
 using NLog;
 
 namespace Hadouken.Plugins.Rpc
@@ -74,8 +76,8 @@ namespace Hadouken.Plugins.Rpc
             return (from plugin in plugins
                 select new PluginDto()
                 {
-                    Name = plugin.Name,
-                    Version = plugin.Version,
+                    Name = plugin.Manifest.Name,
+                    Version = plugin.Manifest.Version,
                     State = plugin.State
                 }).ToArray();
         }
@@ -85,7 +87,7 @@ namespace Hadouken.Plugins.Rpc
     {
         public string Name { get; set; }
 
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
         public PluginState  State { get; set; }
     }

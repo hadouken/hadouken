@@ -118,22 +118,13 @@ namespace Hadouken.Plugins
 
         private void LoadPluginManager(IPluginManager manager)
         {
-            var config = new BootConfig
-            {
-                DataPath = Path.Combine(_configuration.ApplicationDataPath, "Plugins", manager.Name),
-                HostBinding = _configuration.Http.HostBinding,
-                Port = _configuration.Http.Port
-            };
-
-            manager.SetBootConfig(config);
-
             try
             {
                 manager.Load();
             }
             catch (Exception e)
             {
-                Logger.ErrorException(String.Format("Could not load plugin {0}", manager.Name), e);
+                Logger.ErrorException(String.Format("Could not load plugin {0}", manager.Manifest.Name), e);
                 
                 manager.Unload();
                 return;
@@ -141,10 +132,10 @@ namespace Hadouken.Plugins
 
             lock (_lock)
             {
-                _pluginManagers.Add(manager.Name, manager);
+                _pluginManagers.Add(manager.Manifest.Name, manager);
             }
 
-            Logger.Info("Plugin {0}[v{1}] loaded", manager.Name, manager.Version);
+            Logger.Info("Plugin {0}[v{1}] loaded", manager.Manifest.Name, manager.Manifest.Version);
         }
 
         public void Unload()
@@ -153,7 +144,7 @@ namespace Hadouken.Plugins
             {
                 foreach (var manager in _pluginManagers.Values)
                 {
-                    Logger.Info("Unloading plugin {0}", manager.Name);
+                    Logger.Info("Unloading plugin {0}", manager.Manifest.Name);
 
                     try
                     {
@@ -161,7 +152,7 @@ namespace Hadouken.Plugins
                     }
                     catch (Exception e)
                     {
-                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Name), e);
+                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Manifest.Name), e);
                     }
                 }
 

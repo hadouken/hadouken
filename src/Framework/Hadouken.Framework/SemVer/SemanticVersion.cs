@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hadouken.Plugins.Metadata
+namespace Hadouken.Framework.SemVer
 {
     public class SemanticVersion
     {

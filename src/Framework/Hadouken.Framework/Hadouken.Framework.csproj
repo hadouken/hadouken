@@ -75,6 +75,14 @@
     <Compile Include="Rpc\JsonRpcResponse.cs" />
     <Compile Include="Rpc\MethodInvoker.cs" />
     <Compile Include="Rpc\RequestHandler.cs" />
+    <Compile Include="SemVer\EqualsRule.cs" />
+    <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
+    <Compile Include="SemVer\GreaterThanRule.cs" />
+    <Compile Include="SemVer\LessThanOrEqualsRule.cs" />
+    <Compile Include="SemVer\LessThanRule.cs" />
+    <Compile Include="SemVer\Rule.cs" />
+    <Compile Include="SemVer\SemanticVersion.cs" />
+    <Compile Include="SemVer\SemanticVersionRange.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

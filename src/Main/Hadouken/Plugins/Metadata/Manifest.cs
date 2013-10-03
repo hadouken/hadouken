@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using Hadouken.Framework.SemVer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

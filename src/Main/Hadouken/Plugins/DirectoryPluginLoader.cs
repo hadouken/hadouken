@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using Hadouken.Configuration;
+using Hadouken.Framework;
 using Hadouken.IO;
+using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins
 {
@@ -28,7 +30,24 @@ namespace Hadouken.Plugins
             if (!_fileSystem.FileExists(manifestPath))
                 return null;
 
-            return new PluginManager(path, _fileSystem);
+            using (var manifestJson = _fileSystem.OpenRead(manifestPath))
+            {
+                IManifest manifest;
+
+                if (Manifest.TryParse(manifestJson, out manifest))
+                {
+                    var bootConfig = new BootConfig
+                    {
+                        DataPath = _configuration.ApplicationDataPath,
+                        HostBinding = _configuration.Http.HostBinding,
+                        Port = _configuration.Http.Port
+                    };
+
+                    return new PluginManager(path, manifest, _fileSystem, bootConfig);
+                }
+            }
+
+            return null;
         }
     }
 }

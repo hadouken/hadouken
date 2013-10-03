@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Hadouken.Plugins.Metadata;
+﻿using Hadouken.Framework.SemVer;
 using NUnit.Framework;
 
-namespace Hadouken.Tests.Plugins.Metadata
+namespace Hadouken.Framework.Tests.SemVer
 {
     public class SemanticVersionRangeTests
     {

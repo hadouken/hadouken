@@ -1,4 +1,4 @@
-﻿namespace Hadouken.Plugins.Metadata
+﻿namespace Hadouken.Framework.SemVer
 {
     public abstract class Rule
     {
