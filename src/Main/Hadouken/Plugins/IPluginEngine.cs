@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Hadouken.Plugins
@@ -12,8 +10,29 @@ namespace Hadouken.Plugins
 
         IPluginManager Get(string name);
 
-        void Load();
+        /// <summary>
+        /// Scan the plugin base directory for new plugins.
+        /// </summary>
+        Task ScanAsync();
 
-        void Unload();
+        /// <summary>
+        /// Load all plugins which are in the 'Unloaded' state.
+        /// </summary>
+        Task LoadAllAsync();
+
+        /// <summary>
+        /// Unload all plugins which are in the 'Loaded' state.
+        /// </summary>
+        Task UnloadAllAsync();
+
+        Task LoadAsync(string name);
+
+        Task UnloadAsync(string name);
+
+        /// <summary>
+        /// Async removes the plugin from the known plugins. The plugin must be in the Unloaded state.
+        /// </summary>
+        /// <param name="name">The plugin to remove.</param>
+        Task RemoveAsync(string name);
     }
 }

@@ -21,16 +21,19 @@ namespace Hadouken.Service
         {
             Logger.Info("Starting Hadouken");
 
-            _pluginEngine.Load();
             _rpcServer.Open();
+
+            _pluginEngine.ScanAsync().Wait();
+            _pluginEngine.LoadAllAsync().Wait();
         }
 
         protected override void OnStop()
         {
             Logger.Info("Stopping Hadouken");
 
+            _pluginEngine.UnloadAllAsync().Wait();
+
             _rpcServer.Close();
-            _pluginEngine.Unload();
         }
     }
 }

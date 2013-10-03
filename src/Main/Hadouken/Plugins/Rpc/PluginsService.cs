@@ -23,17 +23,9 @@ namespace Hadouken.Plugins.Rpc
         {
             Logger.Trace("Trying to load plugin {0}", name);
 
-            var plugin = _pluginEngine.Get(name);
-
-            if (plugin == null)
-                return false;
-
-            if (plugin.State != PluginState.Unloaded)
-                return false;
-
             try
             {
-                plugin.Load();
+                _pluginEngine.LoadAsync(name);
                 return true;
             }
             catch (Exception e)
@@ -48,17 +40,9 @@ namespace Hadouken.Plugins.Rpc
         {
             Logger.Trace("Trying to unload plugin {0}", name);
 
-            var plugin = _pluginEngine.Get(name);
-
-            if (plugin == null)
-                return false;
-
-            if (plugin.State != PluginState.Loaded)
-                return false;
-
             try
             {
-                plugin.Unload();
+                _pluginEngine.UnloadAsync(name);
                 return true;
             }
             catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Hadouken.Framework;
 using Hadouken.Plugins.Metadata;
 using Hadouken.Sandbox;
@@ -44,6 +45,8 @@ namespace Hadouken.Plugins
         }
 
         public PluginState State { get; private set; }
+
+        public string Path { get { return _path; } }
 
         public void Load()
         {
