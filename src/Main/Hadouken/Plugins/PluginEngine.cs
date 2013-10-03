@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Hadouken.Configuration;
-using Hadouken.Framework;
 using Hadouken.IO;
 using Hadouken.Plugins.Metadata;
 using NLog;
-using System.IO;
 
 namespace Hadouken.Plugins
 {
