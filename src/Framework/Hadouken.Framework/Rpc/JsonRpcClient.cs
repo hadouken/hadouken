@@ -28,8 +28,8 @@ namespace Hadouken.Framework.Rpc
                 {
                     id = _requestId,
                     jsonrpc = "2.0",
-                    method,
-                    @params = parameters
+                    method = "events.publish",
+                    @params = new [] { method, parameters }
                 };
 
             var json = JsonConvert.SerializeObject(request);
