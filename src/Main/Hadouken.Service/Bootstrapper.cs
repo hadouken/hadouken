@@ -11,6 +11,8 @@ using Hadouken.IO;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
+using Hadouken.Events;
+using Hadouken.Events.Rpc;
 
 namespace Hadouken.Service
 {
@@ -34,6 +36,7 @@ namespace Hadouken.Service
 
 			// Register RPC services
 			builder.RegisterType<PluginsService>().As<IJsonRpcService>();
+		    builder.RegisterType<EventsService>().As<IJsonRpcService>();
 			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>();
 			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
 
@@ -46,6 +49,9 @@ namespace Hadouken.Service
 
 				return new HttpJsonRpcServer(uri, handler);
 			});
+
+            // Register SignalR event server
+		    builder.RegisterType<EventServer>().As<IEventServer>().SingleInstance();
 
 			// Register configuration
 			builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
