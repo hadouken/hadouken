@@ -37,7 +37,7 @@ namespace Hadouken.Framework.Rpc
 
         public object Invoke(params object[] args)
         {
-            Logger.Debug("Invoking method with {0} arguments", args.Length);
+            Logger.Debug("Invoking method {0} with {1} arguments", _target.GetType().Name + "." + _method.Name, args.Length);
 
             if (args.Length != ParameterTypes.Length)
                 throw new ArgumentException("Mismatch in argument and parameter length");

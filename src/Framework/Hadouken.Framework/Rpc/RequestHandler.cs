@@ -58,6 +58,8 @@ namespace Hadouken.Framework.Rpc
 
         protected virtual JsonRpcResponse OnMethodMissing(JsonRpcRequest request)
         {
+            Logger.Info("Could not find method {0} in cache.", request.Method);
+
             return new JsonRpcResponse
                 {
                     Error = new MethodNotFoundError
@@ -73,7 +75,6 @@ namespace Hadouken.Framework.Rpc
 
             if (!_services.TryGetValue(request.Method, out invoker))
             {
-                Logger.Info("Could not find method in cache.");
                 return OnMethodMissing(request);
             }
 

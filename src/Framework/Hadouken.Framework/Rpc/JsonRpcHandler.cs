@@ -30,8 +30,6 @@ namespace Hadouken.Framework.Rpc
 
         private string Execute(string jsonRpc)
         {
-            Logger.Debug("Executing JSONRPC request");
-
             JsonRpcRequest request;
             Exception requestParseException;
 
