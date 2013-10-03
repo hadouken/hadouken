@@ -121,114 +121,124 @@ namespace Hadouken.Plugins.Metadata
             range = null;
             exception = null;
 
-            // empty = latest version.
-            if (String.IsNullOrEmpty(versionRange))
+            try
             {
-                range = new SemanticVersionRange();
-                return true;
-            }
+                // empty = latest version.
+                if (String.IsNullOrEmpty(versionRange))
+                {
+                    range = new SemanticVersionRange();
+                    return true;
+                }
 
-            // if it starts with a numeric character it should be a single version
-            // 1.0 = 1.0 <= x
-            if (Char.IsNumber(versionRange[0]))
-            {
-                var version = new SemanticVersion(versionRange);
-                range = new SemanticVersionRange(new GreaterThanOrEqualsRule(version));
-                return true;
-            }
+                // if it starts with a numeric character it should be a single version
+                // 1.0 = 1.0 <= x
+                if (Char.IsNumber(versionRange[0]))
+                {
+                    var version = new SemanticVersion(versionRange);
+                    range = new SemanticVersionRange(new GreaterThanOrEqualsRule(version));
+                    return true;
+                }
 
-            var isRange = versionRange.Contains(",");
-            var lowerInclusive = versionRange[0] == '[';
-            var upperInclusive = versionRange[versionRange.Length - 1] == ']';
+                var isRange = versionRange.Contains(",");
+                var lowerInclusive = versionRange[0] == '[';
+                var upperInclusive = versionRange[versionRange.Length - 1] == ']';
 
-            // (1.0) = invalid
-            if (!isRange && !lowerInclusive && !upperInclusive)
-                return false;
+                // (1.0) = invalid
+                if (!isRange && !lowerInclusive && !upperInclusive)
+                    return false;
 
-            // [1.0] = x == 1.0
-            if (!isRange && lowerInclusive && upperInclusive)
-            {
-                var versionString = versionRange.Substring(1, versionRange.Length - 2);
-                var version = new SemanticVersion(versionString);
+                // [1.0] = x == 1.0
+                if (!isRange && lowerInclusive && upperInclusive)
+                {
+                    var versionString = versionRange.Substring(1, versionRange.Length - 2);
+                    var version = new SemanticVersion(versionString);
 
-                range = new SemanticVersionRange(new EqualsRule(version));
-                return true;
-            }
+                    range = new SemanticVersionRange(new EqualsRule(version));
+                    return true;
+                }
 
-            var rangeParts = versionRange.Split(',');
+                var rangeParts = versionRange.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
 
-            // check if we have an invalid range, eg. ",1.0" or [1.0,"
-            // if we get here, we should only have ranges which contains a comma and either
-            // [ or ( in the beginning and ) or ] in the end.
-            if (rangeParts.Length != 2)
-                return false;
+                // check if we have an invalid range, eg. ",1.0" or [1.0,"
+                // if we get here, we should only have ranges which contains a comma and either
+                // [ or ( in the beginning and ) or ] in the end.
+                if (rangeParts.Length != 2)
+                    return false;
 
-            // Skip first character to get just the version
-            var lowerVersion = rangeParts[0].Substring(1);
-            // Skip last character to get just the version
-            var upperVersion = rangeParts[1].Substring(0, rangeParts[1].Length - 1);
+                // Skip first character to get just the version
+                var lowerVersion = rangeParts[0].Substring(1);
+                // Skip last character to get just the version
+                var upperVersion = rangeParts[1].Substring(0, rangeParts[1].Length - 1);
 
-            // Both versions cannot be null or empty
-            if (String.IsNullOrEmpty(lowerVersion) && String.IsNullOrEmpty(upperVersion))
-                return false;
+                // Both versions cannot be null or empty
+                if (String.IsNullOrEmpty(lowerVersion) && String.IsNullOrEmpty(upperVersion))
+                    return false;
 
-            if (String.IsNullOrEmpty(lowerVersion))
-            {
-                Rule rule;
+                if (String.IsNullOrEmpty(lowerVersion))
+                {
+                    Rule rule;
+
+                    if (upperInclusive)
+                    {
+                        rule = new LessThanOrEqualsRule(upperVersion);
+                    }
+                    else
+                    {
+                        rule = new LessThanRule(upperVersion);
+                    }
+
+                    range = new SemanticVersionRange(rule);
+                    return true;
+                }
+
+                if (String.IsNullOrEmpty(upperVersion))
+                {
+                    Rule rule;
+
+                    if (lowerInclusive)
+                    {
+                        rule = new GreaterThanOrEqualsRule(lowerVersion);
+                    }
+                    else
+                    {
+                        rule = new GreaterThanRule(lowerVersion);
+                    }
+
+                    range = new SemanticVersionRange(rule);
+                    return true;
+                }
+
+                Rule upperRule;
+                Rule lowerRule;
 
                 if (upperInclusive)
                 {
-                    rule = new LessThanOrEqualsRule(upperVersion);
+                    upperRule = new LessThanOrEqualsRule(upperVersion);
                 }
                 else
                 {
-                    rule = new LessThanRule(upperVersion);
+                    upperRule = new LessThanRule(upperVersion);
                 }
-
-                range = new SemanticVersionRange(rule);
-                return true;
-            }
-            
-            if (String.IsNullOrEmpty(upperVersion))
-            {
-                Rule rule;
 
                 if (lowerInclusive)
                 {
-                    rule = new GreaterThanOrEqualsRule(lowerVersion);
+                    lowerRule = new GreaterThanOrEqualsRule(lowerVersion);
                 }
                 else
                 {
-                    rule = new GreaterThanRule(lowerVersion);
+                    lowerRule = new GreaterThanRule(lowerVersion);
                 }
 
-                range = new SemanticVersionRange(rule);
+                range = new SemanticVersionRange(lowerRule, upperRule);
                 return true;
             }
-
-            Rule upperRule;
-            Rule lowerRule;
-
-            if (upperInclusive)
+            catch (Exception e)
             {
-                upperRule = new LessThanOrEqualsRule(upperVersion);
-            }
-            else
-            {
-                upperRule = new LessThanRule(upperVersion);
-            }
+                range = null;
+                exception = e;
 
-            if (lowerInclusive)
-            {
-                lowerRule = new GreaterThanOrEqualsRule(lowerVersion);
+                return false;
             }
-            else
-            {
-                lowerRule = new GreaterThanRule(lowerVersion);
-            }
-
-            range = new SemanticVersionRange(lowerRule, upperRule);
-            return true;
         }
     }
 }

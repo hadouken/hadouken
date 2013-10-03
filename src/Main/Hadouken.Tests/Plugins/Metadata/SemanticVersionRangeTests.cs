@@ -115,6 +115,27 @@ namespace Hadouken.Tests.Plugins.Metadata
         }
 
         [Test]
+        public void TryParse_SilentlyHandlesGarbageRange()
+        {
+            SemanticVersionRange range;
+            Assert.DoesNotThrow(() => SemanticVersionRange.TryParse("/garbage", out range));
+        }
+
+        [Test]
+        public void TryParse_SilentlyHandlesInvalidLower()
+        {
+            SemanticVersionRange range;
+            Assert.DoesNotThrow(() => SemanticVersionRange.TryParse("(garbage,1.0)", out range));
+        }
+
+        [Test]
+        public void TryParse_SilentlyHandlesInvalidUpper()
+        {
+            SemanticVersionRange range;
+            Assert.DoesNotThrow(() => SemanticVersionRange.TryParse("(1.0,garbage)", out range));
+        }
+
+        [Test]
         public void IsIncluded_SingleVersion()
         {
             SemanticVersionRange range;
