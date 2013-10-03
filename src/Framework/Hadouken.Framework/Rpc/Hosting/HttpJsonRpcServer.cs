@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hadouken.Framework.Rpc.Hosting
@@ -12,40 +13,47 @@ namespace Hadouken.Framework.Rpc.Hosting
     {
         private readonly IJsonRpcHandler _rpcHandler;
         private readonly HttpListener _httpListener = new HttpListener();
+        private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+        private readonly Task _workerTask;
 
         public HttpJsonRpcServer(string listenUri, IJsonRpcHandler rpcHandler)
         {
             _rpcHandler = rpcHandler;
             _httpListener.Prefixes.Add(listenUri);
+            _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
         }
 
         public void Open()
         {
-            _httpListener.Start();
-            _httpListener.BeginGetContext(GetContext, null);
+            _workerTask.Start();
         }
 
         public void Close()
         {
+            _cancellationToken.Cancel();
+            _workerTask.Wait();
+        }
+
+        private async void Run(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            _httpListener.Start();
+
+            while (!_cancellationToken.IsCancellationRequested)
+            {
+                var context = await _httpListener.GetContextAsync();
+
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                ProcessContext(context);
+            }
+
             _httpListener.Close();
         }
 
-        private void GetContext(IAsyncResult ar)
-        {
-            try
-            {
-                var context = _httpListener.EndGetContext(ar);
-                Task.Run(() => ProcessContext(context));
-            }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
-
-            _httpListener.BeginGetContext(GetContext, null);
-        }
-
-        private void ProcessContext(HttpListenerContext context)
+        private async void ProcessContext(HttpListenerContext context)
         {
             using (var reader = new StreamReader(context.Request.InputStream))
             using (var writer = new StreamWriter(context.Response.OutputStream))
@@ -54,7 +62,7 @@ namespace Hadouken.Framework.Rpc.Hosting
 
                 try
                 {
-                    var response = _rpcHandler.HandleAsync(content).Result;
+                    var response = await _rpcHandler.HandleAsync(content);
 
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = 200;
