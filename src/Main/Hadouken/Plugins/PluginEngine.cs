@@ -135,19 +135,12 @@ namespace Hadouken.Plugins
 
                 // If we could not find this dependency at all, throw an error.
                 if (managerDependency == null)
-                {
-                    throw new Exception(String.Format("Plugin {0} depends on {1} which cannot be found.",
-                        manager.Manifest.Name, dependency.Name));
-                }
+                    throw new DependencyNotFoundException("Dependency not found: " + dependency.Name);
 
                 // If the dependency we found is the wrong version, throw an error.
                 if (!dependency.VersionRange.IsIncluded(managerDependency.Manifest.Version))
-                {
-                    throw new Exception(
-                        String.Format(
-                            "Plugin {0} depends on {1} which exists, but is of the wrong version {2}",
-                            manager.Manifest.Name, dependency.Name, managerDependency.Manifest.Version));
-                }
+                    throw new InvalidDependencyVersionException(
+                        String.Format("No valid version for dependency {0} found", dependency.Name));
 
                 // If we got this far, load all dependencies for this plugin as well
                 if (managerDependency.Manifest.Dependencies.Any())
