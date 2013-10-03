@@ -1,35 +1,60 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Text;
+using System.Threading.Tasks;
+using Hadouken.Configuration;
+using Hadouken.Framework.Rpc;
+using Hadouken.Framework.Rpc.Hosting;
+using Hadouken.IO;
+using Hadouken.Plugins;
+using Hadouken.Plugins.Rpc;
+using Hadouken.Rpc;
 
 namespace Hadouken.Service
 {
-    public static class Bootstrapper
-    {
-        [DllImport("kernel32")]
-        static extern bool AllocConsole();
+	public sealed class Bootstrapper
+	{
+		public IHadoukenService Build()
+		{
+			var builder = new ContainerBuilder();
 
-        public static bool RunAsConsoleIfRequested(ServiceBase service)
-        {
-            if (!Environment.CommandLine.Contains("--console"))
-                return false;
+			// Register service
+			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
 
-            var args = Environment.GetCommandLineArgs().Where(name => name != "--console").ToArray();
+			// Register plugin engine
+			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
 
-            AllocConsole();
+			// Register plugin loaders
+			builder.RegisterType<DirectoryPluginLoader>().As<IPluginLoader>();
 
-            var onstart = service.GetType().GetMethod("OnStart", BindingFlags.Instance | BindingFlags.NonPublic);
-            onstart.Invoke(service, new object[] { args });
+			// Register file system
+			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 
-            Console.ReadLine();
+			// Register RPC services
+			builder.RegisterType<PluginsService>().As<IJsonRpcService>();
+			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>();
+			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
 
-            var onstop = service.GetType().GetMethod("OnStop", BindingFlags.Instance | BindingFlags.NonPublic);
-            onstop.Invoke(service, null);
-            return true;
-        }
-    }
+			// Register JSONRPC server
+			builder.Register<IJsonRpcServer>(c =>
+			{
+				var handler = c.Resolve<IJsonRpcHandler>();
+				var conf = c.Resolve<IConfiguration>();
+				var uri = String.Format("http://{0}:{1}/jsonrpc/", conf.Http.HostBinding, conf.Http.Port);
+
+				return new HttpJsonRpcServer(uri, handler);
+			});
+
+			// Register configuration
+			builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
+
+			// Build the container.
+			var container = builder.Build();
+
+			// Resolve the service.
+			return container.Resolve<IHadoukenService>();
+		}
+	}
 }
