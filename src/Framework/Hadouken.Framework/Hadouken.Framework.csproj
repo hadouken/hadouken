@@ -54,8 +54,8 @@
   <ItemGroup>
     <Compile Include="BootConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Events\EventService.cs" />
-    <Compile Include="Events\IEventService.cs" />
+    <Compile Include="Events\EventListener.cs" />
+    <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
     <Compile Include="IBootConfig.cs" />
