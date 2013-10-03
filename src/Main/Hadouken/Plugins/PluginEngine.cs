@@ -66,29 +66,14 @@ namespace Hadouken.Plugins
             if (!String.IsNullOrEmpty(extraPlugin))
                 entries.Add(extraPlugin);
 
-            foreach (var entry in entries)
+            var managers = (from entry in entries
+                from loader in _pluginLoaders
+                where loader.CanLoad(entry)
+                select loader.Load(entry));
+
+            foreach (var manager in managers)
             {
-                Logger.Info("Loading plugin from {0}", entry);
-
-                var loader = (from p in _pluginLoaders
-                    where p.CanLoad(entry)
-                    select p).FirstOrDefault();
-
-                if (loader == null)
-                {
-                    Logger.Warn("Could not find a plugin loader for path {0}", entry);
-                    continue;
-                }
-
-                try
-                {
-                    var manager = loader.Load(entry);
-                    LoadPluginManager(manager);
-                }
-                catch (Exception e)
-                {
-                    Logger.ErrorException(String.Format("Could not load plugin from path {0}", entry), e);
-                }
+                LoadPluginManager(manager);
             }
         }
 
