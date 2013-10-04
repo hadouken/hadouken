@@ -27,6 +27,8 @@ namespace Hadouken.Framework.Http.TypeScript
             p.StartInfo.Arguments = String.Format("{0} --out {1}", file, Path.Combine(inputFileDirectory, fileName));
             p.StartInfo.WorkingDirectory = _toolsPath;
             p.StartInfo.FileName = "tsc.exe";
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             p.Start();
             p.WaitForExit();
