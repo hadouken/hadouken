@@ -58,6 +58,8 @@
     <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
+    <Compile Include="Http\TypeScript\ITypeScriptCompiler.cs" />
+    <Compile Include="Http\TypeScript\TypeScriptCompiler.cs" />
     <Compile Include="IBootConfig.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +89,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\TypeScript\Resources\lib.d.ts" />
+    <EmbeddedResource Include="Http\TypeScript\Resources\tsc.exe" />
+    <EmbeddedResource Include="Http\TypeScript\Resources\tsc.js" />
+    <EmbeddedResource Include="Http\TypeScript\Resources\tschost.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

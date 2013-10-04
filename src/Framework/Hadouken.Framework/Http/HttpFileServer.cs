@@ -5,11 +5,14 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hadouken.Framework.Http.TypeScript;
+
 namespace Hadouken.Framework.Http
 {
     public class HttpFileServer : IHttpFileServer
     {
         private readonly HttpListener _httpListener = new HttpListener();
+        private readonly ITypeScriptCompiler _typeScriptCompiler = TypeScriptCompiler.Create();
         private readonly string _baseDirectory;
         private readonly string _uriPrefix;
 
@@ -85,13 +88,15 @@ namespace Hadouken.Framework.Http
 
             if (File.Exists(path))
             {
-                context.Response.ContentType = MimeTypes.ContainsKey(extension) ? MimeTypes[extension] : "text/plain";
-                context.Response.StatusCode = 200;
-
-                using (var reader = new StreamReader(path))
-                using (var writer = new StreamWriter(context.Response.OutputStream))
+                switch (extension)
                 {
-                    writer.Write(reader.ReadToEnd());
+                    case ".ts":
+                        CompileTypeScript(context, path);
+                        break;
+
+                    default:
+                        ReturnFileContent(context, path);
+                        break;
                 }
             }
             else
@@ -106,6 +111,27 @@ namespace Hadouken.Framework.Http
 
             context.Response.OutputStream.Close();
             context.Response.Close();
+        }
+
+        private void CompileTypeScript(HttpListenerContext context, string path)
+        {
+            var typescriptFile = _typeScriptCompiler.Compile(path);
+
+            ReturnFileContent(context, typescriptFile);
+        }
+
+        private void ReturnFileContent(HttpListenerContext context, string path)
+        {
+            var extension = Path.GetExtension(path);
+
+            context.Response.ContentType = MimeTypes.ContainsKey(extension) ? MimeTypes[extension] : "text/plain";
+            context.Response.StatusCode = 200;
+
+            using (var reader = new StreamReader(path))
+            using (var writer = new StreamWriter(context.Response.OutputStream))
+            {
+                writer.Write(reader.ReadToEnd());
+            }
         }
     }
 }

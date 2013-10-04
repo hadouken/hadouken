@@ -53,6 +53,9 @@
     <Compile Include="TorrentsBootstrapper.cs" />
     <Compile Include="TorrentsPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="UI\Scripts\BitTorrent\Torrent.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Framework\Hadouken.Framework\Hadouken.Framework.csproj">
@@ -73,7 +76,19 @@
     <Content Include="UI\list.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Scripts\main.js">
+    <Content Include="UI\Scripts\BitTorrent\BitTorrentEngine.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\hdkn.d.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\Main.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\UI\AddTorrentsDialog.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\UI\TorrentsListPage.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
