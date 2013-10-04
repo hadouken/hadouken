@@ -20,7 +20,36 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         addTorrents(): void {
-            console.log('adding torrents');
+            this.disableAddButton();
+
+            var c = this.getContent();
+            var fileInput = c.find('#torrent-files')[0];
+            var reader = new FileReader();
+
+            reader.onload = (e) => {
+                var data = [
+                    e.target.result.split(',')[1],
+                    '',
+                    ''
+                ];
+
+                var rpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
+                rpcClient.callParams('torrents.addFile', data, (result) => {
+                    this.enableAddButton();
+                });
+            };
+
+            for (var i = 0; i < fileInput.files.length; i++) {
+                reader.readAsDataURL(fileInput.files[i]);
+            }
+        }
+
+        disableAddButton(): void {
+            this.getContent().find('#btn-add-torrents').attr('disabled', true);
+        }
+
+        enableAddButton(): void {
+            this.getContent().find('#btn-add-torrents').attr('disabled', false);
         }
     }
 }
