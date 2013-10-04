@@ -59,6 +59,7 @@
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
     <Compile Include="Http\TypeScript\ITypeScriptCompiler.cs" />
+    <Compile Include="Http\TypeScript\TypeScriptCompiler.cs" />
     <Compile Include="IBootConfig.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
