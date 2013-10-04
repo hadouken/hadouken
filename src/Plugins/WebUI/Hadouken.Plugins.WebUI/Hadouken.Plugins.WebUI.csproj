@@ -82,19 +82,13 @@
     <Content Include="UI\Scripts\Framework\Bootstrapper.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="UI\Scripts\Framework\EventListener.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="UI\Scripts\Framework\Plugin.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Scripts\Libs\handlebars-1.0.0.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="UI\Scripts\Libs\jquery.signalR-1.1.3.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="UI\Scripts\Libs\mootools-core-1.4.5-full-nocompat-yc.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="UI\Scripts\Libs\mootools-more-1.4.0.1.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Scripts\Main.ts">
@@ -111,12 +105,6 @@
     </Content>
     <Content Include="UI\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="UI\Scripts\Libs\jquery.pjax.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="UI\Scripts\Libs\nprogress.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup />
