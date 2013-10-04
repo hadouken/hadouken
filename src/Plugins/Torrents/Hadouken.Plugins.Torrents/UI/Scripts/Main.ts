@@ -1,10 +1,14 @@
-﻿///<reference path="UI/TorrentsListPage.ts"/>
+﻿///<reference path="BitTorrent/BitTorrentEngine.ts"/>
+///<reference path="UI/TorrentsListPage.ts"/>
 
 module Hadouken.Plugins.Torrents {
     export class TorrentsPlugin {
+        private _torrentEngine: Hadouken.Plugins.Torrents.BitTorrent.BitTorrentEngine = new Hadouken.Plugins.Torrents.BitTorrent.BitTorrentEngine();
+
         load(): void {
             console.log('torrents plugin loading');
 
+            this._torrentEngine.load();
             this.setupMainMenu();
 
             return;

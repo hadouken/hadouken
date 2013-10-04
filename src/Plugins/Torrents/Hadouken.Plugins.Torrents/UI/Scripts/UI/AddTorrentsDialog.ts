@@ -25,6 +25,7 @@ module Hadouken.Plugins.Torrents.UI {
             var c = this.getContent();
             var fileInput = c.find('#torrent-files')[0];
             var reader = new FileReader();
+            var filesAdded = 0;
 
             reader.onload = (e) => {
                 var data = [
@@ -34,8 +35,11 @@ module Hadouken.Plugins.Torrents.UI {
                 ];
 
                 var rpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
-                rpcClient.callParams('torrents.addFile', data, (result) => {
-                    this.enableAddButton();
+                rpcClient.callParams('torrents.addFile', data, () => {
+                    filesAdded++;
+
+                    if (filesAdded == fileInput.files.length)
+                        this.enableAddButton();
                 });
             };
 
