@@ -1,7 +1,10 @@
-﻿// Real setup below
+///<reference path="Framework/Plugin.ts"/>
+
+/*
+// Real setup below
 window.addEvent('domready', function () {
     $("overlay").show();
-    
+
     Hadouken.init();
 
     var host = location.hostname;
@@ -21,3 +24,4 @@ window.addEvent('domready', function () {
 
     $("overlay").hide();
 });
+*/
