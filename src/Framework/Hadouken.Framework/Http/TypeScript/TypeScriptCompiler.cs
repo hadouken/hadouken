@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 
 namespace Hadouken.Framework.Http.TypeScript
 {
@@ -23,12 +22,17 @@ namespace Hadouken.Framework.Http.TypeScript
 
             var fileName = Path.GetFileNameWithoutExtension(file) + ".js";
 
-            var p = new Process();
-            p.StartInfo.Arguments = String.Format("{0} --out {1}", file, Path.Combine(inputFileDirectory, fileName));
-            p.StartInfo.WorkingDirectory = _toolsPath;
-            p.StartInfo.FileName = "tsc.exe";
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            var p = new Process
+            {
+                StartInfo =
+                {
+                    Arguments = String.Format("{0} --out {1}", file, Path.Combine(inputFileDirectory, fileName)),
+                    WorkingDirectory = _toolsPath,
+                    FileName = "tsc.exe",
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }
+            };
 
             p.Start();
             p.WaitForExit();
@@ -38,7 +42,7 @@ namespace Hadouken.Framework.Http.TypeScript
 
         public static ITypeScriptCompiler Create()
         {
-            var resourceBase = "Hadouken.Framework.Http.TypeScript.Resources.";
+            const string resourceBase = "Hadouken.Framework.Http.TypeScript.Resources.";
             var temporaryPath = Path.Combine(Path.GetTempPath(), "tsc");
 
             if (!Directory.Exists(temporaryPath))
