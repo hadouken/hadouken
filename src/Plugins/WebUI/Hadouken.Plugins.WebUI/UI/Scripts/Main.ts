@@ -1,4 +1,9 @@
-///<reference path="Framework/Plugin.ts"/>
+///<reference path="Framework/Bootstrapper.ts"/>
+
+jQuery(document).ready(function () {
+    var bs = new Bootstrapper();
+    bs.init();
+});
 
 /*
 // Real setup below
