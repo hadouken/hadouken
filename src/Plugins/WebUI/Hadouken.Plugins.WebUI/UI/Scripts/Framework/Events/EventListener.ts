@@ -1,47 +1,13 @@
-﻿module Hadouken {
-    class EventHandler {
-        private _callback: {
-            (data: any): void;
-        };
+﻿///<reference path="Event.ts"/>
+///<reference path="EventHandler.ts"/>
 
-        constructor(callback: { (data: any): void; }) {
-            this._callback = callback;
-        }
-
-        handle(data: any): void {
-            this._callback(data);
-        }
-    }
-
-    class Event {
-        constructor(public name: string, public data: any) { }
-    }
-
+module Hadouken.Events {
     export class EventListener {
-        private static _instance: EventListener = null;
-
         private _connection: any = null;
         private _proxy: any = null;
         private _eventHandlers: { [event: string]: EventHandler[]; } = {};
 
-        constructor() {
-            if (EventListener._instance) {
-                throw new Error("Use EventListener.getInstance();");
-            }
-
-            EventListener._instance = this;
-        }
-
-        public static getInstance(): EventListener {
-            if (EventListener._instance === null) {
-                EventListener._instance = new EventListener();
-                EventListener._instance.connect();
-            }
-
-            return EventListener._instance;
-        }
-
-        private connect(): void {
+        public connect(): void {
             var host = location.hostname;
             var port = parseInt(location.port, 10) + 1;
             var url = 'http://' + host + ':' + port;
@@ -51,7 +17,9 @@
 
             this._proxy.on('publishEvent', (event: Event) => this.publishEvent(event));
 
-            this._connection.start().done(() => this.publishEvent(new Event("connected", null)));
+            this._connection.start()
+                .done(() => this.publishEvent(new Event("web.signalR.connected", null)))
+                .fail(() => this.publishEvent(new Event("web.signalR.fail", null)));
         }
 
         private publishEvent(event: Event): void {

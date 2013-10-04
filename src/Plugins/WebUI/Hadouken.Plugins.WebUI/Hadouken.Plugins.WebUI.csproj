@@ -82,10 +82,22 @@
     <Content Include="UI\Scripts\Framework\Bootstrapper.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Scripts\Framework\EventListener.ts">
+    <Content Include="UI\Scripts\Framework\Events\Event.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Scripts\Framework\Plugin.ts">
+    <Content Include="UI\Scripts\Framework\Events\EventHandler.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\Framework\Events\EventListener.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\Framework\Http\JsonRpcClient.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\Framework\Plugins\PluginEngine.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\Framework\Plugins\Plugin.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Scripts\Libs\jquery.signalR-1.1.3.min.js">

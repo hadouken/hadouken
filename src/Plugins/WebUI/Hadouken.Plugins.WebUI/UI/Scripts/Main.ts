@@ -1,7 +1,13 @@
 ///<reference path="Framework/Bootstrapper.ts"/>
+///<reference path="Framework/Events/EventListener.ts"/>
+///<reference path="Framework/Plugins/PluginEngine.ts"/>
 
 $(document).ready(function () {
-    new Hadouken.Bootstrapper().init();
+    var eventListener = new Hadouken.Events.EventListener();
+    var pluginEngine = new Hadouken.Plugins.PluginEngine();
+
+    new Hadouken.Bootstrapper()
+        .init(eventListener, pluginEngine);
 });
 
 /*
