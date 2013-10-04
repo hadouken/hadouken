@@ -2,10 +2,6 @@
 
 module Hadouken {
     export class Bootstrapper {
-
-        constructor() {
-        }
-
         init() {
             console.log("init");
 
