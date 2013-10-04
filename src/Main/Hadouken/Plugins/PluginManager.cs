@@ -75,7 +75,7 @@ namespace Hadouken.Plugins
             var rpcClient =
                 new JsonRpcClient(
                     new Uri(String.Format("http://{0}:{1}/jsonrpc", _bootConfig.HostBinding, _bootConfig.Port)));
-            await rpcClient.CallAsync<bool>("plugin.loaded", new {name = _manifest.Name, version = _manifest.Version});
+            await rpcClient.CallAsync<bool>("events.publish", new object [] { "plugin.loaded", new {name = _manifest.Name, version = _manifest.Version}});
         }
 
         public void Unload()
