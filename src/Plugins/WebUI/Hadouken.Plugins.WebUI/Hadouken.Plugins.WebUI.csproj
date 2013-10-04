@@ -106,9 +106,6 @@
     <Content Include="UI\Scripts\Libs\mootools-more-1.4.0.1.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Scripts\Test.ts">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="UI\settings.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
