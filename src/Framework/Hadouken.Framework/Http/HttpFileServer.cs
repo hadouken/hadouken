@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
+
 using Hadouken.Framework.Http.TypeScript;
 
 namespace Hadouken.Framework.Http
