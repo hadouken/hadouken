@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Hadouken.Framework.Rpc;
 using MonoTorrent.Client;
 using MonoTorrent.Client.Encryption;
 using MonoTorrent.Common;
@@ -11,15 +12,17 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
     {
         private readonly string _dataPath;
         private readonly string _torrentsPath;
+        private readonly JsonRpcClient _rpcClient;
         private ClientEngine _engine;
 
         private readonly IDictionary<string, TorrentManager> _torrentManagers =
             new Dictionary<string, TorrentManager>(StringComparer.InvariantCultureIgnoreCase);
 
-        public MonoTorrentEngine(string dataPath)
+        public MonoTorrentEngine(string dataPath, Uri rpcUrl)
         {
             _dataPath = dataPath;
             _torrentsPath = Path.Combine(dataPath, "Torrents");
+            _rpcClient = new JsonRpcClient(rpcUrl);
         }
 
         public void Load()
@@ -74,6 +77,17 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
             _torrentManagers.Add(manager.InfoHash.ToString(), manager);
             _engine.Register(manager);
+
+            _rpcClient.CallAsync<bool>("events.publish", new object[]
+            {
+                "torrent.added",
+                new
+                {
+                    id = manager.InfoHash.ToString().Replace("-", "").ToLowerInvariant(),
+                    name = manager.Torrent.Name,
+                    size = manager.Torrent.Size
+                }
+            });
 
             return manager;
         }

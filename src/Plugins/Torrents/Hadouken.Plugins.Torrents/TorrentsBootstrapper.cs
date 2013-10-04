@@ -18,6 +18,7 @@ namespace Hadouken.Plugins.Torrents
             var container = Container.Create(cfg =>
             {
                 var uri = String.Format("http://{0}:{1}/plugins/core.torrents/", config.HostBinding, config.Port);
+                var rpcUri = new Uri(String.Format("http://{0}:{1}/jsonrpc", config.HostBinding, config.Port));
 
                 cfg.Register<IHttpFileServer>()
                     .AsSingleton()
@@ -37,7 +38,7 @@ namespace Hadouken.Plugins.Torrents
 
                 cfg.Register<IBitTorrentEngine>()
                    .AsSingleton()
-                   .UsingFactory(() => new MonoTorrentEngine(config.DataPath));
+                   .UsingFactory(() => new MonoTorrentEngine(config.DataPath, rpcUri));
 
                 cfg.Register<Plugin>().AsSingleton().UsingConcreteType<TorrentsPlugin>();
             });
