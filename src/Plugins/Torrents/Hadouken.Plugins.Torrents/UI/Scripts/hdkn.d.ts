@@ -1,4 +1,12 @@
-﻿declare module Hadouken.UI {
+﻿declare module Hadouken.Events {
+    class EventListener {
+        addHandler(name: string, callback: { (data: any): void; }): void;
+        connect(): void;
+        sendEvent(name: string, data: any): void;
+    }
+}
+
+declare module Hadouken.UI {
     class Page {
         constructor(url: string);
         load(): void;

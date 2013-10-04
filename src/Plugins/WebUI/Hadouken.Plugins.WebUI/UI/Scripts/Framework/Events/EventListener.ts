@@ -43,5 +43,9 @@ module Hadouken.Events {
 
             this._eventHandlers[name].push(new EventHandler(callback));
         }
+
+        public sendEvent(name: string, data: any): void {
+            this.publishEvent(new Event('web.' + name, data));
+        }
     }
 }
