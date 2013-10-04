@@ -9,7 +9,9 @@ module Hadouken {
             console.log("init");
 
             eventListener.addHandler("web.signalR.connected", (data: any) => {
-                pluginEngine.load();
+                pluginEngine.load(() => {
+                    console.log("plugins loaded.");
+                });
             });
 
             eventListener.addHandler("web.signalR.fail", (data: any) => {
