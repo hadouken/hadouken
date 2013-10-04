@@ -72,8 +72,12 @@ namespace Hadouken.Framework.Http
 
         private void ProcessContext(HttpListenerContext context)
         {
+            var requestedPath = context.Request.Url.AbsolutePath == "/"
+                ? "/index.html"
+                : context.Request.Url.AbsolutePath;
+
             var path = _baseDirectory +
-                       context.Request.Url.AbsolutePath.Substring(_uriPrefix.EndsWith("/")
+                       requestedPath.Substring(_uriPrefix.EndsWith("/")
                            ? _uriPrefix.Length - 1
                            : _uriPrefix.Length);
 
