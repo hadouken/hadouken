@@ -1,14 +1,17 @@
 ﻿module Hadouken.UI {
-    export class Page {
+    export class Dialog {
         private _content: any;
 
         constructor(public url: string) { }
 
-        load(): void {
+        show(): void {
             $.get(this.url, (html) => {
+                console.log('get get get');
+
                 this._content = $(html);
-                $('#page-container').empty().append(this._content);
-                this.setup();
+                this._content.modal();
+
+                this.onShow();
             });
         }
 
@@ -16,7 +19,7 @@
             return this._content;
         }
 
-        setup(): void {
+        onShow(): void {
         }
     }
 }

@@ -3,6 +3,7 @@
 ///<reference path="Framework/Plugins/PluginEngine.ts"/>
 
 // include UI files
+///<reference path="Framework/UI/Dialog.ts"/>
 ///<reference path="Framework/UI/Page.ts"/>
 
 $(document).ready(function () {
