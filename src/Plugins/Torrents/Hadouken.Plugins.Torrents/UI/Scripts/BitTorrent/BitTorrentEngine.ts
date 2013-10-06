@@ -52,13 +52,11 @@ module Hadouken.Plugins.Torrents.BitTorrent {
         }
 
         added(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            this._eventListener.sendEvent('torrent.added', torrent);
             this._torrents[torrent.id] = torrent;
         }
 
         removed(id: string): void {
             delete this._torrents[id];
-            this._eventListener.sendEvent('torrent.removed', id);
         }
     }
 }

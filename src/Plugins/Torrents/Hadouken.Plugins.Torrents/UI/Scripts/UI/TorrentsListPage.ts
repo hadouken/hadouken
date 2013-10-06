@@ -25,8 +25,8 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         setupEvents(): void {
-            this._eventListener.addHandler('web.torrent.added', (torrent) => this.torrentAdded(torrent));
-            this._eventListener.addHandler('web.torrent.removed', (id) => this.torrentRemoved(id));
+            this._eventListener.addHandler('torrent.added', (torrent) => this.torrentAdded(torrent));
+            this._eventListener.addHandler('torrent.removed', (id) => this.torrentRemoved(id));
             this._eventListener.addHandler('web.torrent.updated', (torrent) => this.torrentUpdated(torrent));
         }
 
