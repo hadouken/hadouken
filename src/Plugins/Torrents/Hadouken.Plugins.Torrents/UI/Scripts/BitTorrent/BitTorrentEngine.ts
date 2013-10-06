@@ -13,10 +13,18 @@ module Hadouken.Plugins.Torrents.BitTorrent {
         }
 
         load(): void {
-            this._eventListener.addHandler("torrent.added", this.added);
-            this._eventListener.addHandler("torrent.removed", this.removed);
+            this._eventListener.addHandler("torrent.added", (t: Hadouken.Plugins.Torrents.BitTorrent.Torrent) => this.added(t));
+            this._eventListener.addHandler("torrent.removed", (id: string) => this.removed(id));
 
-            this.setupTimer(10);
+            // Get a list of all existing torrents
+            this._rpcClient.call('torrents.list', (torrents: Array<Hadouken.Plugins.Torrents.BitTorrent.Torrent>) => {
+                for (var i = 0; i < torrents.length; i++) {
+                    var torrent = torrents[i];
+                    this._torrents[torrent.id] = torrent;
+                }
+
+                this.setupTimer(1000);
+            });
         }
 
         setupTimer(interval: number): void {
@@ -33,13 +41,19 @@ module Hadouken.Plugins.Torrents.BitTorrent {
         update(torrents: Array<Hadouken.Plugins.Torrents.BitTorrent.Torrent>): void {
             for (var i = 0; i < torrents.length; i++) {
                 var torrent = torrents[i];
+
+                // Only update torrents which we have locally
+                if (typeof this._torrents[torrent.id] === "undefined")
+                    continue;
+
                 this._torrents[torrent.id] = torrent;
+                this._eventListener.sendEvent('torrent.updated', torrent);
             }
         }
 
         added(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            this._torrents[torrent.id] = torrent;
             this._eventListener.sendEvent('torrent.added', torrent);
+            this._torrents[torrent.id] = torrent;
         }
 
         removed(id: string): void {

@@ -1,5 +1,6 @@
 ﻿///<reference path="../hdkn.d.ts"/>
 
+///<reference path="../BitTorrent/Torrent.ts"/>
 ///<reference path="AddTorrentsDialog.ts"/>
 
 module Hadouken.Plugins.Torrents.UI {
@@ -24,11 +25,43 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         setupEvents(): void {
-            this._eventListener.addHandler('web.torrent.added', this.torrentAdded);
+            this._eventListener.addHandler('web.torrent.added', (torrent) => this.torrentAdded(torrent));
+            this._eventListener.addHandler('web.torrent.removed', (id) => this.torrentRemoved(id));
+            this._eventListener.addHandler('web.torrent.updated', (torrent) => this.torrentUpdated(torrent));
         }
 
-        torrentAdded(d): void {
-            console.log('kekekekekek');
+        torrentAdded(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
+            // Add new row to table
+            console.log('torrentAdded: ' + torrent.id);
+            this.addRow(torrent);
+        }
+
+        torrentRemoved(id: string): void {
+            // Remove row from table
+            console.log('torrentRemoved: ' + id);
+            this.removeRow(id);
+        }
+
+        torrentUpdated(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
+            // Update torrent row in table
+            console.log('torrentUpdated: ' + torrent.id);
+            this.updateRow(torrent);
+        }
+
+        private addRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
+            //
+        }
+
+        private removeRow(id: string): void {
+            //
+        }
+
+        private updateRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
+            //
+        }
+
+        private sortTable(column: string): void {
+            //
         }
     }
 }
