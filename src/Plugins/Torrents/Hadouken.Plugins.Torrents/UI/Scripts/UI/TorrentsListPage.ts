@@ -6,6 +6,8 @@
 module Hadouken.Plugins.Torrents.UI {
     export class TorrentsListPage extends Hadouken.UI.Page {
         private _eventListener: Hadouken.Events.EventListener;
+        private _rows: { [id: string]: any; } = {};
+        private _templates: { [id: string]: any; } = {};
 
         constructor(eventListener: Hadouken.Events.EventListener) {
             super("/plugins/core.torrents/list.html");
@@ -13,8 +15,13 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         setup(): void {
+            this.loadTemplates();
             this.setupUI();
             this.setupEvents();
+        }
+
+        loadTemplates(): void {
+            this._templates['tmpl-torrent-list-item'] = Handlebars.compile($('#tmpl-torrent-list-item').html());
         }
 
         setupUI(): void {
@@ -49,15 +56,25 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         private addRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            //
+            if (typeof this._rows[torrent.id] !== "undefined")
+                return;
+
+            var row = this._templates['tmpl-torrent-list-item']({ torrent: torrent });
+            $('#tbody-torrents-list').append($(row));
+
+            this._rows[torrent.id] = row;
         }
 
         private removeRow(id: string): void {
             //
+            if (typeof this._rows[id] === "undefined")
+                return;
         }
 
         private updateRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
             //
+            if (typeof this._rows[torrent.id] === "undefined")
+                return;
         }
 
         private sortTable(column: string): void {
