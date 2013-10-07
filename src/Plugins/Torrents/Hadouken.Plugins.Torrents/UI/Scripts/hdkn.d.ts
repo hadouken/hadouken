@@ -8,11 +8,11 @@
 
 declare module Hadouken.UI {
     class Page {
+        content: any;
+
         constructor(url: string, routes: Array<string>);
         init(): void;
         load(): void;
-
-        getContent(): any;
     }
 
     class PageManager {

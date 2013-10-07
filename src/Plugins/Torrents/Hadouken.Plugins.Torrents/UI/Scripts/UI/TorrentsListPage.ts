@@ -28,7 +28,7 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         setupUI(): void {
-            this.getContent().find('#btn-show-add-torrents').on('click', (e) => {
+            this.content.find('#btn-show-add-torrents').on('click', (e) => {
                 e.preventDefault();
                 new Hadouken.Plugins.Torrents.UI.AddTorrentsDialog().show();
             });
