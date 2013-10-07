@@ -1,7 +1,9 @@
 ﻿declare module Hadouken.Events {
     class EventListener {
         addHandler(name: string, callback: { (data: any): void; }): void;
+        clearHandlers(): void;
         connect(): void;
+        disconnect(): void;
         sendEvent(name: string, data: any): void;
     }
 }

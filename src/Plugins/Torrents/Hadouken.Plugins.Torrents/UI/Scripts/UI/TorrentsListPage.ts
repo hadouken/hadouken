@@ -5,22 +5,41 @@
 
 module Hadouken.Plugins.Torrents.UI {
     export class TorrentsListPage extends Hadouken.UI.Page {
+        private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
         private _eventListener: Hadouken.Events.EventListener;
         private _rows: { [id: string]: any; } = {};
         private _templates: { [id: string]: any; } = {};
+        private _timer: any = null;
 
-        constructor(eventListener: Hadouken.Events.EventListener) {
+        constructor() {
             super("/plugins/core.torrents/list.html", [
                 '/torrents'
             ]);
 
-            this._eventListener = eventListener;
+            this._eventListener = new Hadouken.Events.EventListener();
         }
 
         load(): void {
-            this.loadTemplates();
-            this.setupUI();
-            this.setupEvents();
+            this._eventListener.addHandler('web.signalR.connected', () => {
+                this.loadTemplates();
+                this.setupUI();
+                this.setupEvents();
+                this.setupTorrents();
+            });
+
+            this._eventListener.connect();
+        }
+
+        unload(): void {
+            clearTimeout(this._timer);
+
+            this._eventListener.disconnect();
+
+            var rows = Object.keys(this._rows);
+
+            for (var i = 0; i < rows.length; i++) {
+                delete this._rows[rows[i]];
+            }
         }
 
         loadTemplates(): void {
@@ -37,7 +56,34 @@ module Hadouken.Plugins.Torrents.UI {
         setupEvents(): void {
             this._eventListener.addHandler('torrent.added', (torrent) => this.torrentAdded(torrent));
             this._eventListener.addHandler('torrent.removed', (id) => this.torrentRemoved(id));
-            this._eventListener.addHandler('web.torrent.updated', (torrent) => this.torrentUpdated(torrent));
+        }
+
+        setupTorrents(): void {
+            this._rpcClient.call('torrents.list', (torrents) => {
+                for (var i = 0; i < torrents.length; i++) {
+                    this.torrentAdded(torrents[i]);
+                }
+
+                this.setupIntervalTimer();
+            });
+        }
+
+        setupIntervalTimer(): void {
+            this._timer = setTimeout(() => this.request(), 1000);
+        }
+
+        request(): void {
+            this._rpcClient.call('torrents.list', (torrents: Array<Hadouken.Plugins.Torrents.BitTorrent.Torrent>) => {
+                this.setupIntervalTimer();
+                this.update(torrents);
+            });
+        }
+
+        update(torrents: Array<Hadouken.Plugins.Torrents.BitTorrent.Torrent>): void {
+            for (var i = 0; i < torrents.length; i++) {
+                var torrent = torrents[i];
+                this.torrentUpdated(torrent);
+            }
         }
 
         torrentAdded(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {

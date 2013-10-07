@@ -4,6 +4,7 @@ module Hadouken.UI {
     export class PageManager {
         private static _instance: PageManager = null;
         private _pages: Array<Page> = [];
+        private _currentPage: Page = null;
 
         constructor() {
             if (PageManager._instance) {
@@ -43,7 +44,12 @@ module Hadouken.UI {
             for (var i = 0; i < page.routes.length; i++) {
                 var route = page.routes[i];
                 crossroads.addRoute(route, () => {
+                    if (this._currentPage !== null)
+                        this._currentPage.unload();
+
                     page.init(arguments);
+
+                    this._currentPage = page;
                 });
             }
 

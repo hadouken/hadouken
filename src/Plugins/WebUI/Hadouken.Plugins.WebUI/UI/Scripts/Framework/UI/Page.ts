@@ -22,5 +22,8 @@
 
         load(...args: any[]): void {
         }
+
+        unload(): void {
+        }
     }
 }

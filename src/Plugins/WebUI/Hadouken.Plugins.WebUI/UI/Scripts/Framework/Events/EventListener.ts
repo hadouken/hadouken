@@ -22,6 +22,11 @@ module Hadouken.Events {
                 .fail(() => this.publishEvent(new Event("web.signalR.fail", null)));
         }
 
+        public disconnect() {
+            this.clearHandlers();
+            this._connection.stop();
+        }
+
         private publishEvent(event: Event): void {
             var name = event.name;
 
@@ -42,6 +47,14 @@ module Hadouken.Events {
             }
 
             this._eventHandlers[name].push(new EventHandler(callback));
+        }
+
+        public clearHandlers() {
+            var keys = Object.keys(this._eventHandlers);
+
+            for (var i = 0; i < keys.length; i++) {
+                delete this._eventHandlers[keys[i]];
+            }
         }
 
         public sendEvent(name: string, data: any): void {

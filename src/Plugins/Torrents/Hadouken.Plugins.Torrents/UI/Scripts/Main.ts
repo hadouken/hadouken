@@ -4,22 +4,16 @@
 
 module Hadouken.Plugins.Torrents {
     export class TorrentsPlugin {
-        private _eventListener: Hadouken.Events.EventListener;
         private _pageManager: Hadouken.UI.PageManager;
         private _torrentEngine: Hadouken.Plugins.Torrents.BitTorrent.BitTorrentEngine;
 
-        constructor(eventListener: Hadouken.Events.EventListener, pageManager: Hadouken.UI.PageManager) {
-            this._eventListener = eventListener;
-            this._pageManager = pageManager;
-            this._torrentEngine = new Hadouken.Plugins.Torrents.BitTorrent.BitTorrentEngine(eventListener);
+        constructor() {
+            this._pageManager = Hadouken.UI.PageManager.getInstance();
         }
 
         load(): void {
             this.setupMainMenu();
-            this.setupPageManager();
-            this.setupTorrentEngine();
-
-            this._eventListener.connect();
+            this.loadPages();
         }
 
         private setupMainMenu(): void {
@@ -27,21 +21,14 @@ module Hadouken.Plugins.Torrents {
             $('#main-menu').append(anchor);
         }
 
-        private setupPageManager(): void {
-            this._pageManager.addPage(new Hadouken.Plugins.Torrents.UI.TorrentsListPage(this._eventListener));
-        }
-
-        private setupTorrentEngine(): void {
-            this._torrentEngine.load();
+        private loadPages(): void {
+            this._pageManager.addPage(new Hadouken.Plugins.Torrents.UI.TorrentsListPage());
         }
     }
 }
 
 try {
-    var eventListener = new Hadouken.Events.EventListener();
-    var pageManager = Hadouken.UI.PageManager.getInstance();
-
-    var plugin = new Hadouken.Plugins.Torrents.TorrentsPlugin(eventListener, pageManager);
+    var plugin = new Hadouken.Plugins.Torrents.TorrentsPlugin();
     plugin.load();
 } catch(e) {
     console.log(e);
