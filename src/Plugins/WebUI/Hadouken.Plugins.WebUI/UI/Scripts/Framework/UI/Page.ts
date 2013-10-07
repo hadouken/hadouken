@@ -5,11 +5,17 @@
         constructor(public url: string, public routes: Array<string>) {
         }
 
-        init(): void {
+        init(...args: any[]): void {
             $.get(this.url, (html) => {
                 this._content = $(html);
                 $('#page-container').empty().append(this._content);
-                this.load();
+
+                if (args !== null && args.length >= 1) {
+                    this.load(args[0]);
+                }
+                else {
+                    this.load();
+                }
             });
         }
 
@@ -17,7 +23,7 @@
             return this._content;
         }
 
-        load(): void {
+        load(...args: any[]): void {
         }
     }
 }

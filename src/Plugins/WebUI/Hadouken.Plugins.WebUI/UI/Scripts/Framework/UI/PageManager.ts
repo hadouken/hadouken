@@ -17,9 +17,17 @@ module Hadouken.UI {
         }
 
         public init(): void {
-            hasher.initialized.add(crossroads.parse, crossroads);
-            hasher.changed.add(crossroads.parse, crossroads);
+            if (location.hash == "") {
+                hasher.setHash("dashboard");
+            }
+
+            hasher.initialized.add((n, o) => this.parseHash(n, o));
+            hasher.changed.add((n, o) => this.parseHash(n, o));
             hasher.init();
+        }
+
+        private parseHash(newHash, oldHash): void {
+            crossroads.parse(newHash);
         }
 
         public static getInstance(): PageManager {
@@ -35,7 +43,7 @@ module Hadouken.UI {
             for (var i = 0; i < page.routes.length; i++) {
                 var route = page.routes[i];
                 crossroads.addRoute(route, () => {
-                    page.init();
+                    page.init(arguments);
                 });
             }
 
