@@ -2,13 +2,14 @@
     export class Page {
         private _content: any;
 
-        constructor(public url: string) { }
+        constructor(public url: string, public routes: Array<string>) {
+        }
 
-        load(): void {
+        init(): void {
             $.get(this.url, (html) => {
                 this._content = $(html);
                 $('#page-container').empty().append(this._content);
-                this.setup();
+                this.load();
             });
         }
 
@@ -16,7 +17,7 @@
             return this._content;
         }
 
-        setup(): void {
+        load(): void {
         }
     }
 }

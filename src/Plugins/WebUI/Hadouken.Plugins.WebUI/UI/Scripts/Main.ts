@@ -5,13 +5,15 @@
 // include UI files
 ///<reference path="Framework/UI/Dialog.ts"/>
 ///<reference path="Framework/UI/Page.ts"/>
+///<reference path="Framework/UI/PageManager.ts"/>
 
 $(document).ready(function () {
     var eventListener = new Hadouken.Events.EventListener();
     var pluginEngine = new Hadouken.Plugins.PluginEngine();
+    var pageManager = Hadouken.UI.PageManager.getInstance();
 
     new Hadouken.Bootstrapper()
-        .init(eventListener, pluginEngine);
+        .init(eventListener, pluginEngine, pageManager);
 });
 
 /*

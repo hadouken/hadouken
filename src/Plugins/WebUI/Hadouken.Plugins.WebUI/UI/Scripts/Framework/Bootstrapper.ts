@@ -1,16 +1,15 @@
 ﻿///<reference path="Events/EventListener.ts"/>
 ///<reference path="Plugins/PluginEngine.ts"/>
+///<reference path="UI/PageManager.ts"/>
 
 module Hadouken {
     export class Bootstrapper {
-
-
-        init(eventListener: Hadouken.Events.EventListener, pluginEngine: Hadouken.Plugins.PluginEngine) {
+        init(eventListener: Hadouken.Events.EventListener, pluginEngine: Hadouken.Plugins.PluginEngine, pageManager: Hadouken.UI.PageManager) {
             console.log("init");
 
             eventListener.addHandler("web.signalR.connected", () => {
                 pluginEngine.load(() => {
-                    console.log("plugins loaded.");
+                    pageManager.init();
                 });
             });
 

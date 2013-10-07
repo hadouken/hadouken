@@ -10,11 +10,11 @@ module Hadouken.Plugins.Torrents.UI {
         private _templates: { [id: string]: any; } = {};
 
         constructor(eventListener: Hadouken.Events.EventListener) {
-            super("/plugins/core.torrents/list.html");
+            super("/plugins/core.torrents/list.html", [ '/torrents' ]);
             this._eventListener = eventListener;
         }
 
-        setup(): void {
+        load(): void {
             this.loadTemplates();
             this.setupUI();
             this.setupEvents();
