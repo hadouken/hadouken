@@ -6,11 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Hadouken.Framework.Http.TypeScript;
+using NLog;
 
 namespace Hadouken.Framework.Http
 {
     public class HttpFileServer : IHttpFileServer
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly ITypeScriptCompiler _typeScriptCompiler = TypeScriptCompiler.Create();
         private readonly string _baseDirectory;
@@ -67,7 +70,14 @@ namespace Hadouken.Framework.Http
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                ProcessContext(context);
+                try
+                {
+                    ProcessContext(context);
+                }
+                catch (Exception e)
+                {
+                    Logger.ErrorException("Error when processing request.", e);
+                }
             }
 
             _httpListener.Close();
