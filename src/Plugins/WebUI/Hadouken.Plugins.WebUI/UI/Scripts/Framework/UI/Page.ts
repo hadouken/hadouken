@@ -12,7 +12,7 @@
                 $('#page-container').empty().append(this.content);
 
                 if (args !== null && args.length >= 1 && typeof args[0] !== "undefined") {
-                    this.load(args[0]);
+                    this.load(args[0][0]);
                 }
                 else {
                     this.load();
