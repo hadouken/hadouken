@@ -15,17 +15,24 @@ module Hadouken.Plugins.Torrents {
         }
 
         load(): void {
-            console.log('torrents plugin loading');
-
-            this._torrentEngine.load();
             this.setupMainMenu();
+            this.setupPageManager();
+            this.setupTorrentEngine();
 
-            this._pageManager.addPage(new Hadouken.Plugins.Torrents.UI.TorrentsListPage(this._eventListener));
+            this._eventListener.connect();
         }
 
         private setupMainMenu(): void {
             var anchor = $('<li><a href="#/torrents">Torrents</a></li>');
             $('#main-menu').append(anchor);
+        }
+
+        private setupPageManager(): void {
+            this._pageManager.addPage(new Hadouken.Plugins.Torrents.UI.TorrentsListPage(this._eventListener));
+        }
+
+        private setupTorrentEngine(): void {
+            this._torrentEngine.load();
         }
     }
 }
@@ -34,12 +41,8 @@ try {
     var eventListener = new Hadouken.Events.EventListener();
     var pageManager = Hadouken.UI.PageManager.getInstance();
 
-    eventListener.addHandler('web.signalR.connected', () => {
-        var plugin = new Hadouken.Plugins.Torrents.TorrentsPlugin(eventListener, pageManager);
-        plugin.load();
-    });
-
-    eventListener.connect();
+    var plugin = new Hadouken.Plugins.Torrents.TorrentsPlugin(eventListener, pageManager);
+    plugin.load();
 } catch(e) {
     console.log(e);
 }

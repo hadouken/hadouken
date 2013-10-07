@@ -17,11 +17,9 @@ module Hadouken.UI {
         }
 
         public init(): void {
-            setTimeout(() => {
-                hasher.initialized.add(crossroads.parse, crossroads);
-                hasher.changed.add(crossroads.parse, crossroads);
-                hasher.init();
-            }, 500);
+            hasher.initialized.add(crossroads.parse, crossroads);
+            hasher.changed.add(crossroads.parse, crossroads);
+            hasher.init();
         }
 
         public static getInstance(): PageManager {
