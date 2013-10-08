@@ -10,6 +10,7 @@ module Hadouken.Plugins.Torrents.UI {
 
         onShow(): void {
             this.setupEvents();
+            this.loadData();
         }
 
         setupEvents(): void {
@@ -20,15 +21,26 @@ module Hadouken.Plugins.Torrents.UI {
 
             this.getContent().find('#btn-save-torrent-config').on('click', (e) => {
                 e.preventDefault();
+                this.saveData();
+            });
+        }
 
-                var data = {
-                    'bt.downloads.savePath': this.getContent().find('#savePath').val(),
-                    'bt.connection.listenPort': this.getContent().find('#port').val()
-                };
+        loadData(): void {
+            var d = [['bt.downloads.savePath', 'bt.connection.listenPort']];
+            this._rpcClient.callParams('config.getMany', d, (result) => {
+                this.getContent().find('#savePath').val(result['bt.downloads.savePath']);
+                this.getContent().find('#port').val(result['bt.connection.listenPort']);
+            });
+        }
 
-                this._rpcClient.callParams('config.setMany', data, (result) => {
-                    console.log('saved');
-                });
+        saveData(): void {
+            var data = {
+                'bt.downloads.savePath': this.getContent().find('#savePath').val(),
+                'bt.connection.listenPort': this.getContent().find('#port').val()
+            };
+
+            this._rpcClient.callParams('config.setMany', data, (result) => {
+                console.log('saved');
             });
         }
     }
