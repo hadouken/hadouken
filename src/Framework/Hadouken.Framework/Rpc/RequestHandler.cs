@@ -62,6 +62,7 @@ namespace Hadouken.Framework.Rpc
 
             return new JsonRpcResponse
                 {
+                    Id = request.Id,
                     Error = new MethodNotFoundError
                         {
                             Data = String.Format("Method {0} not found.", request.Method)

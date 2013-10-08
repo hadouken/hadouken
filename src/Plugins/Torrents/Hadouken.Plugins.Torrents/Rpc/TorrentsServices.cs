@@ -31,6 +31,19 @@ namespace Hadouken.Plugins.Torrents.Rpc
             return true;
         }
 
+        [JsonRpcMethod("torrents.pause")]
+        public bool Pause(string infoHash)
+        {
+            var manager = _torrentEngine.Get(infoHash);
+
+            if (manager == null)
+                return false;
+
+            manager.Pause();
+
+            return true;
+        }
+
         [JsonRpcMethod("torrents.stop")]
         public bool Stop(string infoHash)
         {

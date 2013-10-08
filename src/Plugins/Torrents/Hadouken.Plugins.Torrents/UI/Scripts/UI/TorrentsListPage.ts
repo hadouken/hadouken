@@ -60,10 +60,22 @@ module Hadouken.Plugins.Torrents.UI {
 
             var that = this;
 
-            this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-start', function(e) {
+            this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-start', function (e) {
                 e.preventDefault();
                 var id = $(this).closest('tr').attr('data-torrent-id');
                 that.startTorrent(id);
+            });
+
+            this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-pause', function (e) {
+                e.preventDefault();
+                var id = $(this).closest('tr').attr('data-torrent-id');
+                that.pauseTorrent(id);
+            });
+
+            this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-stop', function (e) {
+                e.preventDefault();
+                var id = $(this).closest('tr').attr('data-torrent-id');
+                that.stopTorrent(id);
             });
         }
 
@@ -137,6 +149,7 @@ module Hadouken.Plugins.Torrents.UI {
                 row.find('.state-progress').text('');
             }
 
+
             row.find('.btn-torrent-start').attr('disabled', !this.canStart(torrent.state));
             row.find('.btn-torrent-pause').attr('disabled', !this.canPause(torrent.state));
             row.find('.btn-torrent-stop').attr('disabled', !this.canStop(torrent.state));
@@ -170,9 +183,16 @@ module Hadouken.Plugins.Torrents.UI {
 
         startTorrent(id: string): void {
             this._rpcClient.callParams('torrents.start', id, (result) => {
-                if (result) {
-                    console.log('started');
-                }
+            });
+        }
+
+        pauseTorrent(id: string): void {
+            this._rpcClient.callParams('torrents.pause', id, (result) => {
+            });
+        }
+
+        stopTorrent(id: string): void {
+            this._rpcClient.callParams('torrents.stop', id, (result) => {
             });
         }
     }
