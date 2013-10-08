@@ -6,6 +6,7 @@
 
 module Hadouken.Plugins.Torrents {
     export class TorrentsPlugin extends Hadouken.Plugins.Plugin {
+        private _eventListener: Hadouken.Events.EventListener = new Hadouken.Events.EventListener();
         private _pageManager: Hadouken.UI.PageManager;
         private _torrentEngine: Hadouken.Plugins.Torrents.BitTorrent.BitTorrentEngine;
 
@@ -15,6 +16,7 @@ module Hadouken.Plugins.Torrents {
         }
 
         load(): void {
+            this.setupNotifications();
             this.setupMainMenu();
             this.loadPages();
         }
@@ -23,6 +25,14 @@ module Hadouken.Plugins.Torrents {
 
         configure(): void {
             new Hadouken.Plugins.Torrents.UI.ConfigureDialog().show();
+        }
+
+        private setupNotifications(): void {
+            this._eventListener.addHandler('torrent.completed', (torrent) => {
+                $.bootstrapGrowl(torrent.name + ' completed!');
+            });
+
+            this._eventListener.connect();
         }
 
         private setupMainMenu(): void {
