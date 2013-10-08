@@ -40,5 +40,10 @@ namespace Hadouken.Plugins.Torrents.Rpc.Dto
         {
             get { return _manager.Progress; }
         }
+
+        public string SavePath
+        {
+            get { return _manager.SavePath; }
+        }
     }
 }

@@ -7,7 +7,6 @@ module Hadouken.Plugins.Torrents.UI {
     export class TorrentsListPage extends Hadouken.UI.Page {
         private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
         private _eventListener: Hadouken.Events.EventListener;
-        private _rows: { [id: string]: any; } = {};
         private _templates: { [id: string]: any; } = {};
         private _timer: any = null;
 
@@ -32,14 +31,7 @@ module Hadouken.Plugins.Torrents.UI {
 
         unload(): void {
             clearTimeout(this._timer);
-
             this._eventListener.disconnect();
-
-            var rows = Object.keys(this._rows);
-
-            for (var i = 0; i < rows.length; i++) {
-                delete this._rows[rows[i]];
-            }
         }
 
         loadTemplates(): void {
@@ -109,43 +101,29 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         torrentAdded(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            // Add new row to table
-            console.log('torrentAdded: ' + torrent.id);
             this.addRow(torrent);
+            this.updateRow(torrent);
         }
 
         torrentRemoved(id: string): void {
-            // Remove row from table
-            console.log('torrentRemoved: ' + id);
             this.removeRow(id);
         }
 
         torrentUpdated(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            // Update torrent row in table
-            console.log('torrentUpdated: ' + torrent.id);
             this.updateRow(torrent);
         }
 
         private addRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            if (typeof this._rows[torrent.id] !== "undefined")
-                return;
-
             var row = this._templates['tmpl-torrent-list-item']({ torrent: torrent });
             $('#tbody-torrents-list').append($(row));
-
-            this._rows[torrent.id] = row;
         }
 
         private removeRow(id: string): void {
-            //
-            if (typeof this._rows[id] === "undefined")
-                return;
+            var row = this.content.find('#tbody-torrents-list > tr[data-torrent-id="' + id + '"]');
+            row.remove();
         }
 
         private updateRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            if (typeof this._rows[torrent.id] === "undefined")
-                return;
-
             var progress = torrent.progress | 0;
 
             var row = this.content.find('#tbody-torrents-list > tr[data-torrent-id="' + torrent.id + '"]');
@@ -158,6 +136,32 @@ module Hadouken.Plugins.Torrents.UI {
             else {
                 row.find('.state-progress').text('');
             }
+
+            row.find('.btn-torrent-start').attr('disabled', !this.canStart(torrent.state));
+            row.find('.btn-torrent-pause').attr('disabled', !this.canPause(torrent.state));
+            row.find('.btn-torrent-stop').attr('disabled', !this.canStop(torrent.state));
+        }
+
+        private canStart(state: string): boolean {
+            if (state === 'Stopped' || state === 'Paused')
+                return true;
+
+            return false;
+        }
+
+        private canPause(state: string): boolean {
+            if (state === 'Downloading' || state === 'Seeding') {
+                return true;
+            }
+
+            return false;
+        }
+
+        private canStop(state: string): boolean {
+            if (state === 'Downloading' || state === 'Paused' || state === 'Seeding' || state === 'Error' || state === 'Hashing' || state === 'Metadata')
+                return true;
+
+            return false;
         }
 
         private sortTable(column: string): void {
