@@ -75,17 +75,64 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                 savePath = _engine.Settings.SavePath;
 
             var manager = new TorrentManager(torrent, savePath, new TorrentSettings());
+            manager.TorrentStateChanged += TorrentStateChanged;
 
             _torrentManagers.Add(manager.InfoHash.ToString().Replace("-", ""), manager);
             _engine.Register(manager);
 
-            _rpcClient.CallAsync<bool>("events.publish", new object[]
-            {
-                "torrent.added",
-                new TorrentOverview(manager)
-            });
+            SendEvent("torrent.added", new TorrentOverview(manager));
 
             return manager;
+        }
+
+        private void TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
+        {
+            if (e.OldState == TorrentState.Downloading
+                && e.NewState == TorrentState.Seeding)
+            {
+                SendEvent("torrent.completed", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.OldState == TorrentState.Stopped
+                     && e.NewState == TorrentState.Downloading)
+            {
+                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.OldState == TorrentState.Stopped
+                     && e.NewState == TorrentState.Seeding)
+            {
+                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.OldState == TorrentState.Hashing
+                     && e.NewState == TorrentState.Downloading)
+            {
+                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.OldState == TorrentState.Hashing
+                     && e.NewState == TorrentState.Seeding)
+            {
+                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.NewState == TorrentState.Paused)
+            {
+                SendEvent("torrent.paused", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.NewState == TorrentState.Stopped)
+            {
+                SendEvent("torrent.stopped", new TorrentOverview(e.TorrentManager));
+            }
+            else if (e.NewState == TorrentState.Error)
+            {
+                SendEvent("torrent.error", new TorrentOverview(e.TorrentManager));
+            }
+        }
+
+        private void SendEvent(string eventName, object data)
+        {
+            _rpcClient.CallAsync<bool>("events.publish", new object[]
+            {
+                eventName,
+                data
+            });
         }
 
         private void SaveTorrentFile(byte[] data, string fileName)
