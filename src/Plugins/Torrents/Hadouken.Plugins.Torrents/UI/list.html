@@ -18,16 +18,28 @@
 
 <script type="text/x-handlebars-template" id="tmpl-torrent-list-item">
     <tr>
-        <td>{{torrent.name}}</td>
+        <td><a href="#/torrents/{{torrent.id}}/">{{torrent.name}}</a></td>
         <td>
-            <div class="progress">
-                <div class="progress-bar" style="width: 53%; margin-bottom: 0;"></div>
+            <div class="progress" style="margin-bottom: 0;">
+                <div class="progress-bar" style="width: 53%;"></div>
             </div>
         </td>
         <td>{{fileSize torrent.size}}</td>
         <td>
-            <div class="pull-right">
-                <button class="btn btn-xs btn-primary"><i class="icon-info"></i></button>
+            <div class="actions pull-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-primary"><i class="icon-play"></i></button>
+                    <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Move</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Remove</a></li>
+                        <li><a href="#">Remove (+data)</a></li>
+                    </ul>
+                </div>
             </div>
         </td>
     </tr>
