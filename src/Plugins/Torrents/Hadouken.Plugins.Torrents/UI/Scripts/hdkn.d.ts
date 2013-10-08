@@ -26,6 +26,7 @@ declare module Hadouken.UI {
     class Dialog {
         constructor(url: string);
         show();
+        close();
         onShow();
 
         getContent(): any;

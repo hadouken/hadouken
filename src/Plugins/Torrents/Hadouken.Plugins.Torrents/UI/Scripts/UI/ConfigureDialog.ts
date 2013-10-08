@@ -40,7 +40,9 @@ module Hadouken.Plugins.Torrents.UI {
             };
 
             this._rpcClient.callParams('config.setMany', data, (result) => {
-                console.log('saved');
+                if (result) {
+                    this.close();
+                }
             });
         }
     }

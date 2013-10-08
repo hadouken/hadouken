@@ -18,6 +18,10 @@
             });
         }
 
+        close(): void {
+            this._content.modal('hide');
+        }
+
         getContent(): any {
             return this._content;
         }
