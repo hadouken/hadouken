@@ -11,7 +11,9 @@
     }
 
     export class TorrentFile {
+        index: number;
         bitField: Array<number>;
+        bitFieldPercentComplete: number;
         bytesDownloaded: number;
         endPieceIndex: number;
         fullPath: string;

@@ -1,4 +1,9 @@
-﻿declare module Hadouken.Events {
+﻿declare var $: any;
+declare var Handlebars: any;
+declare var crossroads: any;
+declare var hasher: any;
+
+declare module Hadouken.Events {
     class EventListener {
         addHandler(name: string, callback: { (data: any): void; }): void;
         clearHandlers(): void;

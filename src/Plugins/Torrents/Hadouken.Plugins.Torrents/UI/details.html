@@ -27,6 +27,20 @@
             
             <div class="tab-pane" id="files">
                 <h3><i class="icon-file"></i> Files</h3>
+                
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%;">Path</th>
+                            <th style="width: 10%;">Size</th>
+                            <th style="width: 10%;">Done</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody id="tbody-torrentfiles-list">
+                    </tbody>
+                </table>
             </div>
             
             <div class="tab-pane" id="peers">
@@ -35,3 +49,12 @@
         </div>
     </div>
 </div>
+
+<script type="text/x-handlebars-template" id="tmpl-torrentdetails-file-item">
+    <tr data-file-index="{{file.index}}">
+        <td class="file-path">{{file.path}}</td>
+        <td class="file-size">{{fileSize file.length}}</td>
+        <td class="file-done"></td>
+        <td class="file-progress"></td>
+    </tr>
+</script>

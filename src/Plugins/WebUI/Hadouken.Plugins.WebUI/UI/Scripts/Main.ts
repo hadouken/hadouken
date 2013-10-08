@@ -1,3 +1,5 @@
+///<reference path="libs.d.ts"/>
+
 ///<reference path="Framework/Bootstrapper.ts"/>
 ///<reference path="Framework/Events/EventListener.ts"/>
 ///<reference path="Framework/Plugins/PluginEngine.ts"/>
