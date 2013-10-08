@@ -37,8 +37,16 @@ namespace Hadouken.Rpc
 
             if (!_proxyList.ContainsKey(plugin))
             {
+                var binding = new NetNamedPipeBinding
+                {
+                    MaxBufferPoolSize = 10485760,
+                    MaxBufferSize = 10485760,
+                    MaxConnections = 10,
+                    MaxReceivedMessageSize = 10485760
+                };
+
                 // Create proxy
-                var factory = new ChannelFactory<IWcfJsonRpcServer>(new NetNamedPipeBinding(),
+                var factory = new ChannelFactory<IWcfJsonRpcServer>(binding,
                     "net.pipe://localhost/hdkn.plugins." + plugin);
                 var proxy = factory.CreateChannel();
 

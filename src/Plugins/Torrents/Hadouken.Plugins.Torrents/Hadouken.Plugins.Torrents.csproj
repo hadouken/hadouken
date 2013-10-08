@@ -50,6 +50,7 @@
     <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
     <Compile Include="BitTorrent\MonoTorrentEngine.cs" />
     <Compile Include="Dto\TorrentDetails.cs" />
+    <Compile Include="Dto\TorrentFileDetails.cs" />
     <Compile Include="Dto\TorrentOverview.cs" />
     <Compile Include="Rpc\TorrentsServices.cs" />
     <Compile Include="TorrentsBootstrapper.cs" />

@@ -1,4 +1,5 @@
-﻿using MonoTorrent.Client;
+﻿using System.Linq;
+using MonoTorrent.Client;
 using MonoTorrent.Common;
 
 namespace Hadouken.Plugins.Torrents.Dto
@@ -12,9 +13,9 @@ namespace Hadouken.Plugins.Torrents.Dto
             _manager = manager;
         }
 
-        public TorrentFile[] Files
+        public TorrentFileDetails[] Files
         {
-            get { return _manager.Torrent.Files; }
+            get { return _manager.Torrent.Files.Select(f => new TorrentFileDetails(f)).ToArray(); }
         }
     }
 }
