@@ -36,7 +36,28 @@ module Hadouken.UI.Pages {
 
                 var template = Handlebars.compile($('#tmpl-plugin-list-item').html());
 
-                this._rpcClient.call('plugins.list', (plugins) => {
+                var multiCall = {
+                    'plugins.list': null,
+                    'config.getMany': [ [ 'plugins.repositoryUrl', 'plugins.enableUpdateChecking' ] ]
+                };
+
+                this._rpcClient.callParams('core.multiCall', multiCall, (response) => {
+                    var plugins = response['plugins.list'];
+                    var repositoryUrl = response['config.getMany']['plugins.repositoryUrl'];
+                    var enableUpdateCheckingVal = response['config.getMany']['plugins.enableUpdateChecking'];
+                    var enableUpdateChecking = false;
+
+                    if (enableUpdateCheckingVal !== null)
+                        enableUpdateChecking = enableUpdateCheckingVal;
+
+                    $('#repositoryUrl').val(repositoryUrl);
+                    $('#enableUpdateChecking').attr('checked', enableUpdateChecking);
+
+                    $('#btn-save-plugin-settings').on('click', (e) => {
+                        e.preventDefault();
+                        this.savePluginSettings();
+                    });
+
                     for (var i = 0; i < plugins.length; i++) {
                         var plugin = plugins[i];
                         var row = template({ plugin: plugin });
@@ -44,6 +65,20 @@ module Hadouken.UI.Pages {
                         $('#tbody-plugin-list').append($(row));
                     }
                 });
+            });
+        }
+
+        savePluginSettings(): void {
+            var repositoryUrl = $('#repositoryUrl').val();
+            var enableUpdateChecking = $('#enableUpdateChecking').is(':checked');
+
+            var d = {
+                'plugins.repositoryUrl': repositoryUrl,
+                'plugins.enableUpdateChecking': enableUpdateChecking
+            };
+
+            this._rpcClient.callParams('config.setMany', d, (result) => {
+                //
             });
         }
     }

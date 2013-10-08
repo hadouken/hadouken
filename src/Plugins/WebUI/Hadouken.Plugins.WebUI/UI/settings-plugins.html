@@ -1,7 +1,5 @@
 ﻿<h3><i class="icon-puzzle-piece"></i> Plugins</h3>
 
-<p>This is a complete list of all your Hadouken plugins.</p>
-
 <table class="table table-striped table-hover">
     <thead>
         <tr>
@@ -14,6 +12,29 @@
     <tbody id="tbody-plugin-list">
     </tbody>
 </table>
+
+<form class="form-horizontal">
+    <div class="form-group">
+        <label for="repositoryUrl" class="col-lg-2 control-label">Repository URL</label>
+        <div class="col-lg-10">
+            <input type="url" class="form-control" id="repositoryUrl" name="repositoryUrl" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="enableUpdateChecking" /> Enable update checking
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <button type="button" class="btn btn-primary" id="btn-save-plugin-settings">Save</button>
+        </div>
+    </div>
+</form>
 
 <script type="text/x-handlebars-template" id="tmpl-plugin-list-item">
     <tr>
