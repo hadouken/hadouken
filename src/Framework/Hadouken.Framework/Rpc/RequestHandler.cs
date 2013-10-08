@@ -82,20 +82,20 @@ namespace Hadouken.Framework.Rpc
 
             if (param != null)
             {
-                if (param.Count != invoker.ParameterTypes.Length)
-                {
-                    return new JsonRpcResponse
-                        {
-                            Id = request.Id,
-                            Error = new InvalidParamsError()
-                        };
-                }
-
                 var p = new List<object>();
 
                 switch (param.Type)
                 {
                     case JTokenType.Array:
+                        if (param.Count != invoker.ParameterTypes.Length)
+                        {
+                            return new JsonRpcResponse
+                            {
+                                Id = request.Id,
+                                Error = new InvalidParamsError()
+                            };
+                        }
+
                         p.AddRange(param.Select(
                             (t, i) =>
                                 t.ToObject(invoker.ParameterTypes[i], Serializer))

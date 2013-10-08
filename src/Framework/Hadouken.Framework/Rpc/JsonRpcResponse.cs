@@ -73,7 +73,7 @@ namespace Hadouken.Framework.Rpc
         [JsonProperty("jsonrpc", Required = Required.Always)]
         public string Protocol { get; set; }
 
-        [JsonProperty("result", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("result", Required = Required.Default)]
         public object Result { get; set; }
 
         [JsonProperty("error", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
