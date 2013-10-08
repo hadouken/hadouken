@@ -17,7 +17,7 @@ module Hadouken.Plugins.Torrents {
         }
 
         private setupMainMenu(): void {
-            var anchor = $('<li><a href="#/torrents">Torrents</a></li>');
+            var anchor = $('<li><a href="#/torrents"><i class="icon-tasks"></i> Torrents</a></li>');
             $('#main-menu').append(anchor);
         }
 
