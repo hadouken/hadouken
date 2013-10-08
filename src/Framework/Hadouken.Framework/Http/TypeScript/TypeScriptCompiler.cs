@@ -26,7 +26,7 @@ namespace Hadouken.Framework.Http.TypeScript
             {
                 StartInfo =
                 {
-                    Arguments = String.Format("{0} --out {1}", file, Path.Combine(inputFileDirectory, fileName)),
+                    Arguments = String.Format("\"{0}\" --out \"{1}\"", file, Path.Combine(inputFileDirectory, fileName)),
                     WorkingDirectory = _toolsPath,
                     FileName = "tsc.exe",
                     CreateNoWindow = true,
