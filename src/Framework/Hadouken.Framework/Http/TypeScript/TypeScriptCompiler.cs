@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Threading;
 
 namespace Hadouken.Framework.Http.TypeScript
 {
@@ -22,7 +24,7 @@ namespace Hadouken.Framework.Http.TypeScript
 
             var fileName = Path.GetFileNameWithoutExtension(file) + ".js";
 
-            var p = new Process
+            var process  = new Process
             {
                 StartInfo =
                 {
@@ -30,12 +32,58 @@ namespace Hadouken.Framework.Http.TypeScript
                     WorkingDirectory = _toolsPath,
                     FileName = "tsc.exe",
                     CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput =  true,
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
 
-            p.Start();
-            p.WaitForExit();
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+
+            using (var outputWaitHandle = new AutoResetEvent(false))
+            using (var errorWaitHandle = new AutoResetEvent(false))
+            {
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null)
+                    {
+                        outputWaitHandle.Set();
+                    }
+                    else
+                    {
+                        output.AppendLine(e.Data);
+                    }
+                };
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null)
+                    {
+                        errorWaitHandle.Set();
+                    }
+                    else
+                    {
+                        error.AppendLine(e.Data);
+                    }
+                };
+
+                process.Start();
+
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                if (process.WaitForExit(10000) &&
+                    outputWaitHandle.WaitOne(10000) &&
+                    errorWaitHandle.WaitOne(10000))
+                {
+                    // Process completed. Check process.ExitCode here.
+                    if (process.ExitCode != 0)
+                    {
+                        File.WriteAllText(Path.Combine(inputFileDirectory, fileName), error.ToString());
+                    }
+                }
+            }
 
             return Path.Combine(inputFileDirectory, fileName);
         }
