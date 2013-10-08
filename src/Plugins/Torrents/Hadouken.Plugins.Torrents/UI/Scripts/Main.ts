@@ -1,5 +1,6 @@
 ﻿///<reference path="hdkn.d.ts"/>
 ///<reference path="BitTorrent/BitTorrentEngine.ts"/>
+///<reference path="UI/TorrentDetailsPage.ts"/>
 ///<reference path="UI/TorrentsListPage.ts"/>
 ///<reference path="UI/ConfigureDialog.ts"/>
 
@@ -31,6 +32,7 @@ module Hadouken.Plugins.Torrents {
 
         private loadPages(): void {
             this._pageManager.addPage(new Hadouken.Plugins.Torrents.UI.TorrentsListPage());
+            this._pageManager.addPage(new Hadouken.Plugins.Torrents.UI.TorrentDetailsPage());
         }
     }
 }
