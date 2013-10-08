@@ -17,18 +17,19 @@
 </table>
 
 <script type="text/x-handlebars-template" id="tmpl-torrent-list-item">
-    <tr>
+    <tr data-torrent-id="{{torrent.id}}">
         <td><a href="#/torrents/{{torrent.id}}/">{{torrent.name}}</a></td>
         <td>
             <div class="progress" style="margin-bottom: 0;">
-                <div class="progress-bar" style="width: 53%;"></div>
+                <div class="progress-bar" style="width: {{torrent.progress}}%;"></div>
             </div>
         </td>
         <td>{{fileSize torrent.size}}</td>
         <td>
             <div class="actions pull-right">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-xs btn-primary"><i class="icon-play"></i></button>
+                    <button type="button" class="btn btn-xs btn-primary btn-torrent-start"><i class="icon-play"></i></button>
+
                     <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                     </button>

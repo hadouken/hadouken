@@ -3,6 +3,8 @@
         id: string;
         name: string;
         size: number;
+        state: string;
         label: string;
+        progress: number;
     }
 }

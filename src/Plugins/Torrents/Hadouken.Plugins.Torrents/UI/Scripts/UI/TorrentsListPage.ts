@@ -56,6 +56,14 @@ module Hadouken.Plugins.Torrents.UI {
                 e.preventDefault();
                 new Hadouken.Plugins.Torrents.UI.AddTorrentsDialog().show();
             });
+
+            var that = this;
+
+            this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-start', function(e) {
+                e.preventDefault();
+                var id = $(this).closest('tr').attr('data-torrent-id');
+                that.startTorrent(id);
+            });
         }
 
         setupEvents(): void {
@@ -126,13 +134,25 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         private updateRow(torrent: Hadouken.Plugins.Torrents.BitTorrent.Torrent): void {
-            //
             if (typeof this._rows[torrent.id] === "undefined")
                 return;
+
+            var progress = torrent.progress | 0;
+
+            var row = this.content.find('#tbody-torrents-list > tr[data-torrent-id="' + torrent.id + '"]');
+            row.find('.progress-bar').css('width', progress + '%');
         }
 
         private sortTable(column: string): void {
             //
+        }
+
+        startTorrent(id: string): void {
+            this._rpcClient.callParams('torrents.start', id, (result) => {
+                if (result) {
+                    console.log('started');
+                }
+            });
         }
     }
 }
