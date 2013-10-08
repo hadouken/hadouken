@@ -7,13 +7,21 @@ namespace Hadouken.Plugins.Torrents.Dto
     {
         private readonly TorrentFile _torrentFile;
 
-        public TorrentFileDetails(TorrentFile torrentFile)
+        public TorrentFileDetails(int index, TorrentFile torrentFile)
         {
+            Index = index;
             _torrentFile = torrentFile;
         }
 
+        public int Index { get; private set; }
+
         public int[] BitField {
             get { return _torrentFile.BitField.Select(b => b ? 1 : 0).ToArray(); }
+        }
+
+        public double BitFieldPercentComplete
+        {
+            get { return _torrentFile.BitField.PercentComplete; }
         }
 
         public long BytesDownloaded {get { return _torrentFile.BytesDownloaded; } }

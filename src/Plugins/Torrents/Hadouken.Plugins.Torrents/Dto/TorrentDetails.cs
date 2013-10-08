@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using MonoTorrent.Client;
-using MonoTorrent.Common;
 
 namespace Hadouken.Plugins.Torrents.Dto
 {
@@ -15,7 +14,7 @@ namespace Hadouken.Plugins.Torrents.Dto
 
         public TorrentFileDetails[] Files
         {
-            get { return _manager.Torrent.Files.Select(f => new TorrentFileDetails(f)).ToArray(); }
+            get { return _manager.Torrent.Files.Select((file, index) => new TorrentFileDetails(index, file)).ToArray(); }
         }
     }
 }
