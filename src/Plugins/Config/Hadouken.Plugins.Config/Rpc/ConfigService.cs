@@ -23,10 +23,33 @@ namespace Hadouken.Plugins.Config.Rpc
             return _dataStore.Get(key);
         }
 
+        [JsonRpcMethod("config.getMany")]
+        public IDictionary<string, object> GetMany(string[] keys)
+        {
+            if (keys == null || keys.Length == 0)
+                return new Dictionary<string, object>();
+
+            return keys.ToDictionary(key => key, Get);
+        }
+
         [JsonRpcMethod("config.set")]
         public bool Set(string key, object val)
         {
             _dataStore.Set(key, val);
+            return true;
+        }
+
+        [JsonRpcMethod("config.setMany")]
+        public bool SetMany(Dictionary<string, object> values)
+        {
+            if (values == null || !values.Any())
+                return false;
+
+            foreach (var val in values)
+            {
+                Set(val.Key, val.Value);
+            }
+
             return true;
         }
 
