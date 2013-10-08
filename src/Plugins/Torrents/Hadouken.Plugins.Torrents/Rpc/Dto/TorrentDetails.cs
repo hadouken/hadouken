@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MonoTorrent.Client;
+﻿using MonoTorrent.Client;
+using MonoTorrent.Common;
 
 namespace Hadouken.Plugins.Torrents.Rpc.Dto
 {
@@ -14,6 +10,11 @@ namespace Hadouken.Plugins.Torrents.Rpc.Dto
         public TorrentDetails(TorrentManager manager): base(manager)
         {
             _manager = manager;
+        }
+
+        public TorrentFile[] Files
+        {
+            get { return _manager.Torrent.Files; }
         }
     }
 }
