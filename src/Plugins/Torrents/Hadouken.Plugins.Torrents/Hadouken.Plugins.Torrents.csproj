@@ -49,8 +49,8 @@
   <ItemGroup>
     <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
     <Compile Include="BitTorrent\MonoTorrentEngine.cs" />
-    <Compile Include="Rpc\Dto\TorrentDetails.cs" />
-    <Compile Include="Rpc\Dto\TorrentOverview.cs" />
+    <Compile Include="Dto\TorrentDetails.cs" />
+    <Compile Include="Dto\TorrentOverview.cs" />
     <Compile Include="Rpc\TorrentsServices.cs" />
     <Compile Include="TorrentsBootstrapper.cs" />
     <Compile Include="TorrentsPlugin.cs" />

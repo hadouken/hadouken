@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hadouken.Framework.Rpc;
+using Hadouken.Plugins.Torrents.Dto;
 using MonoTorrent.Client;
 using MonoTorrent.Client.Encryption;
 using MonoTorrent.Common;
@@ -81,12 +82,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             _rpcClient.CallAsync<bool>("events.publish", new object[]
             {
                 "torrent.added",
-                new
-                {
-                    id = manager.InfoHash.ToString().Replace("-", "").ToLowerInvariant(),
-                    name = manager.Torrent.Name,
-                    size = manager.Torrent.Size
-                }
+                new TorrentOverview(manager)
             });
 
             return manager;
