@@ -1,7 +1,9 @@
 ﻿///<reference path="../Page.ts"/>
+///<reference path="../../Http/JsonRpcClient.ts"/>
 
 module Hadouken.UI.Pages {
     export class SettingsPage extends Page {
+        private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
         private _sections: { [id: string]: { (): void; }; } = {};
 
         constructor() {
@@ -28,9 +30,20 @@ module Hadouken.UI.Pages {
         }
 
         loadPlugins(): void {
-            $.get('/settings-plugins.html', function (html) {
+            $.get('/settings-plugins.html', (html) => {
                 $('#settings-section-container').empty();
                 $('#settings-section-container').append($(html));
+
+                var template = Handlebars.compile($('#tmpl-plugin-list-item').html());
+
+                this._rpcClient.call('plugins.list', (plugins) => {
+                    for (var i = 0; i < plugins.length; i++) {
+                        var plugin = plugins[i];
+                        var row = template({ plugin: plugin });
+
+                        $('#tbody-plugin-list').append($(row));
+                    }
+                });
             });
         }
     }
