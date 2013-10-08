@@ -75,7 +75,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
             var manager = new TorrentManager(torrent, savePath, new TorrentSettings());
 
-            _torrentManagers.Add(manager.InfoHash.ToString(), manager);
+            _torrentManagers.Add(manager.InfoHash.ToString().Replace("-", ""), manager);
             _engine.Register(manager);
 
             _rpcClient.CallAsync<bool>("events.publish", new object[]

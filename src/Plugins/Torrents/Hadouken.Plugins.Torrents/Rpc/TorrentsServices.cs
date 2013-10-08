@@ -57,6 +57,21 @@ namespace Hadouken.Plugins.Torrents.Rpc
 
         }
 
+        [JsonRpcMethod("torrents.details")]
+        public object Details(string id)
+        {
+            var manager = _torrentEngine.Get(id);
+
+            if (manager == null)
+                return null;
+
+            return new
+            {
+                name = manager.Torrent.Name,
+                size = manager.Torrent.Size
+            };
+        }
+
         [JsonRpcMethod("torrents.addFile")]
         public object AddFile(byte[] data, string savePath, string label)
         {
