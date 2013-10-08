@@ -7,6 +7,7 @@ module Hadouken.Plugins.Torrents.UI {
         private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
         private _timer: any;
         private _hasRenderedTemplate: boolean = false;
+        private _bitFieldCache: { [id: number]: Array<number>; } = {};
 
         constructor() {
             super('/plugins/core.torrents/details.html', [
@@ -64,8 +65,39 @@ module Hadouken.Plugins.Torrents.UI {
 
             for (var i = 0; i < torrent.files.length; i++) {
                 var file = torrent.files[i];
+
+                if (this.compareBitFieldToCache(file)) {
+                    continue;
+                }
+
+                console.log('updating torrent file');
+
                 var row = $('#tbody-torrentfiles-list > tr[data-file-index="' + file.index + '"]');
             }
+        }
+
+        compareBitFieldToCache(file: Hadouken.Plugins.Torrents.BitTorrent.TorrentFile): boolean {
+            var bf = file.bitField;
+            var bfc = this._bitFieldCache[file.index];
+
+            if (!bfc) {
+                this._bitFieldCache[file.index] = bf;
+                return false;
+            }
+
+            if (bf.length != bfc.length) {
+                this._bitFieldCache[file.index] = bf;
+                return false;
+            }
+
+            for (var i = 0; i < bf.length; i++) {
+                if (bf[i] != bfc[i]) {
+                    this._bitFieldCache[file.index] = bf;
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         friendlyFileSize(size: number): string {
