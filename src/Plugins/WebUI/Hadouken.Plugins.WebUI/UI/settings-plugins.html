@@ -40,6 +40,12 @@
     <tr>
         <td>{{plugin.name}}</td>
         <td>{{plugin.version}}</td>
-        <td></td>
+        <td>
+            {{#if plugin.instance}}
+            <div class="actions pull-right">
+                <button type="button" class="btn btn-xs btn-primary btn-configure-plugin" data-plugin="{{plugin.name}}">Configure</button>
+            </div>
+            {{/if}}
+        </td>
     </tr>
 </script>

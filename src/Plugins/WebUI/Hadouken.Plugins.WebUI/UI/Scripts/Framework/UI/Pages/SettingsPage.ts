@@ -1,8 +1,11 @@
 ﻿///<reference path="../Page.ts"/>
 ///<reference path="../../Http/JsonRpcClient.ts"/>
+///<reference path="../../Plugins/Plugin.ts"/>
+///<reference path="../../Plugins/PluginEngine.ts"/>
 
 module Hadouken.UI.Pages {
     export class SettingsPage extends Page {
+        private _pluginEngine: Hadouken.Plugins.PluginEngine = Hadouken.Plugins.PluginEngine.getInstance();
         private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
         private _sections: { [id: string]: { (): void; }; } = {};
 
@@ -36,15 +39,11 @@ module Hadouken.UI.Pages {
 
                 var template = Handlebars.compile($('#tmpl-plugin-list-item').html());
 
-                var multiCall = {
-                    'plugins.list': null,
-                    'config.getMany': [ [ 'plugins.repositoryUrl', 'plugins.enableUpdateChecking' ] ]
-                };
+                var data = [['plugins.repositoryUrl', 'plugins.enableUpdateChecking']];
 
-                this._rpcClient.callParams('core.multiCall', multiCall, (response) => {
-                    var plugins = response['plugins.list'];
-                    var repositoryUrl = response['config.getMany']['plugins.repositoryUrl'];
-                    var enableUpdateCheckingVal = response['config.getMany']['plugins.enableUpdateChecking'];
+                this._rpcClient.callParams('config.getMany', data, (response) => {
+                    var repositoryUrl = response['plugins.repositoryUrl'];
+                    var enableUpdateCheckingVal = response['plugins.enableUpdateChecking'];
                     var enableUpdateChecking = false;
 
                     if (enableUpdateCheckingVal !== null)
@@ -58,12 +57,24 @@ module Hadouken.UI.Pages {
                         this.savePluginSettings();
                     });
 
-                    for (var i = 0; i < plugins.length; i++) {
-                        var plugin = plugins[i];
-                        var row = template({ plugin: plugin });
+                    var pluginIds = Object.keys(this._pluginEngine.plugins);
 
+                    for (var i = 0; i < pluginIds.length; i++) {
+                        var key = pluginIds[i];
+                        var plugin = this._pluginEngine.plugins[key];
+
+                        var row = template({ plugin: plugin });
                         $('#tbody-plugin-list').append($(row));
                     }
+
+                    var that = this;
+
+                    $('.btn-configure-plugin').on('click', function (e) {
+                        e.preventDefault();
+
+                        var pluginId = $(this).attr('data-plugin');
+                        that._pluginEngine.plugins[pluginId].instance.configure();
+                    });
                 });
             });
         }

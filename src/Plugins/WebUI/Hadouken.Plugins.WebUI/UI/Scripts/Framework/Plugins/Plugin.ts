@@ -1,7 +1,9 @@
 module Hadouken.Plugins {
     export class Plugin {
-        load() { }
+        load(): void { }
 
-        unload() { }
+        configure(): void { }
+
+        unload(): void { }
     }
 }

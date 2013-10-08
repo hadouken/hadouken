@@ -32,6 +32,19 @@ declare module Hadouken.UI {
     }
 }
 
+declare module Hadouken.Plugins {
+    class Plugin {
+        load(): void;
+        unload(): void;
+        configure(): void;
+    }
+
+    class PluginEngine {
+        public static getInstance(): PluginEngine;
+        public setPlugin(id: string, plugin: Plugin): void;
+    }
+}
+
 declare module Hadouken.Http {
     class JsonRpcClient {
         constructor(url: string);
