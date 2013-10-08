@@ -72,7 +72,7 @@ module Hadouken.UI.Pages {
                     $('.btn-configure-plugin').on('click', function (e) {
                         e.preventDefault();
 
-                        var pluginId = $(this).attr('data-plugin');
+                        var pluginId = $(this).closest("tr").attr('data-plugin-id');
                         that._pluginEngine.plugins[pluginId].instance.configure();
                     });
                 });

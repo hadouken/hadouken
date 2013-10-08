@@ -37,15 +37,26 @@
 </form>
 
 <script type="text/x-handlebars-template" id="tmpl-plugin-list-item">
-    <tr>
+    <tr data-plugin-id="{{plugin.name}}">
         <td>{{plugin.name}}</td>
         <td>{{plugin.version}}</td>
         <td>
-            {{#if plugin.instance}}
             <div class="actions pull-right">
-                <button type="button" class="btn btn-xs btn-primary btn-configure-plugin" data-plugin="{{plugin.name}}">Configure</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">
+                        Actions <span class="caret"></span>
+                    </button>
+                    
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Unload</a></li>
+                        
+                        {{#if plugin.instance}}
+                        <li class="divider"></li>
+                        <li><a href="#" class="btn-configure-plugin"><i class="icon-wrench"></i> Configure</a></li>
+                        {{/if}}
+                    </ul>
+                </div>
             </div>
-            {{/if}}
         </td>
     </tr>
 </script>
