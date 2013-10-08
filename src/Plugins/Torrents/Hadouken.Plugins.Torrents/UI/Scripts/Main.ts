@@ -1,6 +1,7 @@
 ﻿///<reference path="hdkn.d.ts"/>
 ///<reference path="BitTorrent/BitTorrentEngine.ts"/>
 ///<reference path="UI/TorrentsListPage.ts"/>
+///<reference path="UI/ConfigureDialog.ts"/>
 
 module Hadouken.Plugins.Torrents {
     export class TorrentsPlugin extends Hadouken.Plugins.Plugin {
@@ -20,7 +21,7 @@ module Hadouken.Plugins.Torrents {
         unload(): void { }
 
         configure(): void {
-            console.log('configure torrents plugin');
+            new Hadouken.Plugins.Torrents.UI.ConfigureDialog().show();
         }
 
         private setupMainMenu(): void {

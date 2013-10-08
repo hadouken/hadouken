@@ -10,6 +10,9 @@
 
                 this._content = $(html);
                 this._content.modal();
+                this._content.on('hidden.bs.modal', function () {
+                    $(this).remove();
+                });
 
                 this.onShow();
             });

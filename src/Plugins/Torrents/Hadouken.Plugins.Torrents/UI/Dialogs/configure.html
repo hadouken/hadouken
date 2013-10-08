@@ -1,0 +1,42 @@
+﻿<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Configure BitTorrent</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="tab-menu" style="margin-bottom: 15px;">
+                    <li class="active"><a href="#bt-tab-downloads">Downloads</a></li>
+                    <li><a href="#bt-tab-connection">Connection</a></li>
+                    <li><a href="#bt-tab-advanced">Advanced</a></li>
+                </ul>
+                
+                <div class="tab-content">
+                    <div id="bt-tab-downloads" class="tab-pane active">
+                        <form role="form" class="form-horizontal">
+                            <div class="form-group">
+                                <label for="savePath" class="col-lg-3 control-label">Save path</label>
+                                <div class="col-lg-9">
+                                    <input type="text" class="form-control" id="savePath" name="savePath" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                
+                    <div id="bt-tab-connection" class="tab-pane">
+                        <p>connection</p>
+                    </div>
+                
+                    <div id="bt-tab-advanced" class="tab-pane">
+                        <p>advanced</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-save-torrent-config">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
