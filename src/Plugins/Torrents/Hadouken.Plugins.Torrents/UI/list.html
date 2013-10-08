@@ -5,8 +5,9 @@
 <table class="table table-striped table-hover" id="tbl-torrents-list">
     <thead>
         <tr>
-            <th style="width: 50%;">Name</th>
-            <th style="width: 25%;">State</th>
+            <th style="width: 40%;">Name</th>
+            <th style="width: 15%;">State</th>
+            <th style="width: 20%;">Progress</th>
             <th style="width: 15%;">Size</th>
             <th></th>
         </tr>
@@ -19,6 +20,10 @@
 <script type="text/x-handlebars-template" id="tmpl-torrent-list-item">
     <tr data-torrent-id="{{torrent.id}}">
         <td><a href="#/torrents/{{torrent.id}}/">{{torrent.name}}</a></td>
+        <td>
+            <span class="state">{{torrent.state}}</span>
+            <span class="state-progress">{{progress torrent}}</span>
+        </td>
         <td>
             <div class="progress" style="margin-bottom: 0;">
                 <div class="progress-bar" style="width: {{torrent.progress}}%;"></div>

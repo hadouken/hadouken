@@ -48,6 +48,15 @@ module Hadouken.Plugins.Torrents.UI {
                 return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
             });
 
+            Handlebars.registerHelper('progress', function (torrent) {
+                if (torrent.state === 'Downloading') {
+                    var progress = torrent.progress | 0;
+                    return ' (' + progress + '%)';
+                }
+
+                return '';
+            });
+
             this._templates['tmpl-torrent-list-item'] = Handlebars.compile($('#tmpl-torrent-list-item').html());
         }
 
@@ -141,6 +150,14 @@ module Hadouken.Plugins.Torrents.UI {
 
             var row = this.content.find('#tbody-torrents-list > tr[data-torrent-id="' + torrent.id + '"]');
             row.find('.progress-bar').css('width', progress + '%');
+            row.find('.state').text(torrent.state);
+
+            if (torrent.state === 'Downloading') {
+                row.find('.state-progress').text(progress + '%');
+            }
+            else {
+                row.find('.state-progress').text('');
+            }
         }
 
         private sortTable(column: string): void {
