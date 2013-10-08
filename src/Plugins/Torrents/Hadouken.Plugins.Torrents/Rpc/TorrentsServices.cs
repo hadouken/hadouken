@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.BitTorrent;
+using Hadouken.Plugins.Torrents.Rpc.Dto;
 
 namespace Hadouken.Plugins.Torrents.Rpc
 {
@@ -44,48 +45,32 @@ namespace Hadouken.Plugins.Torrents.Rpc
         }
 
         [JsonRpcMethod("torrents.list")]
-        public object List()
+        public IEnumerable<TorrentOverview> List()
         {
             var torrents = _torrentEngine.TorrentManagers;
-
-            return torrents.Select(t => new
-                {
-                    id = t.InfoHash.ToString().Replace("-", "").ToLowerInvariant(),
-                    name = t.Torrent.Name,
-                    size = t.Torrent.Size,
-                    state = t.State,
-                    progress = t.Progress
-                });
-
+            return torrents.Select(t => new TorrentOverview(t));
         }
 
         [JsonRpcMethod("torrents.details")]
-        public object Details(string id)
+        public TorrentDetails Details(string id)
         {
             var manager = _torrentEngine.Get(id);
 
             if (manager == null)
                 return null;
 
-            return new
-            {
-                id,
-                name = manager.Torrent.Name,
-                size = manager.Torrent.Size,
-                state = manager.State,
-                progress = manager.Progress
-            };
+            return new TorrentDetails(manager);
         }
 
         [JsonRpcMethod("torrents.addFile")]
-        public object AddFile(byte[] data, string savePath, string label)
+        public TorrentOverview AddFile(byte[] data, string savePath, string label)
         {
             var manager = _torrentEngine.Add(data, savePath, label);
-            return new
-                {
-                    manager.Torrent.Name,
-                    manager.Torrent.Size
-                };
+
+            if (manager == null)
+                return null;
+
+            return new TorrentOverview(manager);
         }
     }
 }
