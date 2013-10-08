@@ -108,6 +108,7 @@
     <Compile Include="Plugins\PluginState.cs" />
     <Compile Include="Plugins\Rpc\PluginsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\CoreServices.cs" />
     <Compile Include="Rpc\WcfProxyRequestHandler.cs" />
     <Compile Include="Service\HadoukenService.cs" />
     <Compile Include="Service\IHadoukenService.cs" />
