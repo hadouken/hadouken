@@ -52,7 +52,9 @@ namespace Hadouken.Plugins.Torrents.Rpc
                 {
                     id = t.InfoHash.ToString().Replace("-", "").ToLowerInvariant(),
                     name = t.Torrent.Name,
-                    size = t.Torrent.Size
+                    size = t.Torrent.Size,
+                    state = t.State,
+                    progress = t.Progress
                 });
 
         }
@@ -67,8 +69,11 @@ namespace Hadouken.Plugins.Torrents.Rpc
 
             return new
             {
+                id,
                 name = manager.Torrent.Name,
-                size = manager.Torrent.Size
+                size = manager.Torrent.Size,
+                state = manager.State,
+                progress = manager.Progress
             };
         }
 
