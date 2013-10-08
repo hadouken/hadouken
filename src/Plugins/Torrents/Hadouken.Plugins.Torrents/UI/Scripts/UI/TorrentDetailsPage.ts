@@ -63,6 +63,8 @@ module Hadouken.Plugins.Torrents.UI {
             $('#torrent-details-name').append('<small>' + torrent.state + '</small>');
             $('#torrent-details-progress').css('width', progress + '%');
 
+            $('#files-count').text(torrent.files.length);
+
             for (var i = 0; i < torrent.files.length; i++) {
                 var file = torrent.files[i];
 
