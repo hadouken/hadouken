@@ -59,7 +59,9 @@ namespace Hadouken.Rpc
 
                     if (JsonRpcResponse.TryParse(result, out response, out responseParseException))
                     {
-                        _proxyList.Add(plugin, proxy);
+                        if (!_proxyList.ContainsKey(plugin))
+                            _proxyList.Add(plugin, proxy);
+
                         return response;
                     }
 
