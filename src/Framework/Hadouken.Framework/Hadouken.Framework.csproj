@@ -63,10 +63,10 @@
     <Compile Include="IBootConfig.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\Hosting\HttpJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\IJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\IWcfJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\WcfJsonRpcServer.cs" />
+    <Compile Include="Rpc\IClientTransport.cs" />
     <Compile Include="Rpc\IJsonRpcHandler.cs" />
     <Compile Include="Rpc\IJsonRpcService.cs" />
     <Compile Include="Rpc\IMethodInvoker.cs" />
@@ -78,6 +78,7 @@
     <Compile Include="Rpc\JsonRpcResponse.cs" />
     <Compile Include="Rpc\MethodInvoker.cs" />
     <Compile Include="Rpc\RequestHandler.cs" />
+    <Compile Include="Rpc\WcfNamedPipeClientTransport.cs" />
     <Compile Include="SemVer\EqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanRule.cs" />

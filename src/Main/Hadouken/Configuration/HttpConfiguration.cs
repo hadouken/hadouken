@@ -22,5 +22,11 @@ namespace Hadouken.Configuration
             get { return Convert.ToInt32(this["port"]); }
             set { this["port"] = value; }
         }
+
+        [ConfigurationProperty("auth", IsRequired = true)]
+        public HttpAuthConfiguration Authentication
+        {
+            get { return this["auth"] as HttpAuthConfiguration; }
+        }
     }
 }

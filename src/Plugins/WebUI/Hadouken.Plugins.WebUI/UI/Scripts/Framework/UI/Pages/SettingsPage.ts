@@ -1,4 +1,5 @@
 ﻿///<reference path="../Page.ts"/>
+///<reference path="../Dialogs/ChangeAuthDialog.ts"/>
 ///<reference path="../../Http/JsonRpcClient.ts"/>
 ///<reference path="../../Plugins/Plugin.ts"/>
 ///<reference path="../../Plugins/PluginEngine.ts"/>
@@ -20,6 +21,10 @@ module Hadouken.UI.Pages {
         }
 
         loadGeneral(): void {
+            $('#btn-change-auth').on('click', (e) => {
+                e.preventDefault();
+                new Hadouken.UI.Dialogs.ChangeAuthDialog().show();
+            });
         }
 
         loadPlugins(): void {

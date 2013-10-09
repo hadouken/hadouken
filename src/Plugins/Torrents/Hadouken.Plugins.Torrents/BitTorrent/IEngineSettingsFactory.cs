@@ -25,7 +25,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             new Dictionary<string, Func<EngineSettings, object>>(); 
 
         private readonly EngineSettings _settings = new EngineSettings();
-        private readonly JsonRpcClient _rpcClient;
+        private readonly IJsonRpcClient _rpcClient;
 
         public event EventHandler<EngineSettings> EngineSettingsChanged;
 
@@ -46,9 +46,9 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             Getters.Add("bt.connection.globalMaxUploadSpeed", s => s.GlobalMaxUploadSpeed);
         }
 
-        public EngineSettingsFactory(Uri rpcEndpoint)
+        public EngineSettingsFactory(IJsonRpcClient rpcClient)
         {
-            _rpcClient = new JsonRpcClient(rpcEndpoint);
+            _rpcClient = rpcClient;
         }
 
         public EngineSettings Build()

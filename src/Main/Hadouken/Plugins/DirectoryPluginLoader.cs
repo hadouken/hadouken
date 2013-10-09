@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using Hadouken.Configuration;
 using Hadouken.Framework;
+using Hadouken.Framework.Rpc;
 using Hadouken.IO;
 using Hadouken.Plugins.Metadata;
 
@@ -11,11 +13,13 @@ namespace Hadouken.Plugins
     {
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
+        private readonly IJsonRpcClient _rpcClient;
 
-        public DirectoryPluginLoader(IConfiguration configuration, IFileSystem fileSystem)
+        public DirectoryPluginLoader(IConfiguration configuration, IFileSystem fileSystem, IJsonRpcClient rpcClient)
         {
             _configuration = configuration;
             _fileSystem = fileSystem;
+            _rpcClient = rpcClient;
         }
 
         public bool CanLoad(string path)
@@ -36,14 +40,24 @@ namespace Hadouken.Plugins
 
                 if (Manifest.TryParse(manifestJson, out manifest))
                 {
+                    var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, manifest.Name);
+
+                    if (!_fileSystem.DirectoryExists(pluginDataPath))
+                        _fileSystem.CreateDirectory(pluginDataPath);
+
                     var bootConfig = new BootConfig
                     {
-                        DataPath = _configuration.ApplicationDataPath,
+                        DataPath = pluginDataPath,
                         HostBinding = _configuration.Http.HostBinding,
-                        Port = _configuration.Http.Port
+                        Port = _configuration.Http.Port,
+                        UserName = _configuration.Http.Authentication.UserName,
+                        Password = _configuration.Http.Authentication.Password,
+                        GatewayRpcBinding = "net.pipe://localhost/hdkn.jsonrpc",
+                        PluginRpcBinding = String.Format("net.pipe://localhost/hdkn.plugins.{0}", manifest.Name),
+                        HttpVirtualPath = "/plugins/" + manifest.Name
                     };
 
-                    return new PluginManager(path, manifest, _fileSystem, bootConfig);
+                    return new PluginManager(path, manifest, _fileSystem, bootConfig, _rpcClient);
                 }
             }
 

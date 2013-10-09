@@ -28,9 +28,9 @@ namespace Hadouken.Service.Hosts
 			Console.BackgroundColor = ConsoleColor.Blue;
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine();
-			Console.Write(new string(' ', 80));
-			Console.Write(" Press CTRL+C to stop service".PadRight(80));
-			Console.Write(new string(' ', 80));
+			Console.Write(new string(' ', Console.WindowWidth));
+            Console.Write(" Press CTRL+C to stop service".PadRight(Console.WindowWidth));
+            Console.Write(new string(' ', Console.WindowWidth));
 			Console.WriteLine();
 			Console.ResetColor();
 

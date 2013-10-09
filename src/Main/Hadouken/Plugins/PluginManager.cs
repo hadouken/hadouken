@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Hadouken.Framework;
@@ -24,13 +25,14 @@ namespace Hadouken.Plugins
         private readonly IFileSystem _fileSystem;
         private readonly IBootConfig _bootConfig;
         private SandboxedEnvironment _sandboxedEnvironment;
+        private readonly IJsonRpcClient _rpcClient;
 
         static PluginManager()
         {
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public PluginManager(string path, IManifest manifest, IFileSystem fileSystem, IBootConfig bootConfig)
+        public PluginManager(string path, IManifest manifest, IFileSystem fileSystem, IBootConfig bootConfig, IJsonRpcClient rpcClient)
         {
             State = PluginState.Unloaded;
 
@@ -38,6 +40,7 @@ namespace Hadouken.Plugins
             _manifest = manifest;
             _fileSystem = fileSystem;
             _bootConfig = bootConfig;
+            _rpcClient = rpcClient;
         }
 
         public IManifest Manifest
@@ -72,10 +75,7 @@ namespace Hadouken.Plugins
 
             State = PluginState.Loaded;
 
-            var rpcClient =
-                new JsonRpcClient(
-                    new Uri(String.Format("http://{0}:{1}/jsonrpc", _bootConfig.HostBinding, _bootConfig.Port)));
-            await rpcClient.CallAsync<bool>("events.publish", new object [] { "plugin.loaded", new {name = _manifest.Name, version = _manifest.Version}});
+            await _rpcClient.CallAsync<bool>("events.publish", new object [] { "plugin.loaded", new {name = _manifest.Name, version = _manifest.Version}});
         }
 
         public void Unload()

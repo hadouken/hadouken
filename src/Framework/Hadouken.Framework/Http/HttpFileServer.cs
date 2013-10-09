@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +20,8 @@ namespace Hadouken.Framework.Http
         private readonly ITypeScriptCompiler _typeScriptCompiler = TypeScriptCompiler.Create();
         private readonly string _baseDirectory;
         private readonly string _uriPrefix;
+
+        private NetworkCredential _credentials;
 
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
@@ -39,11 +43,23 @@ namespace Hadouken.Framework.Http
 
         public HttpFileServer(string listenUri, string baseDirectory, string uriPrefix)
         {
+            if (!listenUri.EndsWith("/"))
+                listenUri = listenUri + "/";
+
+            if (!uriPrefix.EndsWith("/"))
+                uriPrefix = uriPrefix + "/";
+
             _baseDirectory = baseDirectory;
             _uriPrefix = uriPrefix;
             _httpListener.Prefixes.Add(listenUri);
 
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
+        }
+
+        public void SetCredentials(string username, string password)
+        {
+            _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
+            _credentials = new NetworkCredential(username, password);
         }
 
         public void Open()
@@ -85,6 +101,15 @@ namespace Hadouken.Framework.Http
 
         private void ProcessContext(HttpListenerContext context)
         {
+            if (!IsAuthenticatedUser(context))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.OutputStream.Close();
+                context.Response.Close();
+
+                return;
+            }
+
             var requestedPath = context.Request.Url.AbsolutePath == "/"
                 ? "/index.html"
                 : context.Request.Url.AbsolutePath;
@@ -121,6 +146,35 @@ namespace Hadouken.Framework.Http
 
             context.Response.OutputStream.Close();
             context.Response.Close();
+        }
+
+        private bool IsAuthenticatedUser(HttpListenerContext context)
+        {
+            if (_httpListener.AuthenticationSchemes == AuthenticationSchemes.None)
+                return true;
+
+            if (_credentials == null)
+                return true;
+
+            var id = (HttpListenerBasicIdentity) context.User.Identity;
+            var passwordHash = ComputeHash(id.Password);
+
+            return id.Name == _credentials.UserName && passwordHash == _credentials.Password;
+        }
+
+        private string ComputeHash(string input)
+        {
+            var bytes = Encoding.UTF8.GetBytes(input);
+            var sha256 = new SHA256Managed();
+            var hash = sha256.ComputeHash(bytes);
+            var sb = new StringBuilder();
+
+            foreach (var b in hash)
+            {
+                sb.AppendFormat("{0:x2}", b);
+            }
+
+            return sb.ToString();
         }
 
         private void CompileTypeScript(HttpListenerContext context, string path)

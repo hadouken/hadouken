@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
@@ -11,11 +13,15 @@ using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Framework.Rpc
 {
-    public sealed class JsonRpcClient : IDisposable
+    public interface IJsonRpcClient : IDisposable
     {
+        Task<TResult> CallAsync<TResult>(string method, object parameters = null);
+    }
+
+    public sealed class JsonRpcClient : IJsonRpcClient
+    {
+        private readonly IClientTransport _transport;
         private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
-        private readonly Uri _host;
-        private readonly HttpClient _httpClient = new HttpClient();
         private int _requestId = 0;
 
         static JsonRpcClient()
@@ -26,9 +32,9 @@ namespace Hadouken.Framework.Rpc
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public JsonRpcClient(Uri host)
+        public JsonRpcClient(IClientTransport transport)
         {
-            _host = host;
+            _transport = transport;
         }
 
         public async Task<TResult> CallAsync<TResult>(string method, object parameters = null)
@@ -44,10 +50,9 @@ namespace Hadouken.Framework.Rpc
                 };
 
             var json = JsonConvert.SerializeObject(request, SerializerSettings);
-            var response = await _httpClient.PostAsync(_host, new StringContent(json, Encoding.UTF8, "application/json"));
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var response = _transport.Send(json);
 
-            var j = JToken.Parse(responseContent);
+            var j = JToken.Parse(response);
             return j["result"].ToObject<TResult>();
         }
 

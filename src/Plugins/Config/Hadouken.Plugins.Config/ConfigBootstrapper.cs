@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc.Hosting;
@@ -32,10 +33,10 @@ namespace Hadouken.Plugins.Config
             containerConfiguration.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>
                 {
                     var handler = context.Container.ServiceLocator.Resolve<IJsonRpcHandler>();
-                    return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.config", handler);
+                    return new WcfJsonRpcServer(bootConfig.PluginRpcBinding, handler);
                 });
 
-            containerConfiguration.Register<IConfigDataStore>().AsSingleton().UsingConcreteType<SQLiteDataStore>();
+            containerConfiguration.Register<IConfigDataStore>().AsSingleton().UsingFactory(c => new SQLiteDataStore(bootConfig.DataPath));
         }
     }
 }

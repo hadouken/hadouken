@@ -16,6 +16,7 @@ namespace Hadouken.Plugins.WebUI
         {
             var uri = String.Format("http://{0}:{1}/", config.HostBinding, config.Port);
             var server = new HttpFileServer(uri, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"));
+            server.SetCredentials(config.UserName, config.Password);
 
             return new WebUIPlugin(server);
         }

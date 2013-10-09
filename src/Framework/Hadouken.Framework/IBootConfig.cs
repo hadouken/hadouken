@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,16 @@ namespace Hadouken.Framework
 
         int Port { get; }
 
+        string HttpVirtualPath { get; }
+
+        string GatewayRpcBinding { get; }
+
+        string PluginRpcBinding { get; }
+
         string HostBinding { get; }
+
+        string UserName { get; }
+        
+        string Password { get; }
     }
 }

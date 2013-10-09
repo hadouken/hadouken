@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
+    <Compile Include="Configuration\HttpAuthConfiguration.cs" />
     <Compile Include="Configuration\HttpConfiguration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\PluginElement.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Plugins\Rpc\PluginsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\CoreServices.cs" />
+    <Compile Include="Rpc\HttpJsonRpcServer.cs" />
     <Compile Include="Rpc\WcfProxyRequestHandler.cs" />
     <Compile Include="Service\HadoukenService.cs" />
     <Compile Include="Service\IHadoukenService.cs" />

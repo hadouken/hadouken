@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Net;
+using Autofac;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,14 +42,30 @@ namespace Hadouken.Service
 			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>();
 			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
 
+		    builder.Register(c =>
+		    {
+		        var handler = c.Resolve<IJsonRpcHandler>();
+		        return new WcfJsonRpcServer("net.pipe://localhost/hdkn.jsonrpc", handler);
+		    });
+
+		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
+		    builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
+
 			// Register JSONRPC server
-			builder.Register<IJsonRpcServer>(c =>
+			builder.Register<IHttpJsonRpcServer>(c =>
 			{
-				var handler = c.Resolve<IJsonRpcHandler>();
 				var conf = c.Resolve<IConfiguration>();
 				var uri = String.Format("http://{0}:{1}/jsonrpc/", conf.Http.HostBinding, conf.Http.Port);
 
-				return new HttpJsonRpcServer(uri, handler);
+			    NetworkCredential credentials = null;
+
+			    if (!String.IsNullOrEmpty(conf.Http.Authentication.UserName) &&
+			        !String.IsNullOrEmpty(conf.Http.Authentication.Password))
+			    {
+			        credentials = new NetworkCredential(conf.Http.Authentication.UserName, conf.Http.Authentication.Password);
+			    }
+
+			    return new HttpJsonRpcServer(uri, credentials);
 			});
 
             // Register SignalR event server
