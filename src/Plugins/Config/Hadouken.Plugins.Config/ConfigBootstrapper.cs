@@ -1,13 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.ServiceModel;
+using Autofac.Integration.Wcf;
 using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.Plugins.Config.Rpc;
-using InjectMe.Registration;
-using InjectMe;
+
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Config.Data;
+using Autofac;
 
 namespace Hadouken.Plugins.Config
 {
@@ -15,28 +17,50 @@ namespace Hadouken.Plugins.Config
     {
         public override Plugin Load(IBootConfig config)
         {
-            var container = Container.Create(_ => BuildConfiguration(config, _));
-            return container.ServiceLocator.Resolve<Plugin>();
+            var container = BuildContainer(config);
+            return container.Resolve<Plugin>();
         }
 
-        private static void BuildConfiguration(IBootConfig bootConfig, IContainerConfiguration containerConfiguration)
+        private static IContainer BuildContainer(IBootConfig config)
         {
+            var builder = new ContainerBuilder();
+
             // Register plugin
-            containerConfiguration.Register<Plugin>().AsSingleton().UsingConcreteType<ConfigPlugin>();
+            builder.RegisterType<ConfigPlugin>().As<Plugin>();
 
-            // Register JSON RPC services and handlers
-            containerConfiguration.Register<IJsonRpcService>().AsSingleton().UsingConcreteType<ConfigService>();
-            containerConfiguration.Register<IJsonRpcHandler>().AsSingleton().UsingConcreteType<JsonRpcHandler>();
-            containerConfiguration.Register<IRequestHandler>().AsSingleton().UsingConcreteType<RequestHandler>();
+            // JSONRPC
+            builder.RegisterType<ConfigService>().As<IJsonRpcService>().SingleInstance();
+            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
+            builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
+            builder.RegisterType<WcfJson>().As<IWcfJsonRpcServer>();
 
-            // Register WCF json rpc server
-            containerConfiguration.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>
+            // Data store
+            builder.Register<IConfigDataStore>(c => new SQLiteDataStore(config.DataPath)).SingleInstance();
+
+            var container = builder.Build();
+            var wcfBuilder = new ContainerBuilder();
+
+            // Register WCF
+            wcfBuilder.Register(c =>
+            {
+                var binding = new NetNamedPipeBinding
                 {
-                    var handler = context.Container.ServiceLocator.Resolve<IJsonRpcHandler>();
-                    return new WcfJsonRpcServer(bootConfig.PluginRpcBinding, handler);
-                });
+                    MaxBufferPoolSize = 10485760,
+                    MaxBufferSize = 10485760,
+                    MaxConnections = 10,
+                    MaxReceivedMessageSize = 10485760
+                };
 
-            containerConfiguration.Register<IConfigDataStore>().AsSingleton().UsingFactory(c => new SQLiteDataStore(bootConfig.DataPath));
+                var host = new ServiceHost(typeof(WcfJson));
+                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, config.PluginRpcBinding);
+                host.AddDependencyInjectionBehavior<IWcfJsonRpcServer>(container);
+
+                return new WcfJsonRpcServer(host);
+            });
+
+            wcfBuilder.Update(container);
+
+            return container;
         }
     }
 }

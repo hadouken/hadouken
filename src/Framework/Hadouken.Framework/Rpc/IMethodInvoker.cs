@@ -9,7 +9,7 @@ namespace Hadouken.Framework.Rpc
 {
     public interface IMethodInvoker
     {
-        Type[] ParameterTypes { get; }
+        ParameterInfo[] Parameters { get; }
 
         object Invoke(params object[] args);
     }

@@ -94,7 +94,7 @@ namespace Hadouken.Rpc
             using (var reader = new StreamReader(context.Request.InputStream))
             using (var writer = new StreamWriter(context.Response.OutputStream))
             {
-                var content = reader.ReadToEnd();
+                var content = await reader.ReadToEndAsync();
 
                 try
                 {

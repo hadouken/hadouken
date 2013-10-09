@@ -1,28 +1,31 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 
 namespace Hadouken.Framework.Rpc.Hosting
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class WcfJsonRpcServer : IJsonRpcServer, IWcfJsonRpcServer
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+    public class WcfJson : IWcfJsonRpcServer
     {
-        private readonly IJsonRpcHandler _rpcHandler;
+        private readonly IJsonRpcHandler _handler;
+
+        public WcfJson(IJsonRpcHandler handler)
+        {
+            _handler = handler;
+        }
+
+        public string Call(string json)
+        {
+            return _handler.HandleAsync(json).Result;
+        }
+    }
+
+    public class WcfJsonRpcServer : IJsonRpcServer
+    {
         private readonly ServiceHost _serviceHost;
 
-        public WcfJsonRpcServer(string listenUri, IJsonRpcHandler rpcHandler)
+        public WcfJsonRpcServer(ServiceHost serviceHost)
         {
-            _rpcHandler = rpcHandler;
-
-            _serviceHost = new ServiceHost(this);
-
-            var binding = new NetNamedPipeBinding
-                {
-                    MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
-                    MaxConnections = 10,
-                    MaxReceivedMessageSize = 10485760
-                };
-
-            _serviceHost.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, listenUri);
+            _serviceHost = serviceHost;
         }
 
         public void Open()
@@ -33,11 +36,6 @@ namespace Hadouken.Framework.Rpc.Hosting
         public void Close()
         {
             _serviceHost.Close();
-        }
-
-        public string Call(string json)
-        {
-            return _rpcHandler.HandleAsync(json).Result;
         }
     }
 }

@@ -13,10 +13,10 @@ namespace Hadouken.Plugins.Torrents
     public class TorrentsPlugin : Plugin
     {
         private readonly IBitTorrentEngine _torrentEngine;
-        private readonly IJsonRpcServer _rpcServer;
+        private readonly WcfJsonRpcServer _rpcServer;
         private readonly IHttpFileServer _fileServer;
 
-        public TorrentsPlugin(IBitTorrentEngine torrentEngine, IJsonRpcServer rpcServer, IHttpFileServer fileServer)
+        public TorrentsPlugin(IBitTorrentEngine torrentEngine, WcfJsonRpcServer rpcServer, IHttpFileServer fileServer)
         {
             _torrentEngine = torrentEngine;
             _rpcServer = rpcServer;

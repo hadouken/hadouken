@@ -1,23 +1,12 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
+using System;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IJsonRpcClient : IDisposable
-    {
-        Task<TResult> CallAsync<TResult>(string method, object parameters = null);
-    }
-
     public sealed class JsonRpcClient : IJsonRpcClient
     {
         private readonly IClientTransport _transport;
@@ -52,8 +41,25 @@ namespace Hadouken.Framework.Rpc
             var json = JsonConvert.SerializeObject(request, SerializerSettings);
             var response = _transport.Send(json);
 
-            var j = JToken.Parse(response);
-            return j["result"].ToObject<TResult>();
+            JsonRpcResponse rpcResponse;
+            Exception exception;
+
+            if (JsonRpcResponse.TryParse(response, out rpcResponse, out exception))
+            {
+                var successResponse = rpcResponse as JsonRpcSuccessResponse;
+
+                if (successResponse != null)
+                {
+                    var resultToken = successResponse.Result as JToken;
+
+                    if (resultToken != null)
+                    {
+                        return resultToken.ToObject<TResult>();
+                    }
+                }
+            }
+
+            return default(TResult);
         }
 
         public void Dispose()

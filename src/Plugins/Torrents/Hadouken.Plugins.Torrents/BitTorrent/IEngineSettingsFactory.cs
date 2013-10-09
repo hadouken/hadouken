@@ -54,7 +54,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         public EngineSettings Build()
         {
             var keys = Setters.Keys.ToArray();
-            var config = _rpcClient.CallAsync<Dictionary<string, object>>("config.getMany", new[] {keys}).Result;
+            var config = _rpcClient.CallAsync<Dictionary<string, object>>("config.getMany", keys).Result;
 
             foreach (var pair in config)
             {
