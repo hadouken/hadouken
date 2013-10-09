@@ -11,18 +11,22 @@ namespace Hadouken.Plugins.Config.Data
 {
     public class SQLiteDataStore : IConfigDataStore
     {
+        private readonly string _dataPath;
         private readonly Lazy<SQLiteConnection> _connection;
 
-        public SQLiteDataStore()
+        public SQLiteDataStore(string dataPath)
         {
+            _dataPath = dataPath;
             _connection = new Lazy<SQLiteConnection>(OpenConnection);
         }
 
         private SQLiteConnection OpenConnection()
         {
-            var dbFile = "config.db";
+            if (!Directory.Exists(_dataPath))
+                Directory.CreateDirectory(_dataPath);
 
-            var connection = new SQLiteConnection(String.Format("Data Source={0}; Version=3;", dbFile));
+            var connection =
+                new SQLiteConnection(String.Format("Data Source={0}; Version=3;", Path.Combine(_dataPath, "config.db")));
             connection.Open();
 
             using (var cmd = connection.CreateCommand())
