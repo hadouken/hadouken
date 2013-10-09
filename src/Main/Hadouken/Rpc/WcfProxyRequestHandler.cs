@@ -26,10 +26,6 @@ namespace Hadouken.Rpc
                     plugin = "core.config";
                     break;
 
-                case "events":
-                    plugin = "core.events";
-                    break;
-
                 case "torrents":
                     plugin = "core.torrents";
                     break;

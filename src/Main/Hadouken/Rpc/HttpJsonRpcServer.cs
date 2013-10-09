@@ -6,7 +6,6 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
 
 namespace Hadouken.Rpc
