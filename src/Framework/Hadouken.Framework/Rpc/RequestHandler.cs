@@ -71,12 +71,11 @@ namespace Hadouken.Framework.Rpc
                 return OnMethodMissing(request);
             }
 
-            var requestParam = (JToken) request.Parameters;
-            var paramResolver = new ParameterResolver();
+            IParameterResolver paramResolver = new ParameterResolver();
 
             try
             {
-                var param = paramResolver.Resolve(requestParam, invoker);
+                var param = paramResolver.Resolve(request.Parameters, invoker);
                 var result = invoker.Invoke(param);
                 return new JsonRpcSuccessResponse() {Id = request.Id, Result = result};
             }

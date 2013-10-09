@@ -7,18 +7,31 @@ namespace Hadouken.Framework.Rpc
 {
     public interface IParameterResolver
     {
-        object[] Resolve(JToken inputData, IMethodInvoker method);
+        object[] Resolve(object input, IMethodInvoker method);
     }
 
     public class ParameterResolver : IParameterResolver
     {
-        public object[] Resolve(JToken inputData, IMethodInvoker method)
+        public object[] Resolve(object input, IMethodInvoker method)
         {
             var paramCount = method.Parameters.Length;
 
-            if (paramCount == 0 && inputData == null)
+            if (paramCount == 0 && input == null)
             {
                 return null;
+            }
+
+            var token = input as JToken;
+
+            // This is a simple parameter. It should be matched to the target parameter already.
+            if (token == null)
+            {
+                if (input.GetType() != method.Parameters[0].ParameterType)
+                    throw new InvalidParametersException(String.Format("Expected {0}, was {1}",
+                                                                       method.Parameters[0].ParameterType,
+                                                                       input.GetType()));
+
+                return new[] {input};
             }
             
             if (paramCount == 1)
@@ -27,7 +40,7 @@ namespace Hadouken.Framework.Rpc
 
                 try
                 {
-                    return new[] {inputData.ToObject(paramType)};
+                    return new[] {token.ToObject(paramType)};
                 }
                 catch (Exception e)
                 {
@@ -38,13 +51,13 @@ namespace Hadouken.Framework.Rpc
             // If we get this far, we either have an array with parameters, or an object with named parameters.
             // find out which.
 
-            switch (inputData.Type)
+            switch (token.Type)
             {
                 case JTokenType.Array:
-                    return ResolveArray(inputData as JArray, method);
+                    return ResolveArray(input as JArray, method);
 
                 case JTokenType.Object:
-                    return ResolveObject(inputData as JObject, method);
+                    return ResolveObject(input as JObject, method);
             }
 
             throw new InvalidParametersException();
