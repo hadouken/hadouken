@@ -36,11 +36,7 @@ namespace Hadouken.Plugins.Config
                     return new WcfJsonRpcServer(bootConfig.PluginRpcBinding, handler);
                 });
 
-            containerConfiguration.Register<IConfigDataStore>().AsSingleton().UsingFactory(c =>
-            {
-                var dbFile = Path.Combine(bootConfig.DataPath, "Data", "core.config");
-                return new SQLiteDataStore(dbFile);
-            });
+            containerConfiguration.Register<IConfigDataStore>().AsSingleton().UsingFactory(c => new SQLiteDataStore(bootConfig.DataPath));
         }
     }
 }

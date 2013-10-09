@@ -40,9 +40,14 @@ namespace Hadouken.Plugins
 
                 if (Manifest.TryParse(manifestJson, out manifest))
                 {
+                    var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, manifest.Name);
+
+                    if (!_fileSystem.DirectoryExists(pluginDataPath))
+                        _fileSystem.CreateDirectory(pluginDataPath);
+
                     var bootConfig = new BootConfig
                     {
-                        DataPath = _configuration.ApplicationDataPath,
+                        DataPath = pluginDataPath,
                         HostBinding = _configuration.Http.HostBinding,
                         Port = _configuration.Http.Port,
                         UserName = _configuration.Http.Authentication.UserName,
