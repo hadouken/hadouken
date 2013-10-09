@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hadouken.Framework.Rpc;
+using Hadouken.Framework.Rpc.Hosting;
 
-namespace Hadouken.Framework.Rpc.Hosting
+namespace Hadouken.Rpc
 {
     public interface IHttpJsonRpcServer : IJsonRpcServer
     {

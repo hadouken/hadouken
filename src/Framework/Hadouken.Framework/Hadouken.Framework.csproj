@@ -63,7 +63,6 @@
     <Compile Include="IBootConfig.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\Hosting\HttpJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\IJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\IWcfJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\WcfJsonRpcServer.cs" />

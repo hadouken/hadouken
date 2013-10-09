@@ -1,6 +1,7 @@
 ﻿using Hadouken.Events;
 using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.Plugins;
+using Hadouken.Rpc;
 using NLog;
 
 namespace Hadouken.Service
