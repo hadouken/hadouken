@@ -34,10 +34,16 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             Setters.Add("bt.downloads.savePath", (settings, o) => settings.SavePath = o.ToStringOrDefault(@"C:\Temporary"));
             Setters.Add("bt.connection.listenPort", (settings, o) => settings.ListenPort = o.ToInt32OrDefault(11001));
             Setters.Add("bt.connection.globalMaxConnections", (settings, o) => settings.GlobalMaxConnections = o.ToInt32OrDefault(150));
+            Setters.Add("bt.connection.globalMaxDownloadSpeed", (settings, o) => settings.GlobalMaxDownloadSpeed = o.ToInt32OrDefault(0));
+            Setters.Add("bt.connection.globalMaxHalfOpenConnections", (settings, o) => settings.GlobalMaxHalfOpenConnections = o.ToInt32OrDefault(5));
+            Setters.Add("bt.connection.globalMaxUploadSpeed", (settings, o) => settings.GlobalMaxUploadSpeed = o.ToInt32OrDefault(0));
 
             Getters.Add("bt.downloads.savePath", s => s.SavePath);
             Getters.Add("bt.connection.listenPort", s => s.ListenPort);
             Getters.Add("bt.connection.globalMaxConnections", s => s.GlobalMaxConnections);
+            Getters.Add("bt.connection.globalMaxDownloadSpeed", s => s.GlobalMaxDownloadSpeed);
+            Getters.Add("bt.connection.globalMaxHalfOpenConnections", s => s.GlobalMaxHalfOpenConnections);
+            Getters.Add("bt.connection.globalMaxUploadSpeed", s => s.GlobalMaxUploadSpeed);
         }
 
         public EngineSettingsFactory(Uri rpcEndpoint)
