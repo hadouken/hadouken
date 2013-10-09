@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
+    <Compile Include="Configuration\HttpAuthConfiguration.cs" />
     <Compile Include="Configuration\HttpConfiguration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\PluginElement.cs" />

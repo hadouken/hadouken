@@ -50,13 +50,20 @@ namespace Hadouken.Configuration
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _configuration.Save();
         }
+
+        private System.Configuration.Configuration _configuration;
 
         public static IConfiguration Load()
         {
             var cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var section = cfg.GetSection("hdkn") as ApplicationConfigurationSection;
+
+            if (section == null)
+                return null;
+
+            section._configuration = cfg;
 
             return section;
         }

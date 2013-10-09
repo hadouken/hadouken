@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace Hadouken.Framework
 {
@@ -14,5 +11,7 @@ namespace Hadouken.Framework
         public int Port { get; set; }
 
         public string HostBinding { get; set; }
+
+        public NetworkCredential Credentials { get; set; }
     }
 }
