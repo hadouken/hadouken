@@ -71,52 +71,23 @@ namespace Hadouken.Framework.Rpc
                 return OnMethodMissing(request);
             }
 
-            var param = request.Parameters as JContainer;
+            var requestParam = (JToken) request.Parameters;
+            var paramResolver = new ParameterResolver();
 
-            if (param != null)
+            try
             {
-                var p = new List<object>();
-
-                switch (param.Type)
-                {
-                    case JTokenType.Array:
-                        if (param.Count != invoker.ParameterTypes.Length)
-                        {
-                            return JsonRpcErrorResponse.InvalidParams(request.Id);
-                        }
-
-                        p.AddRange(param.Select(
-                            (t, i) =>
-                                t.ToObject(invoker.ParameterTypes[i], Serializer))
-                            .ToArray());
-                        break;
-
-                    case JTokenType.Object:
-                        p.Add(param.ToObject(invoker.ParameterTypes[0], Serializer));
-                        break;
-
-                    default:
-                        return JsonRpcErrorResponse.InternalRpcError(request.Id);
-                }
-
-                return new JsonRpcSuccessResponse
-                    {
-                        Id = request.Id,
-                        Result = invoker.Invoke(p.ToArray())
-                    };
+                var param = paramResolver.Resolve(requestParam, invoker);
+                var result = invoker.Invoke(param);
+                return new JsonRpcSuccessResponse() {Id = request.Id, Result = result};
             }
-
-            if (invoker.ParameterTypes.Length > 0
-                && request.Parameters.GetType() != invoker.ParameterTypes[0])
+            catch (InvalidParametersException)
             {
                 return JsonRpcErrorResponse.InvalidParams(request.Id);
             }
-
-            return new JsonRpcSuccessResponse
-                {
-                    Id = request.Id,
-                    Result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
-                };
+            catch (Exception exception)
+            {
+                return JsonRpcErrorResponse.InternalRpcError(request.Id, exception);
+            }
         }
     }
 }

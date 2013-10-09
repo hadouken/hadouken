@@ -71,6 +71,8 @@
     <Compile Include="Rpc\IJsonRpcHandler.cs" />
     <Compile Include="Rpc\IJsonRpcService.cs" />
     <Compile Include="Rpc\IMethodInvoker.cs" />
+    <Compile Include="Rpc\InvalidParametersException.cs" />
+    <Compile Include="Rpc\IParameterResolver.cs" />
     <Compile Include="Rpc\IRequestHandler.cs" />
     <Compile Include="Rpc\JsonRpcClient.cs" />
     <Compile Include="Rpc\JsonRpcErrorResponse.cs" />
