@@ -40,6 +40,10 @@ namespace Hadouken.Service.Hosts
 
 			// Stop the service.
 			_service.Stop();
+
+		    Console.WriteLine();
+            Console.Write(" Press any key to close window");
+		    Console.Read();
 		}
 
 		private void OnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
