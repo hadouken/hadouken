@@ -36,11 +36,11 @@ namespace Hadouken.Framework.Rpc
             if (!JsonRpcRequest.TryParse(jsonRpc, out request, out requestParseException))
             {
                 Logger.ErrorException("Could not parse request", requestParseException);
-                return JsonRpcErrorResponse.ParseError(null).Serialize();
+                return JsonRpcResponse.Serialize(JsonRpcErrorResponse.ParseError(null));
             }
 
             var result = _requestHandler.Execute(request);
-            return result.Serialize();
+            return JsonRpcResponse.Serialize(result);
         }
     }
 }

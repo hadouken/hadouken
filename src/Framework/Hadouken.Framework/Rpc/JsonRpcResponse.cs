@@ -20,16 +20,16 @@ namespace Hadouken.Framework.Rpc
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        protected JsonRpcResponse()
+        public JsonRpcResponse()
         {
             Protocol = "2.0";
         }
 
         [JsonProperty("id", Required = Required.Always)]
-        public object Id { get; set; }
+        public virtual object Id { get; set; }
 
         [JsonProperty("jsonrpc", Required = Required.Always)]
-        public string Protocol { get; set; }
+        public virtual string Protocol { get; set; }
 
         public static bool TryParse(string json, out JsonRpcResponse response, out Exception exception)
         {
@@ -64,9 +64,9 @@ namespace Hadouken.Framework.Rpc
             }
         }
 
-        public string Serialize()
+        public static string Serialize(JsonRpcResponse response)
         {
-            return JsonConvert.SerializeObject(this, SerializerSettings);
+            return JsonConvert.SerializeObject(response, SerializerSettings);
         }
     }
 }

@@ -30,7 +30,7 @@ module Hadouken.UI.Pages {
         loadPlugins(): void {
             var template = Handlebars.compile($('#tmpl-plugin-list-item').html());
 
-            var data = [['plugins.repositoryUrl', 'plugins.enableUpdateChecking']];
+            var data = ['plugins.repositoryUrl', 'plugins.enableUpdateChecking'];
 
             this._rpcClient.callParams('config.getMany', data, (response) => {
                 var repositoryUrl = response['plugins.repositoryUrl'];

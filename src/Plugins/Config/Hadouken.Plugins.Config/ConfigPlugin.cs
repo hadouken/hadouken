@@ -4,9 +4,9 @@ namespace Hadouken.Plugins.Config
 {
     public class ConfigPlugin : Plugin
     {
-        private readonly IJsonRpcServer _rpcServer;
+        private readonly WcfJsonRpcServer _rpcServer;
 
-        public ConfigPlugin(IJsonRpcServer rpcServer)
+        public ConfigPlugin(WcfJsonRpcServer rpcServer)
         {
             _rpcServer = rpcServer;
         }

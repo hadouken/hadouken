@@ -24,7 +24,15 @@ namespace Hadouken.Framework.Rpc
             if (paramCount == 1)
             {
                 var paramType = method.Parameters[0].ParameterType;
-                return new[] {inputData.ToObject(paramType)};
+
+                try
+                {
+                    return new[] {inputData.ToObject(paramType)};
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidParametersException("Could not parse parameters.", e);
+                }
             }
 
             // If we get this far, we either have an array with parameters, or an object with named parameters.

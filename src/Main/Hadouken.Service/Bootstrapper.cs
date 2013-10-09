@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.ServiceModel;
 using Autofac;
+using Autofac.Integration.Wcf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,22 +38,17 @@ namespace Hadouken.Service
 			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 
 			// Register RPC services
-			builder.RegisterType<PluginsService>().As<IJsonRpcService>();
-		    builder.RegisterType<EventsService>().As<IJsonRpcService>();
-		    builder.RegisterType<CoreServices>().As<IJsonRpcService>();
-			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>();
-			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>();
-
-		    builder.Register(c =>
-		    {
-		        var handler = c.Resolve<IJsonRpcHandler>();
-		        return new WcfJsonRpcServer("net.pipe://localhost/hdkn.jsonrpc", handler);
-		    });
+            builder.RegisterType<PluginsService>().As<IJsonRpcService>().SingleInstance();
+            builder.RegisterType<EventsService>().As<IJsonRpcService>().SingleInstance();
+		    builder.RegisterType<CoreServices>().As<IJsonRpcService>().SingleInstance();
+			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>().SingleInstance();
+			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
 
 		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
 		    builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
 
 			// Register JSONRPC server
+		    builder.RegisterType<WcfJson>().As<IWcfJsonRpcServer>();
 			builder.Register<IHttpJsonRpcServer>(c =>
 			{
 				var conf = c.Resolve<IConfiguration>();
@@ -76,6 +73,27 @@ namespace Hadouken.Service
 
 			// Build the container.
 			var container = builder.Build();
+            
+            // Register the WCF host
+		    var wcfBuilder = new ContainerBuilder();
+            wcfBuilder.Register(c =>
+            {
+                var binding = new NetNamedPipeBinding
+                {
+                    MaxBufferPoolSize = 10485760,
+                    MaxBufferSize = 10485760,
+                    MaxConnections = 10,
+                    MaxReceivedMessageSize = 10485760
+                };
+
+                var host = new ServiceHost(typeof(WcfJson));
+                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, "net.pipe://localhost/hdkn.jsonrpc");
+                host.AddDependencyInjectionBehavior<IWcfJsonRpcServer>(container);
+
+                return new WcfJsonRpcServer(host);
+            });
+
+		    wcfBuilder.Update(container);
 
 			// Resolve the service.
 			return container.Resolve<IHadoukenService>();
