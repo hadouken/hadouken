@@ -43,6 +43,12 @@ namespace Hadouken.Framework.Http
 
         public HttpFileServer(string listenUri, string baseDirectory, string uriPrefix)
         {
+            if (!listenUri.EndsWith("/"))
+                listenUri = listenUri + "/";
+
+            if (!uriPrefix.EndsWith("/"))
+                uriPrefix = uriPrefix + "/";
+
             _baseDirectory = baseDirectory;
             _uriPrefix = uriPrefix;
             _httpListener.Prefixes.Add(listenUri);

@@ -13,6 +13,12 @@ namespace Hadouken.Framework
 
         int Port { get; }
 
+        string HttpVirtualPath { get; }
+
+        string GatewayRpcBinding { get; }
+
+        string PluginRpcBinding { get; }
+
         string HostBinding { get; }
 
         string UserName { get; }

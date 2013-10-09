@@ -17,13 +17,13 @@ namespace Hadouken.Plugins.Torrents
         {
             var container = Container.Create(cfg =>
             {
-                var uri = String.Format("http://{0}:{1}/plugins/core.torrents/", config.HostBinding, config.Port);
+                var uri = String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath);
 
                 cfg.Register<IHttpFileServer>()
                     .AsSingleton()
                     .UsingFactory(
                         () => new HttpFileServer(uri, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"),
-                            "/plugins/core.torrents/"));
+                            config.HttpVirtualPath));
 
                 cfg.Register<IBootConfig>().AsSingleton().UsingFactory(c => config);
 
@@ -34,12 +34,12 @@ namespace Hadouken.Plugins.Torrents
                 cfg.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>
                 {
                     var handler = context.Container.ServiceLocator.Resolve<IJsonRpcHandler>();
-                    return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.torrents", handler);
+                    return new WcfJsonRpcServer(config.PluginRpcBinding, handler);
                 });
 
                 cfg.Register<IClientTransport>()
                     .AsSingleton()
-                    .UsingFactory(c => new WcfNamedPipeClientTransport(new Uri("net.pipe://localhost/hdkn.jsonrpc")));
+                    .UsingFactory(c => new WcfNamedPipeClientTransport(config.GatewayRpcBinding));
 
                 cfg.Register<IJsonRpcClient>().AsSingleton().UsingConcreteType<JsonRpcClient>();
 

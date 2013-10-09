@@ -13,11 +13,13 @@ namespace Hadouken.Plugins
     {
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
+        private readonly IJsonRpcClient _rpcClient;
 
-        public DirectoryPluginLoader(IConfiguration configuration, IFileSystem fileSystem)
+        public DirectoryPluginLoader(IConfiguration configuration, IFileSystem fileSystem, IJsonRpcClient rpcClient)
         {
             _configuration = configuration;
             _fileSystem = fileSystem;
+            _rpcClient = rpcClient;
         }
 
         public bool CanLoad(string path)
@@ -44,13 +46,13 @@ namespace Hadouken.Plugins
                         HostBinding = _configuration.Http.HostBinding,
                         Port = _configuration.Http.Port,
                         UserName = _configuration.Http.Authentication.UserName,
-                        Password = _configuration.Http.Authentication.Password
+                        Password = _configuration.Http.Authentication.Password,
+                        GatewayRpcBinding = "net.pipe://localhost/hdkn.jsonrpc",
+                        PluginRpcBinding = String.Format("net.pipe://localhost/hdkn.plugins.{0}", manifest.Name),
+                        HttpVirtualPath = "/plugins/" + manifest.Name
                     };
 
-                    var rpcClient =
-                        new JsonRpcClient(new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
-
-                    return new PluginManager(path, manifest, _fileSystem, bootConfig, rpcClient);
+                    return new PluginManager(path, manifest, _fileSystem, bootConfig, _rpcClient);
                 }
             }
 
