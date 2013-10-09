@@ -1,23 +1,11 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Framework.Rpc
 {
-    public interface IJsonRpcClient : IDisposable
-    {
-        Task<TResult> CallAsync<TResult>(string method, object parameters = null);
-    }
-
     public sealed class JsonRpcClient : IJsonRpcClient
     {
         private readonly IClientTransport _transport;
