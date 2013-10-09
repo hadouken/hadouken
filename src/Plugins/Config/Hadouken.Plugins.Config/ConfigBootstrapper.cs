@@ -32,7 +32,7 @@ namespace Hadouken.Plugins.Config
             containerConfiguration.Register<IJsonRpcServer>().AsSingleton().UsingFactory(context =>
                 {
                     var handler = context.Container.ServiceLocator.Resolve<IJsonRpcHandler>();
-                    return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.config", handler);
+                    return new WcfJsonRpcServer(bootConfig.PluginRpcBinding, handler);
                 });
 
             containerConfiguration.Register<IConfigDataStore>().AsSingleton().UsingConcreteType<SQLiteDataStore>();

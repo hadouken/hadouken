@@ -54,12 +54,10 @@ namespace Hadouken.Service
 			// Register JSONRPC server
 			builder.Register<IHttpJsonRpcServer>(c =>
 			{
-				var handler = c.Resolve<IJsonRpcHandler>();
 				var conf = c.Resolve<IConfiguration>();
 				var uri = String.Format("http://{0}:{1}/jsonrpc/", conf.Http.HostBinding, conf.Http.Port);
 
 			    NetworkCredential credentials = null;
-
 
 			    if (!String.IsNullOrEmpty(conf.Http.Authentication.UserName) &&
 			        !String.IsNullOrEmpty(conf.Http.Authentication.Password))
@@ -67,7 +65,7 @@ namespace Hadouken.Service
 			        credentials = new NetworkCredential(conf.Http.Authentication.UserName, conf.Http.Authentication.Password);
 			    }
 
-			    return new HttpJsonRpcServer(uri, handler, credentials);
+			    return new HttpJsonRpcServer(uri, credentials);
 			});
 
             // Register SignalR event server

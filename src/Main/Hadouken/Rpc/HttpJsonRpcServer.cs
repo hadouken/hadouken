@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,18 +17,33 @@ namespace Hadouken.Rpc
 
     public class HttpJsonRpcServer : IHttpJsonRpcServer
     {
-        private readonly IJsonRpcHandler _rpcHandler;
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly NetworkCredential _credentials;
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
+        private readonly Lazy<IWcfJsonRpcServer> _rpcProxy; 
 
-        public HttpJsonRpcServer(string listenUri, IJsonRpcHandler rpcHandler, NetworkCredential credentials = null)
+        public HttpJsonRpcServer(string listenUri, NetworkCredential credentials = null)
         {
-            _rpcHandler = rpcHandler;
+            _rpcProxy = new Lazy<IWcfJsonRpcServer>(BuildProxy);
             _httpListener.Prefixes.Add(listenUri);
             _credentials = credentials;
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
+        }
+
+        private IWcfJsonRpcServer BuildProxy()
+        {
+            var binding = new NetNamedPipeBinding
+            {
+                MaxBufferPoolSize = 10485760,
+                MaxBufferSize = 10485760,
+                MaxConnections = 10,
+                MaxReceivedMessageSize = 10485760
+            };
+
+            // Create proxy
+            var factory = new ChannelFactory<IWcfJsonRpcServer>(binding, "net.pipe://localhost/hdkn.jsonrpc");
+            return factory.CreateChannel();
         }
 
         public void Open()
@@ -83,7 +99,7 @@ namespace Hadouken.Rpc
 
                 try
                 {
-                    var response = await _rpcHandler.HandleAsync(content);
+                    var response = _rpcProxy.Value.Call(content);
 
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = 200;
