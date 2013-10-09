@@ -79,6 +79,7 @@
     <Compile Include="Rpc\JsonRpcResponse.cs" />
     <Compile Include="Rpc\MethodInvoker.cs" />
     <Compile Include="Rpc\RequestHandler.cs" />
+    <Compile Include="Rpc\SemanticVersionConverter.cs" />
     <Compile Include="Rpc\WcfNamedPipeClientTransport.cs" />
     <Compile Include="SemVer\EqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
