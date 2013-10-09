@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Hadouken.Configuration;
@@ -11,15 +12,12 @@ namespace Hadouken.Rpc
     public class CoreServices : IJsonRpcService
     {
         private readonly IConfiguration _configuration;
-        private readonly JsonRpcClient _rpcClient;
+        private readonly IJsonRpcClient _rpcClient;
 
-        public CoreServices(IConfiguration configuration)
+        public CoreServices(IConfiguration configuration, IJsonRpcClient rpcClient)
         {
             _configuration = configuration;
-            _rpcClient =
-                new JsonRpcClient(
-                    new Uri(String.Format("http://{0}:{1}/jsonrpc", configuration.Http.HostBinding,
-                        configuration.Http.Port)));
+            _rpcClient = rpcClient;
         }
 
         [JsonRpcMethod("core.multiCall")]
@@ -56,7 +54,7 @@ namespace Hadouken.Rpc
                 }
             }
 
-            _configuration.Http.Authentication.Username = userName;
+            _configuration.Http.Authentication.UserName = userName;
             _configuration.Http.Authentication.Password = ComputeHash(newPassword);
             _configuration.Save();
 
@@ -68,7 +66,7 @@ namespace Hadouken.Rpc
         {
             return new
             {
-                Username = _configuration.Http.Authentication.Username,
+                Username = _configuration.Http.Authentication.UserName,
                 HasPassword = !String.IsNullOrEmpty(_configuration.Http.Authentication.Password)
             };
         }

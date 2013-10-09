@@ -9,11 +9,11 @@ namespace Hadouken.Configuration
 {
     public class HttpAuthConfiguration : ConfigurationElement
     {
-        [ConfigurationProperty("username", IsRequired = true)]
-        public string Username
+        [ConfigurationProperty("userName", IsRequired = true)]
+        public string UserName
         {
-            get { return this["username"].ToString(); }
-            set { this["username"] = value; }
+            get { return this["userName"].ToString(); }
+            set { this["userName"] = value; }
         }
 
         [ConfigurationProperty("password", IsRequired = true)]

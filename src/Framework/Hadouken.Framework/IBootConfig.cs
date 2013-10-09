@@ -15,6 +15,8 @@ namespace Hadouken.Framework
 
         string HostBinding { get; }
 
-        NetworkCredential Credentials { get; }
+        string UserName { get; }
+        
+        string Password { get; }
     }
 }

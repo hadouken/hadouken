@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using Hadouken.Configuration;
 using Hadouken.Framework;
+using Hadouken.Framework.Rpc;
 using Hadouken.IO;
 using Hadouken.Plugins.Metadata;
 
@@ -40,10 +42,15 @@ namespace Hadouken.Plugins
                     {
                         DataPath = _configuration.ApplicationDataPath,
                         HostBinding = _configuration.Http.HostBinding,
-                        Port = _configuration.Http.Port
+                        Port = _configuration.Http.Port,
+                        UserName = _configuration.Http.Authentication.UserName,
+                        Password = _configuration.Http.Authentication.Password
                     };
 
-                    return new PluginManager(path, manifest, _fileSystem, bootConfig);
+                    var rpcClient =
+                        new JsonRpcClient(new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
+
+                    return new PluginManager(path, manifest, _fileSystem, bootConfig, rpcClient);
                 }
             }
 

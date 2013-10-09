@@ -18,13 +18,14 @@ namespace Hadouken.Plugins.Torrents
             var container = Container.Create(cfg =>
             {
                 var uri = String.Format("http://{0}:{1}/plugins/core.torrents/", config.HostBinding, config.Port);
-                var rpcUri = new Uri(String.Format("http://{0}:{1}/jsonrpc", config.HostBinding, config.Port));
 
                 cfg.Register<IHttpFileServer>()
                     .AsSingleton()
                     .UsingFactory(
                         () => new HttpFileServer(uri, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"),
                             "/plugins/core.torrents/"));
+
+                cfg.Register<IBootConfig>().AsSingleton().UsingFactory(c => config);
 
                 cfg.Register<IJsonRpcService>().AsSingleton().UsingConcreteType<TorrentsServices>();
                 cfg.Register<IJsonRpcHandler>().AsSingleton().UsingConcreteType<JsonRpcHandler>();
@@ -36,9 +37,15 @@ namespace Hadouken.Plugins.Torrents
                     return new WcfJsonRpcServer("net.pipe://localhost/hdkn.plugins.core.torrents", handler);
                 });
 
+                cfg.Register<IClientTransport>()
+                    .AsSingleton()
+                    .UsingFactory(c => new WcfNamedPipeClientTransport(new Uri("net.pipe://localhost/hdkn.jsonrpc")));
+
+                cfg.Register<IJsonRpcClient>().AsSingleton().UsingConcreteType<JsonRpcClient>();
+
                 cfg.Register<IBitTorrentEngine>()
-                   .AsSingleton()
-                   .UsingFactory(() => new MonoTorrentEngine(config.DataPath, rpcUri));
+                    .AsSingleton()
+                    .UsingConcreteType<MonoTorrentEngine>();
 
                 cfg.Register<Plugin>().AsSingleton().UsingConcreteType<TorrentsPlugin>();
             });
