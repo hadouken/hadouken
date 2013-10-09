@@ -23,6 +23,12 @@ namespace Hadouken.Plugins.Config.Rpc
             return _dataStore.Get(key);
         }
 
+        [JsonRpcMethod("config.getSection")]
+        public IDictionary<string, object> GetSection(string section)
+        {
+            return _dataStore.GetStartingWith(section);
+        }
+
         [JsonRpcMethod("config.getMany")]
         public IDictionary<string, object> GetMany(string[] keys)
         {

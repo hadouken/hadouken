@@ -55,6 +55,31 @@ namespace Hadouken.Plugins.Config.Data
             }
         }
 
+        public IDictionary<string, object> GetStartingWith(string section)
+        {
+            using (var cmd = _connection.Value.CreateCommand())
+            {
+                cmd.CommandText = "select Key, Value from Config where Key like :key";
+                cmd.Parameters.Add(new SQLiteParameter(":key", section + "%"));
+
+                var data = cmd.ExecuteReader();
+                var result = new Dictionary<string, object>();
+
+                if (data == null)
+                    return null;
+
+                while (data.Read())
+                {
+                    var key = data["Key"].ToString();
+                    var val = JsonConvert.DeserializeObject(data["Value"].ToString());
+
+                    result.Add(key, val);
+                }
+
+                return result;
+            }
+        } 
+
         public void Set(string key, object value)
         {
             using (var cmd = _connection.Value.CreateCommand())
