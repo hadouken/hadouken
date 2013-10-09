@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.Dto;
 using MonoTorrent.Client;
@@ -14,6 +17,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         private readonly string _dataPath;
         private readonly string _torrentsPath;
         private readonly JsonRpcClient _rpcClient;
+        private readonly IEngineSettingsFactory _settingsFactory;
         private ClientEngine _engine;
 
         private readonly IDictionary<string, TorrentManager> _torrentManagers =
@@ -24,16 +28,13 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             _dataPath = dataPath;
             _torrentsPath = Path.Combine(dataPath, "Torrents");
             _rpcClient = new JsonRpcClient(rpcUrl);
+            _settingsFactory = new EngineSettingsFactory(rpcUrl);
         }
 
         public void Load()
         {
-            _engine = new ClientEngine(new EngineSettings
-            {
-                AllowedEncryption = EncryptionTypes.All,
-                GlobalMaxConnections = 200,
-                SavePath = @"C:\Temporary"
-            });
+            var settings = _settingsFactory.Build();
+            _engine = new ClientEngine(settings);
         }
 
         public void Unload()

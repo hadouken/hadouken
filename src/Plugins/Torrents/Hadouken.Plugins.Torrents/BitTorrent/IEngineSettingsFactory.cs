@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using Hadouken.Framework;
+using Hadouken.Framework.Rpc;
+using MonoTorrent.Client;
+
+namespace Hadouken.Plugins.Torrents.BitTorrent
+{
+    public interface IEngineSettingsFactory
+    {
+        event EventHandler<EngineSettings> EngineSettingsChanged;
+
+        EngineSettings Build();
+    }
+
+    class EngineSettingsFactory : IEngineSettingsFactory
+    {
+        private static readonly IDictionary<string, Action<EngineSettings, object>> Setters =
+            new Dictionary<string, Action<EngineSettings, object>>();
+
+        private static readonly IDictionary<string, Func<EngineSettings, object>> Getters =
+            new Dictionary<string, Func<EngineSettings, object>>(); 
+
+        private readonly EngineSettings _settings = new EngineSettings();
+        private readonly JsonRpcClient _rpcClient;
+
+        public event EventHandler<EngineSettings> EngineSettingsChanged;
+
+        static EngineSettingsFactory()
+        {
+            Setters.Add("bt.downloads.savePath", (settings, o) => settings.SavePath = o.ToStringOrDefault(@"C:\Temporary"));
+            Setters.Add("bt.connection.listenPort", (settings, o) => settings.ListenPort = o.ToInt32OrDefault(11001));
+            Setters.Add("bt.connection.globalMaxConnections", (settings, o) => settings.GlobalMaxConnections = o.ToInt32OrDefault(150));
+
+            Getters.Add("bt.downloads.savePath", s => s.SavePath);
+            Getters.Add("bt.connection.listenPort", s => s.ListenPort);
+            Getters.Add("bt.connection.globalMaxConnections", s => s.GlobalMaxConnections);
+        }
+
+        public EngineSettingsFactory(Uri rpcEndpoint)
+        {
+            _rpcClient = new JsonRpcClient(rpcEndpoint);
+        }
+
+        public EngineSettings Build()
+        {
+            var keys = Setters.Keys.ToArray();
+            var config = _rpcClient.CallAsync<Dictionary<string, object>>("config.getMany", new[] {keys}).Result;
+
+            foreach (var pair in config)
+            {
+                if (!Setters.ContainsKey(pair.Key))
+                    continue;
+
+                var action = Setters[pair.Key];
+                action(_settings, pair.Value);
+            }
+
+            // Save on remote end
+            var d = Getters.ToDictionary(k => k.Key, v => v.Value(_settings));
+
+            _rpcClient.CallAsync<bool>("config.setMany", d).Wait();
+
+            return _settings;
+        }
+
+        protected void OnEngineSettingsChanged(EngineSettings engineSettings)
+        {
+            var e = EngineSettingsChanged;
+
+            if (e != null)
+                e(this, engineSettings);
+        }
+    }
+
+    public static class ObjectExtensions
+    {
+        public static string ToStringOrDefault(this object value, string defaultValue)
+        {
+            if (value == null)
+                return defaultValue;
+
+            return value.ToString();
+        }
+
+        public static int ToInt32OrDefault(this object value, int defaultValue)
+        {
+            if (value == null)
+                return defaultValue;
+
+            return Convert.ToInt32(value);
+        }
+    }
+}

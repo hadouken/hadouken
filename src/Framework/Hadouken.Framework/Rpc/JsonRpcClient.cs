@@ -48,7 +48,7 @@ namespace Hadouken.Framework.Rpc
             var responseContent = await response.Content.ReadAsStringAsync();
 
             var j = JToken.Parse(responseContent);
-            return j["result"].Value<TResult>();
+            return j["result"].ToObject<TResult>();
         }
 
         public void Dispose()
