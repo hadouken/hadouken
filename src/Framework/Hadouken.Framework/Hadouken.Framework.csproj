@@ -73,10 +73,12 @@
     <Compile Include="Rpc\IMethodInvoker.cs" />
     <Compile Include="Rpc\IRequestHandler.cs" />
     <Compile Include="Rpc\JsonRpcClient.cs" />
+    <Compile Include="Rpc\JsonRpcErrorResponse.cs" />
     <Compile Include="Rpc\JsonRpcHandler.cs" />
     <Compile Include="Rpc\JsonRpcMethodAttribute.cs" />
     <Compile Include="Rpc\JsonRpcRequest.cs" />
     <Compile Include="Rpc\JsonRpcResponse.cs" />
+    <Compile Include="Rpc\JsonRpcSuccessResponse.cs" />
     <Compile Include="Rpc\MethodInvoker.cs" />
     <Compile Include="Rpc\RequestHandler.cs" />
     <Compile Include="Rpc\SemanticVersionConverter.cs" />

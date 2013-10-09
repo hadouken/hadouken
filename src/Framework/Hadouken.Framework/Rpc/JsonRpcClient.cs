@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using System;
 
 namespace Hadouken.Framework.Rpc
 {
@@ -40,8 +41,25 @@ namespace Hadouken.Framework.Rpc
             var json = JsonConvert.SerializeObject(request, SerializerSettings);
             var response = _transport.Send(json);
 
-            var j = JToken.Parse(response);
-            return j["result"].ToObject<TResult>();
+            JsonRpcResponse rpcResponse;
+            Exception exception;
+
+            if (JsonRpcResponse.TryParse(response, out rpcResponse, out exception))
+            {
+                var successResponse = rpcResponse as JsonRpcSuccessResponse;
+
+                if (successResponse != null)
+                {
+                    var resultToken = successResponse.Result as JToken;
+
+                    if (resultToken != null)
+                    {
+                        return resultToken.ToObject<TResult>();
+                    }
+                }
+            }
+
+            return default(TResult);
         }
 
         public void Dispose()

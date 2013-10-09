@@ -65,11 +65,7 @@ namespace Hadouken.Rpc
                 }
                 catch (Exception exception)
                 {
-                    return new JsonRpcResponse
-                    {
-                        Id = request.Id,
-                        Error = new InternalRpcError(exception)
-                    };
+                    return JsonRpcErrorResponse.InternalRpcError(request.Id, exception);
                 }
             }
             else if(_proxyList[plugin] != null)
@@ -86,10 +82,10 @@ namespace Hadouken.Rpc
                 _proxyList.Remove(plugin);
 
                 Logger.Error("Received invalid response from proxy {0}", plugin);
-                return new JsonRpcResponse{Id = request.Id, Error = new InternalRpcError()};
+                return JsonRpcErrorResponse.InternalRpcError(request.Id);
             }
 
-            return new JsonRpcResponse {Id = request.Id, Error = new MethodNotFoundError()};
+            return JsonRpcErrorResponse.MethodNotFound(request.Id, request.Method);
         }
     }
 }

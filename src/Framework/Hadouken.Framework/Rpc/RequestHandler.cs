@@ -59,15 +59,7 @@ namespace Hadouken.Framework.Rpc
         protected virtual JsonRpcResponse OnMethodMissing(JsonRpcRequest request)
         {
             Logger.Info("Could not find method {0} in cache.", request.Method);
-
-            return new JsonRpcResponse
-                {
-                    Id = request.Id,
-                    Error = new MethodNotFoundError
-                        {
-                            Data = String.Format("Method {0} not found.", request.Method)
-                        }
-                };
+            return JsonRpcErrorResponse.MethodNotFound(request.Method, request.Method);
         }
 
         public JsonRpcResponse Execute(JsonRpcRequest request)
@@ -90,11 +82,7 @@ namespace Hadouken.Framework.Rpc
                     case JTokenType.Array:
                         if (param.Count != invoker.ParameterTypes.Length)
                         {
-                            return new JsonRpcResponse
-                            {
-                                Id = request.Id,
-                                Error = new InvalidParamsError()
-                            };
+                            return JsonRpcErrorResponse.InvalidParams(request.Id);
                         }
 
                         p.AddRange(param.Select(
@@ -108,14 +96,10 @@ namespace Hadouken.Framework.Rpc
                         break;
 
                     default:
-                        return new JsonRpcResponse
-                            {
-                                Id = request.Id,
-                                Error = new InternalRpcError()
-                            };
+                        return JsonRpcErrorResponse.InternalRpcError(request.Id);
                 }
 
-                return new JsonRpcResponse
+                return new JsonRpcSuccessResponse
                     {
                         Id = request.Id,
                         Result = invoker.Invoke(p.ToArray())
@@ -125,14 +109,10 @@ namespace Hadouken.Framework.Rpc
             if (invoker.ParameterTypes.Length > 0
                 && request.Parameters.GetType() != invoker.ParameterTypes[0])
             {
-                return new JsonRpcResponse
-                    {
-                        Id = request.Id,
-                        Error = new InvalidParamsError()
-                    };
+                return JsonRpcErrorResponse.InvalidParams(request.Id);
             }
 
-            return new JsonRpcResponse
+            return new JsonRpcSuccessResponse
                 {
                     Id = request.Id,
                     Result = request.Parameters == null ? invoker.Invoke() : invoker.Invoke(request.Parameters)
