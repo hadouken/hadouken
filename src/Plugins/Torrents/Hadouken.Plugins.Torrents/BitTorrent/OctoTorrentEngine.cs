@@ -7,6 +7,8 @@ using Hadouken.Plugins.Torrents.Dto;
 using OctoTorrent;
 using OctoTorrent.Client;
 using OctoTorrent.Common;
+using OctoTorrent.Dht;
+using OctoTorrent.Dht.Listeners;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
@@ -22,7 +24,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             new Dictionary<string, IExtendedTorrentManager>(StringComparer.InvariantCultureIgnoreCase); 
  
         private ClientEngine _engine;
-
+        private DhtEngine _dhtEngine;
 
         static OctoTorrentEngine()
         {
@@ -59,6 +61,13 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         private void LoadDht()
         {
             var listenAddress = new IPEndPoint(IPAddress.Any, 56544);
+            var listener = new DhtListener(listenAddress);
+
+            _dhtEngine = new DhtEngine(listener);
+            
+            _engine.RegisterDht(_dhtEngine);
+            listener.Start();
+            _engine.DhtEngine.Start();
         }
 
         public void Unload()
@@ -123,8 +132,10 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         public IExtendedTorrentManager AddMagnetLink(string magnetLink, string savePath, string label)
         {
             var link = new MagnetLink(magnetLink);
+            var path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+
             var manager = new TorrentManager(link, savePath, new TorrentSettings(),
-                Path.Combine(Path.GetTempPath(), Path.GetTempFileName()));
+                path);
             var extendedManager = new ExtendedTorrentManager(manager);
 
             _engine.Register(manager);

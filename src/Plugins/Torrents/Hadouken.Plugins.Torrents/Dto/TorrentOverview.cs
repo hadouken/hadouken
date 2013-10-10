@@ -18,12 +18,12 @@ namespace Hadouken.Plugins.Torrents.Dto
 
         public string Name
         {
-            get { return _manager.Torrent.Name; }
+            get { return _manager.Torrent != null ? _manager.Torrent.Name : "<metadata>"; }
         }
 
         public long Size
         {
-            get { return _manager.Torrent.Size; }
+            get { return _manager.Torrent != null ? _manager.Torrent.Size : -1; }
         }
 
         public string State
