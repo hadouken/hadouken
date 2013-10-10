@@ -25,6 +25,12 @@ module Hadouken.UI.Dialogs {
 
                 this.getContent().find('.modal-body').append(container);
 
+                var target = this.getContent().find('h2.greeter .name');
+                this.getContent().find('#auth-username').on('keyup', function (e) {
+                    var val = $(this).val();
+                    target.text(val);
+                });
+
                 plugin.instance.loadFirstTimeSetup(container);
             }
 
