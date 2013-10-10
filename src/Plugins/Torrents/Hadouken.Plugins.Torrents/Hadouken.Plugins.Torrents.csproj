@@ -41,8 +41,11 @@
     <Reference Include="Autofac.Integration.Wcf">
       <HintPath>..\..\..\..\packages\Autofac.Wcf.3.0.0\lib\net40\Autofac.Integration.Wcf.dll</HintPath>
     </Reference>
-    <Reference Include="MonoTorrent">
-      <HintPath>..\..\..\..\packages\MonoTorrent.0.9.0\lib\net20\MonoTorrent.dll</HintPath>
+    <Reference Include="OctoTorrent">
+      <HintPath>..\..\..\..\packages\OctoTorrent.0.1.7\lib\net40\OctoTorrent.dll</HintPath>
+    </Reference>
+    <Reference Include="OctoTorrent.Dht">
+      <HintPath>..\..\..\..\packages\OctoTorrent.Dht.0.1.6\lib\net40\OctoTorrent.Dht.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,7 +63,7 @@
     <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
     <Compile Include="BitTorrent\IEngineSettingsFactory.cs" />
     <Compile Include="BitTorrent\IExtendedTorrentManager.cs" />
-    <Compile Include="BitTorrent\MonoTorrentEngine.cs" />
+    <Compile Include="BitTorrent\OctoTorrentEngine.cs" />
     <Compile Include="Dto\TorrentDetails.cs" />
     <Compile Include="Dto\TorrentFileDetails.cs" />
     <Compile Include="Dto\TorrentOverview.cs" />

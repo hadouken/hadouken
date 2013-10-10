@@ -4,13 +4,13 @@ using System.IO;
 using System.Net;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.Dto;
-using MonoTorrent;
-using MonoTorrent.Client;
-using MonoTorrent.Common;
+using OctoTorrent;
+using OctoTorrent.Client;
+using OctoTorrent.Common;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
-    public sealed class MonoTorrentEngine : IBitTorrentEngine
+    public sealed class OctoTorrentEngine : IBitTorrentEngine
     {
         private static readonly IDictionary<Tuple<TorrentState, TorrentState>, string> EventMap =
             new Dictionary<Tuple<TorrentState, TorrentState>, string>();
@@ -24,7 +24,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         private ClientEngine _engine;
 
 
-        static MonoTorrentEngine()
+        static OctoTorrentEngine()
         {
             EventMap.Add(Tuple.Create(TorrentState.Downloading, TorrentState.Seeding), "torrent.completed");
             EventMap.Add(Tuple.Create(TorrentState.Stopped, TorrentState.Downloading), "torrent.started");
@@ -33,7 +33,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             EventMap.Add(Tuple.Create(TorrentState.Hashing, TorrentState.Seeding), "torrent.started");
         }
 
-        public MonoTorrentEngine(IEngineSettingsFactory settingsFactory, IJsonRpcClient rpcClient)
+        public OctoTorrentEngine(IEngineSettingsFactory settingsFactory, IJsonRpcClient rpcClient)
         {
             _settingsFactory = settingsFactory;
             _rpcClient = rpcClient;

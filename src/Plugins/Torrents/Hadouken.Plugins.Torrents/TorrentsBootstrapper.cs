@@ -25,7 +25,7 @@ namespace Hadouken.Plugins.Torrents
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<TorrentsPlugin>().As<Plugin>();
-            builder.RegisterType<MonoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
+            builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
 
             builder.Register<IHttpFileServer>

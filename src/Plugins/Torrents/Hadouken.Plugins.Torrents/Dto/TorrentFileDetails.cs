@@ -1,5 +1,5 @@
-﻿using MonoTorrent.Common;
-using System.Linq;
+﻿using System.Linq;
+using OctoTorrent.Common;
 
 namespace Hadouken.Plugins.Torrents.Dto
 {
