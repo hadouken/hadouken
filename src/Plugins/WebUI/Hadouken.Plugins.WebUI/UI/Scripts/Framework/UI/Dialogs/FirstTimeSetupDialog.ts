@@ -85,6 +85,7 @@ module Hadouken.UI.Dialogs {
                         password: pwd,
                         success: () => {
                             this.close();
+                            $.bootstrapGrowl('Hadouken configured.');
                         }
                     });
                 }

@@ -64,6 +64,8 @@ namespace Hadouken.Framework.Http
         {
             if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password)) return;
 
+            Logger.Debug("Updating credentials for HttpFileServer.");
+
             _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
             _credentials = new NetworkCredential(username, password);
         }
