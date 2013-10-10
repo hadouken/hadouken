@@ -2,18 +2,28 @@
 ///<reference path="Plugins/PluginEngine.ts"/>
 ///<reference path="UI/PageManager.ts"/>
 ///<reference path="UI/Pages/SettingsPage.ts"/>
+///<reference path="Http/JsonRpcClient.ts"/>
+///<reference path="UI/Dialogs/FirstTimeSetupDialog.ts"/>
 
 module Hadouken {
     export class Bootstrapper {
-        init(eventListener: Hadouken.Events.EventListener, pluginEngine: Hadouken.Plugins.PluginEngine, pageManager: Hadouken.UI.PageManager) {
-            console.log("init");
+        private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
 
+        init(eventListener: Hadouken.Events.EventListener, pluginEngine: Hadouken.Plugins.PluginEngine, pageManager: Hadouken.UI.PageManager) {
             // Add pages
             pageManager.addPage(new Hadouken.UI.Pages.SettingsPage());
 
             eventListener.addHandler("web.signalR.connected", () => {
                 pluginEngine.load(() => {
                     pageManager.init();
+
+                    this._rpcClient.callParams('config.get', 'web.firstTimeSetupShown', (c) => {
+                        console.log(c);
+
+                        if (c === null || !c) {
+                            new Hadouken.UI.Dialogs.FirstTimeSetupDialog().show();
+                        }
+                    });
                 });
             });
 

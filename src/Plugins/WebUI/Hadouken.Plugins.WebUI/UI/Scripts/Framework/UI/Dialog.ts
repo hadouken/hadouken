@@ -8,8 +8,12 @@
             $.get(this.url, (html) => {
                 this._content = $(html);
                 this._content.modal();
+
+                var that = this;
+
                 this._content.on('hidden.bs.modal', function () {
                     $(this).remove();
+                    that.onClosed();
                 });
 
                 this.onShow();
@@ -25,6 +29,9 @@
         }
 
         onShow(): void {
+        }
+
+        onClosed(): void {
         }
     }
 }

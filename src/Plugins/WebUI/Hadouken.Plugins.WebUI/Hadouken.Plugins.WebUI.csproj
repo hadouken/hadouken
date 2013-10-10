@@ -82,7 +82,13 @@
     <Content Include="UI\Dialogs\change-auth.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="UI\Dialogs\first-time-setup.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="UI\Scripts\Framework\UI\Dialogs\ChangeAuthDialog.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Scripts\Framework\UI\Dialogs\FirstTimeSetupDialog.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Scripts\libs.d.ts">

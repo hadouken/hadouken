@@ -1,0 +1,81 @@
+﻿<div class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">First time setup</h4>
+            </div>
+            <div class="modal-body">
+                <div class="setup-section">
+                    <h2><i class="icon-heart"></i> Greetings, user</h2>
+                
+                    <p>
+                        This is Hadouken, a great way to download torrents. Since this is the first time you
+                        load the UI, you will now have the chance to configure the basics.
+                    </p>
+                
+                    <p>
+                        If you do not feel like it just now, just close this dialog and we will assume the
+                        default settings which you can change at any time.
+                    </p>
+                </div>
+                
+                <div class="setup-section">
+                    <h3><i class="icon-shield"></i> Authentication</h3>
+                
+                    <p>
+                        If you want to enable authentication (HTTP Basic auth), enter a username/password here.
+                        If not - no worries, just leave these fields blank.
+                    </p>
+                
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="auth-username" class="col-lg-3 control-label">Username</label>
+                            <div class="col-lg-5">
+                                <input type="text" class="form-control" name="auth-username" id="auth-username" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="auth-password" class="col-lg-3 control-label">Password</label>
+                            <div class="col-lg-9">
+                                <input type="password" class="form-control" name="auth-password" id="auth-password" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="setup-section">
+                    <h3><i class="icon-puzzle-piece"></i> Plugins</h3>
+                
+                    <p>
+                        Plugin support in Hadouken is awesome. We have chosen the default plugin repository for you,
+                        however you can change this if you'd like. Also, you can disable the automatic checking for
+                        plugin updates.
+                    </p>
+                    
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                        <label for="plugins-repositoryUrl" class="col-lg-3 control-label">Repository URL</label>
+                        <div class="col-lg-9">
+                            <input type="url" class="form-control" id="plugins-repositoryUrl" name="plugins-repositoryUrl" value="http://api.hdkn.net/" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-3 col-lg-9">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="plugins-enableUpdateChecking" checked="checked" /> Enable update checking
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-save-auth">Configure</button>
+            </div>
+        </div>
+    </div>
+</div>

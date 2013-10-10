@@ -42,10 +42,6 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         renderFileTable(files: Array<Hadouken.Plugins.Torrents.BitTorrent.TorrentFile>): void {
-            Handlebars.registerHelper('fileSize', (size) => {
-                return this.friendlyFileSize(size);
-            });
-
             var tmpl = Handlebars.compile($('#tmpl-torrentdetails-file-item').html());
 
             for (var i = 0; i < files.length; i++) {
@@ -100,11 +96,6 @@ module Hadouken.Plugins.Torrents.UI {
             }
 
             return true;
-        }
-
-        friendlyFileSize(size: number): string {
-            var i = Math.floor(Math.log(size) / Math.log(1024));
-            return (size / Math.pow(1024, i)).toFixed(2) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
         }
 
         showNotFound(): void {
