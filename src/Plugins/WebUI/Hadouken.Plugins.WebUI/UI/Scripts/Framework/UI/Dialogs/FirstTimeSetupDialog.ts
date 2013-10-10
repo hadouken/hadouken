@@ -78,16 +78,18 @@ module Hadouken.UI.Dialogs {
 
             this._rpcClient.callParams('core.setAuth', [usr, pwd, ''], (r) => {
                 if (r) {
-                    $.ajax({
-                        url: '/',
-                        type: 'GET',
-                        username: usr,
-                        password: pwd,
-                        success: () => {
-                            this.close();
-                            $.bootstrapGrowl('Hadouken configured.');
-                        }
-                    });
+                    setTimeout(() => {
+                        $.ajax({
+                            url: '/',
+                            type: 'GET',
+                            username: usr,
+                            password: pwd,
+                            success: () => {
+                                this.close();
+                                $.bootstrapGrowl('Hadouken configured.');
+                            }
+                        });
+                    }, 1000);
                 }
             });
         }
