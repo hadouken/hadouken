@@ -43,10 +43,10 @@ namespace Hadouken.Rpc
             if (String.IsNullOrEmpty(newPassword))
                 return false;
 
-            var oldPasswordHash = ComputeHash(oldPassword);
-
             // Only compare if we have an old password
             if(!String.IsNullOrEmpty(_configuration.Http.Authentication.Password)) {
+                var oldPasswordHash = ComputeHash(oldPassword);
+
                 // If the given old password is incrrect, return.
                 if (!String.Equals(_configuration.Http.Authentication.Password, oldPasswordHash, StringComparison.InvariantCultureIgnoreCase))
                 {
