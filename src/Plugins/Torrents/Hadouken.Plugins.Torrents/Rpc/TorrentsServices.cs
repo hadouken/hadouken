@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Framework.Rpc;
@@ -79,6 +80,32 @@ namespace Hadouken.Plugins.Torrents.Rpc
         public TorrentOverview AddFile(byte[] data, string savePath, string label)
         {
             var manager = _torrentEngine.Add(data, savePath, label);
+
+            if (manager == null)
+                return null;
+
+            return new TorrentOverview(manager.Manager);
+        }
+
+        [JsonRpcMethod("torrents.addUrl")]
+        public TorrentOverview AddUrl(string url, string savePath, string label)
+        {
+            using (var client = new HttpClient())
+            {
+                var data = client.GetByteArrayAsync(url).Result;
+                var manager = _torrentEngine.Add(data, savePath, label);
+
+                if (manager == null)
+                    return null;
+
+                return new TorrentOverview(manager.Manager);
+            }
+        }
+
+        [JsonRpcMethod("torrents.addMagnetLink")]
+        public TorrentOverview AddMagnetLink(string magnetLink, string savePath, string label)
+        {
+            var manager = _torrentEngine.AddMagnetLink(magnetLink, savePath, label);
 
             if (manager == null)
                 return null;

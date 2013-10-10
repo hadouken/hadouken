@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.Dto;
+using MonoTorrent;
 using MonoTorrent.Client;
 using MonoTorrent.Common;
 
@@ -19,6 +22,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             new Dictionary<string, IExtendedTorrentManager>(StringComparer.InvariantCultureIgnoreCase); 
  
         private ClientEngine _engine;
+
 
         static MonoTorrentEngine()
         {
@@ -38,6 +42,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         public void Load()
         {
             LoadEngine();
+            LoadDht();
             LoadManagers();
         }
 
@@ -49,6 +54,11 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         {
             var settings = _settingsFactory.Build();
             _engine = new ClientEngine(settings);
+        }
+
+        private void LoadDht()
+        {
+            var listenAddress = new IPEndPoint(IPAddress.Any, 56544);
         }
 
         public void Unload()
@@ -97,6 +107,25 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
             if (Get(extendedManager.FriendlyInfoHash) != null)
                 return null;
+
+            _engine.Register(manager);
+
+            lock (_managersLock)
+            {
+                _managers.Add(extendedManager.FriendlyInfoHash, extendedManager);
+            }
+
+            _rpcClient.SendEventAsync("torrent.added", new TorrentOverview(extendedManager.Manager));
+
+            return extendedManager;
+        }
+
+        public IExtendedTorrentManager AddMagnetLink(string magnetLink, string savePath, string label)
+        {
+            var link = new MagnetLink(magnetLink);
+            var manager = new TorrentManager(link, savePath, new TorrentSettings(),
+                Path.Combine(Path.GetTempPath(), Path.GetTempFileName()));
+            var extendedManager = new ExtendedTorrentManager(manager);
 
             _engine.Register(manager);
 

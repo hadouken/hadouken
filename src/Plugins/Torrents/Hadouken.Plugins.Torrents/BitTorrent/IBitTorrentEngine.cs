@@ -12,6 +12,8 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         IExtendedTorrentManager Add(byte[] data, string savePath = null, string label = null);
 
+        IExtendedTorrentManager AddMagnetLink(string magnetLink, string savePath, string label);
+
         void Remove(IExtendedTorrentManager manager);
     }
 }
