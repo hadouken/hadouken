@@ -18,8 +18,6 @@ module Hadouken {
                     pageManager.init();
 
                     this._rpcClient.callParams('config.get', 'web.firstTimeSetupShown', (c) => {
-                        console.log(c);
-
                         if (c === null || !c) {
                             new Hadouken.UI.Dialogs.FirstTimeSetupDialog().show();
                         }

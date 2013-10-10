@@ -4,6 +4,10 @@ module Hadouken.Plugins {
 
         configure(): void { }
 
+        loadFirstTimeSetup(container: any): void { }
+
+        saveFirstTimeSetup(container: any, callback: { (): void; }): void { }
+
         unload(): void { }
     }
 }

@@ -6,6 +6,7 @@
 
 module Hadouken.Plugins.Torrents {
     export class TorrentsPlugin extends Hadouken.Plugins.Plugin {
+        private _rpcClient: Hadouken.Http.JsonRpcClient = new Hadouken.Http.JsonRpcClient('/jsonrpc');
         private _eventListener: Hadouken.Events.EventListener = new Hadouken.Events.EventListener();
         private _pageManager: Hadouken.UI.PageManager;
         private _torrentEngine: Hadouken.Plugins.Torrents.BitTorrent.BitTorrentEngine;
@@ -19,6 +20,19 @@ module Hadouken.Plugins.Torrents {
             this.setupNotifications();
             this.setupMainMenu();
             this.loadPages();
+        }
+
+        loadFirstTimeSetup(container: any): void {
+            $.get('/plugins/core.torrents/forms/first-time-setup.html', (h) => {
+                container.append(h);
+            });
+        }
+
+        saveFirstTimeSetup(container: any, callback: { (): void; }): void {
+            var savePath = container.find('#torrents-savePath').val();
+            this._rpcClient.callParams('config.set', ['bt.downloads.savePath', savePath], (e) => {
+                callback();
+            });
         }
 
         unload(): void { }
