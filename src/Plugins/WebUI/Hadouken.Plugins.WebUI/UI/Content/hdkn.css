@@ -31,12 +31,43 @@
 	from	{ transform: rotate(0) }
 	to		{ transform: rotate(360deg) }
 }
- 
- 
+
 .icon-refresh.loading:before {
      -webkit-animation: ROTATE 1s infinite;
      -moz-animation:    ROTATE 1s infinite;
      -ms-animation:     ROTATE 1s infinite;
      -o-animation:     ROTATE 1s infinite;
      animation:     ROTATE 1s infinite;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.50);
+    color: #333;
+}
+
+.overlay {
+    text-align: center;
+}
+ 
+.overlay:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em;
+}
+
+.overlay .message {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 10px 15px;
+    position: relative;
+    font-size: 75px;
 }

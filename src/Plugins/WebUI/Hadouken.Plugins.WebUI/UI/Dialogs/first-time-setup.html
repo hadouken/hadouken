@@ -6,6 +6,10 @@
                 <h4 class="modal-title">First time setup</h4>
             </div>
             <div class="modal-body">
+                <div class="overlay hide">
+                    <div class="message"><i class="icon-refresh loading"></i></div>
+                </div>
+
                 <div class="setup-section">
                     <h2><i class="icon-heart"></i> Greetings, user</h2>
                 
@@ -55,26 +59,26 @@
                     
                     <form class="form-horizontal">
                         <div class="form-group">
-                        <label for="plugins-repositoryUrl" class="col-lg-3 control-label">Repository URL</label>
-                        <div class="col-lg-9">
-                            <input type="url" class="form-control" id="plugins-repositoryUrl" name="plugins-repositoryUrl" value="http://api.hdkn.net/" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-offset-3 col-lg-9">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" id="plugins-enableUpdateChecking" checked="checked" /> Enable update checking
-                                </label>
+                            <label for="plugins-repositoryUrl" class="col-lg-3 control-label">Repository URL</label>
+                            <div class="col-lg-9">
+                                <input type="url" class="form-control" id="plugins-repositoryUrl" name="plugins-repositoryUrl" value="http://api.hdkn.net/" />
                             </div>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-3 col-lg-9">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="plugins-enableUpdateChecking" checked="checked" /> Enable update checking
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-save-setup"><i class="icon-refresh loading hide"></i> Configure</button>
+                <button type="button" class="btn btn-primary" id="btn-save-setup">Save configuration</button>
             </div>
         </div>
     </div>
