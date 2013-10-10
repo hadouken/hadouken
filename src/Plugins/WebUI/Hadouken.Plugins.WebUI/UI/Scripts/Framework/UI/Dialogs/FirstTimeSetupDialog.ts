@@ -32,9 +32,12 @@ module Hadouken.UI.Dialogs {
         }
 
         save(): void {
+            $('#btn-save-setup').attr('disabled', true);
+
             var cfg = {
                 'plugins.repositoryUrl': this.getContent().find('#plugins-repositoryUrl').val(),
-                'plugins.enableUpdateChecking': this.getContent().find('#plugins-enableUpdateChecking').is(':checked')
+                'plugins.enableUpdateChecking': this.getContent().find('#plugins-enableUpdateChecking').is(':checked'),
+                'web.firstTimeSetupShown': true
             };
 
             this._rpcClient.callParams('config.setMany', cfg, (r) => {
@@ -75,7 +78,15 @@ module Hadouken.UI.Dialogs {
 
             this._rpcClient.callParams('core.setAuth', [usr, pwd, ''], (r) => {
                 if (r) {
-                    console.log('auth changed');
+                    $.ajax({
+                        url: '/',
+                        type: 'GET',
+                        username: usr,
+                        password: pwd,
+                        success: () => {
+                            this.close();
+                        }
+                    });
                 }
             });
         }
