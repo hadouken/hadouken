@@ -52,6 +52,19 @@ namespace Hadouken.Plugins
 
         public string Path { get { return _path; } }
 
+        public long GetMemoryUsage()
+        {
+            if (State != PluginState.Loaded)
+                return -1;
+
+            var domain = _sandboxedEnvironment.GetAppDomain();
+
+            if (domain == null)
+                return -1;
+
+            return domain.MonitoringSurvivedMemorySize;
+        }
+
         public async void Load()
         {
             Logger.Info("Loading plugin {0}", _manifest.Name);

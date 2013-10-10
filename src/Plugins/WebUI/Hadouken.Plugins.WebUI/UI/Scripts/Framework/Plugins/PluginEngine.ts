@@ -9,7 +9,7 @@ module Hadouken.Plugins {
     export class PluginManager {
         public instance: Hadouken.Plugins.Plugin = null;
 
-        constructor(public name: string, public version: string, public state: string) { }
+        constructor(public name: string, public version: string, public state: string, public memoryUsage: number) { }
     }
 
     export class PluginEngine {

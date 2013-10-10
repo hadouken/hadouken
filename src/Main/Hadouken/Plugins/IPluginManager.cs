@@ -12,6 +12,8 @@ namespace Hadouken.Plugins
 
         string Path { get; }
 
+        long GetMemoryUsage();
+
         void Load();
 
         void Unload();

@@ -62,7 +62,8 @@ namespace Hadouken.Plugins.Rpc
                 {
                     Name = plugin.Manifest.Name,
                     Version = plugin.Manifest.Version,
-                    State = plugin.State
+                    State = plugin.State,
+                    MemoryUsage = plugin.GetMemoryUsage(),
                 }).ToArray();
         }
     }
@@ -72,6 +73,8 @@ namespace Hadouken.Plugins.Rpc
         public string Name { get; set; }
 
         public SemanticVersion Version { get; set; }
+
+        public long MemoryUsage { get; set; }
 
         public PluginState  State { get; set; }
     }

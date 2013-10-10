@@ -18,6 +18,9 @@ namespace Hadouken.Service
 
 		public void Run()
 		{
+            // Enable appdomain monitoring
+		    AppDomain.MonitoringIsEnabled = true;
+
 			// Create the Hadouken service.
 			var service = new Bootstrapper().Build();
 
