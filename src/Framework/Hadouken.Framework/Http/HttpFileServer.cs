@@ -58,6 +58,8 @@ namespace Hadouken.Framework.Http
 
         public void SetCredentials(string username, string password)
         {
+            if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password)) return;
+
             _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
             _credentials = new NetworkCredential(username, password);
         }
