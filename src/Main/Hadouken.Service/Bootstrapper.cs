@@ -49,7 +49,7 @@ namespace Hadouken.Service
 		    builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
 
 			// Register JSONRPC server
-		    builder.RegisterType<WcfJson>().As<IWcfJsonRpcServer>();
+		    builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
 			builder.Register<IHttpJsonRpcServer>(c =>
 			{
 				var conf = c.Resolve<IConfiguration>();
@@ -83,7 +83,7 @@ namespace Hadouken.Service
             
             // Register the WCF host
 		    var wcfBuilder = new ContainerBuilder();
-            wcfBuilder.Register(c =>
+            wcfBuilder.Register<IWcfJsonRpcServer>(c =>
             {
                 var binding = new NetNamedPipeBinding
                 {
@@ -93,9 +93,9 @@ namespace Hadouken.Service
                     MaxReceivedMessageSize = 10485760
                 };
 
-                var host = new ServiceHost(typeof(WcfJson));
-                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, "net.pipe://localhost/hdkn.jsonrpc");
-                host.AddDependencyInjectionBehavior<IWcfJsonRpcServer>(container);
+                var host = new ServiceHost(typeof(WcfJsonRpcService));
+                host.AddServiceEndpoint(typeof(IWcfRpcService), binding, "net.pipe://localhost/hdkn.jsonrpc");
+                host.AddDependencyInjectionBehavior<IWcfRpcService>(container);
 
                 return new WcfJsonRpcServer(host);
             });

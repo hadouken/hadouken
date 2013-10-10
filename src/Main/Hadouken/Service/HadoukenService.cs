@@ -13,9 +13,9 @@ namespace Hadouken.Service
 	    private readonly IEventServer _eventServer;
 	    private readonly IPluginEngine _pluginEngine;
 		private readonly IHttpJsonRpcServer _httpRpcServer;
-	    private readonly WcfJsonRpcServer _wcfRpcServer;
+	    private readonly IWcfJsonRpcServer _wcfRpcServer;
 
-	    public HadoukenService(IEventServer eventServer, IPluginEngine pluginEngine, IHttpJsonRpcServer rpcServer, WcfJsonRpcServer wcfRpcServer)
+        public HadoukenService(IEventServer eventServer, IPluginEngine pluginEngine, IHttpJsonRpcServer rpcServer, IWcfJsonRpcServer wcfRpcServer)
 		{
 		    _eventServer = eventServer;
 		    _pluginEngine = pluginEngine;

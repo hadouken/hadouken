@@ -11,7 +11,7 @@ namespace Hadouken.Rpc
     public class WcfProxyRequestHandler : RequestHandler
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IDictionary<string, IWcfJsonRpcServer> _proxyList = new Dictionary<string, IWcfJsonRpcServer>();
+        private readonly IDictionary<string, IWcfRpcService> _proxyList = new Dictionary<string, IWcfRpcService>();
 
         public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services) : base(services) { }
 
@@ -42,7 +42,7 @@ namespace Hadouken.Rpc
                 };
 
                 // Create proxy
-                var factory = new ChannelFactory<IWcfJsonRpcServer>(binding,
+                var factory = new ChannelFactory<IWcfRpcService>(binding,
                     "net.pipe://localhost/hdkn.plugins." + plugin);
                 var proxy = factory.CreateChannel();
 

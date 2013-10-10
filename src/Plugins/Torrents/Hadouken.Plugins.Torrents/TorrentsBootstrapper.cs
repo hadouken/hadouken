@@ -49,14 +49,14 @@ namespace Hadouken.Plugins.Torrents
             builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
             builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
             builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
-            builder.RegisterType<WcfJson>().As<IWcfJsonRpcServer>();
+            builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
             builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport(config.RpcGatewayUri)).SingleInstance();
 
             var container = builder.Build();
             var wcfBuilder = new ContainerBuilder();
 
             // Register WCF
-            wcfBuilder.Register(c =>
+            wcfBuilder.Register<IWcfJsonRpcServer>(c =>
             {
                 var binding = new NetNamedPipeBinding
                 {
@@ -66,9 +66,9 @@ namespace Hadouken.Plugins.Torrents
                     MaxReceivedMessageSize = 10485760
                 };
 
-                var host = new ServiceHost(typeof(WcfJson));
-                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, config.RpcPluginUri);
-                host.AddDependencyInjectionBehavior<IWcfJsonRpcServer>(container);
+                var host = new ServiceHost(typeof(WcfJsonRpcService));
+                host.AddServiceEndpoint(typeof(IWcfRpcService), binding, config.RpcPluginUri);
+                host.AddDependencyInjectionBehavior<IWcfRpcService>(container);
 
                 return new WcfJsonRpcServer(host);
             });

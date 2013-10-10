@@ -64,8 +64,9 @@
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\Hosting\IJsonRpcServer.cs" />
-    <Compile Include="Rpc\Hosting\IWcfJsonRpcServer.cs" />
+    <Compile Include="Rpc\Hosting\IWcfRpcService.cs" />
     <Compile Include="Rpc\Hosting\WcfJsonRpcServer.cs" />
+    <Compile Include="Rpc\Hosting\WcfJsonRpcService.cs" />
     <Compile Include="Rpc\IClientTransport.cs" />
     <Compile Include="Rpc\IJsonRpcClient.cs" />
     <Compile Include="Rpc\IJsonRpcHandler.cs" />

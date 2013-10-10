@@ -29,18 +29,18 @@ namespace Hadouken.Rpc
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
-        private readonly Lazy<IWcfJsonRpcServer> _rpcProxy;
+        private readonly Lazy<IWcfRpcService> _rpcProxy;
         private NetworkCredential _credentials = null;
 
         public HttpJsonRpcServer(string listenUri, IEventListener eventListener)
         {
             _eventListener = eventListener;
-            _rpcProxy = new Lazy<IWcfJsonRpcServer>(BuildProxy);
+            _rpcProxy = new Lazy<IWcfRpcService>(BuildProxy);
             _httpListener.Prefixes.Add(listenUri);
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
         }
 
-        private IWcfJsonRpcServer BuildProxy()
+        private IWcfRpcService BuildProxy()
         {
             var binding = new NetNamedPipeBinding
             {
@@ -51,7 +51,7 @@ namespace Hadouken.Rpc
             };
 
             // Create proxy
-            var factory = new ChannelFactory<IWcfJsonRpcServer>(binding, "net.pipe://localhost/hdkn.jsonrpc");
+            var factory = new ChannelFactory<IWcfRpcService>(binding, "net.pipe://localhost/hdkn.jsonrpc");
             return factory.CreateChannel();
         }
 

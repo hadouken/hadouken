@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Hadouken.Framework.Rpc.Hosting
 {
     [ServiceContract]
-    public interface IWcfJsonRpcServer
+    public interface IWcfRpcService
     {
         [OperationContract]
         string Call(string json);

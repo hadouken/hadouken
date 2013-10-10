@@ -3,23 +3,11 @@ using System.ServiceModel;
 
 namespace Hadouken.Framework.Rpc.Hosting
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    public class WcfJson : IWcfJsonRpcServer
+    public interface IWcfJsonRpcServer : IJsonRpcServer
     {
-        private readonly IJsonRpcHandler _handler;
-
-        public WcfJson(IJsonRpcHandler handler)
-        {
-            _handler = handler;
-        }
-
-        public string Call(string json)
-        {
-            return _handler.HandleAsync(json).Result;
-        }
     }
 
-    public class WcfJsonRpcServer : IJsonRpcServer
+    public class WcfJsonRpcServer : IWcfJsonRpcServer
     {
         private readonly ServiceHost _serviceHost;
 

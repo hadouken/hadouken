@@ -7,17 +7,17 @@ namespace Hadouken.Framework.Rpc
     public class WcfNamedPipeClientTransport :IClientTransport
     {
         private readonly Uri _rpcHost;
-        private readonly Lazy<IWcfJsonRpcServer> _rpcProxy;
+        private readonly Lazy<IWcfRpcService> _rpcProxy;
  
         public WcfNamedPipeClientTransport(string rpcHost): this(new Uri(rpcHost)) {}
 
         public WcfNamedPipeClientTransport(Uri rpcHost)
         {
             _rpcHost = rpcHost;
-            _rpcProxy = new Lazy<IWcfJsonRpcServer>(BuildProxy);
+            _rpcProxy = new Lazy<IWcfRpcService>(BuildProxy);
         }
 
-        private IWcfJsonRpcServer BuildProxy()
+        private IWcfRpcService BuildProxy()
         {
             var binding = new NetNamedPipeBinding
             {
@@ -28,7 +28,7 @@ namespace Hadouken.Framework.Rpc
             };
 
             // Create proxy
-            var factory = new ChannelFactory<IWcfJsonRpcServer>(binding, _rpcHost.ToString());
+            var factory = new ChannelFactory<IWcfRpcService>(binding, _rpcHost.ToString());
             return factory.CreateChannel();
         }
 
