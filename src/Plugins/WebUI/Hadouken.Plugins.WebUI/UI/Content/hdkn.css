@@ -9,3 +9,34 @@
 .setup-section:last-of-type {
     margin-bottom: 0;
 }
+
+@-webkit-keyframes ROTATE {
+	from	{ -webkit-transform: rotate(0) }
+	to		{ -webkit-transform: rotate(360deg) }
+ 
+}
+@-moz-keyframes ROTATE {
+	from	{ -moz-transform: rotate(0) }
+	to		{ -moz-transform: rotate(360deg) }
+}
+@-ms-keyframes ROTATE {
+	from	{ -ms-transform: rotate(0) }
+	to		{ -ms-transform: rotate(360deg) }
+}
+@-o-keyframes ROTATE {
+	from	{ -o-transform: rotate(0) }
+	to		{ -o-transform: rotate(360deg) }
+}
+@keyframes ROTATE {
+	from	{ transform: rotate(0) }
+	to		{ transform: rotate(360deg) }
+}
+ 
+ 
+.icon-refresh.loading:before {
+     -webkit-animation: ROTATE 1s infinite;
+     -moz-animation:    ROTATE 1s infinite;
+     -ms-animation:     ROTATE 1s infinite;
+     -o-animation:     ROTATE 1s infinite;
+     animation:     ROTATE 1s infinite;
+}

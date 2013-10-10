@@ -32,6 +32,7 @@ module Hadouken.UI.Dialogs {
         }
 
         save(): void {
+            $('#btn-save-setup i').removeClass('hide');
             $('#btn-save-setup').attr('disabled', true);
 
             var cfg = {
