@@ -16,9 +16,9 @@ namespace Hadouken.Framework
 
         public string Password { get; set; }
 
-        public string PluginRpcBinding { get; set; }
+        public string RpcPluginUri { get; set; }
 
-        public string GatewayRpcBinding { get; set; }
+        public string RpcGatewayUri { get; set; }
 
         public string HttpVirtualPath { get; set; }
     }

@@ -52,8 +52,8 @@ namespace Hadouken.Plugins
                         Port = _configuration.Http.Port,
                         UserName = _configuration.Http.Authentication.UserName,
                         Password = _configuration.Http.Authentication.Password,
-                        GatewayRpcBinding = "net.pipe://localhost/hdkn.jsonrpc",
-                        PluginRpcBinding = String.Format("net.pipe://localhost/hdkn.plugins.{0}", manifest.Name),
+                        RpcGatewayUri = _configuration.Rpc.GatewayUri,
+                        RpcPluginUri = String.Format(_configuration.Rpc.PluginUri, manifest.Name),
                         HttpVirtualPath = "/plugins/" + manifest.Name
                     };
 

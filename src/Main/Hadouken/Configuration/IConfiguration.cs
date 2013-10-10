@@ -16,6 +16,8 @@ namespace Hadouken.Configuration
 
         HttpConfiguration Http { get; }
 
+        RpcConfiguration Rpc { get; }
+
         void Save();
     }
 }

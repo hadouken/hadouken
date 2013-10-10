@@ -50,7 +50,7 @@ namespace Hadouken.Plugins.Torrents
             builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
             builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
             builder.RegisterType<WcfJson>().As<IWcfJsonRpcServer>();
-            builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport(config.GatewayRpcBinding)).SingleInstance();
+            builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport(config.RpcGatewayUri)).SingleInstance();
 
             var container = builder.Build();
             var wcfBuilder = new ContainerBuilder();
@@ -67,7 +67,7 @@ namespace Hadouken.Plugins.Torrents
                 };
 
                 var host = new ServiceHost(typeof(WcfJson));
-                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, config.PluginRpcBinding);
+                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, config.RpcPluginUri);
                 host.AddDependencyInjectionBehavior<IWcfJsonRpcServer>(container);
 
                 return new WcfJsonRpcServer(host);

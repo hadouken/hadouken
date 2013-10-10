@@ -52,7 +52,7 @@ namespace Hadouken.Plugins.Config
                 };
 
                 var host = new ServiceHost(typeof(WcfJson));
-                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, config.PluginRpcBinding);
+                host.AddServiceEndpoint(typeof(IWcfJsonRpcServer), binding, config.RpcPluginUri);
                 host.AddDependencyInjectionBehavior<IWcfJsonRpcServer>(container);
 
                 return new WcfJsonRpcServer(host);

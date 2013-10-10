@@ -48,6 +48,12 @@ namespace Hadouken.Configuration
             get { return this["http"] as HttpConfiguration; }
         }
 
+        [ConfigurationProperty("rpc", IsRequired = true)]
+        public RpcConfiguration Rpc
+        {
+            get { return this["rpc"] as RpcConfiguration; }
+        }
+
         public void Save()
         {
             _configuration.Save();
@@ -66,6 +72,23 @@ namespace Hadouken.Configuration
             section._configuration = cfg;
 
             return section;
+        }
+    }
+
+    public sealed class RpcConfiguration : ConfigurationElement
+    {
+        [ConfigurationProperty("gatewayUri", IsRequired = true)]
+        public string GatewayUri
+        {
+            get { return this["gatewayUri"].ToString(); }
+            set { this["gatewayUri"] = value; }
+        }
+
+        [ConfigurationProperty("pluginUri", IsRequired = true)]
+        public string PluginUri
+        {
+            get { return this["pluginUri"].ToString(); }
+            set { this["pluginUri"] = value; }
         }
     }
 }
