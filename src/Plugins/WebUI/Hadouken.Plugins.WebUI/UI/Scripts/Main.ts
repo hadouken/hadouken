@@ -17,7 +17,7 @@ $(document).ready(function () {
     });
 
     var eventListener = new Hadouken.Events.EventListener();
-    var pluginEngine = new Hadouken.Plugins.PluginEngine();
+    var pluginEngine = Hadouken.Plugins.PluginEngine.getInstance();
     var pageManager = Hadouken.UI.PageManager.getInstance();
 
     new Hadouken.Bootstrapper()
