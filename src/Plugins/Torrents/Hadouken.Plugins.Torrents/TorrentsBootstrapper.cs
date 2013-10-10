@@ -3,6 +3,7 @@ using System.IO;
 using System.ServiceModel;
 using Autofac.Integration.Wcf;
 using Hadouken.Framework;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Http;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
@@ -28,12 +29,19 @@ namespace Hadouken.Plugins.Torrents
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
 
+            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/", config.HostBinding, config.Port + 1));
+
             builder.Register<IHttpFileServer>
                 (c =>
-                 new HttpFileServer(
-                     String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath)
-                     , Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"),
-                     config.HttpVirtualPath));
+                {
+                    var server = new HttpFileServer(
+                        String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath)
+                        , Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"), new EventListener(eventListenerUri));
+
+                    server.SetCredentials(config.UserName, config.Password);
+
+                    return server;
+                });
 
             builder.Register(c => config).SingleInstance();
 

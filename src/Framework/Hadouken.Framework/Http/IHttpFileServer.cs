@@ -7,7 +7,7 @@ namespace Hadouken.Framework.Http
 {
     public interface IHttpFileServer
     {
-        void SetCredentials(string username, string password);
+        void SetCredentials(string userName, string password);
 
         void Open();
 

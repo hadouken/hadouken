@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNet.SignalR.Client.Hubs;
+using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace Hadouken.Framework.Events
 {
     public class EventListener : IEventListener
     {
-        private static class CallbackManager<T>
+        private static class CallbackManager
         {
-            private static readonly IDictionary<string, IList<Action<T>>> Callbacks = new Dictionary<string, IList<Action<T>>>();
+            private static readonly IDictionary<string, IList<Action<JToken>>> Callbacks = new Dictionary<string, IList<Action<JToken>>>();
 
-            public static IList<Action<T>> GetCallbacks(string key)
+            public static IList<Action<JToken>> GetCallbacks(string key)
             {
                 if (!Callbacks.ContainsKey(key))
-                    Callbacks.Add(key, new List<Action<T>>());
+                    Callbacks.Add(key, new List<Action<JToken>>());
 
                 return Callbacks[key];
-            }
+            } 
         }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -49,14 +50,31 @@ namespace Hadouken.Framework.Events
         public void Subscribe<T>(string eventName, Action<T> callback)
         {
             if (!_proxy.IsValueCreated)
-                _proxy.Value.On<string, object>("publishEvent", EventCallback);
+                _proxy.Value.On<JToken>("publishEvent", EventCallback);
 
-            CallbackManager<T>.GetCallbacks(eventName).Add(callback);
+            Action<JToken> wrapper = d =>
+            {
+                var args = ConvertTokenToType<T>(d);
+                callback(args);
+            };
+
+            CallbackManager.GetCallbacks(eventName).Add(wrapper);
         }
 
-        private void EventCallback(string name, object data)
+        private T ConvertTokenToType<T>(JToken token)
         {
-            Logger.Debug("Event received: {0}", name);
+            return token["data"].ToObject<T>();
+        }
+
+        private void EventCallback(JToken eventData)
+        {
+            var eventName = eventData["name"].Value<string>();
+            var handlers = CallbackManager.GetCallbacks(eventName);
+
+            foreach (var handler in handlers)
+            {
+                handler(eventData);
+            }
         }
     }
 }

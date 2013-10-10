@@ -73,7 +73,7 @@ namespace Hadouken.Plugins
 
             var setupInfo = new AppDomainSetup
                 {
-                    ApplicationBase = _path
+                    ApplicationBase = _path,
                 };
 
             var assemblyName = typeof (SandboxedEnvironment).Assembly.Location;

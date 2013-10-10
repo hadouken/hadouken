@@ -58,6 +58,8 @@ namespace Hadouken.Rpc
             _configuration.Http.Authentication.Password = ComputeHash(newPassword);
             _configuration.Save();
 
+            _rpcClient.SendEventAsync("auth.changed", new {UserName = userName, HashedPassword = _configuration.Http.Authentication.Password});
+
             return true;
         }
 

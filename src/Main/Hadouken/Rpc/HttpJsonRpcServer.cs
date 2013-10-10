@@ -6,27 +6,37 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Rpc.Hosting;
 
 namespace Hadouken.Rpc
 {
     public interface IHttpJsonRpcServer : IJsonRpcServer
     {
+        void SetCredentials(string userName, string password);
+    }
+
+    public class AuthChangedEventArgs
+    {
+        public string UserName { get; set; }
+
+        public string HashedPassword { get; set; }
     }
 
     public class HttpJsonRpcServer : IHttpJsonRpcServer
     {
+        private readonly IEventListener _eventListener;
         private readonly HttpListener _httpListener = new HttpListener();
-        private readonly NetworkCredential _credentials;
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
-        private readonly Lazy<IWcfJsonRpcServer> _rpcProxy; 
+        private readonly Lazy<IWcfJsonRpcServer> _rpcProxy;
+        private NetworkCredential _credentials = null;
 
-        public HttpJsonRpcServer(string listenUri, NetworkCredential credentials = null)
+        public HttpJsonRpcServer(string listenUri, IEventListener eventListener)
         {
+            _eventListener = eventListener;
             _rpcProxy = new Lazy<IWcfJsonRpcServer>(BuildProxy);
             _httpListener.Prefixes.Add(listenUri);
-            _credentials = credentials;
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
         }
 
@@ -45,12 +55,18 @@ namespace Hadouken.Rpc
             return factory.CreateChannel();
         }
 
+        public void SetCredentials(string username, string password)
+        {
+            if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password)) return;
+
+            _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
+            _credentials = new NetworkCredential(username, password);
+        }
+
         public void Open()
         {
-            if (_credentials != null)
-            {
-                _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
-            }
+            _eventListener.Subscribe<AuthChangedEventArgs>("auth.changed",
+                args => SetCredentials(args.UserName, args.HashedPassword));
 
             _workerTask.Start();
         }

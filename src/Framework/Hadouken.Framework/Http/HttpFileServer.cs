@@ -4,20 +4,29 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Http.TypeScript;
 using NLog;
 
 namespace Hadouken.Framework.Http
 {
+    public class AuthChangedEventArgs
+    {
+        public string UserName { get; set; }
+
+        public string HashedPassword { get; set; }
+    }
+
     public class HttpFileServer : IHttpFileServer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly ITypeScriptCompiler _typeScriptCompiler = TypeScriptCompiler.Create();
+        private readonly IEventListener _eventListener;
         private readonly string _baseDirectory;
         private readonly string _uriPrefix;
 
@@ -36,21 +45,16 @@ namespace Hadouken.Framework.Http
             {".svg", "application/octet-stream"}
         };
 
-        public HttpFileServer(string listenUri, string baseDirectory)
-            : this(listenUri, baseDirectory, String.Empty)
-        {
-        }
-
-        public HttpFileServer(string listenUri, string baseDirectory, string uriPrefix)
+        public HttpFileServer(string listenUri, string baseDirectory, IEventListener eventListener)
         {
             if (!listenUri.EndsWith("/"))
                 listenUri = listenUri + "/";
 
-            if (!uriPrefix.EndsWith("/"))
-                uriPrefix = uriPrefix + "/";
+            var virtualPath = Regex.Replace(listenUri, "^http://.*:[0-9]+(.*)$", "$1");
 
             _baseDirectory = baseDirectory;
-            _uriPrefix = uriPrefix;
+            _eventListener = eventListener;
+            _uriPrefix = virtualPath;
             _httpListener.Prefixes.Add(listenUri);
 
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
@@ -66,6 +70,9 @@ namespace Hadouken.Framework.Http
 
         public void Open()
         {
+            _eventListener.Subscribe<AuthChangedEventArgs>("auth.changed",
+                args => SetCredentials(args.UserName, args.HashedPassword));
+
             _workerTask.Start();
         }
 

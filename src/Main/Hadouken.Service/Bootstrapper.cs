@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Configuration;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.IO;
@@ -52,21 +53,27 @@ namespace Hadouken.Service
 			builder.Register<IHttpJsonRpcServer>(c =>
 			{
 				var conf = c.Resolve<IConfiguration>();
+			    var eventListener = c.Resolve<IEventListener>();
+
 				var uri = String.Format("http://{0}:{1}/jsonrpc/", conf.Http.HostBinding, conf.Http.Port);
 
-			    NetworkCredential credentials = null;
+			    var server = new HttpJsonRpcServer(uri, eventListener);
+			    server.SetCredentials(conf.Http.Authentication.UserName, conf.Http.Authentication.Password);
 
-			    if (!String.IsNullOrEmpty(conf.Http.Authentication.UserName) &&
-			        !String.IsNullOrEmpty(conf.Http.Authentication.Password))
-			    {
-			        credentials = new NetworkCredential(conf.Http.Authentication.UserName, conf.Http.Authentication.Password);
-			    }
-
-			    return new HttpJsonRpcServer(uri, credentials);
+			    return server;
 			});
 
             // Register SignalR event server
 		    builder.RegisterType<EventServer>().As<IEventServer>().SingleInstance();
+
+		    builder.Register<IEventListener>(c =>
+		    {
+		        var conf = c.Resolve<IConfiguration>();
+		        var eventListenerUri =
+		            new Uri(String.Format("http://{0}:{1}/", conf.Http.HostBinding, conf.Http.Port + 1));
+
+		        return new EventListener(eventListenerUri);
+		    });
 
 			// Register configuration
 			builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();

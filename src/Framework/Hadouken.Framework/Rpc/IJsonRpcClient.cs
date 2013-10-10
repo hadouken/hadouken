@@ -10,7 +10,7 @@ namespace Hadouken.Framework.Rpc
 
     public static class JsonRpcClientExtensions
     {
-        public static Task SendEventAsync(this IJsonRpcClient client, string eventName, object data)
+        public static Task SendEventAsync(this IJsonRpcClient client, string eventName, object data = null)
         {
             return client.CallAsync<bool>("events.publish", new
             {

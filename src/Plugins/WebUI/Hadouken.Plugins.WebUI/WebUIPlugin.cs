@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Http;
 using Hadouken.Framework.Plugins;
 
