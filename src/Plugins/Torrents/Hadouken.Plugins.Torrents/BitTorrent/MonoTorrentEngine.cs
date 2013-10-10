@@ -1,39 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
-using Hadouken.Framework;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.Dto;
 using MonoTorrent.Client;
-using MonoTorrent.Client.Encryption;
 using MonoTorrent.Common;
-using System.IO;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
-    public class MonoTorrentEngine : IBitTorrentEngine
+    public sealed class MonoTorrentEngine : IBitTorrentEngine
     {
-        private readonly string _dataPath;
-        private readonly string _torrentsPath;
-        private readonly IJsonRpcClient _rpcClient;
+        private static readonly IDictionary<Tuple<TorrentState, TorrentState>, string> EventMap =
+            new Dictionary<Tuple<TorrentState, TorrentState>, string>();
+
         private readonly IEngineSettingsFactory _settingsFactory;
+        private readonly IJsonRpcClient _rpcClient;
+        private readonly object _managersLock = new object();
+        private readonly IDictionary<string, IExtendedTorrentManager> _managers =
+            new Dictionary<string, IExtendedTorrentManager>(StringComparer.InvariantCultureIgnoreCase); 
+ 
         private ClientEngine _engine;
 
-        private readonly IDictionary<string, TorrentManager> _torrentManagers =
-            new Dictionary<string, TorrentManager>(StringComparer.InvariantCultureIgnoreCase);
-
-        public MonoTorrentEngine(IBootConfig config, IJsonRpcClient rpcClient)
+        static MonoTorrentEngine()
         {
-            _dataPath = config.DataPath;
-            _torrentsPath = Path.Combine(_dataPath, "Torrents");
+            EventMap.Add(Tuple.Create(TorrentState.Downloading, TorrentState.Seeding), "torrent.completed");
+            EventMap.Add(Tuple.Create(TorrentState.Stopped, TorrentState.Downloading), "torrent.started");
+            EventMap.Add(Tuple.Create(TorrentState.Stopped, TorrentState.Seeding), "torrent.started");
+            EventMap.Add(Tuple.Create(TorrentState.Hashing, TorrentState.Downloading), "torrent.started");
+            EventMap.Add(Tuple.Create(TorrentState.Hashing, TorrentState.Seeding), "torrent.started");
+        }
 
+        public MonoTorrentEngine(IEngineSettingsFactory settingsFactory, IJsonRpcClient rpcClient)
+        {
+            _settingsFactory = settingsFactory;
             _rpcClient = rpcClient;
-            _settingsFactory = new EngineSettingsFactory(rpcClient);
         }
 
         public void Load()
+        {
+            LoadEngine();
+            LoadManagers();
+        }
+
+        private void LoadManagers()
+        {
+        }
+
+        private void LoadEngine()
         {
             var settings = _settingsFactory.Build();
             _engine = new ClientEngine(settings);
@@ -41,123 +53,92 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         public void Unload()
         {
+            UnloadManagers();
             _engine.Dispose();
         }
 
-        public IEnumerable<TorrentManager> TorrentManagers
+        private void UnloadManagers()
         {
-            get { return new List<TorrentManager>(_torrentManagers.Values); }
+            foreach (var manager in Managers)
+            {
+                _engine.Unregister(manager.Manager);
+            }
         }
 
-        public TorrentManager Get(string infoHash)
+        public IEnumerable<IExtendedTorrentManager> Managers
         {
-            if (_torrentManagers.ContainsKey(infoHash))
-                return _torrentManagers[infoHash];
+            get { lock (_managersLock) return _managers.Values; }
+        }
+
+        public IExtendedTorrentManager Get(string infoHash)
+        {
+            lock (_managersLock)
+            {
+                if (_managers.ContainsKey(infoHash))
+                    return _managers[infoHash];
+            }
 
             return null;
         }
 
-        public TorrentManager Add(byte[] data, string savePath = null, string label = null)
+        public IExtendedTorrentManager Add(byte[] data, string savePath = null, string label = null)
         {
             Torrent torrent;
 
             if (!Torrent.TryLoad(data, out torrent))
                 return null;
 
-            try
-            {
-                SaveTorrentFile(data, torrent.Name + ".torrent");
-            }
-            catch (Exception)
-            {
-                // TODO: Log exception here
-                return null;
-            }
-
             if (String.IsNullOrEmpty(savePath))
                 savePath = _engine.Settings.SavePath;
 
             var manager = new TorrentManager(torrent, savePath, new TorrentSettings());
-            manager.TorrentStateChanged += TorrentStateChanged;
+            IExtendedTorrentManager extendedManager = new ExtendedTorrentManager(manager);
+            extendedManager.Manager.TorrentStateChanged += Manager_TorrentStateChanged;
 
-            _torrentManagers.Add(manager.InfoHash.ToString().Replace("-", ""), manager);
+            if (Get(extendedManager.FriendlyInfoHash) != null)
+                return null;
+
             _engine.Register(manager);
 
-            SendEvent("torrent.added", new TorrentOverview(manager));
+            lock (_managersLock)
+            {
+                _managers.Add(extendedManager.FriendlyInfoHash, extendedManager);
+            }
 
-            return manager;
+            _rpcClient.SendEventAsync("torrent.added", new TorrentOverview(extendedManager.Manager));
+
+            return extendedManager;
         }
 
-        private void TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
+        private void Manager_TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
         {
-            if (e.OldState == TorrentState.Downloading
-                && e.NewState == TorrentState.Seeding)
+            var tuple = Tuple.Create(e.OldState, e.NewState);
+
+            if (EventMap.ContainsKey(tuple))
             {
-                SendEvent("torrent.completed", new TorrentOverview(e.TorrentManager));
+                var eventName = EventMap[tuple];
+                _rpcClient.SendEventAsync(eventName, new TorrentOverview(e.TorrentManager));
+
+                return;
             }
-            else if (e.OldState == TorrentState.Stopped
-                     && e.NewState == TorrentState.Downloading)
+
+            if (e.NewState == TorrentState.Error)
             {
-                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
-            }
-            else if (e.OldState == TorrentState.Stopped
-                     && e.NewState == TorrentState.Seeding)
-            {
-                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
-            }
-            else if (e.OldState == TorrentState.Hashing
-                     && e.NewState == TorrentState.Downloading)
-            {
-                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
-            }
-            else if (e.OldState == TorrentState.Hashing
-                     && e.NewState == TorrentState.Seeding)
-            {
-                SendEvent("torrent.started", new TorrentOverview(e.TorrentManager));
-            }
-            else if (e.NewState == TorrentState.Paused)
-            {
-                SendEvent("torrent.paused", new TorrentOverview(e.TorrentManager));
+                _rpcClient.SendEventAsync("torrent.error", new TorrentOverview(e.TorrentManager));
             }
             else if (e.NewState == TorrentState.Stopped)
             {
-                SendEvent("torrent.stopped", new TorrentOverview(e.TorrentManager));
+                _rpcClient.SendEventAsync("torrent.stopped", new TorrentOverview(e.TorrentManager));
             }
-            else if (e.NewState == TorrentState.Error)
+            else if (e.NewState == TorrentState.Paused)
             {
-                SendEvent("torrent.error", new TorrentOverview(e.TorrentManager));
+                _rpcClient.SendEventAsync("torrent.paused", new TorrentOverview(e.TorrentManager));
             }
         }
 
-        private void SendEvent(string eventName, object data)
+        public void Remove(IExtendedTorrentManager manager)
         {
-            _rpcClient.CallAsync<bool>("events.publish", new object[]
-            {
-                eventName,
-                data
-            });
-        }
-
-        private void SaveTorrentFile(byte[] data, string fileName)
-        {
-            if (!Directory.Exists(_torrentsPath))
-                Directory.CreateDirectory(_torrentsPath);
-
-            // Save torrent to data path
-            string torrentFile = Path.Combine(_dataPath, "Torrents", fileName);
-
-            if (!File.Exists(torrentFile))
-                File.WriteAllBytes(torrentFile, data);
-        }
-
-        public void Delete(string infoHash)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Move(string infoHash, string targetPath)
-        {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

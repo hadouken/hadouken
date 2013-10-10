@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using MonoTorrent.Client;
-
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
     public interface IBitTorrentEngine
@@ -8,14 +6,12 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         void Load();
         void Unload();
 
-        IEnumerable<TorrentManager> TorrentManagers { get; }
+        IEnumerable<IExtendedTorrentManager> Managers { get; }
 
-        TorrentManager Get(string infoHash);
+        IExtendedTorrentManager Get(string infoHash);
 
-        TorrentManager Add(byte[] data, string savePath = null, string label = null);
+        IExtendedTorrentManager Add(byte[] data, string savePath = null, string label = null);
 
-        void Delete(string infoHash);
-
-        void Move(string infoHash, string targetPath);
+        void Remove(IExtendedTorrentManager manager);
     }
 }

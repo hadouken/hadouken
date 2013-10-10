@@ -60,8 +60,8 @@ namespace Hadouken.Plugins.Torrents.Rpc
         [JsonRpcMethod("torrents.list")]
         public IEnumerable<TorrentOverview> List()
         {
-            var torrents = _torrentEngine.TorrentManagers;
-            return torrents.Select(t => new TorrentOverview(t));
+            var managers = _torrentEngine.Managers;
+            return managers.Select(t => new TorrentOverview(t.Manager));
         }
 
         [JsonRpcMethod("torrents.details")]
@@ -72,7 +72,7 @@ namespace Hadouken.Plugins.Torrents.Rpc
             if (manager == null)
                 return null;
 
-            return new TorrentDetails(manager);
+            return new TorrentDetails(manager.Manager);
         }
 
         [JsonRpcMethod("torrents.addFile")]
@@ -83,7 +83,7 @@ namespace Hadouken.Plugins.Torrents.Rpc
             if (manager == null)
                 return null;
 
-            return new TorrentOverview(manager);
+            return new TorrentOverview(manager.Manager);
         }
     }
 }

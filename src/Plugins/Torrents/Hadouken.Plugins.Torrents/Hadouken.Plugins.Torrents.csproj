@@ -55,8 +55,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitTorrent\ExtendedTorrentManager.cs" />
     <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
     <Compile Include="BitTorrent\IEngineSettingsFactory.cs" />
+    <Compile Include="BitTorrent\IExtendedTorrentManager.cs" />
     <Compile Include="BitTorrent\MonoTorrentEngine.cs" />
     <Compile Include="Dto\TorrentDetails.cs" />
     <Compile Include="Dto\TorrentFileDetails.cs" />
