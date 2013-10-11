@@ -86,6 +86,8 @@
     <Compile Include="Rpc\RequestHandler.cs" />
     <Compile Include="Rpc\SemanticVersionConverter.cs" />
     <Compile Include="Rpc\WcfNamedPipeClientTransport.cs" />
+    <Compile Include="Security\IHashProvider.cs" />
+    <Compile Include="Security\Sha256HashProvider.cs" />
     <Compile Include="SemVer\EqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanRule.cs" />
