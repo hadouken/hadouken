@@ -70,7 +70,7 @@ module Hadouken.Plugins {
                     continue;
                 }
 
-                $.getScript('/plugins/' + plugin.name + '/scripts/main.ts')
+                $.getScript('/plugins/' + plugin.name + '/scripts/main.js')
                     .done(requestCallback)
                     .fail(requestCallback);
             }

@@ -8,7 +8,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Hadouken.Framework.Events;
+using Hadouken.Framework.Http.Media;
 using Hadouken.Framework.Http.TypeScript;
+using Hadouken.Framework.IO;
 using NLog;
 
 namespace Hadouken.Framework.Http
@@ -28,6 +30,7 @@ namespace Hadouken.Framework.Http
         private readonly ITypeScriptCompiler _typeScriptCompiler = TypeScriptCompiler.Create();
         private readonly IEventListener _eventListener;
         private readonly string _baseDirectory;
+        private readonly IMediaTypeFactory _mediaTypeFactory;
         private readonly string _uriPrefix;
 
         private NetworkCredential _credentials;
@@ -35,17 +38,7 @@ namespace Hadouken.Framework.Http
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
 
-        private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
-        {
-            {".html", "text/html"},
-            {".css", "text/css"},
-            {".js", "text/javascript"},
-            {".woff", "application/font-woff"},
-            {".ttf", "application/x-font-ttf"},
-            {".svg", "application/octet-stream"}
-        };
-
-        public HttpFileServer(string listenUri, string baseDirectory, IEventListener eventListener)
+        public HttpFileServer(string listenUri, string baseDirectory, IMediaTypeFactory mediaTypeFactory, IEventListener eventListener)
         {
             if (!listenUri.EndsWith("/"))
                 listenUri = listenUri + "/";
@@ -53,11 +46,16 @@ namespace Hadouken.Framework.Http
             var virtualPath = Regex.Replace(listenUri, "^http://.*:[0-9]+(.*)$", "$1");
 
             _baseDirectory = baseDirectory;
+            _mediaTypeFactory = mediaTypeFactory;
             _eventListener = eventListener;
             _uriPrefix = virtualPath;
             _httpListener.Prefixes.Add(listenUri);
 
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
+
+#if DEBUG
+            _mediaTypeFactory.Replace(".js", new TypeScriptTranspilerHandler(new FileSystem()));
+#endif
         }
 
         public void SetCredentials(string username, string password)
@@ -131,18 +129,19 @@ namespace Hadouken.Framework.Http
                            : _uriPrefix.Length);
 
             var extension = Path.GetExtension(path);
+            var handler = _mediaTypeFactory.Get(extension);
 
-            if (File.Exists(path))
+            if (File.Exists(path) && handler != null)
             {
-                switch (extension)
-                {
-                    case ".ts":
-                        CompileTypeScript(context, path);
-                        break;
+                var media = handler.Handle(new Media.Media() {Path = path});
 
-                    default:
-                        ReturnFileContent(context, path);
-                        break;
+                context.Response.ContentType = handler.MediaType;
+                context.Response.StatusCode = 200;
+
+                using (var reader = new StreamReader(media.Path))
+                using (var writer = new StreamWriter(context.Response.OutputStream))
+                {
+                    writer.Write(reader.ReadToEnd());
                 }
             }
             else
@@ -186,27 +185,6 @@ namespace Hadouken.Framework.Http
             }
 
             return sb.ToString();
-        }
-
-        private void CompileTypeScript(HttpListenerContext context, string path)
-        {
-            var typescriptFile = _typeScriptCompiler.Compile(path);
-
-            ReturnFileContent(context, typescriptFile);
-        }
-
-        private void ReturnFileContent(HttpListenerContext context, string path)
-        {
-            var extension = Path.GetExtension(path);
-
-            context.Response.ContentType = MimeTypes.ContainsKey(extension) ? MimeTypes[extension] : "text/plain";
-            context.Response.StatusCode = 200;
-
-            using (var reader = new StreamReader(path))
-            using (var writer = new StreamWriter(context.Response.OutputStream))
-            {
-                writer.Write(reader.ReadToEnd());
-            }
         }
     }
 }

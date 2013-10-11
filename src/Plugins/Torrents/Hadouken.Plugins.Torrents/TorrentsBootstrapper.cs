@@ -5,6 +5,7 @@ using Autofac.Integration.Wcf;
 using Hadouken.Framework;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Http;
+using Hadouken.Framework.Http.Media;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
@@ -34,9 +35,11 @@ namespace Hadouken.Plugins.Torrents
             builder.Register<IHttpFileServer>
                 (c =>
                 {
+                    var mediaTypeFactory = new MediaTypeFactory();
+
                     var server = new HttpFileServer(
                         String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath)
-                        , Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"), new EventListener(eventListenerUri));
+                        , Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"), mediaTypeFactory, new EventListener(eventListenerUri));
 
                     server.SetCredentials(config.UserName, config.Password);
 

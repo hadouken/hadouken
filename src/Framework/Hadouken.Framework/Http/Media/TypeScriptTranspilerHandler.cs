@@ -22,10 +22,13 @@ namespace Hadouken.Framework.Http.Media
             var directory = Path.GetDirectoryName(media.Path);
             var fileName = Path.GetFileNameWithoutExtension(media.Path);
             var typeScriptFile = Path.Combine(directory, fileName + ".ts");
-            var javasScriptFile = Path.Combine(directory, fileName + ".js");
+            var javaScriptFile = Path.Combine(directory, fileName + ".js");
 
             var typeScriptDate = _fileSystem.LastWriteTime(typeScriptFile);
-            var javaScriptDate = _fileSystem.LastWriteTime(javasScriptFile);
+            var javaScriptDate = _fileSystem.LastWriteTime(javaScriptFile);
+
+            if (_fileSystem.FileExists(javaScriptFile))
+                return media;
             
             if(javaScriptDate == null || (typeScriptDate != null && typeScriptDate >  javaScriptDate))
             {
