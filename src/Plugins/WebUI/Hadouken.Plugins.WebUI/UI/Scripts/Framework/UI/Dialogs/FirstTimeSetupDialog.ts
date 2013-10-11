@@ -1,6 +1,8 @@
 ﻿///<reference path="../Dialog.ts"/>
+///<reference path="../Overlay.ts"/>
 ///<reference path="../../Plugins/PluginEngine.ts"/>
 ///<reference path="../../Http/JsonRpcClient.ts"/>
+
 
 module Hadouken.UI.Dialogs {
     export class FirstTimeSetupDialog extends Hadouken.UI.Dialog {
@@ -38,7 +40,7 @@ module Hadouken.UI.Dialogs {
         }
 
         save(): void {
-            this.getContent().find('.overlay').removeClass('hide');
+            new Hadouken.UI.Overlay('icon-refresh loading').show(this.getContent().find('.modal-body'));
             this.getContent().find('#btn-save-setup').attr('disabled', true);
 
             var cfg = {
