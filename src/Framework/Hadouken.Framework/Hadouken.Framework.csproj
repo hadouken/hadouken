@@ -58,6 +58,10 @@
     <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
+    <Compile Include="Http\Media\BasicMediaType.cs" />
+    <Compile Include="Http\Media\IMediaType.cs" />
+    <Compile Include="Http\Media\IMediaTypeFactory.cs" />
+    <Compile Include="Http\Media\MediaTypeFactory.cs" />
     <Compile Include="Http\TypeScript\ITypeScriptCompiler.cs" />
     <Compile Include="Http\TypeScript\TypeScriptCompiler.cs" />
     <Compile Include="IBootConfig.cs" />
