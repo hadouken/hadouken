@@ -1,4 +1,5 @@
 ﻿///<reference path="../Dialog.ts"/>
+///<reference path="../Overlay.ts"/>
 ///<reference path="../../Http/JsonRpcClient.ts"/>
 
 module Hadouken.UI.Dialogs {
@@ -26,17 +27,34 @@ module Hadouken.UI.Dialogs {
 
         save(): void {
             var content = this.getContent();
+
+            // Show overlay
+            var overlay = new Hadouken.UI.Overlay('icon-refresh loading');
+            overlay.show(content.find('.modal-body'));
+
             var username = content.find('#auth-username').val();
             var newPassword = content.find('#auth-newPassword').val();
+            var currentPassword = content.find('#auth-currentPassword').val();
 
-            var d = [username, newPassword, ''];
+            var d = [username, newPassword, currentPassword];
 
             this._rpcClient.callParams('core.setAuth', d, (r) => {
                 if (!r) {
                     alert('Failed to set auth.');
                 }
                 else {
-                    this.close();
+                    setTimeout(() => {
+                        $.ajax({
+                            url: '/',
+                            type: 'GET',
+                            username: username,
+                            password: newPassword,
+                            success: () => {
+                                this.close();
+                                $.bootstrapGrowl('Auth updated.');
+                            }
+                        });
+                    }, 1000);
                 }
             });
         }
