@@ -5,14 +5,14 @@ namespace Hadouken.Framework.Http.Media
     public class MediaTypeFactory : IMediaTypeFactory
     {
         private readonly object _mediaTypesLock = new object();
-        private readonly IDictionary<string, IMediaType> _mediaTypes;
+        private readonly IDictionary<string, IMediaTypeHandler> _mediaTypes;
 
         public MediaTypeFactory()
         {
             _mediaTypes = CreateDefault();
         }
 
-        public IMediaType Get(string extension)
+        public IMediaTypeHandler Get(string extension)
         {
             lock (_mediaTypesLock)
             {
@@ -23,35 +23,35 @@ namespace Hadouken.Framework.Http.Media
             return null;
         }
 
-        public void Add(string extension, IMediaType mediaType)
+        public void Add(string extension, IMediaTypeHandler mediaTypeHandler)
         {
             lock (_mediaTypesLock)
             {
-                _mediaTypes.Add(extension, mediaType);
+                _mediaTypes.Add(extension, mediaTypeHandler);
             }
         }
 
-        public void Replace(string extension, IMediaType mediaType)
+        public void Replace(string extension, IMediaTypeHandler mediaTypeHandler)
         {
             lock (_mediaTypesLock)
             {
                 if (_mediaTypes.ContainsKey(extension))
                     _mediaTypes.Remove(extension);
 
-                _mediaTypes.Add(extension, mediaType);
+                _mediaTypes.Add(extension, mediaTypeHandler);
             }
         }
 
-        private IDictionary<string, IMediaType> CreateDefault()
+        private IDictionary<string, IMediaTypeHandler> CreateDefault()
         {
-            return new Dictionary<string, IMediaType>
+            return new Dictionary<string, IMediaTypeHandler>
             {
-                {".html", new BasicMediaType("text/html")},
-                {".js", new BasicMediaType("text/javascript")},
-                {".css", new BasicMediaType("text/css")},
-                {".woff", new BasicMediaType("application/font-woff")},
-                {".ttf", new BasicMediaType("application/x-font-ttf")},
-                {".svg", new BasicMediaType("application/octet-stream")}
+                {".html", new BasicMediaTypeHandler("text/html")},
+                {".js", new BasicMediaTypeHandler("text/javascript")},
+                {".css", new BasicMediaTypeHandler("text/css")},
+                {".woff", new BasicMediaTypeHandler("application/font-woff")},
+                {".ttf", new BasicMediaTypeHandler("application/x-font-ttf")},
+                {".svg", new BasicMediaTypeHandler("application/octet-stream")}
             };
         }
     }

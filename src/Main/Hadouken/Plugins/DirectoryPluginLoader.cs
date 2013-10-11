@@ -3,8 +3,8 @@ using System.IO;
 using System.Net;
 using Hadouken.Configuration;
 using Hadouken.Framework;
+using Hadouken.Framework.IO;
 using Hadouken.Framework.Rpc;
-using Hadouken.IO;
 using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins

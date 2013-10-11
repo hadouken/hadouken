@@ -2,10 +2,10 @@
 {
     public interface IMediaTypeFactory
     {
-        IMediaType Get(string extension);
+        IMediaTypeHandler Get(string extension);
 
-        void Add(string extension, IMediaType mediaType);
+        void Add(string extension, IMediaTypeHandler mediaTypeHandler);
 
-        void Replace(string extension, IMediaType replacementMediaType);
+        void Replace(string extension, IMediaTypeHandler replacementMediaTypeHandler);
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Hadouken.Configuration;
-using Hadouken.IO;
+using Hadouken.Framework.IO;
 using NLog;
 
 namespace Hadouken.Plugins

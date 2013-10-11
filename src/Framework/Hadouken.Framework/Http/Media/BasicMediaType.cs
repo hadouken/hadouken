@@ -1,17 +1,17 @@
 ﻿namespace Hadouken.Framework.Http.Media
 {
-    public class BasicMediaType : IMediaType
+    public class BasicMediaTypeHandler : IMediaTypeHandler
     {
-        public BasicMediaType(string contentType)
+        public BasicMediaTypeHandler(string mediaType)
         {
-            ContentType = contentType;
+            MediaType = mediaType;
         }
 
-        public string ContentType { get; private set; }
+        public string MediaType { get; private set; }
 
-        public virtual byte[] Transform(byte[] data)
+        public virtual IMedia Handle(IMedia media)
         {
-            return data;
+            return media;
         }
     }
 }
