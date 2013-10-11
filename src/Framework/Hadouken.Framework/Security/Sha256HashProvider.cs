@@ -3,9 +3,9 @@ using System.Text;
 
 namespace Hadouken.Framework.Security
 {
-    public class Sha256HashProvider : IHashProvider
+    public class Sha256HashProvider : HashProvider
     {
-        public string ComputeHash(string input)
+        public override string ComputeHash(string input)
         {
             var data = Encoding.UTF8.GetBytes(input);
             var hash = ComputeHash(data);
@@ -19,7 +19,7 @@ namespace Hadouken.Framework.Security
             return sb.ToString();
         }
 
-        public byte[] ComputeHash(byte[] input)
+        public override byte[] ComputeHash(byte[] input)
         {
             var sha256 = new SHA256Managed();
             return sha256.ComputeHash(input);
