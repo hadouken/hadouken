@@ -12,14 +12,12 @@ namespace Hadouken.Service
 
 	    private readonly IEventServer _eventServer;
 	    private readonly IPluginEngine _pluginEngine;
-		private readonly IHttpJsonRpcServer _httpRpcServer;
 	    private readonly IWcfJsonRpcServer _wcfRpcServer;
 
-        public HadoukenService(IEventServer eventServer, IPluginEngine pluginEngine, IHttpJsonRpcServer rpcServer, IWcfJsonRpcServer wcfRpcServer)
+        public HadoukenService(IEventServer eventServer, IPluginEngine pluginEngine, IWcfJsonRpcServer wcfRpcServer)
 		{
 		    _eventServer = eventServer;
 		    _pluginEngine = pluginEngine;
-			_httpRpcServer = rpcServer;
 		    _wcfRpcServer = wcfRpcServer;
 		}
 
@@ -30,7 +28,6 @@ namespace Hadouken.Service
 		    _eventServer.Open();
 
 		    _wcfRpcServer.Open();
-			_httpRpcServer.Open();
 
 			_pluginEngine.ScanAsync().Wait();
 			_pluginEngine.LoadAllAsync().Wait();
@@ -42,7 +39,6 @@ namespace Hadouken.Service
 
 			_pluginEngine.UnloadAllAsync().Wait();
 
-			_httpRpcServer.Close();
 		    _wcfRpcServer.Close();
 
 		    _eventServer.Close();

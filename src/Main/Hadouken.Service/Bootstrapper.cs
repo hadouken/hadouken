@@ -50,18 +50,7 @@ namespace Hadouken.Service
 
 			// Register JSONRPC server
 		    builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
-			builder.Register<IHttpJsonRpcServer>(c =>
-			{
-				var conf = c.Resolve<IConfiguration>();
-			    var eventListener = c.Resolve<IEventListener>();
-
-				var uri = String.Format("http://{0}:{1}/jsonrpc/", conf.Http.HostBinding, conf.Http.Port);
-
-			    var server = new HttpJsonRpcServer(uri, eventListener);
-			    server.SetCredentials(conf.Http.Authentication.UserName, conf.Http.Authentication.Password);
-
-			    return server;
-			});
+			
 
             // Register SignalR event server
 		    builder.RegisterType<EventServer>().As<IEventServer>().SingleInstance();

@@ -9,20 +9,8 @@ using System.Threading.Tasks;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Rpc.Hosting;
 
-namespace Hadouken.Rpc
+namespace Hadouken.Plugins.HttpJsonRpc
 {
-    public interface IHttpJsonRpcServer : IJsonRpcServer
-    {
-        void SetCredentials(string userName, string password);
-    }
-
-    public class AuthChangedEventArgs
-    {
-        public string UserName { get; set; }
-
-        public string HashedPassword { get; set; }
-    }
-
     public class HttpJsonRpcServer : IHttpJsonRpcServer
     {
         private readonly IEventListener _eventListener;

@@ -2,5 +2,10 @@
   "manifest_version": 1,
 
   "id": "core.webui",
-  "version": "0.1"
+  "version": "0.1",
+
+  "dependencies": [
+    { "id": "core.config", "version": "0.1" },
+	{ "id": "core.httpjsonrpc", "version": "0.1" }
+  ]
 }
