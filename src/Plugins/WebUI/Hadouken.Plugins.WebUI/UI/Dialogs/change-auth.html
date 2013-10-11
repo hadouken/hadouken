@@ -1,4 +1,4 @@
-﻿<div class="modal">
+﻿<div class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,17 +6,33 @@
                 <h4 class="modal-title">Change username/password</h4>
             </div>
             <div class="modal-body">
+                <h2 style="margin-top: 0;"><i class="icon-shield"></i> Authentication</h2>
+                
+                <p>
+                    If you feel tired of your old username/password combination, or for some other
+                    reason want to change it - this is the place to do it!
+                </p>
+
                 <form role="form" class="form-horizontal">
                     <div class="form-group">
-                        <label for="auth-username" class="col-lg-2 control-label">Username</label>
+                        <label for="auth-username" class="col-lg-3 control-label">New username</label>
                         <div class="col-lg-5">
                             <input type="text" class="form-control" name="auth-username" id="auth-username" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="auth-newPassword" class="col-lg-2 control-label">Password</label>
-                        <div class="col-lg-10">
+                        <label for="auth-newPassword" class="col-lg-3 control-label">New password</label>
+                        <div class="col-lg-9">
                             <input type="password" class="form-control" name="auth-newPassword" id="auth-newPassword" />
+                        </div>
+                    </div>
+                    
+                    <hr />
+
+                    <div class="form-group">
+                        <label for="auth-currentPassword" class="col-lg-3 control-label">Curr. password</label>
+                        <div class="col-lg-9">
+                            <input type="password" class="form-control" name="auth-currentPassword" id="auth-currentPassword" />
                         </div>
                     </div>
                 </form>

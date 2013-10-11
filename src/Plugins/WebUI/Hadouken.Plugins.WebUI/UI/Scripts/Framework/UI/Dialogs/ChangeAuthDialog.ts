@@ -16,6 +16,8 @@ module Hadouken.UI.Dialogs {
                 content.find('#auth-username').val(d.username);
             });
 
+            content.find('#auth-username').focus();
+
             content.find('#btn-save-auth').on('click', (e) => {
                 e.preventDefault();
                 this.save();

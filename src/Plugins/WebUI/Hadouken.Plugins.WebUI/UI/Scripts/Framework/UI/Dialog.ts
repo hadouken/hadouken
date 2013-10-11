@@ -7,6 +7,11 @@
         show(): void {
             $.get(this.url, (html) => {
                 this._content = $(html);
+
+                this._content.on('shown.bs.modal', () => {
+                    this.onShow();
+                });
+
                 this._content.modal();
 
                 var that = this;
@@ -15,8 +20,6 @@
                     $(this).remove();
                     that.onClosed();
                 });
-
-                this.onShow();
             });
         }
 
