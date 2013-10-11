@@ -30,7 +30,13 @@ module Hadouken.UI.Dialogs {
                 var target = this.getContent().find('h2.greeter .name');
                 this.getContent().find('#auth-username').on('blur', function (e) {
                     var val = $(this).val();
-                    target.text(val);
+
+                    if (val === '')
+                        val = 'user';
+
+                    target.fadeOut('fast', function () {
+                        target.text(val).fadeIn('fast');
+                    });
                 });
 
                 plugin.instance.loadFirstTimeSetup(container);
