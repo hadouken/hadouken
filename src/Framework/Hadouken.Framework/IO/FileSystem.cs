@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace Hadouken.Framework.IO
@@ -36,6 +37,15 @@ namespace Hadouken.Framework.IO
         public bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
+        }
+
+        public DateTime? LastWriteTime(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+
+            var info = new FileInfo(path);
+            return info.LastWriteTime;
         }
     }
 }

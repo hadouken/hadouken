@@ -63,7 +63,7 @@
     <Compile Include="Http\Media\IMediaTypeHandler.cs" />
     <Compile Include="Http\Media\IMediaTypeFactory.cs" />
     <Compile Include="Http\Media\MediaTypeFactory.cs" />
-    <Compile Include="Http\Media\TypeScriptTranspilerTypeHandler.cs" />
+    <Compile Include="Http\Media\TypeScriptTranspilerHandler.cs" />
     <Compile Include="Http\TypeScript\ITypeScriptCompiler.cs" />
     <Compile Include="Http\TypeScript\TypeScriptCompiler.cs" />
     <Compile Include="IBootConfig.cs" />
