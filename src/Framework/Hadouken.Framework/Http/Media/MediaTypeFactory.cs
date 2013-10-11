@@ -5,7 +5,12 @@ namespace Hadouken.Framework.Http.Media
     public class MediaTypeFactory : IMediaTypeFactory
     {
         private readonly object _mediaTypesLock = new object();
-        private readonly IDictionary<string, IMediaType> _mediaTypes = new Dictionary<string, IMediaType>();
+        private readonly IDictionary<string, IMediaType> _mediaTypes;
+
+        public MediaTypeFactory()
+        {
+            _mediaTypes = CreateDefault();
+        }
 
         public IMediaType Get(string extension)
         {
@@ -37,17 +42,17 @@ namespace Hadouken.Framework.Http.Media
             }
         }
 
-        public static IMediaTypeFactory CreateDefault()
+        private IDictionary<string, IMediaType> CreateDefault()
         {
-            var factory = new MediaTypeFactory();
-            factory.Add(".html", new BasicMediaType("text/html"));
-            factory.Add(".js", new BasicMediaType("text/javascript"));
-            factory.Add(".css", new BasicMediaType("text/css"));
-            factory.Add(".woff", new BasicMediaType("application/font-woff"));
-            factory.Add(".ttf", new BasicMediaType("application/x-font-ttf"));
-            factory.Add(".svg", new BasicMediaType("application/octet-stream"));
-
-            return factory;
+            return new Dictionary<string, IMediaType>
+            {
+                {".html", new BasicMediaType("text/html")},
+                {".js", new BasicMediaType("text/javascript")},
+                {".css", new BasicMediaType("text/css")},
+                {".woff", new BasicMediaType("application/font-woff")},
+                {".ttf", new BasicMediaType("application/x-font-ttf")},
+                {".svg", new BasicMediaType("application/octet-stream")}
+            };
         }
     }
 }

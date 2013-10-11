@@ -9,7 +9,7 @@
 
         public string ContentType { get; private set; }
 
-        public byte[] Transform(byte[] data)
+        public virtual byte[] Transform(byte[] data)
         {
             return data;
         }
