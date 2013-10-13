@@ -4,6 +4,6 @@
     {
         string MediaType { get; }
 
-        IMedia Handle(IMedia media);
+        HandleResult Handle(IMedia media);
     }
 }

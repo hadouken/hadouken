@@ -11,7 +11,7 @@ namespace Hadouken.Framework.Http.Media
 
         public TypeScriptTranspilerHandler(IFileSystem fileSystem) : this(fileSystem, TypeScriptCompiler.Create()) { }
 
-        public TypeScriptTranspilerHandler(IFileSystem fileSystem, ITypeScriptCompiler typeScriptCompiler) : base(".js")
+        public TypeScriptTranspilerHandler(IFileSystem fileSystem, ITypeScriptCompiler typeScriptCompiler) : base(fileSystem, ".js")
         {
             _fileSystem = fileSystem;
             _typeScriptCompiler = typeScriptCompiler;
@@ -19,28 +19,31 @@ namespace Hadouken.Framework.Http.Media
             MediaType = "text/javascript";
         }
 
-        public override IMedia Handle(IMedia media)
+        public override HandleResult Handle(IMedia media)
         {
             var fileName = Path.GetFileNameWithoutExtension(media.Path);
             var dirName = Path.GetDirectoryName(media.Path);
 
             if (dirName == null)
-                return media;
+                return new ContentResult(_fileSystem, MediaType, media.Path);
 
             var path = Path.Combine(dirName, fileName + ".ts");
 
             if (_fileSystem.FileExists(path))
                 return CompileFile(media, path);
 
-            return media;
+            if (!_fileSystem.FileExists(media.Path))
+                return new HttpNotFoundResult();
+
+             return new ContentResult(_fileSystem, MediaType, media.Path);;
         }
 
-        private IMedia CompileFile(IMedia media, string path)
+        private HandleResult CompileFile(IMedia media, string path)
         {
             var compiledPath = _typeScriptCompiler.Compile(path);
             media.Path = compiledPath;
 
-            return media;
+            return new ContentResult(_fileSystem, MediaType, media.Path);
         }
     }
 }

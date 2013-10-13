@@ -130,18 +130,10 @@ namespace Hadouken.Framework.Http
             var extension = Path.GetExtension(path);
             var handler = _mediaTypeFactory.Get(extension);
 
-            if (File.Exists(path) && handler != null)
+            if (handler != null)
             {
-                var media = handler.Handle(new Media.Media() {Path = path});
-
-                context.Response.ContentType = handler.MediaType;
-                context.Response.StatusCode = 200;
-
-                using (var reader = new StreamReader(media.Path))
-                using (var writer = new StreamWriter(context.Response.OutputStream))
-                {
-                    writer.Write(reader.ReadToEnd());
-                }
+                var result = handler.Handle(new Media.Media() {Path = path});
+                result.Execute(context);
             }
             else
             {

@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
+using Hadouken.Framework.IO;
 
 namespace Hadouken.Framework.Http.Media
 {
     public class MediaTypeFactory : IMediaTypeFactory
     {
+        private readonly IFileSystem _fileSystem;
         private readonly object _mediaTypesLock = new object();
         private readonly IDictionary<string, IMediaTypeHandler> _mediaTypes;
 
-        public MediaTypeFactory()
+        public MediaTypeFactory(IFileSystem fileSystem)
         {
+            _fileSystem = fileSystem;
             _mediaTypes = CreateDefault();
         }
 
@@ -46,12 +49,12 @@ namespace Hadouken.Framework.Http.Media
         {
             return new Dictionary<string, IMediaTypeHandler>
             {
-                {".html", new BasicMediaTypeHandler("text/html")},
-                {".js", new BasicMediaTypeHandler("text/javascript")},
-                {".css", new BasicMediaTypeHandler("text/css")},
-                {".woff", new BasicMediaTypeHandler("application/font-woff")},
-                {".ttf", new BasicMediaTypeHandler("application/x-font-ttf")},
-                {".svg", new BasicMediaTypeHandler("application/octet-stream")}
+                {".html", new BasicMediaTypeHandler(_fileSystem, "text/html")},
+                {".js", new BasicMediaTypeHandler(_fileSystem, "text/javascript")},
+                {".css", new BasicMediaTypeHandler(_fileSystem, "text/css")},
+                {".woff", new BasicMediaTypeHandler(_fileSystem, "application/font-woff")},
+                {".ttf", new BasicMediaTypeHandler(_fileSystem, "application/x-font-ttf")},
+                {".svg", new BasicMediaTypeHandler(_fileSystem, "application/octet-stream")}
             };
         }
     }

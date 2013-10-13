@@ -59,6 +59,9 @@
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
     <Compile Include="Http\Media\BasicMediaType.cs" />
+    <Compile Include="Http\Media\ContentResult.cs" />
+    <Compile Include="Http\Media\HandleResult.cs" />
+    <Compile Include="Http\Media\HttpNotFoundResult.cs" />
     <Compile Include="Http\Media\IMedia.cs" />
     <Compile Include="Http\Media\IMediaTypeHandler.cs" />
     <Compile Include="Http\Media\IMediaTypeFactory.cs" />
