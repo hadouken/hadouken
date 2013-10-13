@@ -27,7 +27,6 @@ namespace Hadouken.Framework.Http
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly HttpListener _httpListener = new HttpListener();
-        private readonly ITypeScriptCompiler _typeScriptCompiler = TypeScriptCompiler.Create();
         private readonly IEventListener _eventListener;
         private readonly string _baseDirectory;
         private readonly IMediaTypeFactory _mediaTypeFactory;

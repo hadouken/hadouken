@@ -7,7 +7,7 @@
             MediaType = mediaType;
         }
 
-        public string MediaType { get; private set; }
+        public string MediaType { get; protected set; }
 
         public virtual IMedia Handle(IMedia media)
         {

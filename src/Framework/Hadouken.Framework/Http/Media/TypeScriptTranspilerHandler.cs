@@ -15,32 +15,29 @@ namespace Hadouken.Framework.Http.Media
         {
             _fileSystem = fileSystem;
             _typeScriptCompiler = typeScriptCompiler;
+
+            MediaType = "text/javascript";
         }
 
         public override IMedia Handle(IMedia media)
         {
-            var directory = Path.GetDirectoryName(media.Path);
             var fileName = Path.GetFileNameWithoutExtension(media.Path);
-            var typeScriptFile = Path.Combine(directory, fileName + ".ts");
-            var javaScriptFile = Path.Combine(directory, fileName + ".js");
+            var dirName = Path.GetDirectoryName(media.Path);
 
-            var typeScriptDate = _fileSystem.LastWriteTime(typeScriptFile);
-            var javaScriptDate = _fileSystem.LastWriteTime(javaScriptFile);
-
-            if (_fileSystem.FileExists(javaScriptFile))
+            if (dirName == null)
                 return media;
-            
-            if(javaScriptDate == null || (typeScriptDate != null && typeScriptDate >  javaScriptDate))
-            {
-                return CompileFile(media);
-            }
+
+            var path = Path.Combine(dirName, fileName + ".ts");
+
+            if (_fileSystem.FileExists(path))
+                return CompileFile(media, path);
 
             return media;
         }
 
-        private IMedia CompileFile(IMedia media)
+        private IMedia CompileFile(IMedia media, string path)
         {
-            var compiledPath = _typeScriptCompiler.Compile(media.Path);
+            var compiledPath = _typeScriptCompiler.Compile(path);
             media.Path = compiledPath;
 
             return media;
