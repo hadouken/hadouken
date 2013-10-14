@@ -13,6 +13,9 @@ module Hadouken.UI {
             // Load the html for the wizard
             $.get('/wizards/wizard.html', (html) => {
                 this.content = $(html);
+                this.content.on('hidden.bs.modal', function () {
+                    $(this).remove();
+                });
 
                 this.loadSteps(() => {
                     this.content.modal();

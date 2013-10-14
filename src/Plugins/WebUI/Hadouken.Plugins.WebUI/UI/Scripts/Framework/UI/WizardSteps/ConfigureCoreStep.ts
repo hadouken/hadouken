@@ -34,8 +34,30 @@ module Hadouken.UI.WizardSteps {
                 'core.isConfigured': true
             };
 
+            var username = this.content.find('#auth-username').val();
+            var newPassword = this.content.find('#auth-password').val();
+
+            var authData = [username, newPassword, ''];
+
             this._rpcClient.callParams('config.setMany', cfg, () => {
-                callback();
+                this._rpcClient.callParams('core.setAuth', authData, (r) => {
+                    if (!r) {
+                        callback();
+                    }
+                    else {
+                        setTimeout(() => {
+                            $.ajax({
+                                url: '/',
+                                type: 'GET',
+                                username: username,
+                                password: newPassword,
+                                success: () => {
+                                    callback();
+                                }
+                            });
+                        }, 1000);
+                    }
+                });
             });
         }
     }

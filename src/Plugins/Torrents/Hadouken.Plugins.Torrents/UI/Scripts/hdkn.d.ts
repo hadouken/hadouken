@@ -58,6 +58,7 @@ declare module Hadouken.Plugins {
         load(): void;
         unload(): void;
         configure(): void;
+        initialConfiguration(): Hadouken.UI.WizardStep;
     }
 
     class PluginEngine {

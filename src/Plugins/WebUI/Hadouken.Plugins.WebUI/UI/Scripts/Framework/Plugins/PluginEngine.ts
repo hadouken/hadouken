@@ -2,10 +2,6 @@
 ///<reference path="Plugin.ts"/>
 
 module Hadouken.Plugins {
-    class PluginDto {
-        constructor(public name: string, public version: string, public state: string) { }
-    }
-
     export class PluginManager {
         public instance: Hadouken.Plugins.Plugin = null;
 

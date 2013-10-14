@@ -2,6 +2,7 @@
 ///<reference path="Plugins/PluginEngine.ts"/>
 ///<reference path="UI/PageManager.ts"/>
 ///<reference path="UI/Pages/SettingsPage.ts"/>
+///<reference path="UI/Overlay.ts"/>
 ///<reference path="Http/JsonRpcClient.ts"/>
 ///<reference path="UI/Wizard.ts"/>
 ///<reference path="UI/WizardSteps/ConfigureCoreStep.ts"/>
@@ -13,6 +14,9 @@ module Hadouken {
         init(eventListener: Hadouken.Events.EventListener, pluginEngine: Hadouken.Plugins.PluginEngine, pageManager: Hadouken.UI.PageManager) {
             // Add pages
             pageManager.addPage(new Hadouken.UI.Pages.SettingsPage());
+
+            var overlay = new Hadouken.UI.Overlay('icon-refresh loading');
+            overlay.show($(document.body));
 
             eventListener.addHandler("web.signalR.connected", () => {
                 pluginEngine.load(() => {
@@ -37,14 +41,8 @@ module Hadouken {
 
                         wiz.addStep(step);
                     }
-
+                    overlay.hide();
                     wiz.show();
-
-                    /*this._rpcClient.callParams('config.get', 'web.firstTimeSetupShown', (c) => {
-                        if (c === null || !c) {
-                            new Hadouken.UI.Dialogs.FirstTimeSetupDialog().show();
-                        }
-                    });*/
                 });
             });
 
