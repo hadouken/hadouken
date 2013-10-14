@@ -9,13 +9,20 @@ module Hadouken.Plugins.Torrents.UI {
         }
 
         public loadData(callback: any): void {
-            console.log('loading data for torrents');
-            setTimeout(() => callback(), 2000);
+            this._rpcClient.callParams('config.get', 'bt.downloads.savePath', (r) => {
+                this.content.find('#torrents-savePath').val(r);
+                callback();
+            });
         }
 
         public saveData(callback: any): void {
-            console.log('saving data for torrents');
-            setTimeout(() => callback(), 1000);
+            var data = [
+                'bt.downloads.savePath', this.content.find('#torrents-savePath').val()
+            ];
+
+            this._rpcClient.callParams('config.set', data, () => {
+                callback();
+            });
         }
     }
 }
