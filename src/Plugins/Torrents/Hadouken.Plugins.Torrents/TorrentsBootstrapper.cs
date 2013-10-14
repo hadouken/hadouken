@@ -31,7 +31,7 @@ namespace Hadouken.Plugins.Torrents
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
 
-            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/", config.HostBinding, config.Port + 1));
+            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/events", config.HostBinding, config.Port));
 
             builder.Register<IHttpFileServer>
                 (c =>

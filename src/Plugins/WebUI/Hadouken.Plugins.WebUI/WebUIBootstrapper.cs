@@ -18,7 +18,7 @@ namespace Hadouken.Plugins.WebUI
         public override Plugin Load(IBootConfig config)
         {
             var uri = String.Format("http://{0}:{1}/", config.HostBinding, config.Port);
-            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/", config.HostBinding, config.Port + 1));
+            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/events", config.HostBinding, config.Port));
             var mediaTypeFactory = new MediaTypeFactory(new FileSystem());
             var server = new HttpFileServer(uri, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"), mediaTypeFactory, new EventListener(eventListenerUri));
             server.SetCredentials(config.UserName, config.Password);

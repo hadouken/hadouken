@@ -9,8 +9,8 @@ module Hadouken.Events {
 
         public connect(): void {
             var host = location.hostname;
-            var port = parseInt(location.port, 10) + 1;
-            var url = 'http://' + host + ':' + port;
+            var port = parseInt(location.port, 10);
+            var url = 'http://' + host + ':' + port + '/events';
 
             this._connection = $.hubConnection(url);
             this._proxy = this._connection.createHubProxy('events');

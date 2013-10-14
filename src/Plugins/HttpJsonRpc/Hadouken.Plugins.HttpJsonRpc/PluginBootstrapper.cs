@@ -15,7 +15,7 @@ namespace Hadouken.Plugins.HttpJsonRpc
             builder.Register<IEventListener>(c =>
             {
                 var eventListenerUri =
-                    new Uri(String.Format("http://{0}:{1}/", config.HostBinding, config.Port + 1));
+                    new Uri(String.Format("http://{0}:{1}/events", config.HostBinding, config.Port));
 
                 return new EventListener(eventListenerUri);
             });

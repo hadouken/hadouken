@@ -28,8 +28,8 @@ namespace Hadouken.Events
         public void Open()
         {
             string host = _configuration.Http.HostBinding;
-            int port = _configuration.Http.Port + 1;
-            string url = String.Format("http://{0}:{1}", host, port);
+            int port = _configuration.Http.Port;
+            string url = String.Format("http://{0}:{1}/events", host, port);
 
             Logger.Info("Opening event server on {0}", url);
 

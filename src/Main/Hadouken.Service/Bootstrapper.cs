@@ -59,7 +59,7 @@ namespace Hadouken.Service
 		    {
 		        var conf = c.Resolve<IConfiguration>();
 		        var eventListenerUri =
-		            new Uri(String.Format("http://{0}:{1}/", conf.Http.HostBinding, conf.Http.Port + 1));
+		            new Uri(String.Format("http://{0}:{1}/events", conf.Http.HostBinding, conf.Http.Port));
 
 		        return new EventListener(eventListenerUri);
 		    });
