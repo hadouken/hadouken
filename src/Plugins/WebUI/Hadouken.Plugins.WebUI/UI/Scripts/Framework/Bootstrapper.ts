@@ -3,7 +3,8 @@
 ///<reference path="UI/PageManager.ts"/>
 ///<reference path="UI/Pages/SettingsPage.ts"/>
 ///<reference path="Http/JsonRpcClient.ts"/>
-///<reference path="UI/Dialogs/FirstTimeSetupDialog.ts"/>
+///<reference path="UI/Wizard.ts"/>
+///<reference path="UI/WizardSteps/ConfigureCoreStep.ts"/>
 
 module Hadouken {
     export class Bootstrapper {
@@ -17,11 +18,15 @@ module Hadouken {
                 pluginEngine.load(() => {
                     pageManager.init();
 
-                    this._rpcClient.callParams('config.get', 'web.firstTimeSetupShown', (c) => {
+                    var wiz = new Hadouken.UI.Wizard('First time setup wizard');
+                    wiz.addStep(new Hadouken.UI.WizardSteps.ConfigureCoreStep());
+                    wiz.show();
+
+                    /*this._rpcClient.callParams('config.get', 'web.firstTimeSetupShown', (c) => {
                         if (c === null || !c) {
                             new Hadouken.UI.Dialogs.FirstTimeSetupDialog().show();
                         }
-                    });
+                    });*/
                 });
             });
 
