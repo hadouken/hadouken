@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Docs", "1. Docs", "{BB90809C-ACD9-406C-9DC3-5352B151787E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\index.md = docs\index.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Framework", "2. Framework", "{B464F418-0F85-4269-A055-33F965D8A697}"
 EndProject
