@@ -77,7 +77,10 @@
     <Content Include="UI\Dialogs\configure.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Forms\first-time-setup.html">
+    <Content Include="UI\Scripts\UI\ConfigureStep.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Wizards\first-time-setup.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Scripts\BitTorrent\Torrent.ts">

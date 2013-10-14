@@ -20,6 +20,24 @@ module Hadouken {
 
                     var wiz = new Hadouken.UI.Wizard('First time setup wizard');
                     wiz.addStep(new Hadouken.UI.WizardSteps.ConfigureCoreStep());
+
+                    var pluginKeys = Object.keys(pluginEngine.plugins);
+
+                    for (var i = 0; i < pluginKeys.length; i++) {
+                        var key = pluginKeys[i];
+                        var plugin = pluginEngine.plugins[key];
+
+                        if (!plugin.instance)
+                            continue;
+
+                        var step = plugin.instance.initialConfiguration();
+
+                        if (!step)
+                            continue;
+
+                        wiz.addStep(step);
+                    }
+
                     wiz.show();
 
                     /*this._rpcClient.callParams('config.get', 'web.firstTimeSetupShown', (c) => {

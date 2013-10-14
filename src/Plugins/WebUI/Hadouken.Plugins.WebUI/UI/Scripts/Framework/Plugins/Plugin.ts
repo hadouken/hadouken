@@ -1,12 +1,14 @@
+///<reference path="../UI/WizardStep.ts"/>
+
 module Hadouken.Plugins {
     export class Plugin {
         load(): void { }
 
         configure(): void { }
 
-        loadFirstTimeSetup(container: any): void { }
-
-        saveFirstTimeSetup(container: any, callback: { (): void; }): void { }
+        initialConfiguration(): Hadouken.UI.WizardStep {
+            return null;
+        }
 
         unload(): void { }
     }

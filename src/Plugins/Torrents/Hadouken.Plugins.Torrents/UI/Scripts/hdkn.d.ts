@@ -36,6 +36,21 @@ declare module Hadouken.UI {
 
         getContent(): any;
     }
+
+    class WizardStep {
+        name: string;
+        content: any;
+
+        constructor(url: string, name: string);
+
+        public load(callback: any): void;
+
+        public onloaded(): void;
+
+        public saveData(callback: any): void;
+
+        public loadData(callback: any): void;
+    }
 }
 
 declare module Hadouken.Plugins {

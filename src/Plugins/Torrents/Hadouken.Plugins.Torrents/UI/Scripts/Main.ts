@@ -3,6 +3,7 @@
 ///<reference path="UI/TorrentDetailsPage.ts"/>
 ///<reference path="UI/TorrentsListPage.ts"/>
 ///<reference path="UI/ConfigureDialog.ts"/>
+///<reference path="UI/ConfigureStep.ts"/>
 
 module Hadouken.Plugins.Torrents {
     export class TorrentsPlugin extends Hadouken.Plugins.Plugin {
@@ -22,23 +23,14 @@ module Hadouken.Plugins.Torrents {
             this.loadPages();
         }
 
-        loadFirstTimeSetup(container: any): void {
-            $.get('/plugins/core.torrents/forms/first-time-setup.html', (h) => {
-                container.append(h);
-            });
-        }
-
-        saveFirstTimeSetup(container: any, callback: { (): void; }): void {
-            var savePath = container.find('#torrents-savePath').val();
-            this._rpcClient.callParams('config.set', ['bt.downloads.savePath', savePath], (e) => {
-                callback();
-            });
-        }
-
         unload(): void { }
 
         configure(): void {
             new Hadouken.Plugins.Torrents.UI.ConfigureDialog().show();
+        }
+
+        initialConfiguration(): Hadouken.UI.WizardStep {
+            return new Hadouken.Plugins.Torrents.UI.ConfigureStep();
         }
 
         private setupNotifications(): void {

@@ -15,10 +15,7 @@
 
             $.get(this._url, (html) => {
                 this.content = $(html);
-
-                this.loadData(() => {
-                    callback();
-                });
+                callback();
             });
         }
 

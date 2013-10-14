@@ -10,6 +10,8 @@ module Hadouken.UI.WizardSteps {
         }
 
         public loadData(callback: any): void {
+            console.log('loading core configure data');
+
             var greeter = this.content.find('h2.greeter .name');
             this.content.find('#auth-username').on('blur', function (e) {
                 var val = $(this).val();
