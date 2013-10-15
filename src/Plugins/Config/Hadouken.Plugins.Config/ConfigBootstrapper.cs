@@ -1,15 +1,6 @@
-﻿using System;
-using System.IO;
-using System.ServiceModel;
-using Autofac.Integration.Wcf;
-using Hadouken.Framework;
+﻿using Hadouken.Framework;
 using Hadouken.Framework.DI;
 using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc.Hosting;
-using Hadouken.Framework.Wcf;
-using Hadouken.Plugins.Config.Rpc;
-
-using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Config.Data;
 using Autofac;
 
@@ -28,8 +19,7 @@ namespace Hadouken.Plugins.Config
         private IContainer BuildContainer(IBootConfig config)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new PluginModule());
-            builder.RegisterModule(new JsonRpcServiceModule());
+            builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof(Bootstrapper).Assembly);
             builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
 
             // Data store

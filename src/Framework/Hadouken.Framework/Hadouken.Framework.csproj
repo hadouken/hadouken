@@ -66,6 +66,7 @@
     <Compile Include="DI\HttpFileServerModule.cs" />
     <Compile Include="DI\JsonRpcClientModule.cs" />
     <Compile Include="DI\JsonRpcServiceModule.cs" />
+    <Compile Include="DI\ParameterlessConstructorModule.cs" />
     <Compile Include="DI\PluginModule.cs" />
     <Compile Include="DI\WcfJsonRpcServerModule.cs" />
     <Compile Include="Events\EventListener.cs" />

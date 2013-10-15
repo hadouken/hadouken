@@ -3,7 +3,7 @@ using Hadouken.Framework.IO;
 
 namespace Hadouken.Framework.DI
 {
-    public class FileSystemModule : Module
+    public class FileSystemModule : ParameterlessConstructorModule
     {
         protected override void Load(ContainerBuilder builder)
         {

@@ -4,7 +4,7 @@ using Hadouken.Framework.Rpc.Hosting;
 
 namespace Hadouken.Framework.DI
 {
-    public class JsonRpcServiceModule : Module
+    public class JsonRpcServiceModule : ParameterlessConstructorModule
     {
         protected override void Load(ContainerBuilder builder)
         {

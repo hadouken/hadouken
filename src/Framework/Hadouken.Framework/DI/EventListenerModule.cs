@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Hadouken.Framework.Events;
 
 namespace Hadouken.Framework.DI
 {
-    public class EventListenerModule : Module
+    public class EventListenerModule : ParameterlessConstructorModule
     {
         protected override void Load(ContainerBuilder builder)
         {
