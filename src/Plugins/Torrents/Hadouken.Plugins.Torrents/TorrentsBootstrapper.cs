@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.ServiceModel;
+using Autofac.Core;
 using Autofac.Integration.Wcf;
 using Hadouken.Framework;
+using Hadouken.Framework.DI;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Http;
 using Hadouken.Framework.Http.Media;
@@ -18,16 +20,21 @@ namespace Hadouken.Plugins.Torrents
 {
     public class TorrentsBootstrapper : Bootstrapper
     {
+        public IContainer Container { get; private set; }
+        
         public override Plugin Load(IBootConfig config)
         {
-            var container = BuildContainer(config);
-            return container.Resolve<Plugin>();
+            Container = BuildContainer(config);
+            return Container.Resolve<Plugin>();
         }
 
-        private static IContainer BuildContainer(IBootConfig config)
+        private IContainer BuildContainer(IBootConfig config)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<TorrentsPlugin>().As<Plugin>();
+            builder.RegisterModule(new PluginModule());
+            builder.RegisterModule(new JsonRpcServiceModule());
+            builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
+
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
 
@@ -48,38 +55,10 @@ namespace Hadouken.Plugins.Torrents
                 });
 
             builder.Register(c => config).SingleInstance();
-
-            builder.RegisterType<TorrentsServices>().As<IJsonRpcService>().SingleInstance();
-            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
-            builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
             builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
-            builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
             builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport(config.RpcGatewayUri)).SingleInstance();
 
-            var container = builder.Build();
-            var wcfBuilder = new ContainerBuilder();
-
-            // Register WCF
-            wcfBuilder.Register<IWcfJsonRpcServer>(c =>
-            {
-                var binding = new NetNamedPipeBinding
-                {
-                    MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
-                    MaxConnections = 10,
-                    MaxReceivedMessageSize = 10485760
-                };
-
-                var host = new ServiceHost(typeof(WcfJsonRpcService));
-                host.AddServiceEndpoint(typeof(IWcfRpcService), binding, config.RpcPluginUri);
-                host.AddDependencyInjectionBehavior<IWcfRpcService>(container);
-
-                return new WcfJsonRpcServer(host);
-            });
-
-            wcfBuilder.Update(container);
-
-            return container;
+            return builder.Build();
         }
     }
 }
