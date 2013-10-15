@@ -1,85 +1,38 @@
 ﻿using System;
 using System.IO;
-using System.ServiceModel;
-using Autofac.Integration.Wcf;
 using Hadouken.Framework;
-using Hadouken.Framework.Events;
-using Hadouken.Framework.Http;
-using Hadouken.Framework.Http.Media;
-using Hadouken.Framework.IO;
+using Hadouken.Framework.DI;
 using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc;
-using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.Plugins.Torrents.BitTorrent;
-using Hadouken.Plugins.Torrents.Rpc;
 using Autofac;
 
 namespace Hadouken.Plugins.Torrents
 {
     public class TorrentsBootstrapper : Bootstrapper
     {
+        public IContainer Container { get; private set; }
+        
         public override Plugin Load(IBootConfig config)
         {
-            var container = BuildContainer(config);
-            return container.Resolve<Plugin>();
+            Container = BuildContainer(config);
+            return Container.Resolve<Plugin>();
         }
 
-        private static IContainer BuildContainer(IBootConfig config)
+        private IContainer BuildContainer(IBootConfig config)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<TorrentsPlugin>().As<Plugin>();
+            builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof (Bootstrapper).Assembly);
+            builder.RegisterModule(new ConfigModule(config));
+            builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
+
+            var httpListenUri = String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath);
+            var httpBaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI");
+            builder.RegisterModule(new HttpFileServerModule(httpListenUri, httpBaseDirectory));
+
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
 
-            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/events", config.HostBinding, config.Port));
-
-            builder.Register<IHttpFileServer>
-                (c =>
-                {
-                    var mediaTypeFactory = new MediaTypeFactory(new FileSystem());
-
-                    var server = new HttpFileServer(
-                        String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath)
-                        , Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"), mediaTypeFactory, new EventListener(eventListenerUri));
-
-                    server.SetCredentials(config.UserName, config.Password);
-
-                    return server;
-                });
-
-            builder.Register(c => config).SingleInstance();
-
-            builder.RegisterType<TorrentsServices>().As<IJsonRpcService>().SingleInstance();
-            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
-            builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
-            builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
-            builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
-            builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport(config.RpcGatewayUri)).SingleInstance();
-
-            var container = builder.Build();
-            var wcfBuilder = new ContainerBuilder();
-
-            // Register WCF
-            wcfBuilder.Register<IWcfJsonRpcServer>(c =>
-            {
-                var binding = new NetNamedPipeBinding
-                {
-                    MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
-                    MaxConnections = 10,
-                    MaxReceivedMessageSize = 10485760
-                };
-
-                var host = new ServiceHost(typeof(WcfJsonRpcService));
-                host.AddServiceEndpoint(typeof(IWcfRpcService), binding, config.RpcPluginUri);
-                host.AddDependencyInjectionBehavior<IWcfRpcService>(container);
-
-                return new WcfJsonRpcServer(host);
-            });
-
-            wcfBuilder.Update(container);
-
-            return container;
+            return builder.Build();
         }
     }
 }

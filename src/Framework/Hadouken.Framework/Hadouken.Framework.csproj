@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\..\..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Wcf">
+      <HintPath>..\..\..\packages\Autofac.Wcf.3.0.0\lib\net40\Autofac.Integration.Wcf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Client">
       <HintPath>..\..\..\packages\Microsoft.AspNet.SignalR.Client.1.1.3\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
     </Reference>
@@ -54,6 +60,15 @@
   <ItemGroup>
     <Compile Include="BootConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="DI\AppDomainExplorer.cs" />
+    <Compile Include="DI\EventListenerModule.cs" />
+    <Compile Include="DI\FileSystemModule.cs" />
+    <Compile Include="DI\HttpFileServerModule.cs" />
+    <Compile Include="DI\JsonRpcClientModule.cs" />
+    <Compile Include="DI\JsonRpcServiceModule.cs" />
+    <Compile Include="DI\ParameterlessConstructorModule.cs" />
+    <Compile Include="DI\PluginModule.cs" />
+    <Compile Include="DI\WcfJsonRpcServerModule.cs" />
     <Compile Include="Events\EventListener.cs" />
     <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Http\HttpFileServer.cs" />

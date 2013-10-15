@@ -1,14 +1,6 @@
-﻿using System;
-using System.IO;
-using System.ServiceModel;
-using Autofac.Integration.Wcf;
-using Hadouken.Framework;
+﻿using Hadouken.Framework;
+using Hadouken.Framework.DI;
 using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc.Hosting;
-using Hadouken.Framework.Wcf;
-using Hadouken.Plugins.Config.Rpc;
-
-using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Config.Data;
 using Autofac;
 
@@ -16,48 +8,24 @@ namespace Hadouken.Plugins.Config
 {
     public class ConfigBootstrapper : Bootstrapper
     {
+        public IContainer Container { get; private set; }
+
         public override Plugin Load(IBootConfig config)
         {
-            var container = BuildContainer(config);
-            return container.Resolve<Plugin>();
+            Container = BuildContainer(config);
+            return Container.Resolve<Plugin>();
         }
 
-        private static IContainer BuildContainer(IBootConfig config)
+        private IContainer BuildContainer(IBootConfig config)
         {
             var builder = new ContainerBuilder();
-
-            // Register plugin
-            builder.RegisterType<ConfigPlugin>().As<Plugin>();
-
-            // JSONRPC
-            builder.RegisterType<ConfigService>().As<IJsonRpcService>().SingleInstance();
-            builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
-            builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
-            builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
+            builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof(Bootstrapper).Assembly);
+            builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
 
             // Data store
             builder.Register<IConfigDataStore>(c => new SQLiteDataStore(config.DataPath)).SingleInstance();
 
-            var container = builder.Build();
-            var wcfBuilder = new ContainerBuilder();
-
-            // Register WCF
-            wcfBuilder.RegisterType<BindingBuilder>().As<IBindingBuilder>().SingleInstance();
-            wcfBuilder.Register<IWcfJsonRpcServer>(c =>
-            {
-                var bindingBuilder = c.Resolve<IBindingBuilder>();
-                var binding = bindingBuilder.Build(config.RpcPluginUri);
-
-                var host = new ServiceHost(typeof(WcfJsonRpcService));
-                host.AddServiceEndpoint(typeof(IWcfRpcService), binding, config.RpcPluginUri);
-                host.AddDependencyInjectionBehavior<IWcfRpcService>(container);
-
-                return new WcfJsonRpcServer(host);
-            });
-
-            wcfBuilder.Update(container);
-
-            return container;
+            return builder.Build();
         }
     }
 }
