@@ -32,7 +32,7 @@
                             <th>Name</th>
                             <th>Version</th>
                             <th>Mem. usage</th>
-                            <th></th>
+                            <th style="width: 100px;"></th>
                         </tr>
                     </thead>
     
@@ -78,22 +78,11 @@
         <td>{{plugin.version}}</td>
         <td>{{fileSize plugin.memoryUsage}}</td>
         <td>
+            {{#if plugin.instance}}
             <div class="actions pull-right">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">
-                        Actions <span class="caret"></span>
-                    </button>
-                    
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Unload</a></li>
-                        
-                        {{#if plugin.instance}}
-                        <li class="divider"></li>
-                        <li><a href="#" class="btn-configure-plugin"><i class="icon-wrench"></i> Configure</a></li>
-                        {{/if}}
-                    </ul>
-                </div>
+                <button type="button" class="btn btn-primary btn-xs btn-configure-plugin"><i class="icon-wrench"></i> Configure</button>
             </div>
+            {{/if}}
         </td>
     </tr>
 </script>

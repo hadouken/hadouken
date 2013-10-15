@@ -54,8 +54,8 @@ module Hadouken.UI.Pages {
                     var key = pluginIds[i];
                     var plugin = this._pluginEngine.plugins[key];
 
-                    var row = template({ plugin: plugin });
-                    $('#tbody-plugin-list').append($(row));
+                    var row = $(template({ plugin: plugin }));
+                    $('#tbody-plugin-list').append(row);
                 }
 
                 var that = this;
