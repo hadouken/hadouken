@@ -1,6 +1,7 @@
 # JSONRPC methods
 
-This is a list of all the JSONRPC methods that ships with Hadouken (including the core plugins).
+This is a list of all the JSONRPC methods that ships with Hadouken (including the core plugins). You can call any of these via the WCF gateway you have access to as a plugin.
+
 To call these over HTTP, you need the `HttpJsonRpc` plugin loaded.
 
 ## Core methods
@@ -19,3 +20,13 @@ To call these over HTTP, you need the `HttpJsonRpc` plugin loaded.
 - [`config.getSection`](config.getSection.md)
 - [`config.set`](config.set.md)
 - [`config.setMany`](config.setMany.md)
+
+## Torrents methods
+- [`torrents.addFile`](torrents.addFile.md)
+- [`torrents.addMagnetLink`](torrents.addMagnetLink.md)
+- [`torrents.addUrl`](torrents.addUrl.md)
+- [`torrents.details`](torrents.details.md)
+- [`torrents.list`](torrents.list.md)
+- [`torrents.pause`](torrents.pause.md)
+- [`torrents.start`](torrents.start.md)
+- [`torrents.stop`](torrents.stop.md)
