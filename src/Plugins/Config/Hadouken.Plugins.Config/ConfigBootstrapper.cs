@@ -5,6 +5,7 @@ using Autofac.Integration.Wcf;
 using Hadouken.Framework;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc.Hosting;
+using Hadouken.Framework.Wcf;
 using Hadouken.Plugins.Config.Rpc;
 
 using Hadouken.Framework.Rpc;
@@ -41,15 +42,11 @@ namespace Hadouken.Plugins.Config
             var wcfBuilder = new ContainerBuilder();
 
             // Register WCF
+            wcfBuilder.RegisterType<BindingBuilder>().As<IBindingBuilder>().SingleInstance();
             wcfBuilder.Register<IWcfJsonRpcServer>(c =>
             {
-                var binding = new NetNamedPipeBinding
-                {
-                    MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
-                    MaxConnections = 10,
-                    MaxReceivedMessageSize = 10485760
-                };
+                var bindingBuilder = c.Resolve<IBindingBuilder>();
+                var binding = bindingBuilder.Build(config.RpcPluginUri);
 
                 var host = new ServiceHost(typeof(WcfJsonRpcService));
                 host.AddServiceEndpoint(typeof(IWcfRpcService), binding, config.RpcPluginUri);

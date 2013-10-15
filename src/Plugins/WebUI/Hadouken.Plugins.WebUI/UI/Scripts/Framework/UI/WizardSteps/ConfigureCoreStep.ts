@@ -10,8 +10,6 @@ module Hadouken.UI.WizardSteps {
         }
 
         public onshown(): void {
-            console.log('onshown core');
-
             var greeter = this.content.find('h2.greeter .name');
             this.content.find('#auth-username').on('blur', function (e) {
                 var val = $(this).val();

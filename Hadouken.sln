@@ -56,6 +56,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extending", "extending", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jsonrpc", "jsonrpc", "{51032085-50B1-4B4F-B00A-87C75BFEF449}"
 	ProjectSection(SolutionItems) = preProject
+		docs\extending\jsonrpc\core.multiCall.md = docs\extending\jsonrpc\core.multiCall.md
 		docs\extending\jsonrpc\index.md = docs\extending\jsonrpc\index.md
 	EndProjectSection
 EndProject

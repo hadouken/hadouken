@@ -110,6 +110,8 @@
     <Compile Include="SemVer\Rule.cs" />
     <Compile Include="SemVer\SemanticVersion.cs" />
     <Compile Include="SemVer\SemanticVersionRange.cs" />
+    <Compile Include="Wcf\BindingBuilder.cs" />
+    <Compile Include="Wcf\IBindingBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
