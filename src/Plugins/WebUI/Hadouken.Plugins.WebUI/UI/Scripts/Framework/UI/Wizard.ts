@@ -17,32 +17,16 @@ module Hadouken.UI {
                     $(this).remove();
                 });
 
-                this.loadSteps(() => {
-                    this.content.modal();
+                // Load data for first step
+                var firstStep = this.steps[0];
 
-                    // Load data for first step
-                    this.steps[0].loadData(() => {
+                firstStep.load(() => {
+                    firstStep.loadData(() => {
+                        this.content.modal();
                         this.step(1);
                     });
                 });
             });
-        }
-
-        private loadSteps(callback: any): void {
-            var loadedSteps = 0;
-
-            var loadCallback = () => {
-                loadedSteps += 1;
-
-                if (loadedSteps == this.steps.length) {
-                    callback();
-                }
-            };
-
-            for (var i = 0; i < this.steps.length; i++) {
-                var step = this.steps[i];
-                step.load(loadCallback);
-            }
         }
 
         public close(): void {
@@ -69,12 +53,10 @@ module Hadouken.UI {
                 return;
             }
 
+            // Get the current, previous and next step
             var step = this.steps[this._currentStep];
             var prevStep = null;
             var nextStep = null;
-
-            console.log(this._currentStep);
-            console.log(this.steps.length);
 
             if (this._currentStep + 1 < this.steps.length)
                 nextStep = this.steps[this._currentStep + 1];
@@ -82,39 +64,42 @@ module Hadouken.UI {
             if (this._currentStep - 1 >= 0)
                 prevStep = this.steps[this._currentStep - 1];
 
+            // Find the modal body and append the step HTML
             var body = this.content.find('.modal-body');
             body.empty().append(step.content);
+
+            // Finish button
+            var finishButton = this.content.find('.btn-finish');
+            finishButton.off('click');
 
             // Update next-button
             var nextButton = this.content.find('.btn-next-step');
             nextButton.off('click');
 
             if (nextStep === null) {
-                nextButton.find('i').hide();
-                nextButton.find('.next-step-title').hide();
-                nextButton.find('.next-text').text('Finish');
+                nextButton.hide();
+                finishButton.show();
+                finishButton.on('click', () => this.save());
             } else {
-                nextButton.find('i').show();
-                nextButton.find('.next-step-title').show();
+                nextButton.show();
+                finishButton.hide();
                 nextButton.find('.next-step-title').text(nextStep.name);
-                nextButton.find('.next-text').text('Next:');
             }
 
             nextButton.on('click', (e) => {
                 e.preventDefault();
 
-                var overlay = new Hadouken.UI.Overlay('icon-refresh loading');
-                overlay.show(this.content.find('.modal-body'));
+                nextStep.load(() => {
+                    if (nextStep.isDataLoaded) {
+                        this.step(1);
+                    } else {
+                        nextButton.attr('disabled', true);
 
-                step.saveData(() => {
-                    if (nextStep != null) {
                         nextStep.loadData(() => {
-                            overlay.hide();
+                            nextStep.isDataLoaded = true;
+                            nextButton.attr('disabled', false);
                             this.step(1);
                         });
-                    } else {
-                        overlay.hide();
-                        this.step(1);
                     }
                 });
             });
@@ -133,21 +118,31 @@ module Hadouken.UI {
             prevButton.on('click', (e) => {
                 e.preventDefault();
 
-                var overlay = new Hadouken.UI.Overlay('icon-refresh loading');
-                overlay.show(this.content.find('.modal-body'));
-
-                step.saveData(() => {
-                    if (prevStep != null) {
-                        prevStep.loadData(() => {
-                            overlay.hide();
-                            this.step(-1);
-                        });
-                    } else {
-                        overlay.hide();
-                        this.step(-1);
-                    }
+                prevStep.load(() => {
+                    this.step(-1);
                 });
             });
+        }
+
+        private save(): void {
+            var overlay = new Hadouken.UI.Overlay('icon-refresh loading');
+            overlay.show(this.content.find('.modal-body'));
+
+            var savedSteps = 0;
+
+            var saveCallback = () => {
+                savedSteps += 1;
+
+                if (savedSteps == this.steps.length) {
+                    overlay.hide();
+                    this.close();
+                }
+            };
+
+            for (var i = 0; i < this.steps.length; i++) {
+                var step = this.steps[i];
+                step.saveData(saveCallback);
+            }
         }
     }
 }

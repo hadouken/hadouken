@@ -9,8 +9,8 @@ module Hadouken.UI.WizardSteps {
             super('/wizards/configure-core.html', 'Core');
         }
 
-        public loadData(callback: any): void {
-            console.log('loading core configure data');
+        public onshown(): void {
+            console.log('onshown core');
 
             var greeter = this.content.find('h2.greeter .name');
             this.content.find('#auth-username').on('blur', function (e) {
@@ -23,15 +23,17 @@ module Hadouken.UI.WizardSteps {
                     greeter.text(val).fadeIn('fast');
                 });
             });
+        }
 
+        public loadData(callback: any): void {
+            // We do not need to load any data for this step.
             callback();
         }
 
         public saveData(callback: any): void {
             var cfg = {
                 'plugins.repositoryUrl': this.content.find('#plugins-repositoryUrl').val(),
-                'plugins.enableUpdateChecking': this.content.find('#plugins-enableUpdateChecking').is(':checked'),
-                'core.isConfigured': true
+                'plugins.enableUpdateChecking': this.content.find('#plugins-enableUpdateChecking').is(':checked')
             };
 
             var username = this.content.find('#auth-username').val();
