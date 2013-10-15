@@ -42,7 +42,7 @@ namespace Hadouken.Framework.Http
             if (!listenUri.EndsWith("/"))
                 listenUri = listenUri + "/";
 
-            var virtualPath = Regex.Replace(listenUri, "^http://.*:[0-9]+(.*)$", "$1");
+            var virtualPath = Regex.Replace(listenUri, "^http://[^:]*?:[0-9]+(.*)$", "$1");
 
             _baseDirectory = baseDirectory;
             _mediaTypeFactory = mediaTypeFactory;
