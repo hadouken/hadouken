@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="BootConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="DI\ConfigModule.cs" />
     <Compile Include="DI\AppDomainExplorer.cs" />
     <Compile Include="DI\EventListenerModule.cs" />
     <Compile Include="DI\FileSystemModule.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Core;
 using Hadouken.Framework.Http;
 using Hadouken.Framework.Http.Media;
 
@@ -27,7 +28,14 @@ namespace Hadouken.Framework.DI
                 .WithParameter("listenUri", _listenUri)
                 .WithParameter("baseDirectory", _baseDirectory)
                 .AsImplementedInterfaces()
+                .OnActivated(SetCredentials)
                 .SingleInstance();
+        }
+
+        private void SetCredentials(IActivatedEventArgs<HttpFileServer> args)
+        {
+            var config = args.Context.Resolve<IBootConfig>();
+            args.Instance.SetCredentials(config.UserName, config.Password);
         }
     }
 }

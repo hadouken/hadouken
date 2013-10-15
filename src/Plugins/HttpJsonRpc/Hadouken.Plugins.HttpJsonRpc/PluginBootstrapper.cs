@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Hadouken.Framework;
+using Hadouken.Framework.DI;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Plugins;
 
@@ -11,14 +12,8 @@ namespace Hadouken.Plugins.HttpJsonRpc
         public override Plugin Load(IBootConfig config)
         {
             var builder = new ContainerBuilder();
-
-            builder.Register<IEventListener>(c =>
-            {
-                var eventListenerUri =
-                    String.Format("http://{0}:{1}/events", config.HostBinding, config.Port);
-
-                return new EventListener(eventListenerUri);
-            });
+            builder.RegisterModule(new ConfigModule(config));
+            builder.RegisterModule(new EventListenerModule());
 
             builder.Register<IHttpJsonRpcServer>(c =>
             {

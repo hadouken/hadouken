@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
-using Hadouken.Framework;
+﻿using Autofac;
 
-namespace Hadouken.Plugins.Torrents
+namespace Hadouken.Framework.DI
 {
     public class ConfigModule : Module
     {
