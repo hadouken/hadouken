@@ -61,6 +61,10 @@
     <Compile Include="BootConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="DI\AppDomainExplorer.cs" />
+    <Compile Include="DI\EventListenerModule.cs" />
+    <Compile Include="DI\FileSystemModule.cs" />
+    <Compile Include="DI\HttpFileServerModule.cs" />
+    <Compile Include="DI\JsonRpcClientModule.cs" />
     <Compile Include="DI\JsonRpcServiceModule.cs" />
     <Compile Include="DI\PluginModule.cs" />
     <Compile Include="DI\WcfJsonRpcServerModule.cs" />

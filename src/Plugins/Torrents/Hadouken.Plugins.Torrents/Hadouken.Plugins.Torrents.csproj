@@ -64,6 +64,7 @@
     <Compile Include="BitTorrent\IEngineSettingsFactory.cs" />
     <Compile Include="BitTorrent\IExtendedTorrentManager.cs" />
     <Compile Include="BitTorrent\OctoTorrentEngine.cs" />
+    <Compile Include="ConfigModule.cs" />
     <Compile Include="Dto\TorrentDetails.cs" />
     <Compile Include="Dto\TorrentFileDetails.cs" />
     <Compile Include="Dto\TorrentOverview.cs" />

@@ -31,32 +31,20 @@ namespace Hadouken.Plugins.Torrents
         private IContainer BuildContainer(IBootConfig config)
         {
             var builder = new ContainerBuilder();
+            builder.RegisterModule(new ConfigModule(config));
             builder.RegisterModule(new PluginModule());
             builder.RegisterModule(new JsonRpcServiceModule());
             builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
+            builder.RegisterModule(new FileSystemModule());
+            builder.RegisterModule(new JsonRpcClientModule());
+            builder.RegisterModule(new EventListenerModule());
+
+            var httpListenUri = String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath);
+            var httpBaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI");
+            builder.RegisterModule(new HttpFileServerModule(httpListenUri, httpBaseDirectory));
 
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
-
-            var eventListenerUri = new Uri(String.Format("http://{0}:{1}/events", config.HostBinding, config.Port));
-
-            builder.Register<IHttpFileServer>
-                (c =>
-                {
-                    var mediaTypeFactory = new MediaTypeFactory(new FileSystem());
-
-                    var server = new HttpFileServer(
-                        String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath)
-                        , Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI"), mediaTypeFactory, new EventListener(eventListenerUri));
-
-                    server.SetCredentials(config.UserName, config.Password);
-
-                    return server;
-                });
-
-            builder.Register(c => config).SingleInstance();
-            builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
-            builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport(config.RpcGatewayUri)).SingleInstance();
 
             return builder.Build();
         }

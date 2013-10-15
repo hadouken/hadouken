@@ -23,11 +23,11 @@ namespace Hadouken.Framework.Events
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly Uri _host;
+        private readonly string _host;
         private readonly Lazy<HubConnection> _connection; 
         private readonly Lazy<IHubProxy> _proxy;
 
-        public EventListener(Uri host)
+        public EventListener(string host)
         {
             _host = host;
             _connection = new Lazy<HubConnection>(CreateConnection);
@@ -36,7 +36,7 @@ namespace Hadouken.Framework.Events
 
         private HubConnection CreateConnection()
         {
-            return new HubConnection(_host.ToString());
+            return new HubConnection(_host);
         }
 
         private IHubProxy CreateProxy()
