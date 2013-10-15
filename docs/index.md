@@ -15,5 +15,5 @@ Here you'll find resources for getting started with Hadouken, either as an end-u
 - Extending Hadouken
  - How it all works
  - The plugin package
- - [JSONRPC methods](extending/jsonrpcmethods.md)
+ - [JSONRPC methods](extending/jsonrpc/index.md)
  - Listening on events
