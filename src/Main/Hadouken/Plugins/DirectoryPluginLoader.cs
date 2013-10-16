@@ -38,27 +38,26 @@ namespace Hadouken.Plugins
             {
                 IManifest manifest;
 
-                if (Manifest.TryParse(manifestJson, out manifest))
+                if (!Manifest.TryParse(manifestJson, out manifest)) return null;
+
+                var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, manifest.Name);
+
+                if (!_fileSystem.DirectoryExists(pluginDataPath))
+                    _fileSystem.CreateDirectory(pluginDataPath);
+
+                var bootConfig = new BootConfig
                 {
-                    var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, manifest.Name);
+                    DataPath = pluginDataPath,
+                    HostBinding = _configuration.Http.HostBinding,
+                    Port = _configuration.Http.Port,
+                    UserName = _configuration.Http.Authentication.UserName,
+                    Password = _configuration.Http.Authentication.Password,
+                    RpcGatewayUri = _configuration.Rpc.GatewayUri,
+                    RpcPluginUri = String.Format(_configuration.Rpc.PluginUri, manifest.Name),
+                    HttpVirtualPath = "/plugins/" + manifest.Name
+                };
 
-                    if (!_fileSystem.DirectoryExists(pluginDataPath))
-                        _fileSystem.CreateDirectory(pluginDataPath);
-
-                    var bootConfig = new BootConfig
-                    {
-                        DataPath = pluginDataPath,
-                        HostBinding = _configuration.Http.HostBinding,
-                        Port = _configuration.Http.Port,
-                        UserName = _configuration.Http.Authentication.UserName,
-                        Password = _configuration.Http.Authentication.Password,
-                        RpcGatewayUri = _configuration.Rpc.GatewayUri,
-                        RpcPluginUri = String.Format(_configuration.Rpc.PluginUri, manifest.Name),
-                        HttpVirtualPath = "/plugins/" + manifest.Name
-                    };
-
-                    return new PluginManager(path, manifest, _fileSystem, bootConfig, _rpcClient);
-                }
+                return new PluginManager(path, manifest, _fileSystem, bootConfig, _rpcClient);
             }
 
             return null;
