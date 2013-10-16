@@ -1,6 +1,6 @@
 # core.multiCall
 
-Enables you to call multiple methods in a single call.
+Enables you to call multiple methods in a single call. The methods will be called in the order they are passed.
 
 ## Parameters
 

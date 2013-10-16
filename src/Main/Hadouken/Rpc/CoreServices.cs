@@ -68,7 +68,7 @@ namespace Hadouken.Rpc
         {
             return new
             {
-                Username = _configuration.Http.Authentication.UserName,
+                _configuration.Http.Authentication.UserName,
                 HasPassword = !String.IsNullOrEmpty(_configuration.Http.Authentication.Password)
             };
         }
