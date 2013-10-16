@@ -14,7 +14,7 @@ module Hadouken.UI.Dialogs {
             var content = this.getContent();
 
             this._rpcClient.call('core.getAuthInfo', (d) => {
-                content.find('#auth-username').val(d.username);
+                content.find('#auth-username').val(d.userName);
             });
 
             content.find('#auth-username').focus();
