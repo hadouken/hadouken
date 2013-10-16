@@ -49,8 +49,8 @@
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
-    <Compile Include="WebUIBootstrapper.cs" />
-    <Compile Include="WebUIPlugin.cs" />
+    <Compile Include="WebBootstrapper.cs" />
+    <Compile Include="WebPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
