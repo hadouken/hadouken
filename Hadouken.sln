@@ -36,9 +36,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Service", "src\Mai
 		{F7D249DF-D25E-471F-9EC6-463FB1A784DA} = {F7D249DF-D25E-471F-9EC6-463FB1A784DA}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{F6E910A0-939F-49BA-A50E-F51471612996}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{F6E910A0-939F-49BA-A50E-F51471612996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.WebUI", "src\Plugins\WebUI\Hadouken.Plugins.WebUI\Hadouken.Plugins.WebUI.csproj", "{B3D8890F-1C52-4DDC-9A80-3E15F72B748D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Web", "src\Plugins\Web\Hadouken.Plugins.Web\Hadouken.Plugins.Web.csproj", "{B3D8890F-1C52-4DDC-9A80-3E15F72B748D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{66475E2D-4B77-40EE-BE38-1F9DDCBB7315}"
 EndProject

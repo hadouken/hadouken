@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Hadouken.Framework;
+﻿using Hadouken.Framework;
 using Hadouken.Framework.DI;
 using Hadouken.Framework.Plugins;
 using Hadouken.Plugins.Torrents.BitTorrent;
@@ -24,10 +22,6 @@ namespace Hadouken.Plugins.Torrents
             builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof (Bootstrapper).Assembly);
             builder.RegisterModule(new ConfigModule(config));
             builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
-
-            var httpListenUri = String.Format("http://{0}:{1}{2}", config.HostBinding, config.Port, config.HttpVirtualPath);
-            var httpBaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI");
-            builder.RegisterModule(new HttpFileServerModule(httpListenUri, httpBaseDirectory));
 
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
