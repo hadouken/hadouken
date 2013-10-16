@@ -28,6 +28,11 @@ namespace Hadouken.Framework.Rpc
             _services = BuildServiceCache(services);            
         }
 
+        internal IDictionary<string, IMethodInvoker> Services
+        {
+            get { return _services; }
+        } 
+
         private IDictionary<string, IMethodInvoker> BuildServiceCache(IEnumerable<IJsonRpcService> services)
         {
             Logger.Info("Building service cache");

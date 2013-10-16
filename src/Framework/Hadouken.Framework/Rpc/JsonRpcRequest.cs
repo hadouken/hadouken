@@ -2,6 +2,7 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Framework.Rpc
@@ -27,7 +28,7 @@ namespace Hadouken.Framework.Rpc
         public string Protocol { get; set; }
 
         [JsonProperty("params", Required = Required.Default)]
-        public object Parameters { get; set; }
+        public JToken Parameters { get; set; }
 
         public static bool TryParse(string json, out JsonRpcRequest request, out Exception exception)
         {
