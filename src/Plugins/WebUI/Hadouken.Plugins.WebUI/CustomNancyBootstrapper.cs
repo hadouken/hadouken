@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
-using Nancy;
+﻿using Nancy;
 using Nancy.Conventions;
+using Nancy.Diagnostics;
 using Nancy.Hosting.Self;
 
 namespace Hadouken.Plugins.WebUI
@@ -15,10 +14,9 @@ namespace Hadouken.Plugins.WebUI
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI");
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "UI/"));
-            
             base.ConfigureConventions(nancyConventions);
+
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "UI/"));
         }
     }
 }

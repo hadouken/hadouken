@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
     <Compile Include="WebUIBootstrapper.cs" />
