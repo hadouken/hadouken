@@ -4,9 +4,9 @@ using Nancy;
 using Nancy.Conventions;
 using Nancy.Hosting.Self;
 
-namespace Hadouken.Plugins.WebUI.Nancy
+namespace Hadouken.Plugins.WebUI
 {
-    public class CustomBootstrapper : DefaultNancyBootstrapper
+    public class CustomNancyBootstrapper : DefaultNancyBootstrapper
     {
         protected override IRootPathProvider RootPathProvider
         {
@@ -16,7 +16,7 @@ namespace Hadouken.Plugins.WebUI.Nancy
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UI");
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", path));
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "UI/"));
             
             base.ConfigureConventions(nancyConventions);
         }

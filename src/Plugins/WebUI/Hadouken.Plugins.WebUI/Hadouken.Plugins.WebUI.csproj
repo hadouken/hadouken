@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\PluginsModule.cs" />
-    <Compile Include="Nancy\CustomBootstrapper.cs" />
+    <Compile Include="CustomNancyBootstrapper.cs" />
     <Compile Include="WebUIBootstrapper.cs" />
     <Compile Include="WebUIPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,30 +63,30 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="UI\Content\glyphicons-halflings-regular.eot">
+    <None Include="UI\Css\glyphicons-halflings-regular.eot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="UI\Content\glyphicons-halflings-regular.ttf">
+    <None Include="UI\Css\glyphicons-halflings-regular.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="UI\Content\glyphicons-halflings-regular.woff">
+    <None Include="UI\Css\glyphicons-halflings-regular.woff">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UI\Content\bootstrap-theme.min.css">
+    <Content Include="UI\Css\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Content\bootstrap.min.css">
+    <Content Include="UI\Css\bootstrap.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Content\glyphicons-halflings-regular.svg">
+    <Content Include="UI\Css\glyphicons-halflings-regular.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Content\hdkn.css">
+    <Content Include="UI\Css\hdkn.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Content\nprogress.css">
+    <Content Include="UI\Css\nprogress.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Dialogs\change-auth.html">
