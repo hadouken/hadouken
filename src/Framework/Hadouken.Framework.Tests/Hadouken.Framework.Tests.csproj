@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\JsonRpcHandlerTests.cs" />
+    <Compile Include="Rpc\ParameterResolverTests.cs" />
     <Compile Include="Rpc\RequestHandlerTests.cs" />
     <Compile Include="SemVer\SemanticVersionRangeTests.cs" />
     <Compile Include="SemVer\SemanticVersionTests.cs" />
