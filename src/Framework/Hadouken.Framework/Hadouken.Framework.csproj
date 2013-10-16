@@ -64,7 +64,6 @@
     <Compile Include="DI\AppDomainExplorer.cs" />
     <Compile Include="DI\EventListenerModule.cs" />
     <Compile Include="DI\FileSystemModule.cs" />
-    <Compile Include="DI\HttpFileServerModule.cs" />
     <Compile Include="DI\JsonRpcClientModule.cs" />
     <Compile Include="DI\JsonRpcServiceModule.cs" />
     <Compile Include="DI\ParameterlessConstructorModule.cs" />
@@ -72,19 +71,6 @@
     <Compile Include="DI\WcfJsonRpcServerModule.cs" />
     <Compile Include="Events\EventListener.cs" />
     <Compile Include="Events\IEventListener.cs" />
-    <Compile Include="Http\HttpFileServer.cs" />
-    <Compile Include="Http\IHttpFileServer.cs" />
-    <Compile Include="Http\Media\BasicMediaType.cs" />
-    <Compile Include="Http\Media\ContentResult.cs" />
-    <Compile Include="Http\Media\HandleResult.cs" />
-    <Compile Include="Http\Media\HttpNotFoundResult.cs" />
-    <Compile Include="Http\Media\IMedia.cs" />
-    <Compile Include="Http\Media\IMediaTypeHandler.cs" />
-    <Compile Include="Http\Media\IMediaTypeFactory.cs" />
-    <Compile Include="Http\Media\MediaTypeFactory.cs" />
-    <Compile Include="Http\Media\TypeScriptTranspilerHandler.cs" />
-    <Compile Include="Http\TypeScript\ITypeScriptCompiler.cs" />
-    <Compile Include="Http\TypeScript\TypeScriptCompiler.cs" />
     <Compile Include="IBootConfig.cs" />
     <Compile Include="IO\FileSystem.cs" />
     <Compile Include="IO\IFileSystem.cs" />
@@ -131,12 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Http\TypeScript\Resources\lib.d.ts" />
-    <EmbeddedResource Include="Http\TypeScript\Resources\tsc.exe" />
-    <EmbeddedResource Include="Http\TypeScript\Resources\tsc.js" />
-    <EmbeddedResource Include="Http\TypeScript\Resources\tschost.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
