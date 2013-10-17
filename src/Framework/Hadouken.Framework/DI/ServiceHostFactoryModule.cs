@@ -12,10 +12,7 @@ namespace Hadouken.Framework.DI
                 .SingleInstance();
 
             builder.RegisterGeneric(typeof(ServiceHostFactory<>))
-                .As(typeof(IServiceHostFactory<>))
-                .WithParameter(
-                    (info, context) => info.Name == "container",
-                    (info, context) => context.Resolve<IContainer>());
+                .As(typeof(IServiceHostFactory<>));
         }
     }
 }
