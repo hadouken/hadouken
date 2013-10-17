@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Hadouken.Framework.Events;
-using Hadouken.Framework.Rpc.Hosting;
+using Hadouken.Framework.Plugins;
 
 namespace Hadouken.Plugins.HttpJsonRpc
 {
@@ -17,18 +17,18 @@ namespace Hadouken.Plugins.HttpJsonRpc
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
-        private readonly Lazy<IWcfRpcService> _rpcProxy;
+        private readonly Lazy<IPluginManagerService> _rpcProxy;
         private NetworkCredential _credentials = null;
 
         public HttpJsonRpcServer(string listenUri, IEventListener eventListener)
         {
             _eventListener = eventListener;
-            _rpcProxy = new Lazy<IWcfRpcService>(BuildProxy);
+            _rpcProxy = new Lazy<IPluginManagerService>(BuildProxy);
             _httpListener.Prefixes.Add(listenUri);
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
         }
 
-        private IWcfRpcService BuildProxy()
+        private IPluginManagerService BuildProxy()
         {
             var binding = new NetNamedPipeBinding
             {
@@ -39,7 +39,7 @@ namespace Hadouken.Plugins.HttpJsonRpc
             };
 
             // Create proxy
-            var factory = new ChannelFactory<IWcfRpcService>(binding, "net.pipe://localhost/hdkn.jsonrpc");
+            var factory = new ChannelFactory<IPluginManagerService>(binding, "net.pipe://localhost/hdkn.jsonrpc");
             return factory.CreateChannel();
         }
 
@@ -102,7 +102,7 @@ namespace Hadouken.Plugins.HttpJsonRpc
 
                 try
                 {
-                    var response = _rpcProxy.Value.Call(content);
+                    var response = _rpcProxy.Value.RpcAsync(content).Result;
 
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = 200;

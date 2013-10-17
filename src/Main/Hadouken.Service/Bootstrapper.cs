@@ -1,19 +1,11 @@
-﻿using System.Net;
-using System.ServiceModel;
-using Autofac;
-using Autofac.Integration.Wcf;
+﻿using Autofac;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hadouken.Configuration;
 using Hadouken.Framework.DI;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.IO;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
-using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
@@ -49,10 +41,6 @@ namespace Hadouken.Service
 
 		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
 		    builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
-
-			// Register JSONRPC server
-		    builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
-			
 
             // Register SignalR event server
 		    builder.RegisterType<EventServer>().As<IEventServer>().SingleInstance();

@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Hadouken.Framework.Rpc;
-using Hadouken.Framework.Rpc.Hosting;
 
 namespace Hadouken.Framework.DI
 {
@@ -13,7 +12,6 @@ namespace Hadouken.Framework.DI
 
             builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
             builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
-            builder.RegisterType<WcfJsonRpcService>().As<IWcfRpcService>();
         }
     }
 }

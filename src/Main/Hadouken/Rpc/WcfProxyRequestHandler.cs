@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
-using Hadouken.Framework.Rpc.Hosting;
 using NLog;
 
 namespace Hadouken.Rpc

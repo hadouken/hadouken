@@ -1,8 +1,4 @@
-﻿using System;
-using System.ServiceModel;
-using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc.Hosting;
-using Hadouken.Framework.Wcf;
+﻿using Hadouken.Framework.Plugins;
 using Hadouken.Plugins.Torrents.BitTorrent;
 
 namespace Hadouken.Plugins.Torrents

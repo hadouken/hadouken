@@ -1,9 +1,10 @@
-﻿using Hadouken.Framework.Rpc.Hosting;
-
-namespace Hadouken.Plugins.HttpJsonRpc
+﻿namespace Hadouken.Plugins.HttpJsonRpc
 {
-    public interface IHttpJsonRpcServer : IJsonRpcServer
+    public interface IHttpJsonRpcServer
     {
+        void Open();
+        void Close();
+
         void SetCredentials(string userName, string password);
     }
 }

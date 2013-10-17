@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
 using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc.Hosting;
 
 namespace Hadouken.Framework.Rpc
 {
