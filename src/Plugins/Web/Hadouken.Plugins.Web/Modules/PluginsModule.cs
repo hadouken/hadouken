@@ -19,6 +19,8 @@ namespace Hadouken.Plugins.WebUI.Modules
             if (pluginId == "core.web")
                 return null;
 
+            // TODO: Refactor this
+
             var bindingFactory = new BindingFactory();
             var pluginEndpoint = new Uri("net.pipe://localhost/hdkn.plugins." + pluginId);
             var binding = bindingFactory.Create(pluginEndpoint);
