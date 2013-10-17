@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace Hadouken.Plugins.WebUI.TypeScript
+namespace Hadouken.Framework.TypeScript
 {
     public interface ITypeScriptCompiler
     {
@@ -93,7 +93,7 @@ namespace Hadouken.Plugins.WebUI.TypeScript
         private void ExtractResources()
         {
             var resourceBase = typeof (TypeScriptCompiler) + ".Resources.";
-            var workingDirectory = Path.Combine(Path.GetTempPath(), "tsc");
+            var workingDirectory = Path.Combine(Path.GetTempPath(), "tsc", AppDomain.CurrentDomain.FriendlyName);
             var dir = new DirectoryInfo(workingDirectory);
 
             if (!dir.Exists)

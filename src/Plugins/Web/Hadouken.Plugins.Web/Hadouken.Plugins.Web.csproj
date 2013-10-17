@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,7 +51,6 @@
     <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
     <Compile Include="Modules\TypeScriptModule.cs" />
-    <Compile Include="TypeScript\ITypeScriptCompiler.cs" />
     <Compile Include="WebPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -76,10 +76,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="TypeScript\Resources\lib.d.ts" />
-    <EmbeddedResource Include="TypeScript\Resources\tsc.exe" />
-    <EmbeddedResource Include="TypeScript\Resources\tsc.js" />
-    <EmbeddedResource Include="TypeScript\Resources\tschost.dll" />
     <Content Include="UI\Css\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -6,6 +6,8 @@ using Hadouken.Framework.Events;
 using Hadouken.Framework.IO;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
+using Hadouken.Framework.TypeScript;
+using Hadouken.Framework.Wcf;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
@@ -31,6 +33,10 @@ namespace Hadouken.Service
 
 			// Register file system
 			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
+		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
+
+            // TypeScript
+		    builder.RegisterType<TypeScriptCompiler>().As<ITypeScriptCompiler>().SingleInstance();
 
 			// Register RPC services
             builder.RegisterType<PluginsService>().As<IJsonRpcService>().SingleInstance();
@@ -40,7 +46,12 @@ namespace Hadouken.Service
 			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
 
 		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
-		    builder.Register<IClientTransport>(c => new WcfNamedPipeClientTransport("net.pipe://localhost/hdkn.jsonrpc"));
+
+		    builder.RegisterGeneric(typeof (ProxyFactory<>)).As(typeof (IProxyFactory<>)).SingleInstance();
+
+		    builder.RegisterType<WcfClientTransport>()
+		        .As<IClientTransport>()
+		        .WithParameter("endpoint", new Uri("net.pipe://localhost/hdkn.jsonrpc"));
 
             // Register SignalR event server
 		    builder.RegisterType<EventServer>().As<IEventServer>().SingleInstance();

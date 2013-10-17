@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Hadouken.Plugins.WebUI.TypeScript;
+using Hadouken.Framework.TypeScript;
 using Nancy;
 
 namespace Hadouken.Plugins.WebUI.Modules

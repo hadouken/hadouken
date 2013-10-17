@@ -11,7 +11,7 @@ namespace Hadouken.Framework.DI
         protected override void Load(ContainerBuilder builder)
         {
             builder
-                .RegisterType<WcfNamedPipeClientTransport>()
+                .RegisterType<WcfClientTransport>()
                 .WithParameter(
                     (param, ctx) => param.Name == "rpcHost",
                     (param, ctx) => BuildRpcHostUri(ctx.Resolve<IBootConfig>()))
