@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hadouken.Configuration;
+using Hadouken.Framework.DI;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.IO;
+using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
 using Hadouken.Plugins;
@@ -66,31 +68,11 @@ namespace Hadouken.Service
 			// Register configuration
 			builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
 
-			// Build the container.
-			var container = builder.Build();
-            
-            // Register the WCF host
-		    var wcfBuilder = new ContainerBuilder();
-            wcfBuilder.Register<IWcfJsonRpcServer>(c =>
-            {
-                var binding = new NetNamedPipeBinding
-                {
-                    MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
-                    MaxConnections = 10,
-                    MaxReceivedMessageSize = 10485760
-                };
-
-                var host = new ServiceHost(typeof(WcfJsonRpcService));
-                host.AddServiceEndpoint(typeof(IWcfRpcService), binding, "net.pipe://localhost/hdkn.jsonrpc");
-                host.AddDependencyInjectionBehavior<IWcfRpcService>(container);
-
-                return new WcfJsonRpcServer(host);
-            });
-
-		    wcfBuilder.Update(container);
+		    builder.RegisterType<PluginManagerService>().As<IPluginManagerService>();
+			builder.RegisterModule(new ServiceHostFactoryModule());
 
 			// Resolve the service.
+		    var container = builder.Build();
 			return container.Resolve<IHadoukenService>();
 		}
 	}

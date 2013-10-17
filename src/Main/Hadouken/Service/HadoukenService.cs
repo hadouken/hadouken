@@ -1,5 +1,9 @@
-﻿using Hadouken.Events;
+﻿using System;
+using Hadouken.Configuration;
+using Hadouken.Events;
+using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc.Hosting;
+using Hadouken.Framework.Wcf;
 using Hadouken.Plugins;
 using Hadouken.Rpc;
 using NLog;
@@ -12,13 +16,16 @@ namespace Hadouken.Service
 
 	    private readonly IEventServer _eventServer;
 	    private readonly IPluginEngine _pluginEngine;
-	    private readonly IWcfJsonRpcServer _wcfRpcServer;
+	    private readonly IServiceHost _gatewayHost;
 
-        public HadoukenService(IEventServer eventServer, IPluginEngine pluginEngine, IWcfJsonRpcServer wcfRpcServer)
+        public HadoukenService(IConfiguration configuration,
+            IEventServer eventServer,
+            IPluginEngine pluginEngine,
+            IServiceHostFactory<IPluginManagerService> serviceHostFactory)
 		{
 		    _eventServer = eventServer;
 		    _pluginEngine = pluginEngine;
-		    _wcfRpcServer = wcfRpcServer;
+            _gatewayHost = serviceHostFactory.Create(new Uri(configuration.Rpc.GatewayUri));
 		}
 
 		public void Start(string[] args)
@@ -27,7 +34,7 @@ namespace Hadouken.Service
 
 		    _eventServer.Open();
 
-		    _wcfRpcServer.Open();
+		    _gatewayHost.Open();
 
 			_pluginEngine.ScanAsync().Wait();
 			_pluginEngine.LoadAllAsync().Wait();
@@ -39,7 +46,7 @@ namespace Hadouken.Service
 
 			_pluginEngine.UnloadAllAsync().Wait();
 
-		    _wcfRpcServer.Close();
+		    _gatewayHost.Close();
 
 		    _eventServer.Close();
 		}

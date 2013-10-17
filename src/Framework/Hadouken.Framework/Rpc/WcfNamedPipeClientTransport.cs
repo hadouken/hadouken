@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
+using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc.Hosting;
 
 namespace Hadouken.Framework.Rpc
@@ -7,15 +8,15 @@ namespace Hadouken.Framework.Rpc
     public class WcfNamedPipeClientTransport :IClientTransport
     {
         private readonly string _rpcHost;
-        private readonly Lazy<IWcfRpcService> _rpcProxy;
+        private readonly Lazy<IPluginManagerService> _rpcProxy;
 
         public WcfNamedPipeClientTransport(string rpcHost)
         {
             _rpcHost = rpcHost;
-            _rpcProxy = new Lazy<IWcfRpcService>(BuildProxy);
+            _rpcProxy = new Lazy<IPluginManagerService>(BuildProxy);
         }
 
-        private IWcfRpcService BuildProxy()
+        private IPluginManagerService BuildProxy()
         {
             var binding = new NetNamedPipeBinding
             {
@@ -26,13 +27,13 @@ namespace Hadouken.Framework.Rpc
             };
 
             // Create proxy
-            var factory = new ChannelFactory<IWcfRpcService>(binding, _rpcHost);
+            var factory = new ChannelFactory<IPluginManagerService>(binding, _rpcHost);
             return factory.CreateChannel();
         }
 
         public string Send(string data)
         {
-            return _rpcProxy.Value.Call(data);
+            return _rpcProxy.Value.RpcAsync(data).Result;
         }
     }
 }
