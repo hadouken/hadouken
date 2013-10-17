@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-
+using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Rpc.Hosting;
 using NLog;
@@ -11,7 +11,7 @@ namespace Hadouken.Rpc
     public class WcfProxyRequestHandler : RequestHandler
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IDictionary<string, IWcfRpcService> _proxyList = new Dictionary<string, IWcfRpcService>();
+        private readonly IDictionary<string, IPluginManagerService> _proxyList = new Dictionary<string, IPluginManagerService>();
 
         public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services) : base(services) { }
 
@@ -42,13 +42,13 @@ namespace Hadouken.Rpc
                 };
 
                 // Create proxy
-                var factory = new ChannelFactory<IWcfRpcService>(binding,
+                var factory = new ChannelFactory<IPluginManagerService>(binding,
                     "net.pipe://localhost/hdkn.plugins." + plugin);
                 var proxy = factory.CreateChannel();
 
                 try
                 {
-                    var result = proxy.Call(request.Serialize());
+                    var result = proxy.RpcAsync(request.Serialize()).Result;
 
                     Exception responseParseException;
                     JsonRpcResponse response;
@@ -71,7 +71,7 @@ namespace Hadouken.Rpc
             else if(_proxyList[plugin] != null)
             {
                 var wcfProxy = _proxyList[plugin];
-                var result = wcfProxy.Call(request.Serialize());
+                var result = wcfProxy.RpcAsync(request.Serialize()).Result;
 
                 Exception parseException;
                 JsonRpcResponse response;

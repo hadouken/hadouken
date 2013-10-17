@@ -84,6 +84,7 @@ namespace Hadouken.Plugins
             Logger.Debug("Creating sandboxed environment");
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
             Logger.Debug("Loading {0} in sandboxed environment", _manifest.Name);
+            
             _sandboxedEnvironment.Load(_bootConfig);
 
             State = PluginState.Loaded;

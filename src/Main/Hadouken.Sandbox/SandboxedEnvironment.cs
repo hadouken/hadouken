@@ -10,7 +10,7 @@ namespace Hadouken.Sandbox
 {
     public sealed class SandboxedEnvironment : MarshalByRefObject
     {
-        private Plugin _plugin;
+        private IPluginHost _pluginHost;
 
         public SandboxedEnvironment()
         {
@@ -35,21 +35,30 @@ namespace Hadouken.Sandbox
                                       .Select(Assembly.Load).ToList();
 
             // Find the bootstrapper class in this AppDomain. Get the plugin and load it.
-            var bootstrapperType = (from asm in assemblies
-                                    from type in asm.GetTypes()
-                                    where typeof(Bootstrapper).IsAssignableFrom(type)
-                                    where type.IsClass && !type.IsAbstract
-                                    select type).Single();
+            // If we find a bootstrapper which is not the DefaultBootstrapper, use that instead.
+
+            var bootstrapperTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                from type in asm.GetTypes()
+                where typeof (Bootstrapper).IsAssignableFrom(type)
+                where type.IsClass && !type.IsAbstract
+                select type).ToList();
+
+            var bootstrapperType = bootstrapperTypes.Single(t => t == typeof (DefaultBootstrapper));
+
+            if (bootstrapperTypes.Count > 1)
+            {
+                bootstrapperType = bootstrapperTypes.Single(t => t != typeof (DefaultBootstrapper));
+            }
 
             var bootstrapper = (Bootstrapper)Activator.CreateInstance(bootstrapperType);
 
-            _plugin = bootstrapper.Load(bootConfig);
-            _plugin.OnStart();
+            _pluginHost = bootstrapper.Bootstrap(bootConfig);
+            _pluginHost.Load();
         }
 
         private void Unload()
         {
-            _plugin.OnStop();
+            _pluginHost.Unload();
         }
     }
 }

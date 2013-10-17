@@ -51,7 +51,6 @@
     <Compile Include="CustomNancyBootstrapper.cs" />
     <Compile Include="Modules\TypeScriptModule.cs" />
     <Compile Include="TypeScript\ITypeScriptCompiler.cs" />
-    <Compile Include="WebBootstrapper.cs" />
     <Compile Include="WebPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

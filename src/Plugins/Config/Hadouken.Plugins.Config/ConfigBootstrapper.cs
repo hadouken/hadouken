@@ -6,25 +6,11 @@ using Autofac;
 
 namespace Hadouken.Plugins.Config
 {
-    public class ConfigBootstrapper : Bootstrapper
+    public class ConfigBootstrapper : DefaultBootstrapper
     {
-        public IContainer Container { get; private set; }
-
-        public override Plugin Load(IBootConfig config)
+        public override void RegisterDependencies(ContainerBuilder builder)
         {
-            Container = BuildContainer(config);
-            return Container.Resolve<Plugin>();
-        }
-
-        private IContainer BuildContainer(IBootConfig config)
-        {
-            var builder = new ContainerBuilder();
-            builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof(Bootstrapper).Assembly);
-
-            // Data store
-            builder.Register<IConfigDataStore>(c => new SQLiteDataStore(config.DataPath)).SingleInstance();
-
-            return builder.Build();
+            builder.Register<IConfigDataStore>(c => new SQLiteDataStore(Configuration.DataPath)).SingleInstance();
         }
     }
 }
