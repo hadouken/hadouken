@@ -49,6 +49,8 @@
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
+    <Compile Include="Modules\TypeScriptModule.cs" />
+    <Compile Include="TypeScript\ITypeScriptCompiler.cs" />
     <Compile Include="WebBootstrapper.cs" />
     <Compile Include="WebPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +77,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="TypeScript\Resources\lib.d.ts" />
+    <EmbeddedResource Include="TypeScript\Resources\tsc.exe" />
+    <EmbeddedResource Include="TypeScript\Resources\tsc.js" />
+    <EmbeddedResource Include="TypeScript\Resources\tschost.dll" />
     <Content Include="UI\Css\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
