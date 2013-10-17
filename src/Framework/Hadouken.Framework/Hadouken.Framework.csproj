@@ -88,6 +88,7 @@
     <Compile Include="Rpc\IMethodInvoker.cs" />
     <Compile Include="Rpc\InvalidParametersException.cs" />
     <Compile Include="Rpc\IParameterResolver.cs" />
+    <Compile Include="Rpc\IProxy.cs" />
     <Compile Include="Rpc\IRequestHandler.cs" />
     <Compile Include="Rpc\JsonRpcClient.cs" />
     <Compile Include="Rpc\JsonRpcErrorResponse.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Wcf\IBindingFactory.cs" />
     <Compile Include="Wcf\IServiceHost.cs" />
     <Compile Include="Wcf\IServiceHostFactory.cs" />
+    <Compile Include="Wcf\Proxy.cs" />
     <Compile Include="Wcf\ServiceHostFactory.cs" />
   </ItemGroup>
   <ItemGroup>
