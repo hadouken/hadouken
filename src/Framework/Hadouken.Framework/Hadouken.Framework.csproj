@@ -68,13 +68,15 @@
     <Compile Include="DI\JsonRpcServiceModule.cs" />
     <Compile Include="DI\ParameterlessConstructorModule.cs" />
     <Compile Include="DI\PluginModule.cs" />
-    <Compile Include="DI\WcfJsonRpcServerModule.cs" />
+    <Compile Include="DI\ServiceHostFactoryModule.cs" />
     <Compile Include="Events\EventListener.cs" />
     <Compile Include="Events\IEventListener.cs" />
     <Compile Include="IBootConfig.cs" />
     <Compile Include="IO\FileSystem.cs" />
     <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="Plugins\IPluginManagerService.cs" />
     <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\PluginManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\Hosting\IJsonRpcServer.cs" />
     <Compile Include="Rpc\Hosting\IWcfRpcService.cs" />
@@ -112,8 +114,12 @@
     <Compile Include="SemVer\Rule.cs" />
     <Compile Include="SemVer\SemanticVersion.cs" />
     <Compile Include="SemVer\SemanticVersionRange.cs" />
-    <Compile Include="Wcf\BindingBuilder.cs" />
-    <Compile Include="Wcf\IBindingBuilder.cs" />
+    <Compile Include="Wcf\BindingFactory.cs" />
+    <Compile Include="Wcf\GenericServiceHost.cs" />
+    <Compile Include="Wcf\IBindingFactory.cs" />
+    <Compile Include="Wcf\IServiceHost.cs" />
+    <Compile Include="Wcf\IServiceHostFactory.cs" />
+    <Compile Include="Wcf\ServiceHostFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -44,12 +44,12 @@ namespace Hadouken.Sandbox
             var bootstrapper = (Bootstrapper)Activator.CreateInstance(bootstrapperType);
 
             _plugin = bootstrapper.Load(bootConfig);
-            _plugin.Load();
+            _plugin.OnStart();
         }
 
         private void Unload()
         {
-            _plugin.Unload();
+            _plugin.OnStop();
         }
     }
 }

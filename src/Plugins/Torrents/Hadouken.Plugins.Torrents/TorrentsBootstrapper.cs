@@ -21,7 +21,6 @@ namespace Hadouken.Plugins.Torrents
             var builder = new ContainerBuilder();
             builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof (Bootstrapper).Assembly);
             builder.RegisterModule(new ConfigModule(config));
-            builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
 
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();

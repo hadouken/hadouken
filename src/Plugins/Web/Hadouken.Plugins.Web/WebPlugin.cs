@@ -13,12 +13,12 @@ namespace Hadouken.Plugins.WebUI
             _nancyHost = new NancyHost(new CustomNancyBootstrapper(), new HostConfiguration(){RewriteLocalhost = false}, new Uri("http://localhost:7890/"));
         }
 
-        public override void Load()
+        public override void OnStart()
         {
             _nancyHost.Start();
         }
 
-        public override void Unload()
+        public override void OnStop()
         {
             _nancyHost.Stop();
         }

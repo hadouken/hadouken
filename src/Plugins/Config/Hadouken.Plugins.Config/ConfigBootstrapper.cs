@@ -20,7 +20,6 @@ namespace Hadouken.Plugins.Config
         {
             var builder = new ContainerBuilder();
             builder.RegisterAssemblyModules<ParameterlessConstructorModule>(typeof(Bootstrapper).Assembly);
-            builder.RegisterModule(new WcfJsonRpcServerModule(() => Container, config.RpcPluginUri));
 
             // Data store
             builder.Register<IConfigDataStore>(c => new SQLiteDataStore(config.DataPath)).SingleInstance();

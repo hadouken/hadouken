@@ -11,12 +11,12 @@ namespace Hadouken.Plugins.HttpJsonRpc
             _rpcServer = rpcServer;
         }
 
-        public override void Load()
+        public override void OnStart()
         {
             _rpcServer.Open();
         }
 
-        public override void Unload()
+        public override void OnStop()
         {
             _rpcServer.Close();
         }
