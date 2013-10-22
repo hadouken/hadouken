@@ -18,5 +18,7 @@ namespace Hadouken.Framework.IO
         bool DirectoryExists(string path);
 
         DateTime? LastWriteTime(string path);
+
+        void EmptyDirectory(string path);
     }
 }

@@ -2,7 +2,7 @@
 using Hadouken.Framework.TypeScript;
 using Nancy;
 
-namespace Hadouken.Plugins.WebUI.Modules
+namespace Hadouken.Plugins.Web.Modules
 {
     public class TypeScriptModule : NancyModule
     {

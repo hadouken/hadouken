@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Hadouken.Configuration;
+using Hadouken.Framework;
 using Hadouken.Framework.IO;
+using Hadouken.Framework.Rpc;
 using NLog;
 
 namespace Hadouken.Plugins
@@ -15,18 +18,18 @@ namespace Hadouken.Plugins
 
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
-        private readonly IEnumerable<IPluginLoader> _pluginLoaders;
+        private readonly IJsonRpcClient _rpcClient;
 
         private readonly IDictionary<string, IPluginManager> _pluginManagers =
             new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
 
         private readonly object _lock = new object();
 
-        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IEnumerable<IPluginLoader> pluginLoaders)
+        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IJsonRpcClient rpcClient)
         {
             _configuration = configuration;
             _fileSystem = fileSystem;
-            _pluginLoaders = pluginLoaders;
+            _rpcClient = rpcClient;
         }
 
         public IEnumerable<IPluginManager> GetAll()
@@ -51,8 +54,8 @@ namespace Hadouken.Plugins
         public void Scan()
         {
             var entries = new List<string>((from PluginElement element
-                    in _configuration.Plugins
-                                            select element.Path));
+                in _configuration.Plugins
+                select element.Path));
 
             // Add entries from baseDirectory
             entries.AddRange(
@@ -64,19 +67,51 @@ namespace Hadouken.Plugins
             if (!String.IsNullOrEmpty(extraPlugin))
                 entries.Add(extraPlugin);
 
-            var managers = (from entry in entries
-                            from loader in _pluginLoaders
-                            where loader.CanLoad(entry)
-                            select loader.Load(entry)).ToList();
-
-            lock (_lock)
+            foreach (var path in entries)
             {
-                foreach (var manager in managers)
+                using (var stream = _fileSystem.OpenRead(path))
                 {
-                    if (_pluginManagers.ContainsKey(manager.Manifest.Name))
+                    IPackage package;
+
+                    if (!Package.TryParse(stream, out package))
                         continue;
 
-                    _pluginManagers.Add(manager.Manifest.Name, manager);
+                    // Extract package
+                    var unpackagedPath = Path.Combine(
+                        Path.GetTempPath(),
+                        "hdkn",
+                        package.Manifest.Name + "-" + package.Manifest.Version);
+
+                    _fileSystem.EmptyDirectory(unpackagedPath);
+
+                    stream.Seek(0, SeekOrigin.Begin);
+                    package.Unpack(stream, unpackagedPath);
+
+                    lock (_lock)
+                    {
+                        if (_pluginManagers.ContainsKey(package.Manifest.Name))
+                            continue;
+
+                        var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, package.Manifest.Name);
+
+                        if (!_fileSystem.DirectoryExists(pluginDataPath))
+                            _fileSystem.CreateDirectory(pluginDataPath);
+
+                        var bootConfig = new BootConfig
+                        {
+                            DataPath = pluginDataPath,
+                            HostBinding = _configuration.Http.HostBinding,
+                            Port = _configuration.Http.Port,
+                            UserName = _configuration.Http.Authentication.UserName,
+                            Password = _configuration.Http.Authentication.Password,
+                            RpcGatewayUri = _configuration.Rpc.GatewayUri,
+                            RpcPluginUri = String.Format(_configuration.Rpc.PluginUri, package.Manifest.Name),
+                            HttpVirtualPath = "/plugins/" + package.Manifest.Name
+                        };
+
+                        var manager = new PluginManager(unpackagedPath, package.Manifest, _fileSystem, bootConfig, _rpcClient);
+                        _pluginManagers.Add(package.Manifest.Name, manager);
+                    }
                 }
             }
         }

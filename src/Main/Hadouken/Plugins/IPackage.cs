@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hadouken.Framework.SemVer;
+﻿using System.IO;
 using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins
@@ -12,6 +7,6 @@ namespace Hadouken.Plugins
     {
         IManifest Manifest { get; }
 
-
+        void Unpack(Stream stream, string outputPath);
     }
 }

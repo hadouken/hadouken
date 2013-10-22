@@ -28,9 +28,6 @@ namespace Hadouken.Service
 			// Register plugin engine
 			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
 
-			// Register plugin loaders
-			builder.RegisterType<DirectoryPluginLoader>().As<IPluginLoader>();
-
 			// Register file system
 			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();

@@ -2,7 +2,7 @@
 using Hadouken.Framework.Plugins;
 using Nancy.Hosting.Self;
 
-namespace Hadouken.Plugins.WebUI
+namespace Hadouken.Plugins.Web
 {
     public class WebPlugin : Plugin
     {

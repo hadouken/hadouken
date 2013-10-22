@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Docs", "1. Docs", "{BB90809C-ACD9-406C-9DC3-5352B151787E}"
 	ProjectSection(SolutionItems) = preProject
 		docs\index.md = docs\index.md
@@ -32,6 +34,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Service", "src\Main\Hadouken.Service\Hadouken.Service.csproj", "{80922004-394C-435F-B6AF-37011C85FAB9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B3D8890F-1C52-4DDC-9A80-3E15F72B748D} = {B3D8890F-1C52-4DDC-9A80-3E15F72B748D}
+		{F4E2D988-73DF-4173-BD55-A4E15105D232} = {F4E2D988-73DF-4173-BD55-A4E15105D232}
 		{4A450DD2-5837-4FD1-9307-A9BEB2ED51C9} = {4A450DD2-5837-4FD1-9307-A9BEB2ED51C9}
 		{F7D249DF-D25E-471F-9EC6-463FB1A784DA} = {F7D249DF-D25E-471F-9EC6-463FB1A784DA}
 	EndProjectSection

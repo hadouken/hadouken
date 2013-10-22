@@ -5,7 +5,7 @@ using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Wcf;
 using Nancy;
 
-namespace Hadouken.Plugins.WebUI.Modules
+namespace Hadouken.Plugins.Web.Modules
 {
     public class PluginsModule : NancyModule
     {

@@ -1,15 +1,14 @@
-﻿using Nancy;
+﻿using System;
+using Nancy;
 using Nancy.Conventions;
-using Nancy.Diagnostics;
-using Nancy.Hosting.Self;
 
-namespace Hadouken.Plugins.WebUI
+namespace Hadouken.Plugins.Web
 {
     public class CustomNancyBootstrapper : DefaultNancyBootstrapper
     {
         protected override IRootPathProvider RootPathProvider
         {
-            get { return new FileSystemRootPathProvider(); }
+            get { return new AppDomainRootPathProvider(); }
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
@@ -18,4 +17,13 @@ namespace Hadouken.Plugins.WebUI
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "UI/", "html", "css"));
         }
     }
+
+    public class AppDomainRootPathProvider : IRootPathProvider
+    {
+        public string GetRootPath()
+        {
+            return AppDomain.CurrentDomain.BaseDirectory;
+        }
+    }
+
 }

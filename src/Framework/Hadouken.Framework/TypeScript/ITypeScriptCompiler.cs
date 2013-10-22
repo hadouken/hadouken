@@ -32,7 +32,7 @@ namespace Hadouken.Framework.TypeScript
                 {
                     Arguments = String.Format("\"{0}\" --out \"{1}\"", file, outputFile),
                     WorkingDirectory = _toolsPath,
-                    FileName = "tsc.exe",
+                    FileName = Path.Combine(_toolsPath, "tsc.exe"),
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
@@ -92,8 +92,8 @@ namespace Hadouken.Framework.TypeScript
 
         private void ExtractResources()
         {
-            var resourceBase = typeof (TypeScriptCompiler) + ".Resources.";
-            var workingDirectory = Path.Combine(Path.GetTempPath(), "tsc", AppDomain.CurrentDomain.FriendlyName);
+            var resourceBase = typeof (TypeScriptCompiler).Namespace + ".Resources.";
+            var workingDirectory = Path.Combine(Path.GetTempPath(), "hdkn", "tsc", AppDomain.CurrentDomain.FriendlyName);
             var dir = new DirectoryInfo(workingDirectory);
 
             if (!dir.Exists)

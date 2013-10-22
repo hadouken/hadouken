@@ -47,5 +47,23 @@ namespace Hadouken.Framework.IO
             var info = new FileInfo(path);
             return info.LastWriteTime;
         }
+
+        public void EmptyDirectory(string path)
+        {
+            if (!DirectoryExists(path))
+                CreateDirectory(path);
+
+            var dir = new DirectoryInfo(path);
+
+            foreach (var file in dir.GetFiles())
+            {
+                file.Delete();
+            }
+
+            foreach (var subDir in dir.GetDirectories())
+            {
+                subDir.Delete(true);
+            }
+        }
     }
 }

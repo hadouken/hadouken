@@ -78,8 +78,8 @@ namespace Hadouken.Plugins
 
             var assemblyName = typeof (SandboxedEnvironment).Assembly.Location;
             var typeName = typeof (SandboxedEnvironment).FullName;
-
-            var domain = AppDomain.CreateDomain(Guid.NewGuid().ToString(), null, setupInfo);
+            var domainName = String.Concat(_manifest.Name, "-", _manifest.Version);
+            var domain = AppDomain.CreateDomain(domainName, null, setupInfo);
 
             Logger.Debug("Creating sandboxed environment");
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
