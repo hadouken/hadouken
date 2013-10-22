@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jurassic">
+      <HintPath>..\..\..\..\packages\Jurassic.2.1.1\lib\Jurassic.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\..\..\..\packages\Nancy.0.20.0\lib\net40\Nancy.dll</HintPath>
     </Reference>
@@ -47,10 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoffeeScript\ICoffeeCompiler.cs" />
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
-    <Compile Include="Modules\TypeScriptModule.cs" />
+    <Compile Include="Modules\CoffeeModule.cs" />
     <Compile Include="WebPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -74,8 +78,12 @@
     <None Include="UI\Css\glyphicons-halflings-regular.woff">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="UI\Scripts\test.coffee">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CoffeeScript\Resources\CoffeeScript.compiler.js" />
     <Content Include="UI\Css\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
