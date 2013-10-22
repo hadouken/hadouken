@@ -6,6 +6,7 @@
         Unloaded,
         Unloading,
         Loading,
-        Loaded
+        Loaded,
+        Updating
     }
 }

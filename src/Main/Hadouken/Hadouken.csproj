@@ -91,6 +91,7 @@
     <Compile Include="Events\Rpc\EventsService.cs" />
     <Compile Include="Plugins\DependencyNotFoundException.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
+    <Compile Include="Plugins\IPackage.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
@@ -99,12 +100,16 @@
     <Compile Include="Plugins\Metadata\IManifestReader.cs" />
     <Compile Include="Plugins\Metadata\Manifest.cs" />
     <Compile Include="Plugins\Metadata\ManifestV1Reader.cs" />
+    <Compile Include="Plugins\Package.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\DirectoryPluginLoader.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\ManifestNotFoundException.cs" />
     <Compile Include="Plugins\ManifestParseException.cs" />
     <Compile Include="Plugins\PluginState.cs" />
+    <Compile Include="Plugins\Repository\Models\Plugin.cs" />
+    <Compile Include="Plugins\Repository\IPluginRepository.cs" />
+    <Compile Include="Plugins\Repository\Models\Release.cs" />
     <Compile Include="Plugins\Rpc\PluginsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\CoreServices.cs" />
