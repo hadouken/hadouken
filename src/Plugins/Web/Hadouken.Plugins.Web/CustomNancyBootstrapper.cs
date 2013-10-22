@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Hadouken.Plugins.Web.CoffeeScript;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Conventions;
+using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
 
 namespace Hadouken.Plugins.Web
@@ -13,60 +16,54 @@ namespace Hadouken.Plugins.Web
     {
         protected override IRootPathProvider RootPathProvider
         {
-            get { return new AppDomainRootPathProvider(); }
+            get { return new FileSystemRootPathProvider(); }
         }
 
-        protected override void RequestStartup(TinyIoCContainer container, IPipelines pipelines, NancyContext context)
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            base.RequestStartup(container, pipelines, context);
+            base.ApplicationStartup(container, pipelines);
 
-            pipelines.AfterRequest.AddItemToEndOfPipeline(ctx =>
+            pipelines.AfterRequest.AddItemToEndOfPipeline(
+                ctx => CompileCoffeeFiles(container.Resolve<ICoffeeCompiler>(), ctx));
+        }
+
+        private static void CompileCoffeeFiles(ICoffeeCompiler compiler, NancyContext context)
+        {
+            if (!context.Request.Path.EndsWith(".coffee"))
+                return;
+
+            if (context.Response.StatusCode != HttpStatusCode.OK)
+                return;
+
+            using (var ms = new MemoryStream())
             {
-                if (!ctx.Request.Path.EndsWith(".coffee")
-                    && ctx.Response.StatusCode != HttpStatusCode.OK)
+                context.Response.Contents(ms);
+                var responseContent = Encoding.UTF8.GetString(ms.ToArray());
+
+                if (String.IsNullOrEmpty(responseContent))
                 {
-                    return;
+                    context.Response.StatusCode = HttpStatusCode.NotFound;
                 }
-
-                var currentContents = "";
-                using (var ms = new MemoryStream())
+                else
                 {
-                    ctx.Response.Contents.Invoke(ms);
-                    currentContents = Encoding.UTF8.GetString(ms.ToArray());
-                }
-
-                if (String.IsNullOrEmpty(currentContents))
-                {
-                    ctx.Response.StatusCode = HttpStatusCode.NotFound;
-                    return;
-                }
-
-                ctx.Response.ContentType = "text/javascript";
-
-                ctx.Response.Contents = s =>
-                {
-                    using (var writer = new StreamWriter(s))
+                    context.Response.ContentType = "text/javascript";
+                    context.Response.Contents = stream =>
                     {
-                        var compiler = container.Resolve<ICoffeeCompiler>();
-                        writer.Write(compiler.Compile(currentContents));
-                    }
-                };
-            });
+                        using (var writer = new StreamWriter(stream))
+                        {
+                            var compiledCoffeeResponse = compiler.Compile(responseContent);
+                            writer.Write(compiledCoffeeResponse);
+                        }
+                    };
+                }
+            }
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
             base.ConfigureConventions(nancyConventions);
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/", "UI/", "html", "css"));
+            nancyConventions.StaticContentsConventions.Add(
+                StaticContentConventionBuilder.AddDirectory("/", "UI/", "html", "css", "js"));
         }
     }
-
-    public class AppDomainRootPathProvider : IRootPathProvider
-    {
-        public string GetRootPath()
-        {
-            return AppDomain.CurrentDomain.BaseDirectory;
-        }
-    }
-
 }
