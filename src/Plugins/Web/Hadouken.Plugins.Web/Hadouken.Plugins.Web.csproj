@@ -50,7 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoffeeScript\CoffeeCompiler.cs" />
     <Compile Include="CoffeeScript\ICoffeeCompiler.cs" />
+    <Compile Include="CoffeeScript\ResourceReader.cs" />
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
