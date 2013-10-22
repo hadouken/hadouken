@@ -116,7 +116,6 @@
     <Compile Include="SemVer\Rule.cs" />
     <Compile Include="SemVer\SemanticVersion.cs" />
     <Compile Include="SemVer\SemanticVersionRange.cs" />
-    <Compile Include="TypeScript\ITypeScriptCompiler.cs" />
     <Compile Include="Wcf\BindingFactory.cs" />
     <Compile Include="Wcf\GenericServiceHost.cs" />
     <Compile Include="Wcf\IBindingFactory.cs" />
@@ -129,18 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TypeScript\Resources\lib.d.ts" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TypeScript\Resources\tsc.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TypeScript\Resources\tsc.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TypeScript\Resources\tschost.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

@@ -4,7 +4,6 @@ using Autofac;
 using Hadouken.Framework.DI;
 using Hadouken.Framework.IO;
 using Hadouken.Framework.Plugins;
-using Hadouken.Framework.TypeScript;
 
 namespace Hadouken.Framework
 {
@@ -17,8 +16,6 @@ namespace Hadouken.Framework
             builder.RegisterType<PluginManagerService>().As<IPluginManagerService>();
             builder.RegisterType<PluginHost>().As<IPluginHost>().SingleInstance();
             builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
-            // TypeScript
-            builder.RegisterType<TypeScriptCompiler>().As<ITypeScriptCompiler>().SingleInstance();
         }
 
         public override void RegisterPlugin(ContainerBuilder builder)

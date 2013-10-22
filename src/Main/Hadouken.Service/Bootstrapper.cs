@@ -6,7 +6,6 @@ using Hadouken.Framework.Events;
 using Hadouken.Framework.IO;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
-using Hadouken.Framework.TypeScript;
 using Hadouken.Framework.Wcf;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
@@ -31,9 +30,6 @@ namespace Hadouken.Service
 			// Register file system
 			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
-
-            // TypeScript
-		    builder.RegisterType<TypeScriptCompiler>().As<ITypeScriptCompiler>().SingleInstance();
 
 			// Register RPC services
             builder.RegisterType<PluginsService>().As<IJsonRpcService>().SingleInstance();
