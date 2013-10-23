@@ -1,6 +1,7 @@
-﻿define ['eventListener'], (EventListener) ->
+﻿define ['eventListener', 'pageManager'], (EventListener, PageManager) ->
   class Bootstrapper
-    eventListener = new EventListener()
+    eventListener: new EventListener()
+    pageManager: PageManager.getInstance()
 
     constructor: ->
 

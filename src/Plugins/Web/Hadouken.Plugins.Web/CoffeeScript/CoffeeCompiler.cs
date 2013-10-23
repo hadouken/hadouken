@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Jurassic;
 
 namespace Hadouken.Plugins.Web.CoffeeScript
@@ -6,17 +7,17 @@ namespace Hadouken.Plugins.Web.CoffeeScript
     public class CoffeeCompiler : ICoffeeCompiler
     {
         private const string CoffeeScriptCompile = "CoffeeScript.compile(Source, {{bare: {0}}})";
-        private readonly Lazy<ScriptEngine> _scriptEngine;
+        private readonly ThreadLocal<Lazy<ScriptEngine>> _scriptEngine;
 
         public CoffeeCompiler()
         {
-            _scriptEngine = new Lazy<ScriptEngine>(InitScriptEngine);
+            _scriptEngine = new ThreadLocal<Lazy<ScriptEngine>>(() => new Lazy<ScriptEngine>(InitScriptEngine));
         }
 
         public string Compile(string source)
         {
-            _scriptEngine.Value.SetGlobalValue("Source", source);
-            return _scriptEngine.Value.Evaluate<string>(String.Format(CoffeeScriptCompile, "false"));
+            _scriptEngine.Value.Value.SetGlobalValue("Source", source);
+            return _scriptEngine.Value.Value.Evaluate<string>(String.Format(CoffeeScriptCompile, "false"));
         }
 
         private ScriptEngine InitScriptEngine()

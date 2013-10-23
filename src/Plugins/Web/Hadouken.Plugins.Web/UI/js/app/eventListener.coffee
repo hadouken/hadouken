@@ -1,4 +1,4 @@
-﻿define ['jquery', 'jquery.signalr'], ($, signalR) ->
+﻿define ['jquery', 'jquery.signalr'], ($) ->
   class EventListener
     connection: $.hubConnection('/events')
     proxy: null
@@ -30,6 +30,5 @@
         for handler, i in @handlers[key]
           delete @handlers[key][i]
       
-
   return EventListener
       
