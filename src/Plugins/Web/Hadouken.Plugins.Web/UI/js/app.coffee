@@ -6,8 +6,9 @@
     pageManager: '../app/pageManager.coffee?n'
     page: '../app/page.coffee?n'
     settingsPage: '../app/pages/settings.coffee?n'
+    rpc: '../app/rpc.coffee?n'
 })
 
-requirejs ['jquery', 'bootstrapper'], ($, Bootstrapper) ->
+requirejs ['jquery', 'bootstrap', 'bootstrapper'], ($, t, Bootstrapper) ->
   bs = new Bootstrapper()
   bs.load()
