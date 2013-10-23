@@ -1,9 +1,11 @@
-﻿define () ->
+﻿define ['eventListener'], (EventListener) ->
   class Bootstrapper
+    eventListener = new EventListener()
+
     constructor: ->
-      console.log('creating bootstrapper')
+      @even
 
     load: ->
-      console.log('load')
+      eventListener.connect()
 
   return Bootstrapper
