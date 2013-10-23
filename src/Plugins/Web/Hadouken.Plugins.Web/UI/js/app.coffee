@@ -7,6 +7,7 @@
     page: '../app/page.coffee?n'
     settingsPage: '../app/pages/settings.coffee?n'
     rpc: '../app/rpc.coffee?n'
+    pluginEngine: '../app/pluginEngine.coffee?n'
 })
 
 requirejs ['jquery', 'bootstrap', 'bootstrapper'], ($, t, Bootstrapper) ->

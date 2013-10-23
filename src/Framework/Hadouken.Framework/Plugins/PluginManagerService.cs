@@ -26,10 +26,15 @@ namespace Hadouken.Framework.Plugins
 
         public async Task<byte[]> GetFileAsync(string path)
         {
-            // TODO: Use some kind of abstraction
+            var root = Path.Combine(_rootPathProvider.GetRootPath(), "UI");
 
-            var root = _rootPathProvider.GetRootPath();
+            if (!Directory.Exists(root))
+                return null;
+
             var file = Path.Combine(root, "UI", path);
+
+            if (!File.Exists(file))
+                return null;
 
             return File.ReadAllBytes(file);
         }

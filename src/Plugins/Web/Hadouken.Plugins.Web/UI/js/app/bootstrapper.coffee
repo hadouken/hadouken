@@ -1,7 +1,8 @@
-﻿define ['eventListener', 'pageManager', 'settingsPage' ], (EventListener, PageManager, SettingsPage) ->
+﻿define ['eventListener', 'pageManager', 'pluginEngine', 'settingsPage' ], (EventListener, PageManager, PluginEngine, SettingsPage) ->
   class Bootstrapper
     eventListener: new EventListener()
     pageManager: PageManager.getInstance()
+    pluginEngine: PluginEngine.getInstance()
 
     constructor: ->
 
@@ -16,7 +17,8 @@
     loadPages: =>
       @pageManager.addPage(new SettingsPage)
 
-    loadPlugins: ->
-      console.log('loading plugins')
+    loadPlugins: =>
+      @pluginEngine.load () ->
+        console.log('plugins loaded')
 
   return Bootstrapper
