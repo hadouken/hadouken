@@ -31,7 +31,7 @@ namespace Hadouken.Framework.Plugins
             if (!Directory.Exists(root))
                 return null;
 
-            var file = Path.Combine(root, "UI", path);
+            var file = Path.Combine(root, path);
 
             if (!File.Exists(file))
                 return null;
