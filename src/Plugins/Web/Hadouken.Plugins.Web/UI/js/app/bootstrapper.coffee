@@ -3,9 +3,19 @@
     eventListener = new EventListener()
 
     constructor: ->
-      @even
+
+    init: ->
+      eventListener.addHandler('web.connected', () => @load())
+      eventListener.connect()
 
     load: ->
-      eventListener.connect()
+      @loadPages()
+      @loadPlugins()
+
+    loadPages: ->
+      console.log('loading pages')
+
+    loadPlugins: ->
+      console.log('loading plugins')
 
   return Bootstrapper
