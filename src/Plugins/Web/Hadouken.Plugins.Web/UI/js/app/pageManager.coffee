@@ -25,9 +25,9 @@
     parseHash: (newHash, oldHash) ->
       crossroads.parse(newHash)
 
-    addPage: (page) ->
-      for route in page.routes
-        crossroads.addRoute(route, () -> @route(page))
+    addPage: (page) =>
+      for r in page.routes
+        crossroads.addRoute(r, () => @route(page))
 
     route: (page) ->
       @current.unload() if @current?

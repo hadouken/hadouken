@@ -1,20 +1,20 @@
-﻿define ['eventListener', 'pageManager'], (EventListener, PageManager) ->
+﻿define ['eventListener', 'pageManager', 'settingsPage' ], (EventListener, PageManager, SettingsPage) ->
   class Bootstrapper
     eventListener: new EventListener()
     pageManager: PageManager.getInstance()
 
     constructor: ->
 
-    init: ->
-      eventListener.addHandler('web.connected', () => @load())
+    init: =>
+      eventListener.addHandler('web.connected', () => load())
       eventListener.connect()
 
-    load: ->
+    load: =>
       @loadPages()
       @loadPlugins()
 
-    loadPages: ->
-      console.log('loading pages')
+    loadPages: =>
+      @pageManager.addPage(new SettingsPage)
 
     loadPlugins: ->
       console.log('loading plugins')
