@@ -1,5 +1,8 @@
 ﻿class Plugin
-  load: -> console.log('load')
+  pageManager: Hadouken.UI.PageManager.getInstance()
+
+  load: =>
+    console.log @pageManager.current
 
   unload: -> console.log('unload')
 
