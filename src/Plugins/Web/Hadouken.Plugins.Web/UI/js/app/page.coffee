@@ -1,5 +1,5 @@
 ﻿define ['jquery'], ($) ->
-  class Page
+  class Hadouken.UI.Page
     content: ''
 
     constructor: (@url, @routes) ->
@@ -16,4 +16,4 @@
 
     unload: ->
 
-  return Page
+  return Hadouken.UI.Page

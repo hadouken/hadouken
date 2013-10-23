@@ -1,5 +1,5 @@
 ﻿define ['eventListener', 'pageManager', 'pluginEngine', 'settingsPage' ], (EventListener, PageManager, PluginEngine, SettingsPage) ->
-  class Bootstrapper
+  class Hadouken.Bootstrapper
     eventListener: new EventListener()
     pageManager: PageManager.getInstance()
     pluginEngine: PluginEngine.getInstance()
@@ -21,4 +21,4 @@
       @pluginEngine.load () ->
         console.log('plugins loaded')
 
-  return Bootstrapper
+  return Hadouken.Bootstrapper

@@ -1,5 +1,5 @@
 ﻿define ['signals', 'hasher', 'crossroads'], (s, hasher, crossroads) ->
-  class PageManager
+  class Hadouken.UI.PageManager
     @instance: null
     current: null
 
@@ -35,4 +35,4 @@
 
       page.init(arguments)
 
-  return PageManager
+  return Hadouken.UI.PageManager

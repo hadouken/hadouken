@@ -1,5 +1,5 @@
 ﻿define ['jquery', 'rpc'], ($, RpcClient) ->
-  class PluginEngine
+  class Hadouken.Plugins.PluginEngine
     @instance: null
 
     rpc: new RpcClient()
@@ -47,4 +47,4 @@
 
       callback()
 
-  return PluginEngine
+  return Hadouken.Plugins.PluginEngine

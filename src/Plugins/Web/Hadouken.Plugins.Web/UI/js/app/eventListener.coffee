@@ -1,5 +1,5 @@
 ﻿define ['jquery', 'jquery.signalr'], ($) ->
-  class EventListener
+  class Hadouken.Events.EventListener
     connection: $.hubConnection('/events')
     proxy: null
     handlers: {}
@@ -30,5 +30,5 @@
         for handler, i in @handlers[key]
           delete @handlers[key][i]
       
-  return EventListener
+  return Hadouken.Events.EventListener
       

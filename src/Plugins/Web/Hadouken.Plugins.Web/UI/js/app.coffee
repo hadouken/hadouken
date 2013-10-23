@@ -1,4 +1,9 @@
-﻿requirejs.config({
+﻿window.Hadouken = {}
+Hadouken.Events = {}
+Hadouken.Plugins = {}
+Hadouken.UI = {}
+
+requirejs.config({
   baseUrl: 'js/lib'
   paths:
     bootstrapper: '../app/bootstrapper.coffee?n'
