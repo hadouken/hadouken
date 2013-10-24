@@ -1,9 +1,6 @@
-﻿class Plugin
-  pageManager: Hadouken.UI.PageManager.getInstance()
+﻿js =
+  torrentsListPage: '/plugins/core.torrents/js/app/torrentsListPage.coffee?n'
 
-  load: =>
-    console.log @pageManager.current
-
-  unload: -> console.log('unload')
-
-return new Plugin
+require ['jquery', js.torrentsListPage], ($, TorrentsListPage) ->
+  p = new TorrentsListPage()
+  p.load()

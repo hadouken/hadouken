@@ -26,7 +26,7 @@
       files = 0
       requestCallback = () =>
         files += 1
-        if files == Object.keys(@plugins).length then @loadPlugins(callback)
+        if files == Object.keys(@plugins).length then callback()
 
       for key of @plugins
         plugin = @plugins[key]
@@ -35,16 +35,8 @@
           requestCallback()
           continue
 
-        $.get("/plugins/#{plugin.name}/js/plugin.coffee", (script) =>
-          f = new Function('return ' + script)
-          @plugins[key].instance = f()
-        ).always(requestCallback)
-
-    loadPlugins: (callback) =>
-      for key of @plugins
-        if typeof @plugins[key].instance != 'undefined'
-          @plugins[key].instance.load()
-
-      callback()
+        $.getScript("/plugins/#{plugin.name}/js/plugin.coffee")
+          .done(requestCallback)
+          .fail(requestCallback)
 
   return Hadouken.Plugins.PluginEngine
