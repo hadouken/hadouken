@@ -13,6 +13,7 @@ requirejs.config({
     settingsPage: '../app/pages/settings.coffee?n'
     rpc: '../app/rpc.coffee?n'
     pluginEngine: '../app/pluginEngine.coffee?n'
+    dialog: '../app/dialog.coffee?n'
 })
 
 requirejs ['jquery', 'bootstrap', 'bootstrapper'], ($, t, Bootstrapper) ->
