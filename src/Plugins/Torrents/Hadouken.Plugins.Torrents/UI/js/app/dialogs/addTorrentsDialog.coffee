@@ -1,7 +1,7 @@
 ﻿define ['dialog'], (Dialog) ->
   class AddTorrentsDialog extends Dialog
     constructor: ->
-      super('/plugins/core.torrents/dialogs/addTorrents.html')
+      super('/plugins/core.torrents/dialogs/add-torrents.html')
 
     onShow: =>
       @setupEvents()
@@ -20,3 +20,5 @@
 
     enableAdd: =>
       @content.find('#btn-add-torrents').attr 'disabled', false
+
+  return AddTorrentsDialog

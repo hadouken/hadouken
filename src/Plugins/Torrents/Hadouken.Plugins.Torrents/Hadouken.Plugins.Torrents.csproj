@@ -112,7 +112,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UI\Dialogs\add.html">
+    <Content Include="UI\Dialogs\add-torrents.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\list.html">

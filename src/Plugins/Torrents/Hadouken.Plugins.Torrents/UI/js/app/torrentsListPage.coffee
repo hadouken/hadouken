@@ -16,12 +16,14 @@ define ['page', 'rpc', 'eventListener', js.addTorrentsDialog], (Page, RpcClient,
         @setupEvents()
         @setupTorrents
 
+      @eventListener.connect()
+
     loadTemplates: ->
 
     setupUI: =>
       @content.find('#btn-show-add-torrents').on 'click', (e) =>
         e.preventDefault()
-        new AddTorrentsDialog().show
+        new AddTorrentsDialog().show()
 
       that = @
 
@@ -96,6 +98,6 @@ define ['page', 'rpc', 'eventListener', js.addTorrentsDialog], (Page, RpcClient,
 
     canPause: -> false
 
-    unload: -> console.log('Unload torrents list page')
+    unload: => @eventListener.disconnect()
 
   return TorrentsListPage
