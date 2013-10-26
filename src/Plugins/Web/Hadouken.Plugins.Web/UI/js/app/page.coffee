@@ -5,12 +5,11 @@
     constructor: (@url, @routes) ->
 
     init: =>
-      $.get(@url, (html) =>
+      $.get @url, (html) =>
         @content = $(html)
         $('#page-container').empty().append(@content)
 
         @load()
-      )
 
     load: ->
 

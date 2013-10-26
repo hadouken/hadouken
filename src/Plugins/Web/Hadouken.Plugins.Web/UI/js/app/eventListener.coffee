@@ -5,31 +5,30 @@
     handlers: {}
 
     constructor: ->
-      console.log('EventListener')
 
-    connect: ->
+    connect: =>
+      console.log 'connecting eventlistener'
+
       @proxy = @connection.createHubProxy('events');
       @proxy.on('publishEvent', (e) => @publishEvent(e))
 
       @connection.start().done(() => @publishEvent({name: 'web.connected'}))
 
-    disconnect: ->
+    disconnect: =>
       @connection.stop()
       @clearHandlers()
 
-    addHandler: (name, callback) ->
+    addHandler: (name, callback) =>
       @handlers[name] = [] if not @handlers[name]?
       @handlers[name].push(callback)
 
-    publishEvent: (event) ->
-      console.log "event: #{event.name}"
-
+    publishEvent: (event) =>
       return unless @handlers[event.name]?
 
       for handler in @handlers[event.name]
         handler(event.data)
 
-    clearHandlers: ->
+    clearHandlers: =>
       for key of @handlers
         for handler, i in @handlers[key]
           delete @handlers[key][i]

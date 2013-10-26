@@ -20,8 +20,6 @@
       hasher.changed.add((n, o) => @parseHash(n, o))
       hasher.init()
 
-      console.log('pagemanager init')
-
     parseHash: (newHash, oldHash) ->
       crossroads.parse(newHash)
 

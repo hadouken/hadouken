@@ -34,8 +34,14 @@
           requestCallback()
           continue
 
-        $.getScript("/plugins/#{plugin.name}/js/plugin.coffee")
-          .done(requestCallback)
-          .fail(requestCallback)
+        $.ajax({
+          url: "/plugins/#{plugin.name}/js/plugin.coffee"
+          success: (js) =>
+            funcFactory = new Function('return ' + js)
+            func = funcFactory()
+            func(() -> requestCallback())
+
+          error: -> requestCallback()
+        })
 
   return Hadouken.Plugins.PluginEngine
