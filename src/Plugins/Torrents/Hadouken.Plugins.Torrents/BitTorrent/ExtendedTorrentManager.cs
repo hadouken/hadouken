@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OctoTorrent.BEncoding;
 using OctoTorrent.Client;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
@@ -65,6 +66,16 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             {
                 _metadata[key] = value;
             }
+        }
+
+        public BEncodedDictionary Save()
+        {
+            return null;
+        }
+
+        public void Load(BEncodedDictionary dictionary)
+        {
+            
         }
     }
 }

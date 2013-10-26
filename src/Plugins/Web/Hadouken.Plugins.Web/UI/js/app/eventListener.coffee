@@ -9,6 +9,8 @@
 
     connect: ->
       @proxy = @connection.createHubProxy('events');
+      @proxy.on('publishEvent', (e) => @publishEvent(e))
+
       @connection.start().done(() => @publishEvent({name: 'web.connected'}))
 
     disconnect: ->
@@ -20,6 +22,8 @@
       @handlers[name].push(callback)
 
     publishEvent: (event) ->
+      console.log "event: #{event.name}"
+
       return unless @handlers[event.name]?
 
       for handler in @handlers[event.name]

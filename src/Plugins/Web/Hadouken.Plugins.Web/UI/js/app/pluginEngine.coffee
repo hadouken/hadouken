@@ -17,7 +17,6 @@
     load: (callback) =>
       @rpc.call 'plugins.list', (p) =>
         for plugin in p
-          console.log(plugin.name)
           @plugins[plugin.name] = plugin
 
         @loadPluginScripts(callback)
@@ -26,7 +25,7 @@
       files = 0
       requestCallback = () =>
         files += 1
-        if files == Object.keys(@plugins).length then callback()
+        if files >= Object.keys(@plugins).length then callback()
 
       for key of @plugins
         plugin = @plugins[key]

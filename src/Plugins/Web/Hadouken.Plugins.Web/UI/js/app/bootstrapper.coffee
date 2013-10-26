@@ -3,12 +3,15 @@
     eventListener: new EventListener()
     pageManager: PageManager.getInstance()
     pluginEngine: PluginEngine.getInstance()
+    overlay: null
 
     constructor: ->
 
-    init: =>
-      eventListener.addHandler('web.connected', () => load())
-      eventListener.connect()
+    init: (o) =>
+      @overlay = o
+
+      @eventListener.addHandler('web.connected', () => @load())
+      @eventListener.connect()
 
     load: =>
       @loadPages()
@@ -18,7 +21,7 @@
       @pageManager.addPage(new SettingsPage)
 
     loadPlugins: =>
-      @pluginEngine.load () ->
-        console.log('plugins loaded')
+      @pluginEngine.load () =>
+        @overlay.hide()
 
   return Hadouken.Bootstrapper

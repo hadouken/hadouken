@@ -1,4 +1,5 @@
-﻿using OctoTorrent.Client;
+﻿using OctoTorrent.BEncoding;
+using OctoTorrent.Client;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
@@ -19,5 +20,9 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         string GetMetadata(string key);
 
         void SetMetadata(string key, string value);
+
+        BEncodedDictionary Save();
+
+        void Load(BEncodedDictionary dictionary);
     }
 }

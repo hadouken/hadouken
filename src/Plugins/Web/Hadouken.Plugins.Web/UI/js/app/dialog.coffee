@@ -19,6 +19,9 @@
           $(@).remove()
           that.onClosed()
 
+    close: =>
+        @content.modal 'hide'
+
     onShow: ->
 
     onClosed: ->

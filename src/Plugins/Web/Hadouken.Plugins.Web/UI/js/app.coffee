@@ -14,8 +14,12 @@ requirejs.config({
     rpc: '../app/rpc.coffee?n'
     pluginEngine: '../app/pluginEngine.coffee?n'
     dialog: '../app/dialog.coffee?n'
+    overlay: '../app/overlay.coffee?n'
 })
 
-requirejs ['jquery', 'bootstrap', 'bootstrapper'], ($, t, Bootstrapper) ->
+requirejs ['jquery', 'bootstrap', 'overlay', 'bootstrapper'], ($, t, Overlay, Bootstrapper) ->
+  ol = new Overlay()
+  ol.show('body')
+
   bs = new Bootstrapper()
-  bs.load()
+  bs.init(ol)
