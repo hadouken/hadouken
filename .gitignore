@@ -1,5 +1,5 @@
 # Ignore FAKE
-FAKE.Core/
+tools/FAKE.Core/
 
 # Ignore /lib folder
 lib/
