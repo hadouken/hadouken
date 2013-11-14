@@ -2,7 +2,6 @@
 tools/FAKE.Core/
 
 # Ignore /lib folder
-lib/
 _ReSharper.Hadouken/
 
 # Build output
