@@ -4,6 +4,7 @@ using Hadouken.Configuration;
 using Hadouken.Framework.DI;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.IO;
+using Hadouken.Framework.IO.Local;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
@@ -28,7 +29,7 @@ namespace Hadouken.Service
 			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
 
 			// Register file system
-			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
+			builder.RegisterType<LocalFileSystem>().As<IFileSystem>().SingleInstance();
 		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
 
 			// Register RPC services

@@ -53,39 +53,16 @@ namespace Hadouken.Plugins
 
         public void Scan()
         {
-            var entries = new List<string>((from PluginElement element
-                in _configuration.Plugins
-                select element.Path));
+            var pluginDirectory = _fileSystem.GetDirectory(_configuration.Plugins.BaseDirectory);
 
-            // Add entries from baseDirectory
-            entries.AddRange(
-                (from entry in _fileSystem.GetDirectoryEntries(_configuration.Plugins.BaseDirectory)
-                 select entry));
-
-            var extraPlugin = GetOptionalPluginArgument(Environment.GetCommandLineArgs());
-
-            if (!String.IsNullOrEmpty(extraPlugin))
-                entries.Add(extraPlugin);
-
-            foreach (var path in entries)
+            foreach (var file in pluginDirectory.Files)
             {
-                using (var stream = _fileSystem.OpenRead(path))
+                using (var stream = file.OpenRead())
                 {
                     IPackage package;
 
                     if (!Package.TryParse(stream, out package))
                         continue;
-
-                    // Extract package
-                    var unpackagedPath = Path.Combine(
-                        Path.GetTempPath(),
-                        "hdkn",
-                        package.Manifest.Name + "-" + package.Manifest.Version);
-
-                    _fileSystem.EmptyDirectory(unpackagedPath);
-
-                    stream.Seek(0, SeekOrigin.Begin);
-                    package.Unpack(stream, unpackagedPath);
 
                     lock (_lock)
                     {
@@ -93,9 +70,9 @@ namespace Hadouken.Plugins
                             continue;
 
                         var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, package.Manifest.Name);
-
-                        if (!_fileSystem.DirectoryExists(pluginDataPath))
-                            _fileSystem.CreateDirectory(pluginDataPath);
+                        
+                        var dataDirectory = _fileSystem.GetDirectory(pluginDataPath);
+                        dataDirectory.CreateIfNotExists();
 
                         var bootConfig = new BootConfig
                         {
@@ -109,7 +86,7 @@ namespace Hadouken.Plugins
                             HttpVirtualPath = "/plugins/" + package.Manifest.Name
                         };
 
-                        var manager = new PluginManager(unpackagedPath, package.Manifest, _fileSystem, bootConfig, _rpcClient);
+                        var manager = new PluginManager(package, bootConfig, _rpcClient);
                         _pluginManagers.Add(package.Manifest.Name, manager);
                     }
                 }

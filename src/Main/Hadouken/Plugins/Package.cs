@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Hadouken.Framework.IO;
 using Hadouken.Plugins.Metadata;
 using Ionic.Zip;
 
@@ -9,10 +11,12 @@ namespace Hadouken.Plugins
     public sealed class Package : IPackage
     {
         private readonly IManifest _manifest;
+        private readonly IFile[] _files;
 
-        private Package(IManifest manifest)
+        private Package(IManifest manifest, IFile[] files)
         {
             _manifest = manifest;
+            _files = files;
         }
 
         public IManifest Manifest
@@ -20,12 +24,9 @@ namespace Hadouken.Plugins
             get { return _manifest; }
         }
 
-        public void Unpack(Stream stream, string outputPath)
+        public IFile[] Files
         {
-            using (var zip = ZipFile.Read(stream))
-            {
-                zip.ExtractAll(outputPath);
-            }
+            get { return _files; }
         }
 
         public static bool TryParse(Stream stream, out IPackage package)
@@ -50,7 +51,26 @@ namespace Hadouken.Plugins
                     if (!Metadata.Manifest.TryParse(memoryStream, out manifest))
                         return false;
 
-                    package = new Package(manifest);
+                    // Valid manifest, lets load all files
+                    var files = new List<IFile>();
+
+                    foreach (var entry in zip.Entries)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            entry.Extract(ms);
+
+                            var data = ms.ToArray();
+                            var streamFactory = new Func<MemoryStream>(() => new MemoryStream(data));
+
+                            files.Add(new InMemoryFile(streamFactory)
+                            {
+                                Name = entry.FileName
+                            });
+                        }
+                    }
+
+                    package = new Package(manifest, files.ToArray());
                     return true;
                 }
             }

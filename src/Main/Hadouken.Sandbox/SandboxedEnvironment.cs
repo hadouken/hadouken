@@ -15,6 +15,12 @@ namespace Hadouken.Sandbox
         public SandboxedEnvironment()
         {
             AppDomain.CurrentDomain.DomainUnload += (s, e) => Unload();
+            AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
+        }
+
+        private Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(asm => asm.FullName == args.Name);
         }
 
         public override object InitializeLifetimeService()
@@ -28,11 +34,18 @@ namespace Hadouken.Sandbox
             return AppDomain.CurrentDomain;
         }
 
-        public void Load(IBootConfig bootConfig)
+        public void Load(IBootConfig bootConfig, byte[][] assemblies)
         {
-            var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
-                                      .Select(File.ReadAllBytes)
-                                      .Select(Assembly.Load).ToList();
+            foreach (var assembly in assemblies)
+            {
+                try
+                {
+                    Assembly.Load(assembly);
+                }
+                catch (BadImageFormatException)
+                {
+                }
+            }
 
             // Find the bootstrapper class in this AppDomain. Get the plugin and load it.
             // If we find a bootstrapper which is not the DefaultBootstrapper, use that instead.

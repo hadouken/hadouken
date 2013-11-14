@@ -5,20 +5,10 @@ namespace Hadouken.Framework.IO
 {
     public interface IFileSystem
     {
-        void CreateDirectory(string path);
+        string RootPath { get; }
 
-        string[] GetDirectoryEntries(string path);
+        IDirectory GetDirectory(string path);
 
-        bool IsDirectory(string path);
-
-        Stream OpenRead(string path);
-
-        bool FileExists(string path);
-
-        bool DirectoryExists(string path);
-
-        DateTime? LastWriteTime(string path);
-
-        void EmptyDirectory(string path);
+        IFile GetFile(string path);
     }
 }

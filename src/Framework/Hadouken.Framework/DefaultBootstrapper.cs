@@ -25,7 +25,7 @@ namespace Hadouken.Framework
                 from type in asm.GetTypes()
                 where typeof (Plugin).IsAssignableFrom(type)
                 where type.IsClass && !type.IsAbstract
-                select type).First();
+                select type).FirstOrDefault();
 
             if (pluginType == null)
                 throw new Exception("No plugin found");

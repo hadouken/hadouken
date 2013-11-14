@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using Hadouken.Framework.IO;
+using Hadouken.Framework.IO.Local;
 
 namespace Hadouken.Framework.DI
 {
@@ -7,7 +7,7 @@ namespace Hadouken.Framework.DI
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<FileSystem>().AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<LocalFileSystem>().AsImplementedInterfaces().SingleInstance();
         }
     }
 }

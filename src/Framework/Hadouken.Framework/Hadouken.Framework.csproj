@@ -74,9 +74,14 @@
     <Compile Include="Events\EventListener.cs" />
     <Compile Include="Events\IEventListener.cs" />
     <Compile Include="IBootConfig.cs" />
-    <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="IO\IDirectory.cs" />
+    <Compile Include="IO\IFile.cs" />
     <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="IO\InMemoryFile.cs" />
     <Compile Include="IO\IRootPathProvider.cs" />
+    <Compile Include="IO\Local\LocalDirectory.cs" />
+    <Compile Include="IO\Local\LocalFile.cs" />
+    <Compile Include="IO\Local\LocalFileSystem.cs" />
     <Compile Include="Plugins\IPluginHost.cs" />
     <Compile Include="Plugins\IPluginManagerService.cs" />
     <Compile Include="Plugins\Plugin.cs" />

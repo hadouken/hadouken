@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using Hadouken.Framework.IO;
 using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins
@@ -7,6 +10,6 @@ namespace Hadouken.Plugins
     {
         IManifest Manifest { get; }
 
-        void Unpack(Stream stream, string outputPath);
+        IFile[] Files { get; }
     }
 }

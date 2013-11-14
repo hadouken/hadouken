@@ -10,8 +10,6 @@ namespace Hadouken.Plugins
 
         PluginState State { get; }
 
-        string Path { get; }
-
         long GetMemoryUsage();
 
         void Load();

@@ -3,7 +3,6 @@ using System.Linq;
 
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.SemVer;
-using Hadouken.Plugins.Metadata;
 using NLog;
 
 namespace Hadouken.Plugins.Rpc
@@ -65,6 +64,19 @@ namespace Hadouken.Plugins.Rpc
                     State = plugin.State,
                     MemoryUsage = plugin.GetMemoryUsage(),
                 }).ToArray();
+        }
+
+        [JsonRpcMethod("plugins.install")]
+        public bool Install(string packageUrl, string password)
+        {
+            if (String.IsNullOrEmpty(packageUrl))
+                return false;
+
+            // Validate password
+
+            // 
+
+            throw new NotImplementedException();
         }
     }
 

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.IO;
 using Hadouken.Framework;
-using Hadouken.Framework.IO;
 using Hadouken.Plugins.Metadata;
 using Hadouken.Sandbox;
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using NLog;
 using Hadouken.Framework.Rpc;
 
@@ -20,9 +16,7 @@ namespace Hadouken.Plugins
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
 
-        private readonly string _path;
-        private readonly IManifest _manifest;
-        private readonly IFileSystem _fileSystem;
+        private readonly IPackage _package;
         private readonly IBootConfig _bootConfig;
         private SandboxedEnvironment _sandboxedEnvironment;
         private readonly IJsonRpcClient _rpcClient;
@@ -32,25 +26,21 @@ namespace Hadouken.Plugins
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public PluginManager(string path, IManifest manifest, IFileSystem fileSystem, IBootConfig bootConfig, IJsonRpcClient rpcClient)
+        public PluginManager(IPackage package, IBootConfig bootConfig, IJsonRpcClient rpcClient)
         {
             State = PluginState.Unloaded;
 
-            _path = path;
-            _manifest = manifest;
-            _fileSystem = fileSystem;
+            _package = package;
             _bootConfig = bootConfig;
             _rpcClient = rpcClient;
         }
 
         public IManifest Manifest
         {
-            get { return _manifest; }
+            get { return _package.Manifest; }
         }
 
         public PluginState State { get; private set; }
-
-        public string Path { get { return _path; } }
 
         public long GetMemoryUsage()
         {
@@ -67,29 +57,44 @@ namespace Hadouken.Plugins
 
         public async void Load()
         {
-            Logger.Info("Loading plugin {0}", _manifest.Name);
+            Logger.Info("Loading plugin {0}", Manifest.Name);
 
             State = PluginState.Loading;
 
             var setupInfo = new AppDomainSetup
                 {
-                    ApplicationBase = _path,
                 };
 
             var assemblyName = typeof (SandboxedEnvironment).Assembly.Location;
             var typeName = typeof (SandboxedEnvironment).FullName;
-            var domainName = String.Concat(_manifest.Name, "-", _manifest.Version);
+            var domainName = String.Concat(Manifest.Name, "-", Manifest.Version);
             var domain = AppDomain.CreateDomain(domainName, null, setupInfo);
 
             Logger.Debug("Creating sandboxed environment");
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
-            Logger.Debug("Loading {0} in sandboxed environment", _manifest.Name);
-            
-            _sandboxedEnvironment.Load(_bootConfig);
+
+            Logger.Debug("Loading {0} in sandboxed environment", Manifest.Name);
+
+            var assemblies = new List<byte[]>();
+
+            foreach (var file in _package.Files)
+            {
+                if (file.Extension != ".dll")
+                    continue;
+
+                using (var stream = file.OpenRead())
+                using (var ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+                    assemblies.Add(ms.ToArray());
+                }
+            }
+
+            _sandboxedEnvironment.Load(_bootConfig, assemblies.ToArray());
 
             State = PluginState.Loaded;
 
-            await _rpcClient.CallAsync<bool>("events.publish", new object [] { "plugin.loaded", new {name = _manifest.Name, version = _manifest.Version}});
+            await _rpcClient.CallAsync<bool>("events.publish", new object [] { "plugin.loaded", new {name = Manifest.Name, version = Manifest.Version}});
         }
 
         public void Unload()
@@ -102,7 +107,7 @@ namespace Hadouken.Plugins
 
             if (domain == null) return;
 
-            Logger.Debug("Unloading AppDomain for plugin {0}", _manifest.Name);
+            Logger.Debug("Unloading AppDomain for plugin {0}", Manifest.Name);
             AppDomain.Unload(domain);
 
             State = PluginState.Unloaded;
