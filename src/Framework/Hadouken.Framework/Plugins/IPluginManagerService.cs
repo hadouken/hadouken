@@ -8,8 +8,5 @@ namespace Hadouken.Framework.Plugins
     {
         [OperationContract]
         Task<string> RpcAsync(string request);
-
-        [OperationContract]
-        Task<byte[]> GetFileAsync(string path);
     }
 }

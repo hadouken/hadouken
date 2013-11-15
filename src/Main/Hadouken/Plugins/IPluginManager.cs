@@ -6,7 +6,7 @@ namespace Hadouken.Plugins
 {
     public interface IPluginManager
     {
-        IManifest Manifest { get; }
+        IPackage Package { get; }
 
         PluginState State { get; }
 

@@ -8,6 +8,7 @@ using Hadouken.Framework.IO.Local;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
+using Hadouken.Gateway;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
@@ -61,7 +62,7 @@ namespace Hadouken.Service
 			// Register configuration
 			builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
 
-		    builder.RegisterType<PluginManagerService>().As<IPluginManagerService>();
+		    builder.RegisterType<GatewayPluginManagerService>().As<IPluginManagerService>();
 			builder.RegisterModule(new ServiceHostFactoryModule());
 
 			// Resolve the service.

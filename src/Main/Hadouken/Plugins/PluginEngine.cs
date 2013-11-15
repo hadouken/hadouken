@@ -118,7 +118,7 @@ namespace Hadouken.Plugins
             try
             {
                 // Traverse all dependencies up to root objects and make sure all of them exist and are loaded.
-                if (manager.Manifest.Dependencies.Any())
+                if (manager.Package.Manifest.Dependencies.Any())
                     LoadDependencies(manager);
 
                 manager.Load();
@@ -126,7 +126,7 @@ namespace Hadouken.Plugins
             catch (Exception exception)
             {
                 Logger.Error(
-                    String.Format("Error when loading plugin {0}[{1}].", manager.Manifest.Name, manager.Manifest.Version),
+                    String.Format("Error when loading plugin {0}[{1}].", manager.Package.Manifest.Name, manager.Package.Manifest.Version),
                     exception);
             }
         }
@@ -135,7 +135,7 @@ namespace Hadouken.Plugins
         {
             // For each dependency, find a suitable plugin manager
             // and load those dependencies
-            foreach (var dependency in manager.Manifest.Dependencies)
+            foreach (var dependency in manager.Package.Manifest.Dependencies)
             {
                 IPluginManager managerDependency = null;
 
@@ -150,12 +150,12 @@ namespace Hadouken.Plugins
                     throw new DependencyNotFoundException("Dependency not found: " + dependency.Name);
 
                 // If the dependency we found is the wrong version, throw an error.
-                if (!dependency.VersionRange.IsIncluded(managerDependency.Manifest.Version))
+                if (!dependency.VersionRange.IsIncluded(managerDependency.Package.Manifest.Version))
                     throw new InvalidDependencyVersionException(
                         String.Format("No valid version for dependency {0} found", dependency.Name));
 
                 // If we got this far, load all dependencies for this plugin as well
-                if (managerDependency.Manifest.Dependencies.Any())
+                if (managerDependency.Package.Manifest.Dependencies.Any())
                     LoadDependencies(managerDependency);
 
                 // Load the dependency
@@ -209,8 +209,8 @@ namespace Hadouken.Plugins
             catch (Exception exception)
             {
                 Logger.ErrorException(
-                    String.Format("Error when unloading plugin {0}[{1}].", manager.Manifest.Name,
-                                  manager.Manifest.Version),
+                    String.Format("Error when unloading plugin {0}[{1}].", manager.Package.Manifest.Name,
+                                  manager.Package.Manifest.Version),
                     exception);
             }
         }
@@ -294,7 +294,7 @@ namespace Hadouken.Plugins
             {
                 foreach (var manager in _pluginManagers.Values)
                 {
-                    Logger.Info("Unloading plugin {0}", manager.Manifest.Name);
+                    Logger.Info("Unloading plugin {0}", manager.Package.Manifest.Name);
 
                     try
                     {
@@ -302,7 +302,7 @@ namespace Hadouken.Plugins
                     }
                     catch (Exception e)
                     {
-                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Manifest.Name), e);
+                        Logger.ErrorException(String.Format("Could not unload plugin {0}", manager.Package.Manifest.Name), e);
                     }
                 }
 

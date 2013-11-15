@@ -82,7 +82,13 @@ namespace Hadouken.Framework.Rpc
             {
                 var param = paramResolver.Resolve(request.Parameters, invoker);
                 var result = invoker.Invoke(param);
-                return new JsonRpcSuccessResponse() {Id = request.Id, Result = result};
+
+                var token = (JToken)null;
+
+                if (result != null)
+                    token = JToken.FromObject(result);
+
+                return new JsonRpcSuccessResponse() {Id = request.Id, Result = token};
             }
             catch (InvalidParametersException)
             {

@@ -54,7 +54,6 @@
     <Compile Include="CoffeeScript\ICoffeeCompiler.cs" />
     <Compile Include="CoffeeScript\ResourceReader.cs" />
     <Compile Include="Modules\HomeModule.cs" />
-    <Compile Include="Modules\PluginsModule.cs" />
     <Compile Include="CustomNancyBootstrapper.cs" />
     <Compile Include="Modules\CoffeeModule.cs" />
     <Compile Include="WebPlugin.cs" />

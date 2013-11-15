@@ -92,6 +92,7 @@
     <Compile Include="Events\EventServer.cs" />
     <Compile Include="Events\IEventServer.cs" />
     <Compile Include="Events\Rpc\EventsService.cs" />
+    <Compile Include="Gateway\GatewayPluginManagerService.cs" />
     <Compile Include="Plugins\DependencyNotFoundException.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
     <Compile Include="Plugins\IPackage.cs" />

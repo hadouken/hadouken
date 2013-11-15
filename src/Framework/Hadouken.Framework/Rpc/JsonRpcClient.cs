@@ -48,14 +48,9 @@ namespace Hadouken.Framework.Rpc
             {
                 var successResponse = rpcResponse as JsonRpcSuccessResponse;
 
-                if (successResponse != null)
+                if (successResponse != null && successResponse.Result != null)
                 {
-                    var resultToken = successResponse.Result as JToken;
-
-                    if (resultToken != null)
-                    {
-                        return resultToken.ToObject<TResult>();
-                    }
+                    return successResponse.Result.ToObject<TResult>();
                 }
             }
 

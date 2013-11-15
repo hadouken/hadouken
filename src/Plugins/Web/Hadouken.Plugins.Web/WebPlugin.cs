@@ -1,5 +1,6 @@
 ﻿using System;
 using Hadouken.Framework.Plugins;
+using Hadouken.Framework.Rpc;
 using Nancy.Hosting.Self;
 
 namespace Hadouken.Plugins.Web
@@ -8,9 +9,9 @@ namespace Hadouken.Plugins.Web
     {
         private readonly NancyHost _nancyHost;
 
-        public WebPlugin()
+        public WebPlugin(IJsonRpcClient rpcClient)
         {
-            _nancyHost = new NancyHost(new CustomNancyBootstrapper(), new HostConfiguration(){RewriteLocalhost = false}, new Uri("http://localhost:7890/"));
+            _nancyHost = new NancyHost(new CustomNancyBootstrapper(rpcClient), new HostConfiguration(){RewriteLocalhost = false}, new Uri("http://localhost:7890/"));
         }
 
         public override void OnStart()

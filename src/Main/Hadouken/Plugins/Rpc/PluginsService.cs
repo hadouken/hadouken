@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 
 using Hadouken.Framework.Rpc;
@@ -59,11 +60,36 @@ namespace Hadouken.Plugins.Rpc
             return (from plugin in plugins
                 select new PluginDto()
                 {
-                    Name = plugin.Manifest.Name,
-                    Version = plugin.Manifest.Version,
+                    Name = plugin.Package.Manifest.Name,
+                    Version = plugin.Package.Manifest.Version,
                     State = plugin.State,
                     MemoryUsage = plugin.GetMemoryUsage(),
                 }).ToArray();
+        }
+
+        [JsonRpcMethod("plugins.getFileContents")]
+        public byte[] GetFileContents(string pluginId, string fileName)
+        {
+            // Get the plugin
+            var plugin = _pluginEngine.Get(pluginId);
+
+            if (plugin == null)
+                return null;
+
+            var file =
+                plugin.Package.Files.FirstOrDefault(
+                    f => String.Equals(f.Name, fileName, StringComparison.InvariantCultureIgnoreCase));
+
+            if (file == null)
+                return null;
+
+            using (var stream = file.OpenRead())
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+
+                return ms.ToArray();
+            }
         }
 
         [JsonRpcMethod("plugins.install")]

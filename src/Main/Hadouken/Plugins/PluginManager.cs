@@ -35,9 +35,9 @@ namespace Hadouken.Plugins
             _rpcClient = rpcClient;
         }
 
-        public IManifest Manifest
+        public IPackage Package
         {
-            get { return _package.Manifest; }
+            get { return _package; }
         }
 
         public PluginState State { get; private set; }
@@ -57,7 +57,7 @@ namespace Hadouken.Plugins
 
         public async void Load()
         {
-            Logger.Info("Loading plugin {0}", Manifest.Name);
+            Logger.Info("Loading plugin {0}", Package.Manifest.Name);
 
             State = PluginState.Loading;
 
@@ -67,13 +67,13 @@ namespace Hadouken.Plugins
 
             var assemblyName = typeof (SandboxedEnvironment).Assembly.Location;
             var typeName = typeof (SandboxedEnvironment).FullName;
-            var domainName = String.Concat(Manifest.Name, "-", Manifest.Version);
+            var domainName = String.Concat(Package.Manifest.Name, "-", Package.Manifest.Version);
             var domain = AppDomain.CreateDomain(domainName, null, setupInfo);
 
             Logger.Debug("Creating sandboxed environment");
             _sandboxedEnvironment = (SandboxedEnvironment) domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
 
-            Logger.Debug("Loading {0} in sandboxed environment", Manifest.Name);
+            Logger.Debug("Loading {0} in sandboxed environment", Package.Manifest.Name);
 
             var assemblies = new List<byte[]>();
 
@@ -94,7 +94,7 @@ namespace Hadouken.Plugins
 
             State = PluginState.Loaded;
 
-            await _rpcClient.CallAsync<bool>("events.publish", new object [] { "plugin.loaded", new {name = Manifest.Name, version = Manifest.Version}});
+            await _rpcClient.CallAsync<bool>("events.publish", new object[] { "plugin.loaded", new { name = Package.Manifest.Name, version = Package.Manifest.Version } });
         }
 
         public void Unload()
@@ -107,7 +107,7 @@ namespace Hadouken.Plugins
 
             if (domain == null) return;
 
-            Logger.Debug("Unloading AppDomain for plugin {0}", Manifest.Name);
+            Logger.Debug("Unloading AppDomain for plugin {0}", Package.Manifest.Name);
             AppDomain.Unload(domain);
 
             State = PluginState.Unloaded;

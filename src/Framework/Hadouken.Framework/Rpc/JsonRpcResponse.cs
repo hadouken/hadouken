@@ -15,21 +15,22 @@ namespace Hadouken.Framework.Rpc
         static JsonRpcResponse()
         {
             SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            SerializerSettings.Converters.Add(new BinaryConverter());
             SerializerSettings.Converters.Add(new SemanticVersionConverter());
             SerializerSettings.Converters.Add(new StringEnumConverter());
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public JsonRpcResponse()
+        protected JsonRpcResponse()
         {
             Protocol = "2.0";
         }
 
         [JsonProperty("id", Required = Required.Always)]
-        public virtual object Id { get; set; }
+        public object Id { get; set; }
 
         [JsonProperty("jsonrpc", Required = Required.Always)]
-        public virtual string Protocol { get; set; }
+        public string Protocol { get; set; }
 
         public static bool TryParse(string json, out JsonRpcResponse response, out Exception exception)
         {
@@ -48,14 +49,11 @@ namespace Hadouken.Framework.Rpc
                     response = JsonConvert.DeserializeObject<JsonRpcSuccessResponse>(json);
                     return true;
                 }
-                
-                if (obj.ContainsKey("error"))
-                {
-                    response = JsonConvert.DeserializeObject<JsonRpcErrorResponse>(json);
-                    return true;
-                }
 
-                return false;
+                if (!obj.ContainsKey("error")) return false;
+
+                response = JsonConvert.DeserializeObject<JsonRpcErrorResponse>(json);
+                return true;
             }
             catch (Exception e)
             {
