@@ -21,6 +21,7 @@ namespace Hadouken.Framework.Rpc
             Serializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
             Serializer.Converters.Add(new VersionConverter());
             Serializer.Converters.Add(new StringEnumConverter());
+            Serializer.Converters.Add(new SemanticVersionConverter());
         }
 
         public RequestHandler(IEnumerable<IJsonRpcService> services)
@@ -86,7 +87,7 @@ namespace Hadouken.Framework.Rpc
                 var token = (JToken)null;
 
                 if (result != null)
-                    token = JToken.FromObject(result);
+                    token = JToken.FromObject(result, Serializer);
 
                 return new JsonRpcSuccessResponse() {Id = request.Id, Result = token};
             }

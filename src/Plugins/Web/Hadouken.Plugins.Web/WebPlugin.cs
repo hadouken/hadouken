@@ -1,27 +1,25 @@
-﻿using System;
-using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc;
-using Nancy.Hosting.Self;
+﻿using Hadouken.Framework.Plugins;
+using Hadouken.Plugins.Web.Http;
 
 namespace Hadouken.Plugins.Web
 {
     public class WebPlugin : Plugin
     {
-        private readonly NancyHost _nancyHost;
+        private readonly IHttpFileServer _httpFileServer;
 
-        public WebPlugin(IJsonRpcClient rpcClient)
+        public WebPlugin(IHttpFileServer httpFileServer)
         {
-            _nancyHost = new NancyHost(new CustomNancyBootstrapper(rpcClient), new HostConfiguration(){RewriteLocalhost = false}, new Uri("http://localhost:7890/"));
+            _httpFileServer = httpFileServer;
         }
 
         public override void OnStart()
         {
-            _nancyHost.Start();
+            _httpFileServer.Start();
         }
 
         public override void OnStop()
         {
-            _nancyHost.Stop();
+            _httpFileServer.Stop();
         }
     }
 }
