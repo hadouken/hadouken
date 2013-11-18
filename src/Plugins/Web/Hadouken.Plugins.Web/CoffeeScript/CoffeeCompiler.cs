@@ -7,17 +7,21 @@ namespace Hadouken.Plugins.Web.CoffeeScript
     public class CoffeeCompiler : ICoffeeCompiler
     {
         private const string CoffeeScriptCompile = "CoffeeScript.compile(Source, {{bare: {0}}})";
-        private readonly ThreadLocal<Lazy<ScriptEngine>> _scriptEngine;
+        private readonly ScriptEngine _scriptEngine;
+        private readonly object _compileLock = new object();
 
         public CoffeeCompiler()
         {
-            _scriptEngine = new ThreadLocal<Lazy<ScriptEngine>>(() => new Lazy<ScriptEngine>(InitScriptEngine));
+            _scriptEngine = InitScriptEngine();
         }
 
         public string Compile(string source)
         {
-            _scriptEngine.Value.Value.SetGlobalValue("Source", source);
-            return _scriptEngine.Value.Value.Evaluate<string>(String.Format(CoffeeScriptCompile, "false"));
+            lock (_compileLock)
+            {
+                _scriptEngine.SetGlobalValue("Source", source);
+                return _scriptEngine.Evaluate<string>(String.Format(CoffeeScriptCompile, "false"));
+            }
         }
 
         private ScriptEngine InitScriptEngine()
