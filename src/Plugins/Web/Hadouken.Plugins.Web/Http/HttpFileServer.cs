@@ -53,7 +53,12 @@ namespace Hadouken.Plugins.Web.Http
 
         private void ProcessContext(HttpListenerContext context)
         {
-            var path = "UI" + context.Request.Url.AbsolutePath;
+            var file = context.Request.Url.AbsolutePath;
+
+            if (file == "/")
+                file = "/index.html";
+
+            var path = "UI" + file;
             var pluginId = "core.web";
 
             if (PluginRegex.IsMatch(context.Request.Url.AbsolutePath))
