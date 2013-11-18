@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Hadouken.Plugins.Config.Data
 {
-    class JsonDataStore : IConfigDataStore
+    public class JsonDataStore : IConfigDataStore
     {
         private readonly string _dataPath;
         private readonly Lazy<JObject> _jsonDictionary;
