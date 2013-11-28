@@ -9,13 +9,17 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
     {
         private readonly TorrentManager _manager;
         private readonly object _metaLock = new object();
+        private readonly long _initialUploadedBytes;
+        private readonly long _initialDownloadedBytes;
 
         private readonly IDictionary<string, string> _metadata =
             new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase); 
 
-        public ExtendedTorrentManager(TorrentManager manager)
+        public ExtendedTorrentManager(TorrentManager manager, long uploadedBytes = 0, long downloadedBytes = 0)
         {
             _manager = manager;
+            _initialUploadedBytes = uploadedBytes;
+            _initialDownloadedBytes = downloadedBytes;
         }
 
         public TorrentManager Manager
@@ -26,6 +30,16 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         public string FriendlyInfoHash
         {
             get { return _manager.InfoHash.ToString().Replace("-", "").ToLowerInvariant(); }
+        }
+
+        public long UploadedBytes
+        {
+            get { return _initialUploadedBytes + _manager.Monitor.DataBytesUploaded; }
+        }
+
+        public long DownloadedBytes
+        {
+            get { return _initialDownloadedBytes + _manager.Monitor.DataBytesDownloaded; }
         }
 
         public string Label
@@ -66,16 +80,6 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             {
                 _metadata[key] = value;
             }
-        }
-
-        public BEncodedDictionary Save()
-        {
-            return null;
-        }
-
-        public void Load(BEncodedDictionary dictionary)
-        {
-            
         }
     }
 }
