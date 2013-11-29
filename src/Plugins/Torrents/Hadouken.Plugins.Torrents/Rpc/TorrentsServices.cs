@@ -101,16 +101,5 @@ namespace Hadouken.Plugins.Torrents.Rpc
                 return new TorrentOverview(manager.Manager);
             }
         }
-
-        [JsonRpcMethod("torrents.addMagnetLink")]
-        public TorrentOverview AddMagnetLink(string magnetLink, string savePath, string label)
-        {
-            var manager = _torrentEngine.AddMagnetLink(magnetLink, savePath, label);
-
-            if (manager == null)
-                return null;
-
-            return new TorrentOverview(manager.Manager);
-        }
     }
 }

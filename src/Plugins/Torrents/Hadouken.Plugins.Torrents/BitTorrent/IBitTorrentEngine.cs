@@ -7,13 +7,8 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         void Unload();
 
         IEnumerable<IExtendedTorrentManager> Managers { get; }
-
         IExtendedTorrentManager Get(string infoHash);
-
-        IExtendedTorrentManager Add(byte[] data, string savePath = null, string label = null);
-
-        IExtendedTorrentManager AddMagnetLink(string magnetLink, string savePath, string label);
-
+        IExtendedTorrentManager Add(byte[] data, string savePath = null, string label = null, bool propagateEvent = true, long uploadedBytes = 0, long downloadedBytes = 0);
         void Remove(IExtendedTorrentManager manager);
     }
 }

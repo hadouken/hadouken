@@ -8,6 +8,8 @@ namespace Hadouken.Plugins.Torrents
     {
         public override void RegisterDependencies(ContainerBuilder builder)
         {
+            string path = this.Configuration.DataPath;
+
             builder.RegisterType<OctoTorrentEngine>().As<IBitTorrentEngine>().SingleInstance();
             builder.RegisterType<EngineSettingsFactory>().As<IEngineSettingsFactory>().SingleInstance();
         }
