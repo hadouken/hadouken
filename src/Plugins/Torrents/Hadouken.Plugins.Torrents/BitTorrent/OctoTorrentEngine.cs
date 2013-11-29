@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.ExceptionServices;
+using Hadouken.Framework;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.Dto;
 using OctoTorrent;
@@ -9,6 +11,7 @@ using OctoTorrent.Client;
 using OctoTorrent.Common;
 using OctoTorrent.Dht;
 using OctoTorrent.Dht.Listeners;
+using System.Linq;
 
 namespace Hadouken.Plugins.Torrents.BitTorrent
 {
@@ -19,9 +22,9 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         private readonly IEngineSettingsFactory _settingsFactory;
         private readonly IJsonRpcClient _rpcClient;
+        private readonly IBootConfig _config;
         private readonly object _managersLock = new object();
-        private readonly IDictionary<string, IExtendedTorrentManager> _managers =
-            new Dictionary<string, IExtendedTorrentManager>(StringComparer.InvariantCultureIgnoreCase); 
+        private readonly IDictionary<string, IExtendedTorrentManager> _managers;
  
         private ClientEngine _engine;
         private DhtEngine _dhtEngine;
@@ -35,10 +38,12 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             EventMap.Add(Tuple.Create(TorrentState.Hashing, TorrentState.Seeding), "torrent.started");
         }
 
-        public OctoTorrentEngine(IEngineSettingsFactory settingsFactory, IJsonRpcClient rpcClient)
+        public OctoTorrentEngine(IEngineSettingsFactory settingsFactory, IJsonRpcClient rpcClient, IBootConfig config)
         {
             _settingsFactory = settingsFactory;
             _rpcClient = rpcClient;
+            _config = config;
+            _managers = new Dictionary<string, IExtendedTorrentManager>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         public void Load()
@@ -46,10 +51,6 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             LoadEngine();
             LoadDht();
             LoadManagers();
-        }
-
-        private void LoadManagers()
-        {
         }
 
         private void LoadEngine()
@@ -78,6 +79,8 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         private void UnloadManagers()
         {
+            this.SaveManager(_managers.Values);
+
             foreach (var manager in Managers)
             {
                 _engine.Unregister(manager.Manager);
@@ -100,43 +103,25 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             return null;
         }
 
-        public IExtendedTorrentManager Add(byte[] data, string savePath = null, string label = null)
+        public IExtendedTorrentManager Add(byte[] data, string savePath = null, 
+            string label = null, bool propagateEvent = true, long uploadedBytes = 0, long downloadedBytes = 0)
         {
             Torrent torrent;
 
             if (!Torrent.TryLoad(data, out torrent))
                 return null;
-
             if (String.IsNullOrEmpty(savePath))
                 savePath = _engine.Settings.SavePath;
 
             var manager = new TorrentManager(torrent, savePath, new TorrentSettings());
-            IExtendedTorrentManager extendedManager = new ExtendedTorrentManager(manager);
+
+            IExtendedTorrentManager extendedManager = new ExtendedTorrentManager(manager, uploadedBytes, downloadedBytes);
             extendedManager.Manager.TorrentStateChanged += Manager_TorrentStateChanged;
 
-            if (Get(extendedManager.FriendlyInfoHash) != null)
+            if (this.Get(extendedManager.FriendlyInfoHash) != null)
                 return null;
 
-            _engine.Register(manager);
-
-            lock (_managersLock)
-            {
-                _managers.Add(extendedManager.FriendlyInfoHash, extendedManager);
-            }
-
-            _rpcClient.SendEventAsync("torrent.added", new TorrentOverview(extendedManager.Manager));
-
-            return extendedManager;
-        }
-
-        public IExtendedTorrentManager AddMagnetLink(string magnetLink, string savePath, string label)
-        {
-            var link = new MagnetLink(magnetLink);
-            var path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
-
-            var manager = new TorrentManager(link, savePath, new TorrentSettings(),
-                path);
-            var extendedManager = new ExtendedTorrentManager(manager);
+            this.SaveTorrent(extendedManager.FriendlyInfoHash, data);
 
             _engine.Register(manager);
 
@@ -145,7 +130,10 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                 _managers.Add(extendedManager.FriendlyInfoHash, extendedManager);
             }
 
-            _rpcClient.SendEventAsync("torrent.added", new TorrentOverview(extendedManager.Manager));
+            if (propagateEvent)
+            {
+                _rpcClient.SendEventAsync("torrent.added", new TorrentOverview(extendedManager.Manager));
+            }
 
             return extendedManager;
         }
@@ -179,6 +167,102 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         public void Remove(IExtendedTorrentManager manager)
         {
             throw new NotImplementedException();
+        }
+
+        private void LoadManagers()
+        {
+            var path = Path.Combine(_config.DataPath, "state.dat");
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+            using (var reader = new BinaryReader(stream))
+            {
+                var managerCount = reader.ReadInt32();
+                for (int index = 0; index < managerCount; index++)
+                {
+                    var hash = reader.ReadString();
+                    var label = (string)null;
+                    var savePath = (string)null;
+
+                    var haslabel = reader.ReadBoolean();
+                    if (haslabel)
+                    {
+                        label = reader.ReadString();
+                    }
+
+                    var hasSavePath = reader.ReadBoolean();
+                    if (hasSavePath)
+                    {
+                        savePath = reader.ReadString();
+                    }                    
+
+                    long uploadedByteCount = reader.ReadInt64();
+                    long downloadedByteCount = reader.ReadInt64();
+
+                    // Read the torrent data.
+                    var data = this.LoadTorrent(hash);
+
+                    // Add the manager.
+                    this.Add(data, savePath, label, false, uploadedByteCount, downloadedByteCount);
+                }
+            }
+        }
+
+        private void SaveManager(IEnumerable<IExtendedTorrentManager> managers)
+        {
+            var managerList = new List<IExtendedTorrentManager>(managers);
+            var path = Path.Combine(_config.DataPath, "state.dat");
+            using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(managerList.Count);
+                foreach (var manager in managerList)
+                {
+                    writer.Write(manager.FriendlyInfoHash);
+
+                    writer.Write(manager.Label != null);
+                    if (manager.Label != null)
+                    {
+                        writer.Write(manager.Label);
+                    }
+
+                    writer.Write(manager.Manager.SavePath != null);
+                    if (manager.Manager.SavePath != null)
+                    {
+                        writer.Write(manager.Manager.SavePath);
+                    }
+
+                    writer.Write(manager.Manager.Monitor.DataBytesUploaded);
+                    writer.Write(manager.Manager.Monitor.DataBytesDownloaded);
+                }
+            }
+        }
+
+        private void SaveTorrent(string hash, byte[] data)
+        {
+            var path = Path.Combine(_config.DataPath, string.Concat(hash, ".torrent"));
+            using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(data.Length);
+                writer.Write(data);
+            }
+        }
+
+        private byte[] LoadTorrent(string hash)
+        {
+            // Read the torrent data.
+            var torrentPath = Path.Combine(_config.DataPath, string.Concat(hash, ".torrent"));
+            using (var torrentStream = new FileStream(torrentPath, FileMode.Open, FileAccess.Read, FileShare.None))
+            using (var torrentReader = new BinaryReader(torrentStream))
+            {
+                // Read the torrent.
+                var dataLength = torrentReader.ReadInt32();
+                return torrentReader.ReadBytes(dataLength);
+            }
         }
     }
 }
