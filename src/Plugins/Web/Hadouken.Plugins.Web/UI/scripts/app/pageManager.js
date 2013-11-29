@@ -1,4 +1,4 @@
-﻿define(['signals', 'hasher', 'crossroads'], function (signals, hasher, crossroads) {
+﻿define(['signals', 'hasher', 'crossroads', 'page'], function (signals, hasher, crossroads, Page) {
     function PageManager() {
         this.currentPage = null;
     }
@@ -27,15 +27,13 @@
 
     PageManager.prototype.addPage = function (page) {
         var that = this;
-        
-        if (typeof page.routes === 'undefined') {
+
+        if (typeof page.route === 'undefined') {
             return;
         }
         
-        for (var i = 0; i < page.routes.length; i++) {
-            var route = page.routes[i];
-            crossroads.addRoute(route, function () { that.route(page); });
-        }
+        crossroads.addRoute(page.route, function () { that.route(page); });
+
     };
 
     PageManager.prototype.route = function(page) {
@@ -44,7 +42,7 @@
         }
 
         this.currentPage = page;
-        this.currentPage.load(arguments);
+        this.currentPage.init(arguments);
     };
 
     return PageManager;

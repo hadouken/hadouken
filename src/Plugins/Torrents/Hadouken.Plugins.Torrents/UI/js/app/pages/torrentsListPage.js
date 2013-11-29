@@ -1,9 +1,10 @@
-﻿define(function() {
+﻿define(['page'], function(Page) {
     function TorrentsListPage() {
-        this.routes = [
-            '/torrents'
-        ];
+        Page.call(this, '/plugins/core.torrents/list.html', '/torrents');
     }
+
+    TorrentsListPage.prototype = new Page();
+    TorrentsListPage.prototype.constructor = TorrentsListPage;
 
     TorrentsListPage.prototype.load = function() {
         console.log('loading torrents list');
