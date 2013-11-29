@@ -1,13 +1,14 @@
 ﻿define(
     [
         'jquery',
+        'bootstrap',
         'overlay',
         'eventListener',
         'pageManager',
         'pluginEngine',
         'pages/settingsPage'
     ],
-    function ($, Overlay, EventListener, PageManager, PluginEngine, SettingsPage) {
+    function ($, $bs, Overlay, EventListener, PageManager, PluginEngine, SettingsPage) {
         function Bootstrapper() {
             this.eventListener = new EventListener();
         }

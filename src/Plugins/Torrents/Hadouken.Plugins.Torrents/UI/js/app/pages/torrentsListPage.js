@@ -1,17 +1,50 @@
-﻿define(['page'], function(Page) {
+﻿define(['rpcClient', 'eventListener', 'page'], function(RpcClient, EventListener, Page) {
     function TorrentsListPage() {
         Page.call(this, '/plugins/core.torrents/list.html', '/torrents');
+        this.rpc = new RpcClient();
+        this.eventListener = new EventListener();
     }
 
     TorrentsListPage.prototype = new Page();
     TorrentsListPage.prototype.constructor = TorrentsListPage;
 
-    TorrentsListPage.prototype.load = function() {
-        console.log('loading torrents list');
+    TorrentsListPage.prototype.load = function () {
+        // Setup events
+        this.eventListener.subscribe('torrent.added', this.torrentAdded);
+        this.eventListener.subscribe('torrent.removed', this.torrentRemoved);
+
+        var that = this;
+        this.eventListener.subscribe('web.connected', function() {
+            that.setupTimer(1);
+        });
+
+        this.eventListener.connect();
     };
 
-    TorrentsListPage.prototype.unload = function() {
-        console.log('unloading torrents list');
+    TorrentsListPage.prototype.unload = function () {
+        this.eventListener.disconnect();
+        clearTimeout(this.timer);
+    };
+
+    TorrentsListPage.prototype.setupTimer = function (milliseconds) {
+        var that = this;
+
+        this.timer = setTimeout(function() {
+            that.fetchTorrents();
+        }, milliseconds);
+    };
+
+    TorrentsListPage.prototype.fetchTorrents = function () {
+        var that = this;
+        
+        this.rpc.call('torrents.list', function(torrents) {
+            clearTimeout(that.timer);
+            that.setupTimer(1000);
+        });
+    };
+
+    TorrentsListPage.prototype.loadTorrents = function(torrents) {
+
     };
 
     return TorrentsListPage;

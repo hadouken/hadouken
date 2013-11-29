@@ -27,6 +27,8 @@
             for (var j = 0; j < this.handlers[key].length; j++) {
                 delete this.handlers[key][j];
             }
+
+            delete this.handlers[key];
         }
     };
 
