@@ -27,42 +27,55 @@
 
     PluginEngine.prototype.loadPluginScripts = function (callback) {
         var that = this;
-        
-        var files = 0;
-        var requestCallback = function() {
-            files += 1;
-            
-            if (files >= Object.keys(that.plugins).length) {
-                callback();
-            }
+        var keys = Object.keys(this.plugins);
+
+        var asyncLoop = function(o) {
+            var i = -1;
+
+            var loop = function() {
+                i++;
+
+                if (i == o.length) {
+                    o.callback();
+                    return;
+                }
+
+                o.loopTarget(loop, i);
+            };
+
+            loop();
         };
 
-        var keys = Object.keys(this.plugins);
-        
-        for (var i = 0; i < keys.length; i++) {
-            var plugin = this.plugins[keys[i]];
-            
-            if (plugin.name === 'core.web') {
-                requestCallback();
-                continue;
+        asyncLoop({
+            length: keys.length,
+            loopTarget: function(loopCallback, index) {
+                var plugin = that.plugins[keys[index]];
+                
+                if (plugin.name === 'core.web') {
+                    loopCallback();
+                    return;
+                }
+                
+                $.ajax({
+                    url: '/plugins/' + plugin.name + '/js/factory.js',
+                    success: function (js) {
+                        var funcFactory = new Function('return ' + js);
+                        var func = funcFactory();
+
+                        func(function (instance) {
+                            that.plugins[plugin.name].instance = instance;
+                            that.plugins[plugin.name].instance.load();
+
+                            loopCallback();
+                        });
+                    },
+                    error: loopCallback
+                });
+            },
+            callback: function() {
+                callback();
             }
-
-            $.ajax({
-                url: '/plugins/' + plugin.name + '/js/factory.js',
-                success: function(js) {
-                    var funcFactory = new Function('return ' + js);
-                    var func = funcFactory();
-
-                    func(function(instance) {
-                        plugin.instance = instance;
-                        plugin.instance.load();
-
-                        requestCallback();
-                    });
-                },
-                error: requestCallback
-            });
-        }
+        });
     };
 
     return PluginEngine;

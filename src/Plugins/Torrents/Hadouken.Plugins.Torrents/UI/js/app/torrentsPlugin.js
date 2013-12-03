@@ -22,5 +22,9 @@ define(['jquery', 'pageManager', js.pages.torrentsList, js.pages.torrentDetails]
 
     };
 
+    TorrentsPlugin.prototype.configure = function() {
+        console.log('tjoho');
+    };
+
     return TorrentsPlugin;
 });
