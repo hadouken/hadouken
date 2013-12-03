@@ -83,7 +83,10 @@
     <Content Include="UI\js\app\pages\torrentsListPage.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\js\plugin.js">
+    <Content Include="UI\js\app\torrentsPlugin.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\js\factory.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Scripts\UI\ConfigureStep.ts">

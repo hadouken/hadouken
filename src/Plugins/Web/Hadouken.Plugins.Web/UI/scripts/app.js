@@ -7,12 +7,16 @@
         'jquery.signalr': '../lib/jquery.signalr',
         signals: '../lib/signals',
         hasher: '../lib/hasher',
-        crossroads: '../lib/crossroads'
+        crossroads: '../lib/crossroads',
+        handlebars: '../lib/handlebars'
     },
     
     shim: {
         bootstrap: {
             deps: ['jquery']
+        },
+        handlebars: {
+            exports: 'Handlebars'
         }
     }
 });

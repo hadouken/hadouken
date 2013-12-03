@@ -48,11 +48,17 @@
             }
 
             $.ajax({
-                url: '/plugins/' + plugin.name + '/js/plugin.js',
+                url: '/plugins/' + plugin.name + '/js/factory.js',
                 success: function(js) {
                     var funcFactory = new Function('return ' + js);
                     var func = funcFactory();
-                    func(requestCallback);
+
+                    func(function(instance) {
+                        plugin.instance = instance;
+                        plugin.instance.load();
+
+                        requestCallback();
+                    });
                 },
                 error: requestCallback
             });

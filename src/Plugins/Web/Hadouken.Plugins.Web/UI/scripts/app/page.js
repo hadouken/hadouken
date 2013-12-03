@@ -9,7 +9,7 @@
         var that = this;
         
         $.get(this.url, function(html) {
-            that.content = $(html);
+            that.content = $('<div>' + html + '</div>');
             $('#page-container').empty().append(that.content);
 
             that.load.apply(that, args);
