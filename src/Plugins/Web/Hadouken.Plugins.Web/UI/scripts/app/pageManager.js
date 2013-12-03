@@ -32,17 +32,17 @@
             return;
         }
         
-        crossroads.addRoute(page.route, function () { that.route(page); });
+        crossroads.addRoute(page.route, function () { that.route(page, arguments); });
 
     };
 
-    PageManager.prototype.route = function(page) {
+    PageManager.prototype.route = function(page, args) {
         if (this.currentPage !== null) {
             this.currentPage.unload();
         }
 
         this.currentPage = page;
-        this.currentPage.init(arguments);
+        this.currentPage.init(args);
     };
 
     return PageManager;

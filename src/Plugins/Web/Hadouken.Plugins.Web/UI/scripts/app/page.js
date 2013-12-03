@@ -5,14 +5,14 @@
         this.content = '';
     }
 
-    Page.prototype.init = function () {
+    Page.prototype.init = function (args) {
         var that = this;
         
         $.get(this.url, function(html) {
             that.content = $(html);
             $('#page-container').empty().append(that.content);
 
-            that.load();
+            that.load.apply(that, args);
         });
     };
 

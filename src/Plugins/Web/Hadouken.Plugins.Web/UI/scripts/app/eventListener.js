@@ -5,15 +5,16 @@
         this.handlers = {};
     }
 
-    EventListener.prototype.connect = function() {
+    EventListener.prototype.connect = function(callback) {
         this.proxy = this.connection.createHubProxy('events');
         this.proxy.on('publishEvent', this.publish);
 
         var that = this;
 
-        this.connection.start().done(function() {
-            that.publish({ name: 'web.connected' });
-        });
+        if (typeof callback === 'undefined')
+            callback = Function.from();
+
+        this.connection.start().done(callback);
     };
 
     EventListener.prototype.disconnect = function() {

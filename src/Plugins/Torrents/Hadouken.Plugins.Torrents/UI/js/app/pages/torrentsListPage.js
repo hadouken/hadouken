@@ -1,6 +1,7 @@
 ﻿define(['rpcClient', 'eventListener', 'page'], function(RpcClient, EventListener, Page) {
     function TorrentsListPage() {
         Page.call(this, '/plugins/core.torrents/list.html', '/torrents');
+        
         this.rpc = new RpcClient();
         this.eventListener = new EventListener();
     }
@@ -13,12 +14,11 @@
         this.eventListener.subscribe('torrent.added', this.torrentAdded);
         this.eventListener.subscribe('torrent.removed', this.torrentRemoved);
 
+        // Connect the event listener
         var that = this;
-        this.eventListener.subscribe('web.connected', function() {
+        this.eventListener.connect(function() {
             that.setupTimer(1);
         });
-
-        this.eventListener.connect();
     };
 
     TorrentsListPage.prototype.unload = function () {

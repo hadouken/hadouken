@@ -17,7 +17,7 @@
             var overlay = new Overlay('body');
             overlay.show();
 
-            this.eventListener.subscribe('web.connected', function() {
+            this.eventListener.connect(function() {
                 var pageManager = PageManager.getInstance();
                 pageManager.addPage(new SettingsPage());
 
@@ -27,8 +27,6 @@
                     overlay.hide();
                 });
             });
-
-            this.eventListener.connect();
         };
 
         return Bootstrapper;
