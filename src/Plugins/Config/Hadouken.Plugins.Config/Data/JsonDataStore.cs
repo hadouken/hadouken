@@ -50,7 +50,7 @@ namespace Hadouken.Plugins.Config.Data
 
         public void Set(string key, object value)
         {
-            JsonDictionary.Add(key, JToken.FromObject(value));
+            JsonDictionary[key] = JToken.FromObject(value);
         }
 
         public void Delete(string key)
