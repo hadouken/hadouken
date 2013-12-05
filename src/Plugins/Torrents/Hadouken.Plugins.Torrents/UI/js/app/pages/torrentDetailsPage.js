@@ -6,8 +6,7 @@
         this.eventListener = new EventListener();
     }
 
-    TorrentDetailsPage.prototype = new Page();
-    TorrentDetailsPage.prototype.constructor = TorrentDetailsPage;
+    Page.derive(TorrentDetailsPage);
 
     TorrentDetailsPage.prototype.load = function(id) {
         console.log(id);

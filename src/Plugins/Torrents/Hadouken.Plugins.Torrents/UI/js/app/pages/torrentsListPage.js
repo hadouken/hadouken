@@ -6,8 +6,7 @@
         this.eventListener = new EventListener();
     }
 
-    TorrentsListPage.prototype = new Page();
-    TorrentsListPage.prototype.constructor = TorrentsListPage;
+    Page.derive(TorrentsListPage);
 
     TorrentsListPage.prototype.load = function () {
         // Setup events

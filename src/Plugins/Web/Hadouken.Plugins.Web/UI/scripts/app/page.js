@@ -5,6 +5,11 @@
         this.content = '';
     }
 
+    Page.derive = function (childClass) {
+        childClass.prototype = new Page();
+        childClass.prototype.constructor = childClass;
+    };
+
     Page.prototype.init = function (args) {
         var that = this;
         

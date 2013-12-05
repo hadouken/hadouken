@@ -1,12 +1,12 @@
 ﻿define(['rpcClient', 'pluginEngine', 'page', 'handlebars'], function(RpcClient, PluginEngine, Page, Handlebars) {
     function SettingsPage() {
         Page.call(this, '/settings.html', '/settings');
+        
         this.rpc = new RpcClient();
         this.pluginEngine = PluginEngine.getInstance();
     }
-
-    SettingsPage.prototype = new Page();
-    SettingsPage.prototype.constructor = SettingsPage;
+    
+    Page.derive(SettingsPage);
 
     SettingsPage.prototype.load = function () {
         this.loadPlugins(this.pluginEngine.plugins);
@@ -43,8 +43,7 @@
     };
 
     SettingsPage.prototype.unload = function() {
-        console.log('unloading settings page');
     };
-
+    
     return SettingsPage;
 });
