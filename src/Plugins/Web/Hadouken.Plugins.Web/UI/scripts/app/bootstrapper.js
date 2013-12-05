@@ -6,9 +6,11 @@
         'eventListener',
         'pageManager',
         'pluginEngine',
-        'pages/settingsPage'
+        'pages/settingsPage',
+        'wizard',
+        'wizardSteps/configureStep'
     ],
-    function ($, $bs, Overlay, EventListener, PageManager, PluginEngine, SettingsPage) {
+    function ($, $bs, Overlay, EventListener, PageManager, PluginEngine, SettingsPage, Wizard, ConfigureStep) {
         function Bootstrapper() {
             this.eventListener = new EventListener();
         }
@@ -24,7 +26,13 @@
                 var pluginEngine = PluginEngine.getInstance();
                 pluginEngine.load(function () {
                     pageManager.init();
+
+                    // Show wizard
+                    var wizard = new Wizard('First time setup');
+                    wizard.steps.push(new ConfigureStep());
+
                     overlay.hide();
+                    wizard.show();
                 });
             });
         };
