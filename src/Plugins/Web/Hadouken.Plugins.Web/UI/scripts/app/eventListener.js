@@ -6,13 +6,18 @@
     }
 
     EventListener.prototype.connect = function(callback) {
-        this.proxy = this.connection.createHubProxy('events');
-        this.proxy.on('publishEvent', this.publish);
-
         var that = this;
+        
+        this.proxy = this.connection.createHubProxy('events');
+        this.proxy.on('publishEvent', function(e) {
+            that.publish(e);
+        });
 
-        if (typeof callback === 'undefined')
-            callback = Function.from();
+
+        if (typeof callback === 'undefined') {
+            callback = function() {
+            };
+        }
 
         this.connection.start().done(callback);
     };

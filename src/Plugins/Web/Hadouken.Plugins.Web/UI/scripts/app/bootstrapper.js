@@ -31,6 +31,24 @@
                     var wizard = new Wizard('First time setup');
                     wizard.steps.push(new ConfigureStep());
 
+                    // Add steps from plugins
+                    var plugins = Object.keys(pluginEngine.plugins);
+                    for (var i = 0; i < plugins.length; i++) {
+                        var plugin = pluginEngine.plugins[plugins[i]];
+                        
+                        if (!plugin.instance) {
+                            continue;
+                        }
+
+                        var step = plugin.instance.configure('wizard');
+                        
+                        if (!step) {
+                            continue;
+                        }
+
+                        wizard.steps.push(step);
+                    }
+
                     overlay.hide();
                     wizard.show();
                 });

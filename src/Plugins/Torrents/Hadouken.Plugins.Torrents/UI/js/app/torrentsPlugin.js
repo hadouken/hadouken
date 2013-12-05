@@ -5,10 +5,13 @@
     pages: {
         torrentsList: '/plugins/core.torrents/js/app/pages/torrentsListPage.js',
         torrentDetails: '/plugins/core.torrents/js/app/pages/torrentDetailsPage.js'
+    },
+    wizardSteps: {
+        configure: '/plugins/core.torrents/js/app/wizardSteps/configureStep.js'
     }
 };
 
-define(['jquery', 'pageManager', js.pages.torrentsList, js.pages.torrentDetails, js.dialogs.configure], function ($, PageManager, TorrentsListPage, TorrentDetailsPage, ConfigureDialog) {
+define(['jquery', 'pageManager', js.pages.torrentsList, js.pages.torrentDetails, js.dialogs.configure, js.wizardSteps.configure], function ($, PageManager, TorrentsListPage, TorrentDetailsPage, ConfigureDialog, ConfigureStep) {
     function TorrentsPlugin() {
     }
 
@@ -25,7 +28,11 @@ define(['jquery', 'pageManager', js.pages.torrentsList, js.pages.torrentDetails,
         $('#menuitem-torrents-list').remove();
     };
 
-    TorrentsPlugin.prototype.configure = function() {
+    TorrentsPlugin.prototype.configure = function (mode) {
+        if (mode === 'wizard') {
+            return new ConfigureStep();
+        }
+
         var dialog = new ConfigureDialog();
         dialog.show();
     };
