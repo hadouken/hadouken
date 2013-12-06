@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthChangedEventArgs.cs" />
     <Compile Include="Http\HttpFileServer.cs" />
     <Compile Include="Http\IHttpFileServer.cs" />
     <Compile Include="WebBootstrapper.cs" />
@@ -99,6 +100,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\scripts\app\dialog.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\scripts\app\dialogs\changeAuthDialog.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\scripts\app\eventListener.js">

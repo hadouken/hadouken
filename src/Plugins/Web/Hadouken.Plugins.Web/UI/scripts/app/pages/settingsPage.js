@@ -1,4 +1,4 @@
-﻿define(['rpcClient', 'pluginEngine', 'page', 'handlebars'], function(RpcClient, PluginEngine, Page, Handlebars) {
+﻿define(['rpcClient', 'pluginEngine', 'page', 'handlebars', 'dialogs/changeAuthDialog'], function(RpcClient, PluginEngine, Page, Handlebars, ChangeAuthDialog) {
     function SettingsPage() {
         Page.call(this, '/settings.html', '/settings');
         
@@ -12,6 +12,13 @@
         this.loadPlugins(this.pluginEngine.plugins);
 
         var that = this;
+
+        $('#btn-change-auth').on('click', function(e) {
+            e.preventDefault();
+
+            var dlg = new ChangeAuthDialog();
+            dlg.show();
+        });
 
         $('#tbody-plugin-list .btn-configure-plugin').on('click', function(e) {
             var id = $(this).closest('tr').attr('data-plugin-id');
