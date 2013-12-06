@@ -8,8 +8,11 @@
 
     Page.derive(TorrentDetailsPage);
 
-    TorrentDetailsPage.prototype.load = function(id) {
-        console.log(id);
+    TorrentDetailsPage.prototype.load = function (id) {
+        var that = this;
+        this.rpc.callParams('torrents.details', id, function (torrent) {
+            that.content.find('#torrent-details-name').text(torrent.name);
+        });
     };
 
     TorrentDetailsPage.prototype.unload = function() {
