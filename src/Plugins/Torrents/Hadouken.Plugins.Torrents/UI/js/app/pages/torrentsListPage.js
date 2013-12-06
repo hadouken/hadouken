@@ -20,8 +20,8 @@
         });
         
         // Setup events
-        this.eventListener.subscribe('torrent.added', function (e) { that.torrentAdded(e.data); });
-        this.eventListener.subscribe('torrent.removed', function (e) { that.torrentRemoved(e.data); });
+        this.eventListener.subscribe('torrent.added', function (e) { that.torrentAdded(e); });
+        this.eventListener.subscribe('torrent.removed', function (e) { that.torrentRemoved(e); });
 
         // Connect the event listener
         this.eventListener.connect(function() {
@@ -53,6 +53,14 @@
 
     TorrentsListPage.prototype.loadTorrents = function(torrents) {
 
+    };
+
+    TorrentsListPage.prototype.torrentAdded = function(torrent) {
+        console.log('added: ' + torrent.name);
+    };
+
+    TorrentsListPage.prototype.torrentRemoved = function(infoHash) {
+        console.log('removed: ' + infoHash);
     };
 
     return TorrentsListPage;
