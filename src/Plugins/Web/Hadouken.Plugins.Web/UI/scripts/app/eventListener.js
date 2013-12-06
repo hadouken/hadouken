@@ -20,6 +20,11 @@
         }
 
         this.connection.start().done(callback);
+        this.connection.disconnected(function() {
+            that.publish({
+                name: 'web.disconnected'
+            });
+        });
     };
 
     EventListener.prototype.disconnect = function() {
