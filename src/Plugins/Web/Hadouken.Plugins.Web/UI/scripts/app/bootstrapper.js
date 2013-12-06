@@ -2,6 +2,7 @@
     [
         'jquery',
         'bootstrap',
+        'handlebars',
         'overlay',
         'eventListener',
         'pageManager',
@@ -10,12 +11,21 @@
         'wizard',
         'wizardSteps/configureStep'
     ],
-    function ($, $bs, Overlay, EventListener, PageManager, PluginEngine, SettingsPage, Wizard, ConfigureStep) {
+    function ($, $bs, Handlebars, Overlay, EventListener, PageManager, PluginEngine, SettingsPage, Wizard, ConfigureStep) {
         function Bootstrapper() {
             this.eventListener = new EventListener();
         }
 
         Bootstrapper.prototype.init = function () {
+            // Register Handlebars helpers
+            Handlebars.registerHelper('fileSize', function(size) {
+                if (size < 0)
+                    return 'NaN';
+
+                var i = Math.floor(Math.log(size) / Math.log(1024));
+                return (size / Math.pow(1024, i)).toFixed(2) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+            });
+
             var overlay = new Overlay('body');
             overlay.show();
 

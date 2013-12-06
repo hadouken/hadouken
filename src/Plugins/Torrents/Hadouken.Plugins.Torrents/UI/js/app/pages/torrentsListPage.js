@@ -9,6 +9,16 @@
     Page.derive(TorrentsListPage);
 
     TorrentsListPage.prototype.load = function () {
+        // Register template helpers
+        Handlebars.registerHelper('progress', function(torrent) {
+            if (torrent.state === 'Downloading') {
+                var progress = torrent.progress | 0;
+                return ' (' + progress + ')';
+            }
+
+            return '';
+        });
+
         // Load template
         var templateHtml = this.content.find('#tmpl-torrent-list-item').html();
         this.template = Handlebars.compile(templateHtml);
