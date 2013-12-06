@@ -45,14 +45,18 @@
     TorrentsListPage.prototype.fetchTorrents = function () {
         var that = this;
         
-        this.rpc.call('torrents.list', function(torrents) {
+        this.rpc.call('torrents.list', function (torrents) {
+            that.loadTorrents(torrents);
+            
             clearTimeout(that.timer);
             that.setupTimer(1000);
         });
     };
 
     TorrentsListPage.prototype.loadTorrents = function(torrents) {
-
+        if (typeof torrents === 'undefined' || torrents === null || torrents.length === 0) {
+            return;
+        }
     };
 
     TorrentsListPage.prototype.torrentAdded = function(torrent) {
