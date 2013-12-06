@@ -1,4 +1,4 @@
-﻿define(['rpcClient', 'eventListener', 'page'], function(RpcClient, EventListener, Page) {
+﻿define(['rpcClient', 'eventListener', 'page', '/plugins/core.torrents/js/app/dialogs/addTorrentsDialog.js'], function(RpcClient, EventListener, Page, AddTorrentsDialog) {
     function TorrentsListPage() {
         Page.call(this, '/plugins/core.torrents/list.html', '/torrents');
         
@@ -9,12 +9,21 @@
     Page.derive(TorrentsListPage);
 
     TorrentsListPage.prototype.load = function () {
+        var that = this;
+        
+        // Event handlers
+        this.content.find('#btn-show-add-torrents').on('click', function(e) {
+            e.preventDefault();
+
+            var dlg = new AddTorrentsDialog();
+            dlg.show();
+        });
+        
         // Setup events
-        this.eventListener.subscribe('torrent.added', this.torrentAdded);
-        this.eventListener.subscribe('torrent.removed', this.torrentRemoved);
+        this.eventListener.subscribe('torrent.added', function (e) { that.torrentAdded(e.data); });
+        this.eventListener.subscribe('torrent.removed', function (e) { that.torrentRemoved(e.data); });
 
         // Connect the event listener
-        var that = this;
         this.eventListener.connect(function() {
             that.setupTimer(1);
         });
