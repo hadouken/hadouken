@@ -11,32 +11,15 @@ namespace Hadouken.Framework.Plugins
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IJsonRpcHandler _jsonRpcHandler;
-        private readonly IRootPathProvider _rootPathProvider;
 
-        public PluginManagerService(IJsonRpcHandler jsonRpcHandler, IRootPathProvider rootPathProvider)
+        public PluginManagerService(IJsonRpcHandler jsonRpcHandler)
         {
             _jsonRpcHandler = jsonRpcHandler;
-            _rootPathProvider = rootPathProvider;
         }
 
         public async Task<string> RpcAsync(string request)
         {
             return await _jsonRpcHandler.HandleAsync(request);
-        }
-
-        public async Task<byte[]> GetFileAsync(string path)
-        {
-            var root = Path.Combine(_rootPathProvider.GetRootPath(), "UI");
-
-            if (!Directory.Exists(root))
-                return null;
-
-            var file = Path.Combine(root, path);
-
-            if (!File.Exists(file))
-                return null;
-
-            return File.ReadAllBytes(file);
         }
     }
 }
