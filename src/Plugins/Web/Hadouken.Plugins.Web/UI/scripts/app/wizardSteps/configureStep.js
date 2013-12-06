@@ -23,15 +23,17 @@
                 if (!result) {
                     callback();
                 } else {
-                    $.ajax({
-                        url: '/',
-                        type: 'GET',
-                        username: username,
-                        password: password,
-                        success: function () {
-                            callback();
-                        }
-                    });
+                    setTimeout(function() {
+                        $.ajax({
+                            url: '/',
+                            type: 'GET',
+                            username: username,
+                            password: password,
+                            success: function() {
+                                callback();
+                            }
+                        });
+                    }, 1000);
                 }
             });
         });
