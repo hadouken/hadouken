@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Hadouken.Framework.Rpc;
-using Hadouken.Plugins.Web.CoffeeScript;
 
 namespace Hadouken.Plugins.Web.Http
 {
@@ -14,13 +13,11 @@ namespace Hadouken.Plugins.Web.Http
         private static readonly Regex PluginRegex = new Regex("^/plugins/(?<pluginId>[a-zA-Z0-9\\.]*?)/(?<path>.*)$");
 
         private readonly IJsonRpcClient _rpcClient;
-        private readonly ICoffeeCompiler _coffeeCompiler;
         private readonly HttpListener _httpListener;
 
-        public HttpFileServer(string listenUri, IJsonRpcClient rpcClient, ICoffeeCompiler coffeeCompiler)
+        public HttpFileServer(string listenUri, IJsonRpcClient rpcClient)
         {
             _rpcClient = rpcClient;
-            _coffeeCompiler = coffeeCompiler;
 
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add(listenUri);
@@ -83,14 +80,6 @@ namespace Hadouken.Plugins.Web.Http
             else
             {
                 var mapping = MimeMapping.GetMimeMapping(path);
-
-                if (path.EndsWith(".coffee"))
-                {
-                    var coffeeScript = _coffeeCompiler.Compile(Encoding.UTF8.GetString(fileContents));
-                    fileContents = Encoding.UTF8.GetBytes(coffeeScript);
-
-                    mapping = "text/javascript";
-                }
 
                 context.Response.ContentType = mapping;
                 context.Response.StatusCode = 200;
