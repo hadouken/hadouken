@@ -1,4 +1,4 @@
-﻿define(['rpcClient', 'eventListener', 'page', '/plugins/core.torrents/js/app/dialogs/addTorrentsDialog.js'], function(RpcClient, EventListener, Page, AddTorrentsDialog) {
+﻿define(['rpcClient', 'eventListener', 'page', 'handlebars', '/plugins/core.torrents/js/app/dialogs/addTorrentsDialog.js'], function(RpcClient, EventListener, Page, Handlebars, AddTorrentsDialog) {
     function TorrentsListPage() {
         Page.call(this, '/plugins/core.torrents/list.html', '/torrents');
         
@@ -9,6 +9,10 @@
     Page.derive(TorrentsListPage);
 
     TorrentsListPage.prototype.load = function () {
+        // Load template
+        var templateHtml = this.content.find('#tmpl-torrent-list-item').html();
+        this.template = Handlebars.compile(templateHtml);
+        
         var that = this;
         
         // Event handlers
@@ -22,10 +26,17 @@
         // Setup events
         this.eventListener.subscribe('torrent.added', function (e) { that.torrentAdded(e); });
         this.eventListener.subscribe('torrent.removed', function (e) { that.torrentRemoved(e); });
-
-        // Connect the event listener
-        this.eventListener.connect(function() {
-            that.setupTimer(1);
+        
+        // Get a list of all torrents and add them to the page
+        this.rpc.call('torrents.list', function(result) {
+            for (var i = 0; i < result.length; i++) {
+                that.torrentAdded(result[i]);
+            }
+            
+            // Connect the event listener
+            that.eventListener.connect(function () {
+                that.setupTimer(1);
+            });
         });
     };
 
@@ -60,7 +71,8 @@
     };
 
     TorrentsListPage.prototype.torrentAdded = function(torrent) {
-        console.log('added: ' + torrent.name);
+        var row = this.template({ torrent: torrent });
+        this.content.find('#tbody-torrents-list').append($(row));
     };
 
     TorrentsListPage.prototype.torrentRemoved = function(infoHash) {

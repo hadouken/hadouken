@@ -22,14 +22,14 @@
         <td><a href="#/torrents/{{torrent.id}}/">{{torrent.name}}</a></td>
         <td>
             <span class="state">{{torrent.state}}</span>
-            <span class="state-progress">{{progress torrent}}</span>
+            <span class="state-progress">{{torrent}}</span>
         </td>
         <td>
             <div class="progress" style="margin-bottom: 0;">
                 <div class="progress-bar" style="width: {{torrent.progress}}%;"></div>
             </div>
         </td>
-        <td>{{fileSize torrent.size}}</td>
+        <td>{{torrent.size}}</td>
         <td>
             <div class="actions pull-right">
                 <div class="btn-group">
