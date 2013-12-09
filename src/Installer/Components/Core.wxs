@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Fragment>
+    <ComponentGroup Id="CoreComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Name="Hadouken.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Framework.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Sandbox.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
