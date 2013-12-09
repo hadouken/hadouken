@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <Fragment>
+    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Id="HdknWinSrvCfg" Name="Hadouken.Service.exe.config" />
+      </Component>
+
+      <Component>
+        <RegistryKey Root="HKLM" Key="Software\Hadouken">
+          <RegistryValue Type="string" Name="InstallDir" Value="[INSTALLDIR]"/>
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

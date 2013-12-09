@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Fragment>
+    <ComponentGroup Id="PluginComponents" Directory="PLUGINDIR" Source="$(var.BinDir)\Plugins\">
+      <Component>
+        <File Name="core.config.zip" />
+      </Component>
+
+      <Component>
+        <File Name="core.httpjsonrpc.zip" />
+      </Component>
+
+      <Component>
+        <File Name="core.torrents.zip" />
+      </Component>
+
+      <Component>
+        <File Name="core.web.zip" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

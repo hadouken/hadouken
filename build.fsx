@@ -71,7 +71,55 @@ Target "Zip" (fun _ ->
     trace "----------------------------------------\n"
 
     !! (deployDir + "**/*") 
-        |> Zip deployDir (versionDir + "Hadouken." + releaseNotes.AssemblyVersion + ".zip")
+        |> Zip deployDir (versionDir + "hdkn-" + releaseNotes.AssemblyVersion + ".zip")
+)
+
+Target "MSI" (fun _ ->
+    trace "\n----------------------------------------"
+    trace "BUILDING MSI PACKAGE"
+    trace "----------------------------------------\n"
+
+    let candleSources =
+        [
+            "src/Installer/Hadouken.wxs";
+            "src/Installer/Components/Config.wxs";
+            "src/Installer/Components/Core.wxs";
+            "src/Installer/Components/Lib.wxs";
+            "src/Installer/Components/Plugins.wxs";
+            "src/Installer/Components/Service.wxs"
+        ]
+        |> String.concat " "
+
+    let binDir = "build/" + releaseNotes.AssemblyVersion + "/bin"
+
+    let candleResult =
+        ExecProcess (fun info -> 
+            info.FileName <- "./tools/wix-3.8/candle.exe"
+            info.Arguments <- "-ext WixUIExtension -ext WixNetFxExtension -out src/Installer/obj/ -dBinDir=" + binDir + " -dBuildVersion=" + releaseNotes.AssemblyVersion + " " + candleSources
+        ) (System.TimeSpan.FromMinutes 1.)
+ 
+    if candleResult <> 0 then failwith "MSI (Candle) failed."
+
+    let lightSources =
+        [
+            "src/Installer/obj/Config.wixobj";
+            "src/Installer/obj/Core.wixobj";
+            "src/Installer/obj/Hadouken.wixobj";
+            "src/Installer/obj/Lib.wixobj";
+            "src/Installer/obj/Plugins.wixobj";
+            "src/Installer/obj/Service.wixobj"
+        ]
+        |> String.concat " "
+
+    let msiPath = "build/" + releaseNotes.AssemblyVersion + "/hdkn-" + releaseNotes.AssemblyVersion + ".msi"
+
+    let lightResult =
+        ExecProcess (fun info ->
+            info.FileName <- "./tools/wix-3.8/light.exe"
+            info.Arguments <- "-ext WixUIExtension -ext WixNetFxExtension -pdbout src/Installer/pdb/Hadouken.wixpdb -out " + msiPath + " " + lightSources
+        ) (System.TimeSpan.FromMinutes 1.)
+
+    if lightResult <> 0 then failwith "MSI (Light) failed."
 )
 
 Target "Help" (fun _ ->
@@ -93,6 +141,7 @@ Target "All" DoNothing
    ==> "Tests"
    ==> "Copy"
    ==> "Zip"
+   ==> "MSI"
    ==> "All"
 
 // Set the default target to the last node in the

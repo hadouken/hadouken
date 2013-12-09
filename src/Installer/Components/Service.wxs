@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+           xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <Fragment>
+    <ComponentGroup Id="ServiceComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component Id="HadoukenService">
+        <File Id="HadoukenServiceExecutable" Name="Hadouken.Service.exe" />
+
+        <ServiceInstall Id="ServiceInstaller"
+                    Type="ownProcess"
+                    Vital="yes"
+                    Name="Hadouken"
+                    DisplayName="Hadouken"
+                    Description="The service for Hadouken BitTorrent client"
+                    Start="auto"
+                    Interactive="no"
+                    ErrorControl="normal" />
+
+        <!-- Start service on installation -->
+        <ServiceControl Id="StartService" Start="install" Name="Hadouken" Wait="yes" />
+        
+        <!-- Stop and remove service on uninstallation -->
+        <ServiceControl Id="StopService" Stop="both" Name="Hadouken" Wait="yes" Remove="uninstall" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
