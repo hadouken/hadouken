@@ -86,7 +86,7 @@
     };
 
     TorrentsListPage.prototype.torrentRemoved = function(infoHash) {
-        console.log('removed: ' + infoHash);
+        this.content.find('tr[data-torrent-id=' + infoHash + ']').remove();
     };
 
     return TorrentsListPage;

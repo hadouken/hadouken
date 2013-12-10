@@ -33,7 +33,7 @@ Target "Build" (fun _ ->
     trace "BUILDING SOLUTION"
     trace "----------------------------------------\n"
 
-    MSBuild null "Build" ["Configuration", buildMode] ["./Hadouken.sln"]
+    MSBuild null "Rebuild" ["Configuration", buildMode] ["./Hadouken.sln"]
     |> Log "AppBuild-Output: "
 )
 
