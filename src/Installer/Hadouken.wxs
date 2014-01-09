@@ -33,7 +33,11 @@
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
-        <Directory Id="INSTALLDIR" Name="Hadouken">
+        <Directory Id="INSTALLDIR" Name="Hadouken" />
+      </Directory>
+
+      <Directory Id="CommonAppDataFolder" Name="ProgramDataFolder">
+        <Directory Id="HdknData" Name="Hadouken">
           <Directory Id="PLUGINDIR" Name="Plugins" />
         </Directory>
       </Directory>

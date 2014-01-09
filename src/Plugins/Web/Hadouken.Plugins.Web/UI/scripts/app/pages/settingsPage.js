@@ -1,4 +1,4 @@
-﻿define(['rpcClient', 'pluginEngine', 'page', 'handlebars', 'dialogs/changeAuthDialog'], function(RpcClient, PluginEngine, Page, Handlebars, ChangeAuthDialog) {
+﻿define(['rpcClient', 'pluginEngine', 'page', 'handlebars', 'dialogs/changeAuthDialog', 'dialogs/uploadPluginDialog'], function(RpcClient, PluginEngine, Page, Handlebars, ChangeAuthDialog, UploadPluginDialog) {
     function SettingsPage() {
         Page.call(this, '/settings.html', '/settings');
         
@@ -17,6 +17,13 @@
             e.preventDefault();
 
             var dlg = new ChangeAuthDialog();
+            dlg.show();
+        });
+
+        $('#btn-upload-plugin').on('click', function(e) {
+            e.preventDefault();
+
+            var dlg = new UploadPluginDialog();
             dlg.show();
         });
 
