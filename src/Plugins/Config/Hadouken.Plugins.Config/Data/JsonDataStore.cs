@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Hadouken.Plugins.Config.Data
@@ -56,6 +58,14 @@ namespace Hadouken.Plugins.Config.Data
         public void Delete(string key)
         {
             JsonDictionary.Remove(key);
+        }
+
+        public void Save()
+        {
+            var jsonFile = Path.Combine(_dataPath, "data.json");
+            var content = JsonConvert.SerializeObject(JsonDictionary);
+
+            File.WriteAllText(jsonFile, content, Encoding.UTF8);
         }
     }
 }

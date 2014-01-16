@@ -11,5 +11,7 @@ namespace Hadouken.Plugins.Config.Data
         void Set(string key, object value);
 
         void Delete(string key);
+
+        void Save();
     }
 }

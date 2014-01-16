@@ -23,7 +23,7 @@ namespace Hadouken.Framework.IO.Local
 
         public IFile GetFile(string path)
         {
-            throw new System.NotImplementedException();
+            return new LocalFile(new FileInfo(path));
         }
     }
 }

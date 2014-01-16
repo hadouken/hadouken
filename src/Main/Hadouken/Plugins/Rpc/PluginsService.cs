@@ -109,7 +109,7 @@ namespace Hadouken.Plugins.Rpc
                     return false;
                 }
 
-                // Check if this is an upgrade of an older package
+                // Get the existing plugin, if any
                 var existing = _pluginEngine.Get(package.Manifest.Name);
 
                 // If the existing one is newer than the uploaded one, return

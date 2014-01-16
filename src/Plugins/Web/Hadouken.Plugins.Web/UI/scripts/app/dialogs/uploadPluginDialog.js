@@ -17,7 +17,10 @@
         callback();
     };
 
-    UploadPluginDialog.prototype.upload = function() {
+    UploadPluginDialog.prototype.upload = function () {
+        var overlay = new Overlay(this.content.find('.modal-body'));
+        overlay.show();
+        
         this.content.find('#btn-upload-plugin').attr('disabled', true);
 
         var fileInput = this.content.find('#plugin-package-file')[0];
@@ -36,6 +39,11 @@
                 }
 
                 that.content.find('#btn-upload-plugin').attr('disabled', false);
+                overlay.hide();
+                
+                if (response) {
+                    that.close();
+                }
             });
         };
 

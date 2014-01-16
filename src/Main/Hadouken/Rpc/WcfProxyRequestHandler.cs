@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using NLog;
@@ -9,10 +10,23 @@ namespace Hadouken.Rpc
 {
     public class WcfProxyRequestHandler : RequestHandler
     {
+        private readonly IEventListener _eventListener;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IDictionary<string, IPluginManagerService> _proxyList = new Dictionary<string, IPluginManagerService>();
 
-        public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services) : base(services) { }
+        public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services, IEventListener eventListener) : base(services)
+        {
+            _eventListener = eventListener;
+            _eventListener.Subscribe<string>("plugin.unloaded", OnPluginUnloaded);
+        }
+
+        private void OnPluginUnloaded(string name)
+        {
+            if (_proxyList.ContainsKey(name))
+            {
+                _proxyList.Remove(name);
+            }
+        }
 
         protected override JsonRpcResponse OnMethodMissing(JsonRpcRequest request)
         {

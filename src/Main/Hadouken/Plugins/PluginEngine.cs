@@ -261,30 +261,6 @@ namespace Hadouken.Plugins
             return Task.Factory.StartNew(() => Remove(name));
         }
 
-        private static string GetOptionalPluginArgument(string[] args)
-        {
-            // Args cannot be null and its length must be 2 or more
-            // since --plugin and "path" sits in two different positions.
-
-            if (args == null || args.Length < 2)
-                return null;
-
-            // Args must contain --plugin
-
-            if (!args.Contains("--plugin"))
-                return null;
-
-            var position = Array.IndexOf(args, "--plugin");
-
-            // The array must be at least one field longer
-            // than the position of the --plugin entry
-
-            if (position == -1 || args.Length - 1 < position + 1)
-                return null;
-
-            return args[position + 1];
-        }
-
         public void Unload()
         {
             lock (_lock)

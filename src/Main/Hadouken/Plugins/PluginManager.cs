@@ -111,6 +111,8 @@ namespace Hadouken.Plugins
             AppDomain.Unload(domain);
 
             State = PluginState.Unloaded;
+
+            _rpcClient.CallAsync<bool>("events.publish", new object[] { "plugin.unloaded", Package.Manifest.Name }).Wait();
         }
     }
 }
