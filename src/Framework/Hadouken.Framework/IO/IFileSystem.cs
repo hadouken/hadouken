@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Hadouken.Framework.IO
+﻿namespace Hadouken.Framework.IO
 {
     public interface IFileSystem
     {

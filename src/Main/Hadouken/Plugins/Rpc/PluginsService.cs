@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-
+using Hadouken.Configuration;
+using Hadouken.Framework.IO;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.SemVer;
 using NLog;
@@ -12,10 +13,14 @@ namespace Hadouken.Plugins.Rpc
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IPluginEngine _pluginEngine;
+        private readonly IConfiguration _configuration;
+        private readonly IFileSystem _fileSystem;
 
-        public PluginsService(IPluginEngine pluginEngine)
+        public PluginsService(IPluginEngine pluginEngine, IConfiguration configuration, IFileSystem fileSystem)
         {
             _pluginEngine = pluginEngine;
+            _configuration = configuration;
+            _fileSystem = fileSystem;
         }
 
         [JsonRpcMethod("plugins.load")]
@@ -89,6 +94,57 @@ namespace Hadouken.Plugins.Rpc
                 stream.CopyTo(ms);
 
                 return ms.ToArray();
+            }
+        }
+
+        [JsonRpcMethod("plugins.upload")]
+        public bool Upload(byte[] packageData, string password)
+        {
+            using (var ms = new MemoryStream(packageData))
+            {
+                IPackage package;
+
+                if (!Package.TryParse(ms, out package))
+                {
+                    return false;
+                }
+
+                // Check if this is an upgrade of an older package
+                var existing = _pluginEngine.Get(package.Manifest.Name);
+
+                // If the existing one is newer than the uploaded one, return
+                if (existing != null && existing.Package.Manifest.Version >= package.Manifest.Version)
+                {
+                    return false;
+                }
+
+                // If the existing one is older than the uploaded one, unload and remove
+                if (existing != null && package.Manifest.Version > existing.Package.Manifest.Version)
+                {
+                    // Unload existing plugin
+                    _pluginEngine.UnloadAsync(existing.Package.Manifest.Name).Wait();
+
+                    // Remove it from the plugin engine
+                    _pluginEngine.RemoveAsync(existing.Package.Manifest.Name).Wait();
+
+                    // Remove it from disk
+                    var file = _fileSystem.GetFile(existing.Package.Path);
+                    file.Delete();
+                }
+
+                // Save new package to default plugin location
+                var fileName = String.Concat(package.Manifest.Name, "-", package.Manifest.Version, ".zip");
+                var path = Path.Combine(_configuration.Plugins.BaseDirectory, fileName);
+                
+                File.WriteAllBytes(path, packageData);
+
+                // Scan for new plugins
+                _pluginEngine.ScanAsync().Wait();
+
+                // Load the newly uploaded plugin
+                _pluginEngine.LoadAsync(package.Manifest.Name);
+
+                return true;
             }
         }
 

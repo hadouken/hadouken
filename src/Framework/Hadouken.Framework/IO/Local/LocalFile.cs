@@ -51,5 +51,10 @@ namespace Hadouken.Framework.IO.Local
         {
             return _fileInfo.OpenWrite();
         }
+
+        public void Delete()
+        {
+            _fileInfo.Delete();
+        }
     }
 }

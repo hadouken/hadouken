@@ -45,5 +45,9 @@ namespace Hadouken.Framework.IO
         {
             throw new NotImplementedException();
         }
+
+        public void Delete()
+        {
+        }
     }
 }

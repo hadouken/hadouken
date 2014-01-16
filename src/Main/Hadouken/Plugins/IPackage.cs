@@ -11,5 +11,7 @@ namespace Hadouken.Plugins
         IManifest Manifest { get; }
 
         IFile[] Files { get; }
+
+        string Path { get; }
     }
 }

@@ -57,38 +57,35 @@ namespace Hadouken.Plugins
 
             foreach (var file in pluginDirectory.Files)
             {
-                using (var stream = file.OpenRead())
-                {
-                    IPackage package;
+                IPackage package;
 
-                    if (!Package.TryParse(stream, out package))
+                if (!Package.TryParse(file.FullPath, out package))
+                    continue;
+
+                lock (_lock)
+                {
+                    if (_pluginManagers.ContainsKey(package.Manifest.Name))
                         continue;
 
-                    lock (_lock)
-                    {
-                        if (_pluginManagers.ContainsKey(package.Manifest.Name))
-                            continue;
-
-                        var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, package.Manifest.Name);
+                    var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, package.Manifest.Name);
                         
-                        var dataDirectory = _fileSystem.GetDirectory(pluginDataPath);
-                        dataDirectory.CreateIfNotExists();
+                    var dataDirectory = _fileSystem.GetDirectory(pluginDataPath);
+                    dataDirectory.CreateIfNotExists();
 
-                        var bootConfig = new BootConfig
-                        {
-                            DataPath = pluginDataPath,
-                            HostBinding = _configuration.Http.HostBinding,
-                            Port = _configuration.Http.Port,
-                            UserName = _configuration.Http.Authentication.UserName,
-                            Password = _configuration.Http.Authentication.Password,
-                            RpcGatewayUri = _configuration.Rpc.GatewayUri,
-                            RpcPluginUri = String.Format(_configuration.Rpc.PluginUri, package.Manifest.Name),
-                            HttpVirtualPath = "/plugins/" + package.Manifest.Name
-                        };
+                    var bootConfig = new BootConfig
+                    {
+                        DataPath = pluginDataPath,
+                        HostBinding = _configuration.Http.HostBinding,
+                        Port = _configuration.Http.Port,
+                        UserName = _configuration.Http.Authentication.UserName,
+                        Password = _configuration.Http.Authentication.Password,
+                        RpcGatewayUri = _configuration.Rpc.GatewayUri,
+                        RpcPluginUri = String.Format(_configuration.Rpc.PluginUri, package.Manifest.Name),
+                        HttpVirtualPath = "/plugins/" + package.Manifest.Name
+                    };
 
-                        var manager = new PluginManager(package, bootConfig, _rpcClient);
-                        _pluginManagers.Add(package.Manifest.Name, manager);
-                    }
+                    var manager = new PluginManager(package, bootConfig, _rpcClient);
+                    _pluginManagers.Add(package.Manifest.Name, manager);
                 }
             }
         }
