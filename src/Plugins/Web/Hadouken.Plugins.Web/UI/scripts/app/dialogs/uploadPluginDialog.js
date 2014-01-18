@@ -33,7 +33,7 @@
                 that.content.find('#current-password').val()
             ];
 
-            that.rpc.callParams('plugins.upload', data, function(response) {
+            that.rpc.callParams('plugins.installFromFile', data, function(response) {
                 if (!response) {
                     alert('Upload failed');
                 }

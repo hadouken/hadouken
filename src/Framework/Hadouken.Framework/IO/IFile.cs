@@ -22,5 +22,7 @@ namespace Hadouken.Framework.IO
         Stream OpenWrite();
         
         void Delete();
+
+        byte[] ReadAllBytes();
     }
 }

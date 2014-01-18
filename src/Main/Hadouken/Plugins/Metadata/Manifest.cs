@@ -9,6 +9,8 @@ namespace Hadouken.Plugins.Metadata
 {
     public sealed class Manifest : IManifest
     {
+        public const string FileName = "manifest.json";
+
         private static readonly IDictionary<int, Func<IManifestReader>> ManifestReaders =
             new Dictionary<int, Func<IManifestReader>>();
 

@@ -59,7 +59,7 @@ namespace Hadouken.Plugins
             {
                 IPackage package;
 
-                if (!Package.TryParse(file.FullPath, out package))
+                if (!Package.TryParse(file.ReadAllBytes(), out package))
                     continue;
 
                 lock (_lock)
@@ -215,6 +215,47 @@ namespace Hadouken.Plugins
         public Task UnloadAsync(string name)
         {
             return Task.Factory.StartNew(() => Unload(name));
+        }
+
+        public void InstallOrUpgrade(IPackage package)
+        {
+            // Get the existing package/plugin if we have any
+            var existing = Get(package.Manifest.Name);
+
+            // If the existing version is newer than the provided one, return
+            if (existing != null && existing.Package.Manifest.Version >= package.Manifest.Version)
+            {
+                return;
+            }
+
+            // If the existing one is older than the uploaded one, unload and remove
+            if (existing != null && package.Manifest.Version > existing.Package.Manifest.Version)
+            {
+                // Unload existing plugin
+                Unload(existing.Package.Manifest.Name);
+
+                // Remove it from the plugin engine
+                Remove(existing.Package.Manifest.Name);
+
+                // Remove it from disk
+                var existingPath = Path.Combine(_configuration.Plugins.BaseDirectory,
+                    existing.Package.Manifest.Name + ".zip");
+                var file = _fileSystem.GetFile(existingPath);
+
+                file.Delete();
+            }
+
+            // Save new package to default plugin location
+            var fileName = String.Concat(package.Manifest.Name, ".zip");
+            var path = Path.Combine(_configuration.Plugins.BaseDirectory, fileName);
+
+            File.WriteAllBytes(path, package.Data);
+
+            // Scan for new plugins
+            Scan();
+
+            // Load the newly uploaded plugin
+            Load(package.Manifest.Name);
         }
 
         public void UnloadAll()

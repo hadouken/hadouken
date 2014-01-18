@@ -7,6 +7,7 @@
         Unloading,
         Loading,
         Loaded,
-        Updating
+        Updating,
+        Error
     }
 }

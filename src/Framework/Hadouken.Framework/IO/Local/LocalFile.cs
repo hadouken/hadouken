@@ -56,5 +56,10 @@ namespace Hadouken.Framework.IO.Local
         {
             _fileInfo.Delete();
         }
+
+        public byte[] ReadAllBytes()
+        {
+            return _fileInfo.Exists ? File.ReadAllBytes(_fileInfo.FullName) : null;
+        }
     }
 }

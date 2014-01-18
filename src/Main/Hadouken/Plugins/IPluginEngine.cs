@@ -29,6 +29,8 @@ namespace Hadouken.Plugins
 
         Task UnloadAsync(string name);
 
+        void InstallOrUpgrade(IPackage package);
+
         /// <summary>
         /// Async removes the plugin from the known plugins. The plugin must be in the Unloaded state.
         /// </summary>

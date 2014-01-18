@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Media;
 using Hadouken.Framework.IO;
 using Hadouken.Plugins.Metadata;
 using Ionic.Zip;
@@ -10,20 +11,13 @@ namespace Hadouken.Plugins
 {
     public sealed class Package : IPackage
     {
-        private readonly string _sourcePath;
         private readonly IManifest _manifest;
         private readonly IFile[] _files;
 
         private Package(IManifest manifest, IFile[] files)
-            : this(manifest, files, String.Empty)
-        {
-        }
-
-        private Package(IManifest manifest, IFile[] files, string sourcePath)
         {
             _manifest = manifest;
             _files = files;
-            _sourcePath = sourcePath;
         }
 
         public IManifest Manifest
@@ -36,25 +30,26 @@ namespace Hadouken.Plugins
             get { return _files; }
         }
 
-        public string Path
-        {
-            get { return _sourcePath; }
-        }
+        public byte[] Data { get; set; }
 
-        public static bool TryParse(string path, out IPackage package)
+        public static bool TryParse(byte[] packageData, out IPackage package)
         {
-            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            package = null;
+
+            using (var ms = new MemoryStream(packageData))
             {
-                return TryParse(path, fileStream, out package);
+                Package p;
+
+                if (!TryParse(ms, out p)) return false;
+
+                p.Data = packageData;
+                package = p;
+
+                return true;
             }
         }
 
-        public static bool TryParse(Stream stream, out IPackage package)
-        {
-            return TryParse(null, stream, out package);
-        }
-
-        private static bool TryParse(string path, Stream stream, out IPackage package)
+        private static bool TryParse(Stream stream, out Package package)
         {
             package = null;
 
@@ -63,7 +58,7 @@ namespace Hadouken.Plugins
                 using (var zip = ZipFile.Read(stream))
                 {
                     // Read manifest
-                    var manifestEntry = zip.Entries.SingleOrDefault(e => e.FileName == "manifest.json");
+                    var manifestEntry = zip.Entries.SingleOrDefault(e => e.FileName == Metadata.Manifest.FileName);
 
                     if (manifestEntry == null)
                         return false;
@@ -97,12 +92,12 @@ namespace Hadouken.Plugins
                             }
                         }
 
-                        package = new Package(manifest, files.ToArray(), path);
+                        package = new Package(manifest, files.ToArray());
                         return true;
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

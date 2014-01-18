@@ -42,6 +42,8 @@ namespace Hadouken.Plugins
 
         public PluginState State { get; private set; }
 
+        public string ErrorMessage { get; set; }
+
         public long GetMemoryUsage()
         {
             if (State != PluginState.Loaded)

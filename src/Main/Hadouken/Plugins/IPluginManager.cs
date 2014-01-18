@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins
 {
@@ -9,6 +8,8 @@ namespace Hadouken.Plugins
         IPackage Package { get; }
 
         PluginState State { get; }
+
+        string ErrorMessage { get; }
 
         long GetMemoryUsage();
 

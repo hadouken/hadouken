@@ -49,5 +49,14 @@ namespace Hadouken.Framework.IO
         public void Delete()
         {
         }
+
+        public byte[] ReadAllBytes()
+        {
+            using (var ms = new MemoryStream())
+            {
+                OpenRead().CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
     }
 }
