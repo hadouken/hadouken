@@ -22,6 +22,7 @@ namespace Hadouken.Plugins
 
         private readonly IDictionary<string, IPluginManager> _pluginManagers =
             new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase);
+        private DirectedGraph<string> _pluginGraph = new DirectedGraph<string>(); 
 
         private readonly object _lock = new object();
 
@@ -88,6 +89,23 @@ namespace Hadouken.Plugins
                     _pluginManagers.Add(package.Manifest.Name, manager);
                 }
             }
+
+            var graph = new DirectedGraph<string>();
+
+            foreach (var pluginManager in _pluginManagers)
+            {
+                graph.Add(pluginManager.Value.Package.Manifest.Name);
+            }
+
+            foreach (var pluginManager in _pluginManagers)
+            {
+                foreach (var dependency in pluginManager.Value.Package.Manifest.Dependencies)
+                {
+                    graph.Connect(dependency.Name, pluginManager.Value.Package.Manifest.Name);
+                }
+            }
+
+            _pluginGraph = graph;
         }
 
         public Task ScanAsync()
@@ -231,8 +249,18 @@ namespace Hadouken.Plugins
             // If the existing one is older than the uploaded one, unload and remove
             if (existing != null && package.Manifest.Version > existing.Package.Manifest.Version)
             {
-                // Unload existing plugin
-                Unload(existing.Package.Manifest.Name);
+                var unloadOrder = _pluginGraph.TraverseReverseOrder(existing.Package.Manifest.Name);
+
+                if (existing.Package.Manifest.Name != unloadOrder.Last())
+                {
+                    throw new InvalidOperationException();
+                }
+
+                // Unload existing plugins
+                foreach (var name in unloadOrder)
+                {
+                    Unload(name);                    
+                }
 
                 // Remove it from the plugin engine
                 Remove(existing.Package.Manifest.Name);
@@ -255,7 +283,13 @@ namespace Hadouken.Plugins
             Scan();
 
             // Load the newly uploaded plugin
-            Load(package.Manifest.Name);
+            var loadOrder = _pluginGraph.TraverseReverseOrder(package.Manifest.Name);
+            loadOrder.Reverse();
+
+            foreach (var name in loadOrder)
+            {
+                Load(name);
+            }
         }
 
         public void UnloadAll()

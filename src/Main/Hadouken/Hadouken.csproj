@@ -94,6 +94,8 @@
     <Compile Include="Events\Rpc\EventsService.cs" />
     <Compile Include="Gateway\GatewayPluginManagerService.cs" />
     <Compile Include="Plugins\DependencyNotFoundException.cs" />
+    <Compile Include="Plugins\DirectedGraph.cs" />
+    <Compile Include="Plugins\DirectedGraphEdge.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
     <Compile Include="Plugins\IPackage.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
