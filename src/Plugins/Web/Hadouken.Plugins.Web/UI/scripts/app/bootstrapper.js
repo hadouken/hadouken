@@ -8,10 +8,11 @@
         'pageManager',
         'pluginEngine',
         'pages/settingsPage',
+        'rpcClient',
         'wizard',
         'wizardSteps/configureStep'
     ],
-    function ($, $bs, Handlebars, Overlay, EventListener, PageManager, PluginEngine, SettingsPage, Wizard, ConfigureStep) {
+    function ($, $bs, Handlebars, Overlay, EventListener, PageManager, PluginEngine, SettingsPage, RpcClient, Wizard, ConfigureStep) {
         function Bootstrapper() {
             this.eventListener = new EventListener();
         }
@@ -37,30 +38,40 @@
                 pluginEngine.load(function () {
                     pageManager.init();
 
-                    // Show wizard
-                    var wizard = new Wizard('First time setup');
-                    wizard.steps.push(new ConfigureStep());
+                    // Only show the first time wizard if we haven't set 'ui.configured' to true.
+                    var rpc = new RpcClient();
+                    rpc.callParams('config.get', 'ui.configured', function(configured) {
+                        if (!configured) {
+                            rpc.callParams('config.set', ['ui.configured', true], function() {
+                                // Show wizard
+                                var wizard = new Wizard('First time setup');
+                                wizard.steps.push(new ConfigureStep());
 
-                    // Add steps from plugins
-                    var plugins = Object.keys(pluginEngine.plugins);
-                    for (var i = 0; i < plugins.length; i++) {
-                        var plugin = pluginEngine.plugins[plugins[i]];
-                        
-                        if (!plugin.instance) {
-                            continue;
+                                // Add steps from plugins
+                                var plugins = Object.keys(pluginEngine.plugins);
+                                for (var i = 0; i < plugins.length; i++) {
+                                    var plugin = pluginEngine.plugins[plugins[i]];
+
+                                    if (!plugin.instance) {
+                                        continue;
+                                    }
+
+                                    var step = plugin.instance.configure('wizard');
+
+                                    if (!step) {
+                                        continue;
+                                    }
+
+                                    wizard.steps.push(step);
+                                }
+
+                                overlay.hide();
+                                wizard.show();
+                            });
+                        } else {
+                            overlay.hide();
                         }
-
-                        var step = plugin.instance.configure('wizard');
-                        
-                        if (!step) {
-                            continue;
-                        }
-
-                        wizard.steps.push(step);
-                    }
-
-                    overlay.hide();
-                    wizard.show();
+                    });
                 });
             });
         };
