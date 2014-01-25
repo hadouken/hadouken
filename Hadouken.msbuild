@@ -1,0 +1,89 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
+  <UsingTask TaskName="Candle" AssemblyFile="tools/wix-3.8/WixTasks.dll" />
+  <UsingTask TaskName="Light" AssemblyFile="tools/wix-3.8/WixTasks.dll" />
+  <UsingTask TaskName="Zip" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
+
+  <PropertyGroup>
+    <Version>$([System.IO.File]::ReadAllText("VERSION"))</Version>
+    <Tag Condition="$(Tag) == ''"></Tag>
+    <Configuration>Release</Configuration>
+    <OutputDirectory>build/$(Version)$(Tag)</OutputDirectory>
+  </PropertyGroup>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(OutputDirectory)" />
+    <MakeDir Directories="$(OutputDirectory)" />
+  </Target>
+  
+  <Target Name="Prepare" DependsOnTargets="Clean">
+    <Message Text="##teamcity[buildNumber '$(Version)$(Tag)']" />
+    <Message Text="##teamcity[message 'Installing solution-wide Nuget packages.']" />
+    <Exec Command=".nuget\nuget.exe install .nuget\packages.config -OutputDirectory packages" />
+  </Target>
+  
+  <Target Name="Compile" DependsOnTargets="Prepare">
+    <MSBuild
+      Projects="Hadouken.sln"
+      Properties="Configuration=$(Configuration)"
+      Targets="Rebuild" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Compile">
+    <Message Text="##teamcity[message 'Running unit tests.']" />
+    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=build/$(Version)$(Tag)/TestResult.xml /framework=4.0 /nologo /nodots src\Main\Hadouken.Tests\bin\Release\Hadouken.Tests.dll src\Framework\Hadouken.Framework.Tests\bin\Release\Hadouken.Framework.Tests.dll" />
+    <Message Text="##teamcity[importData type='nunit' path='build/$(Version)$(Tag)/TestResult.xml']" />
+  </Target>
+
+  <Target Name="Output" DependsOnTargets="Compile">
+    <PropertyGroup>
+      <SourceDirectory>src/Main/Hadouken.Service/bin/$(Configuration)</SourceDirectory>
+      <TargetDirectory>$(OutputDirectory)/binaries</TargetDirectory>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(OutputDirectory)/binaries" />
+    <Exec Command="xcopy.exe &quot;$(SourceDirectory)&quot; &quot;$(TargetDirectory)&quot; /e" />
+  </Target>
+
+  <Target Name="Zip" DependsOnTargets="Compile">
+    <ItemGroup>
+      <ZipFiles Include="src\Main\Hadouken.Service\bin\$(Configuration)\**\*.*" />
+    </ItemGroup>
+    
+    <Message Text="##teamcity[message 'Packaging zip file.']" />
+    
+    <Zip Files="@(ZipFiles)" ZipFileName="$(OutputDirectory)/hdkn-$(Version)$(Tag).zip" WorkingDirectory="src\Main\Hadouken.Service\bin\$(Configuration)\" />
+  </Target>
+
+  <Target Name="MSI" DependsOnTargets="Compile">
+    <ItemGroup>
+      <CandleSources Include="src\Installer\**\*.wxs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <CandleDefines Include="BinDir=$(OutputDirectory)\binaries" />
+      <CandleDefines Include="BuildVersion=$(Version)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <LightExtensions Include="WixUIExtension" />
+      <LightExtensions Include="WixNetFxExtension" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <LightSources Include="$(OutputDirectory)\wixobj\Config.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Core.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Hadouken.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Lib.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Plugins.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Service.wixobj" />
+    </ItemGroup>
+    
+    <Candle DefineConstants="@(CandleDefines)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="tools\wix-3.8\" />
+    
+    <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" ToolPath="tools\wix-3.8\" />
+  </Target>
+
+  <Target Name="All">
+    <CallTarget Targets="Clean; Prepare; Compile; Test; Output; Zip; MSI" />
+  </Target>
+</Project>
