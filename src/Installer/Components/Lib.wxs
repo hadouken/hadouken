@@ -56,15 +56,7 @@
       </Component>
 
       <Component>
-        <File Name="System.Net.Http.Formatting.dll" />
-      </Component>
-
-      <Component>
         <File Name="System.Web.Cors.dll" />
-      </Component>
-
-      <Component>
-        <File Name="System.Web.Http.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>
