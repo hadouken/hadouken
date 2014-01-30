@@ -1,14 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
-  <UsingTask TaskName="Candle" AssemblyFile="tools/wix-3.8/WixTasks.dll" />
-  <UsingTask TaskName="Light" AssemblyFile="tools/wix-3.8/WixTasks.dll" />
-  <UsingTask TaskName="Zip" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
-
   <PropertyGroup>
+    <WixPath>packages/WiX.Toolset.3.8.1128.0/tools/wix</WixPath>
     <Version>$([System.IO.File]::ReadAllText("VERSION"))</Version>
     <Tag Condition="$(Tag) == ''"></Tag>
     <Configuration>Release</Configuration>
     <OutputDirectory>build/</OutputDirectory>
   </PropertyGroup>
+
+  <UsingTask TaskName="Candle" AssemblyFile="$(WixPath)/WixTasks.dll" />
+  <UsingTask TaskName="Light" AssemblyFile="$(WixPath)/WixTasks.dll" />
+  <UsingTask TaskName="Zip" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
 
   <Target Name="Clean">
     <RemoveDir Directories="$(OutputDirectory)" />
@@ -30,7 +31,7 @@
 
   <Target Name="Test" DependsOnTargets="Compile">
     <Message Text="##teamcity[message 'Running unit tests.']" />
-    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=$(OutputDirectory)/TestResult.xml /framework=4.0 /nologo /nodots src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll src\Framework\Hadouken.Framework.Tests\bin\$(Configuration)\Hadouken.Framework.Tests.dll" />
+    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=$(OutputDirectory)/TestResult.xml /framework=4.5 /nologo /nodots src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll src\Framework\Hadouken.Framework.Tests\bin\$(Configuration)\Hadouken.Framework.Tests.dll" />
     <Message Text="##teamcity[importData type='nunit' path='build/TestResult.xml']" />
   </Target>
 
@@ -78,9 +79,9 @@
       <LightSources Include="$(OutputDirectory)\wixobj\Service.wixobj" />
     </ItemGroup>
     
-    <Candle DefineConstants="@(CandleDefines)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="tools\wix-3.8\" />
+    <Candle DefineConstants="@(CandleDefines)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="$(WixPath)" />
     
-    <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" ToolPath="tools\wix-3.8\" />
+    <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" ToolPath="$(WixPath)" />
   </Target>
 
   <Target Name="Nuget" DependsOnTargets="Output">
