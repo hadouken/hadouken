@@ -7,7 +7,7 @@
     <Version>$([System.IO.File]::ReadAllText("VERSION"))</Version>
     <Tag Condition="$(Tag) == ''"></Tag>
     <Configuration>Release</Configuration>
-    <OutputDirectory>build/$(Version)$(Tag)</OutputDirectory>
+    <OutputDirectory>build/</OutputDirectory>
   </PropertyGroup>
 
   <Target Name="Clean">
@@ -30,8 +30,8 @@
 
   <Target Name="Test" DependsOnTargets="Compile">
     <Message Text="##teamcity[message 'Running unit tests.']" />
-    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=build/$(Version)$(Tag)/TestResult.xml /framework=4.0 /nologo /nodots src\Main\Hadouken.Tests\bin\Release\Hadouken.Tests.dll src\Framework\Hadouken.Framework.Tests\bin\Release\Hadouken.Framework.Tests.dll" />
-    <Message Text="##teamcity[importData type='nunit' path='build/$(Version)$(Tag)/TestResult.xml']" />
+    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=$(OutputDirectory)/TestResult.xml /framework=4.0 /nologo /nodots src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll src\Framework\Hadouken.Framework.Tests\bin\$(Configuration)\Hadouken.Framework.Tests.dll" />
+    <Message Text="##teamcity[importData type='nunit' path='build/TestResult.xml']" />
   </Target>
 
   <Target Name="Output" DependsOnTargets="Compile">
@@ -83,7 +83,11 @@
     <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" ToolPath="tools\wix-3.8\" />
   </Target>
 
+  <Target Name="Nuget" DependsOnTargets="Output">
+    <Exec Command=".nuget\nuget.exe pack Hadouken.nuspec -Version $(Version)$(Tag) -OutputDirectory $(OutputDirectory)" />
+  </Target>
+
   <Target Name="All">
-    <CallTarget Targets="Clean; Prepare; Compile; Test; Output; Zip; MSI" />
+    <CallTarget Targets="Clean; Prepare; Compile; Test; Output; Zip; MSI; Nuget" />
   </Target>
 </Project>
