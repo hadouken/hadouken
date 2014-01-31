@@ -3,7 +3,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
   <Fragment>
-    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.ConfigDir)/">
       <Component>
         <File Id="HdknWinSrvCfg" Name="Hadouken.Service.exe.config" />
       </Component>
