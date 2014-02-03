@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using Hadouken.Framework;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.Dto;
@@ -83,6 +84,12 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
             foreach (var manager in Managers)
             {
+                manager.Stop();
+
+                // Fully stop manager before unregistering
+                while (manager.Manager.State != TorrentState.Stopped)
+                    Thread.Sleep(50);
+
                 _engine.Unregister(manager.Manager);
             }
         }
@@ -184,6 +191,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                 for (int index = 0; index < managerCount; index++)
                 {
                     var hash = reader.ReadString();
+                    var state = (TorrentState) reader.ReadInt32();
                     var label = (string)null;
                     var savePath = (string)null;
 
@@ -206,7 +214,16 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                     var data = this.LoadTorrent(hash);
 
                     // Add the manager.
-                    this.Add(data, savePath, label, false, uploadedByteCount, downloadedByteCount);
+                    var manager = this.Add(data, savePath, label, false, uploadedByteCount, downloadedByteCount);
+
+                    switch (state)
+                    {
+                        case TorrentState.Downloading:
+                        case TorrentState.Seeding:
+                        case TorrentState.Metadata:
+                            manager.Start();
+                            break;
+                    }
                 }
             }
         }
@@ -222,6 +239,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                 foreach (var manager in managerList)
                 {
                     writer.Write(manager.FriendlyInfoHash);
+                    writer.Write((int)manager.Manager.State);
 
                     writer.Write(manager.Label != null);
                     if (manager.Label != null)
@@ -229,10 +247,15 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                         writer.Write(manager.Label);
                     }
 
-                    writer.Write(manager.Manager.SavePath != null);
-                    if (manager.Manager.SavePath != null)
+                    var savePath = manager.Manager.SavePath;
+
+                    if (manager.Manager.Torrent.Files.Length > 1)
+                        savePath = Directory.GetParent(manager.Manager.SavePath).FullName;
+
+                    writer.Write(savePath != null);
+                    if (savePath != null)
                     {
-                        writer.Write(manager.Manager.SavePath);
+                        writer.Write(savePath);
                     }
 
                     writer.Write(manager.Manager.Monitor.DataBytesUploaded);
