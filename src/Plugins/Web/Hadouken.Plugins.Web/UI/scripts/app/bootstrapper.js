@@ -30,6 +30,9 @@
             var overlay = new Overlay('body');
             overlay.show();
 
+            var that = this;
+            this.eventListener.subscribe('sys.unloading', function() { that.shutdown(); });
+
             this.eventListener.connect(function() {
                 var pageManager = PageManager.getInstance();
                 pageManager.addPage(new SettingsPage());
@@ -74,6 +77,33 @@
                     });
                 });
             });
+        };
+
+        Bootstrapper.prototype.shutdown = function() {
+            // Get the page manager and unload current page
+            var pageManager = PageManager.getInstance();
+            if (pageManager.currentPage != null) {
+                pageManager.currentPage.unload();
+            }
+
+            // Get the plugin engine and unload all plugins
+            var pluginEngine = PluginEngine.getInstance();
+            var pluginKeys = Object.keys(pluginEngine.plugins);
+
+            for (var i = 0; i < pluginKeys.length; i++) {
+                var plugin = pluginEngine.plugins[pluginKeys[i]];
+                var instance = plugin.instance;
+
+                if (!instance) {
+                    continue;
+                }
+
+                if (typeof instance.unload === 'function') {
+                    instance.unload();
+                }
+            }
+
+            $('#page-container').empty();
         };
 
         return Bootstrapper;

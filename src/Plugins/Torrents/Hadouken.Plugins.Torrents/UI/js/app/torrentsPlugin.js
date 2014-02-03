@@ -12,6 +12,7 @@
 };
 
 define(['jquery', 'pageManager', js.pages.torrentsList, js.pages.torrentDetails, js.dialogs.configure, js.wizardSteps.configure], function ($, PageManager, TorrentsListPage, TorrentDetailsPage, ConfigureDialog, ConfigureStep) {
+
     function TorrentsPlugin() {
     }
 

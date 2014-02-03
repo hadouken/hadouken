@@ -2,6 +2,7 @@
 using Hadouken.Configuration;
 using Hadouken.Events;
 using Hadouken.Framework.Plugins;
+using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
 using Hadouken.Plugins;
 using NLog;
@@ -14,15 +15,18 @@ namespace Hadouken.Service
 
 	    private readonly IEventServer _eventServer;
 	    private readonly IPluginEngine _pluginEngine;
+	    private readonly IJsonRpcClient _rpcClient;
 	    private readonly IServiceHost _gatewayHost;
 
         public HadoukenService(IConfiguration configuration,
             IEventServer eventServer,
             IPluginEngine pluginEngine,
+            IJsonRpcClient rpcClient,
             IServiceHostFactory<IPluginManagerService> serviceHostFactory)
 		{
 		    _eventServer = eventServer;
 		    _pluginEngine = pluginEngine;
+            _rpcClient = rpcClient;
             _gatewayHost = serviceHostFactory.Create(new Uri(configuration.Rpc.GatewayUri));
 		}
 
@@ -41,6 +45,8 @@ namespace Hadouken.Service
 		public void Stop()
 		{
 			Logger.Info("Stopping Hadouken");
+
+		    _rpcClient.CallAsync<bool>("events.publish", new object[] {"sys.unloading", ""});
 
 			_pluginEngine.UnloadAllAsync().Wait();
 
