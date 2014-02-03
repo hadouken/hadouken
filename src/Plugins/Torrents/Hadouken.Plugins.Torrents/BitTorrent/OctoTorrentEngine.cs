@@ -150,17 +150,17 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                 return;
             }
 
-            if (e.NewState == TorrentState.Error)
+            switch (e.NewState)
             {
-                _rpcClient.SendEventAsync("torrent.error", new TorrentOverview(e.TorrentManager));
-            }
-            else if (e.NewState == TorrentState.Stopped)
-            {
-                _rpcClient.SendEventAsync("torrent.stopped", new TorrentOverview(e.TorrentManager));
-            }
-            else if (e.NewState == TorrentState.Paused)
-            {
-                _rpcClient.SendEventAsync("torrent.paused", new TorrentOverview(e.TorrentManager));
+                case TorrentState.Error:
+                    _rpcClient.SendEventAsync("torrent.error", new TorrentOverview(e.TorrentManager));
+                    break;
+                case TorrentState.Stopped:
+                    _rpcClient.SendEventAsync("torrent.stopped", new TorrentOverview(e.TorrentManager));
+                    break;
+                case TorrentState.Paused:
+                    _rpcClient.SendEventAsync("torrent.paused", new TorrentOverview(e.TorrentManager));
+                    break;
             }
         }
 

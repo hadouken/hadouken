@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.BitTorrent;
 using Hadouken.Plugins.Torrents.Dto;

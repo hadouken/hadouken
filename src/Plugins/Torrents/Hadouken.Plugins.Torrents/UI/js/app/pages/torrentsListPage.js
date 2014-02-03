@@ -9,21 +9,17 @@
     Page.derive(TorrentsListPage);
 
     TorrentsListPage.prototype.load = function () {
+        var that = this;
+
         // Register template helpers
         Handlebars.registerHelper('progress', function(torrent) {
-            if (torrent.state === 'Downloading') {
-                var progress = torrent.progress | 0;
-                return ' (' + progress + ')';
-            }
-
-            return '';
+            that.progressStatus(torrent);
         });
 
         // Load template
         var templateHtml = this.content.find('#tmpl-torrent-list-item').html();
         this.template = Handlebars.compile(templateHtml);
         
-        var that = this;
         
         // Event handlers
         this.content.find('#btn-show-add-torrents').on('click', function(e) {
@@ -33,9 +29,19 @@
             dlg.show();
         });
 
-        this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-start', function(e) {
+        this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-start', function () {
             var torrentId = $(this).parents('tr').attr('data-torrent-id');
             that.startTorrent(torrentId);
+        });
+
+        this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-pause', function () {
+            var torrentId = $(this).parents('tr').attr('data-torrent-id');
+            that.pauseTorrent(torrentId);
+        });
+
+        this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-stop', function () {
+            var torrentId = $(this).parents('tr').attr('data-torrent-id');
+            that.stopTorrent(torrentId);
         });
         
         // Setup events
@@ -53,6 +59,15 @@
                 that.setupTimer(1);
             });
         });
+    };
+
+    TorrentsListPage.prototype.progressStatus = function(torrent) {
+        if (torrent.state === 'Downloading') {
+            var progress = torrent.progress | 0;
+            return ' (' + progress + '%)';
+        }
+
+        return '';
     };
 
     TorrentsListPage.prototype.unload = function () {
@@ -85,13 +100,21 @@
         }
 
         for (var i = 0; i < torrents.length; i++) {
-            this.loadTorrent(torrents[i]);
+            this.updateRow(torrents[i]);
         }
     };
 
-    TorrentsListPage.prototype.loadTorrent = function (torrent) {
+    TorrentsListPage.prototype.updateRow = function (torrent) {
         var row = this.content.find('tr[data-torrent-id=' + torrent.id + ']');
-        console.log(row);
+        var progress = this.progressStatus(torrent);
+
+        row.find('.state').text(torrent.state);
+        row.find('.state-progress').text(progress);
+        row.find('.progress-bar').width(torrent.progress + '%');
+
+        row.find('.btn-torrent-start').attr('disabled', !this.canStart(torrent));
+        row.find('.btn-torrent-pause').attr('disabled', !this.canPause(torrent));
+        row.find('.btn-torrent-stop').attr('disabled', !this.canStop(torrent));
     };
 
     TorrentsListPage.prototype.torrentAdded = function(torrent) {
@@ -104,9 +127,46 @@
     };
 
     TorrentsListPage.prototype.startTorrent = function(infoHash) {
-        this.rpc.callParams('torrents.start', infoHash, function(e) {
-            alert(e);
-        });
+        this.rpc.callParams('torrents.start', infoHash, function() {});
+    };
+
+    TorrentsListPage.prototype.pauseTorrent = function(infoHash) {
+        this.rpc.callParams('torrents.pause', infoHash, function() {});
+    };
+
+    TorrentsListPage.prototype.stopTorrent = function(infoHash) {
+        this.rpc.callParams('torrents.stop', infoHash, function() {});
+    };
+
+    TorrentsListPage.prototype.canStart = function(torrent) {
+        switch(torrent.state) {
+            case 'Stopped':
+            case 'Paused':
+                return true;
+        }
+
+        return false;
+    };
+
+    TorrentsListPage.prototype.canPause = function(torrent) {
+        switch(torrent.state) {
+            case 'Downloading':
+            case 'Seeding':
+                return true;
+        }
+
+        return false;
+    };
+
+    TorrentsListPage.prototype.canStop = function(torrent) {
+        switch(torrent.state) {
+            case 'Downloading':
+            case 'Seeding':
+            case 'Paused':
+                return true;
+        }
+
+        return false;
     };
 
     return TorrentsListPage;
