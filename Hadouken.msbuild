@@ -47,12 +47,23 @@
 
   <Target Name="Zip" DependsOnTargets="Compile">
     <ItemGroup>
-      <ZipFiles Include="src\Main\Hadouken.Service\bin\$(Configuration)\**\*.*" />
+      <HadoukenFiles Include="src\Main\Hadouken.Service\bin\$(Configuration)\**\*.*" />
+      
+      <CoreConfigFiles Include="src\Plugins\Config\Hadouken.Plugins.Config\bin\$(Configuration)\**\*.*" />
+      <CoreHttpJsonRpcFiles Include="src\Plugins\HttpJsonRpc\Hadouken.Plugins.HttpJsonRpc\bin\$(Configuration)\**\*.*" />
+      <CoreTorrentsFiles Include="src\Plugins\Torrents\Hadouken.Plugins.Torrents\bin\$(Configuration)\**\*.*" />
+      <CoreWebFiles Include="src\Plugins\Web\Hadouken.Plugins.Web\bin\$(Configuration)\**\*.*" />
     </ItemGroup>
     
-    <Message Text="##teamcity[message 'Packaging zip file.']" />
+    <Message Text="##teamcity[message 'Packaging zip files.']" />
     
-    <Zip Files="@(ZipFiles)" ZipFileName="$(OutputDirectory)/hdkn-$(Version)$(Tag).zip" WorkingDirectory="src\Main\Hadouken.Service\bin\$(Configuration)\" />
+    <!-- Zip plugins -->
+    <Zip Files="@(CoreConfigFiles)" ZipFileName="$(OutputDirectory)/binaries/Plugins/core.config.zip" WorkingDirectory="src\Plugins\Config\Hadouken.Plugins.Config\bin\$(Configuration)\" />
+    <Zip Files="@(CoreHttpJsonRpcFiles)" ZipFileName="$(OutputDirectory)/binaries/Plugins/core.httpjsonrpc.zip" WorkingDirectory="src\Plugins\HttpJsonRpc\Hadouken.Plugins.HttpJsonRpc\bin\$(Configuration)\" />
+    <Zip Files="@(CoreTorrentsFiles)" ZipFileName="$(OutputDirectory)/binaries/Plugins/core.torrents.zip" WorkingDirectory="src\Plugins\Torrents\Hadouken.Plugins.Torrents\bin\$(Configuration)\" />
+    <Zip Files="@(CoreWebFiles)" ZipFileName="$(OutputDirectory)/binaries/Plugins/core.web.zip" WorkingDirectory="src\Plugins\Web\Hadouken.Plugins.Web\bin\$(Configuration)\" />
+
+    <Zip Files="@(HadoukenFiles)" ZipFileName="$(OutputDirectory)/hdkn-$(Version)$(Tag).zip" WorkingDirectory="src\Main\Hadouken.Service\bin\$(Configuration)\" />
   </Target>
 
   <Target Name="MSI" DependsOnTargets="Compile">
