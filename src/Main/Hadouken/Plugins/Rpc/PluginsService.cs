@@ -81,9 +81,7 @@ namespace Hadouken.Plugins.Rpc
             if (plugin == null)
                 return null;
 
-            var file =
-                plugin.Package.Files.FirstOrDefault(
-                    f => String.Equals(f.Name, fileName, StringComparison.InvariantCultureIgnoreCase));
+            var file = plugin.Package.GetFile(fileName);
 
             if (file == null)
                 return null;
@@ -100,9 +98,11 @@ namespace Hadouken.Plugins.Rpc
         [JsonRpcMethod("plugins.installFromFile")]
         public bool Upload(byte[] packageData, string password)
         {
+            var file = new InMemoryFile(() => new MemoryStream(packageData));
+            
             IPackage package;
 
-            if (!Package.TryParse(packageData, out package))
+            if (!Package.TryParse(file, out package))
             {
                 return false;
             }

@@ -10,5 +10,7 @@ namespace Hadouken.Plugins
         IFile[] Files { get; }
 
         byte[] Data { get; }
+
+        IFile GetFile(string path);
     }
 }

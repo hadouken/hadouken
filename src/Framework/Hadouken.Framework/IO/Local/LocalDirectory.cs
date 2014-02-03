@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Hadouken.Framework.IO.Local
 {
@@ -18,12 +15,12 @@ namespace Hadouken.Framework.IO.Local
 
         public string FullPath
         {
-            get { throw new NotImplementedException(); }
+            get { return _directoryInfo.FullName; }
         }
 
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return _directoryInfo.Name; }
         }
 
         public IDirectory[] Directories
@@ -33,7 +30,14 @@ namespace Hadouken.Framework.IO.Local
 
         public IFile[] Files
         {
-            get { return _directoryInfo.GetFiles().Select(f => new LocalFile(f)).ToArray(); }
+            get
+            {
+                return
+                    _directoryInfo.GetFileSystemInfos("*", SearchOption.AllDirectories)
+                        .Where(f => File.Exists(f.FullName))
+                        .Select(f => new LocalFile(new FileInfo(f.FullName)))
+                        .ToArray();
+            }
         }
 
         public bool Exists

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hadouken.Configuration;
 using Hadouken.Framework;
 using Hadouken.Framework.IO;
+using Hadouken.Framework.IO.Local;
 using Hadouken.Framework.Rpc;
 using NLog;
 
@@ -52,17 +53,67 @@ namespace Hadouken.Plugins
             }
         }
 
-        public void Scan()
+        private IEnumerable<IPackage> LoadPackagesFromBaseDirectory()
         {
             var pluginDirectory = _fileSystem.GetDirectory(_configuration.Plugins.BaseDirectory);
+            var result = new List<IPackage>();
 
             foreach (var file in pluginDirectory.Files)
             {
                 IPackage package;
 
-                if (!Package.TryParse(file.ReadAllBytes(), out package))
+                if (!Package.TryParse(file, out package))
+                {
                     continue;
+                }
 
+                result.Add(package);
+            }
+
+            return result;
+        }
+
+        private IEnumerable<IPackage> LoadPackagesFromExplicitList()
+        {
+            var result = new List<IPackage>();
+
+            foreach (PluginElement pluginElement in _configuration.Plugins)
+            {
+                var directory = _fileSystem.GetDirectory(pluginElement.Path);
+
+                IPackage package;
+
+                if (directory.Exists)
+                {
+                    if (!Package.TryParse(directory, out package))
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    var file = _fileSystem.GetFile(pluginElement.Path);
+
+                    if (!Package.TryParse(file, out package))
+                    {
+                        continue;
+                    }
+                }
+
+                result.Add(package);
+            }
+
+            return result;
+        } 
+
+        public void Scan()
+        {
+            var packages = new List<IPackage>();
+            packages.AddRange(LoadPackagesFromBaseDirectory());
+            packages.AddRange(LoadPackagesFromExplicitList());
+
+            foreach (var package in packages)
+            {
                 lock (_lock)
                 {
                     if (_pluginManagers.ContainsKey(package.Manifest.Name))

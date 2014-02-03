@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace Hadouken.Configuration
 {
@@ -19,8 +16,30 @@ namespace Hadouken.Configuration
         [ConfigurationProperty("path", IsRequired = true)]
         public string Path
         {
-            get { return this["path"].ToString(); }
+            get { return GetFullPath(this["path"].ToString()); }
             set { this["path"] = value; }
+        }
+
+        private string GetFullPath(string relativePath)
+        {
+            relativePath = relativePath.Replace("${Configuration}", GetConfiguration());
+
+            string path = Environment.ExpandEnvironmentVariables(relativePath);
+            path = System.IO.Path.GetFullPath(path);
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+
+        private string GetConfiguration()
+        {
+#if DEBUG
+            return "Debug";
+#else
+            return "Release";
+#endif
         }
     }
 }

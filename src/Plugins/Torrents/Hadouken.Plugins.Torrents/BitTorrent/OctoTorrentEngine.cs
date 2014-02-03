@@ -268,10 +268,8 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         {
             var path = Path.Combine(_config.DataPath, string.Concat(hash, ".torrent"));
             using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
-            using (var writer = new BinaryWriter(stream))
             {
-                writer.Write(data.Length);
-                writer.Write(data);
+                stream.Write(data, 0, data.Length);
             }
         }
 
@@ -280,11 +278,12 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             // Read the torrent data.
             var torrentPath = Path.Combine(_config.DataPath, string.Concat(hash, ".torrent"));
             using (var torrentStream = new FileStream(torrentPath, FileMode.Open, FileAccess.Read, FileShare.None))
-            using (var torrentReader = new BinaryReader(torrentStream))
+            using (var ms = new MemoryStream())
             {
                 // Read the torrent.
-                var dataLength = torrentReader.ReadInt32();
-                return torrentReader.ReadBytes(dataLength);
+                torrentStream.CopyTo(ms);
+
+                return ms.ToArray();
             }
         }
     }

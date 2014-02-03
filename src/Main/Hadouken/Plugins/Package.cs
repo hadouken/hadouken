@@ -14,7 +14,7 @@ namespace Hadouken.Plugins
         private readonly IManifest _manifest;
         private readonly IFile[] _files;
 
-        private Package(IManifest manifest, IFile[] files)
+        internal Package(IManifest manifest, IFile[] files)
         {
             _manifest = manifest;
             _files = files;
@@ -32,21 +32,97 @@ namespace Hadouken.Plugins
 
         public byte[] Data { get; set; }
 
-        public static bool TryParse(byte[] packageData, out IPackage package)
+        public Uri BaseUri { get; set; }
+
+        public IFile GetFile(string path)
+        {
+            var requestedUri = new Uri(path, UriKind.Relative);
+
+            if (BaseUri == null)
+            {
+                // Probably an in-memory file.
+
+                return (from file in Files
+                    let root = new Uri(file.FullPath, UriKind.Relative)
+                    where requestedUri == root
+                    select file).FirstOrDefault();
+            }
+
+            var f = (from file in Files
+                let root = new Uri(file.FullPath, UriKind.Absolute)
+                where BaseUri.MakeRelativeUri(root) == requestedUri
+                select file).FirstOrDefault();
+
+            return f;
+        }
+
+        public static bool TryParse(IDirectory directory, out IPackage package)
         {
             package = null;
+            Package p;
 
-            using (var ms = new MemoryStream(packageData))
+            if (!TryParse(directory.Files, out p))
+            {
+                return false;
+            }
+
+            p.BaseUri = new Uri(directory.FullPath, UriKind.Absolute);
+            package = p;
+            return true;
+        }
+
+        public static bool TryParse(IFile file, out IPackage package)
+        {
+            package = null;
+            var data = file.ReadAllBytes();
+
+            using (var ms = new MemoryStream(data))
             {
                 Package p;
 
                 if (!TryParse(ms, out p)) return false;
 
-                p.Data = packageData;
+                p.Data = data;
                 package = p;
 
                 return true;
             }
+        }
+
+        private static bool TryParse(IFile[] files, out Package package)
+        {
+            package = null;
+
+            if (files == null)
+            {
+                return false;
+            }
+
+            if (!files.Any())
+            {
+                return false;
+            }
+
+            var manifestFile = files.SingleOrDefault(f => f.Name == Metadata.Manifest.FileName);
+
+            if (manifestFile == null)
+            {
+                return false;
+            }
+
+            IManifest manifest;
+
+            using (var stream = manifestFile.OpenRead())
+            {
+                if (!Metadata.Manifest.TryParse(stream, out manifest))
+                {
+                    return false;
+                }
+            }
+
+            // We have a valid manifest. Create package.
+            package = new Package(manifest, files);
+            return true;
         }
 
         private static bool TryParse(Stream stream, out Package package)
@@ -57,44 +133,34 @@ namespace Hadouken.Plugins
             {
                 using (var zip = ZipFile.Read(stream))
                 {
-                    // Read manifest
-                    var manifestEntry = zip.Entries.SingleOrDefault(e => e.FileName == Metadata.Manifest.FileName);
+                    var files = new List<IFile>();
 
-                    if (manifestEntry == null)
-                        return false;
-
-                    using (var memoryStream = new MemoryStream())
+                    foreach (var entry in zip.Entries)
                     {
-                        manifestEntry.Extract(memoryStream);
-                        memoryStream.Position = 0;
-
-                        IManifest manifest;
-
-                        if (!Metadata.Manifest.TryParse(memoryStream, out manifest))
-                            return false;
-
-                        // Valid manifest, lets load all files
-                        var files = new List<IFile>();
-
-                        foreach (var entry in zip.Entries)
+                        using (var memStream = new MemoryStream())
                         {
-                            using (var ms = new MemoryStream())
+                            entry.Extract(memStream);
+
+                            var data = memStream.ToArray();
+                            var streamFactory = new Func<MemoryStream>(() => new MemoryStream(data));
+
+                            files.Add(new InMemoryFile(streamFactory)
                             {
-                                entry.Extract(ms);
-
-                                var data = ms.ToArray();
-                                var streamFactory = new Func<MemoryStream>(() => new MemoryStream(data));
-
-                                files.Add(new InMemoryFile(streamFactory)
-                                {
-                                    Name = entry.FileName
-                                });
-                            }
+                                Name = entry.FileName,
+                                FullPath = entry.FileName
+                            });
                         }
-
-                        package = new Package(manifest, files.ToArray());
-                        return true;
                     }
+
+                    Package p;
+
+                    if (!TryParse(files.ToArray(), out p))
+                    {
+                        return false;
+                    }
+
+                    package = p;
+                    return true;
                 }
             }
             catch (Exception)

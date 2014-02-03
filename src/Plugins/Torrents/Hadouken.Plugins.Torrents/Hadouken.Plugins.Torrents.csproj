@@ -129,16 +129,7 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  -->
-  <!-- Custom packaging -->
-  <PropertyGroup>
-    <MSBuildCommunityTasksPath>$(SolutionDir)\tools\msbuild</MSBuildCommunityTasksPath>
-  </PropertyGroup>
-  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
   <Target Name="AfterBuild">
-    <ItemGroup>
-      <ZipFiles Include="$(OutputPath)\**\*.*" />
-    </ItemGroup>
-    <Zip Files="@(ZipFiles)" ZipFileName="$(SolutionDir)\src\Main\Hadouken.Service\bin\$(Configuration)\Plugins\core.torrents.zip" WorkingDirectory="$(OutputPath)" />
   </Target>
+  -->
 </Project>
