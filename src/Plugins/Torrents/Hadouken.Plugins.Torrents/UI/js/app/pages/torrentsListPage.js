@@ -62,7 +62,7 @@
     };
 
     TorrentsListPage.prototype.progressStatus = function(torrent) {
-        if (torrent.state === 'Downloading') {
+        if (torrent.state === 'Downloading' || torrent.state == 'Hashing') {
             var progress = torrent.progress | 0;
             return ' (' + progress + '%)';
         }
