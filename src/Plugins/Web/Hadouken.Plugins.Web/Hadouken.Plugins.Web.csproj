@@ -64,16 +64,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="UI\Css\glyphicons-halflings-regular.eot">
+    <None Include="UI\css\glyphicons-halflings-regular.eot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="UI\Css\glyphicons-halflings-regular.ttf">
+    <None Include="UI\css\glyphicons-halflings-regular.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="UI\Css\glyphicons-halflings-regular.woff">
+    <None Include="UI\css\glyphicons-halflings-regular.woff">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="UI\Dialogs\upload-plugin.html">
+    <Content Include="UI\dialogs\upload-plugin.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\scripts\app.js">
@@ -81,22 +81,22 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UI\Css\bootstrap-theme.min.css">
+    <Content Include="UI\css\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Css\bootstrap.min.css">
+    <Content Include="UI\css\bootstrap.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Css\glyphicons-halflings-regular.svg">
+    <Content Include="UI\css\glyphicons-halflings-regular.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Css\hdkn.css">
+    <Content Include="UI\css\hdkn.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Css\nprogress.css">
+    <Content Include="UI\css\nprogress.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Dialogs\change-auth.html">
+    <Content Include="UI\dialogs\change-auth.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\scripts\app\bootstrapper.js">
@@ -165,7 +165,7 @@
     <Content Include="UI\scripts\require.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\Wizards\configure-core.html">
+    <Content Include="UI\wizards\configure-core.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\wizard.html">
