@@ -8,10 +8,12 @@ namespace Hadouken.Plugins.Config.Rpc
     public class ConfigService : IJsonRpcService
     {
         private readonly IConfigDataStore _dataStore;
+        private readonly IJsonRpcClient _rpcClient;
 
-        public ConfigService(IConfigDataStore dataStore)
+        public ConfigService(IConfigDataStore dataStore, IJsonRpcClient rpcClient)
         {
             _dataStore = dataStore;
+            _rpcClient = rpcClient;
         }
 
         [JsonRpcMethod("config.get")]
@@ -39,6 +41,9 @@ namespace Hadouken.Plugins.Config.Rpc
         public bool Set(string key, object val)
         {
             _dataStore.Set(key, val);
+
+            PublishChangedEvent(key);
+
             return true;
         }
 
@@ -50,8 +55,10 @@ namespace Hadouken.Plugins.Config.Rpc
 
             foreach (var val in values)
             {
-                Set(val.Key, val.Value);
+                _dataStore.Set(val.Key, val.Value);
             }
+
+            PublishChangedEvent(values.Keys.ToArray());
 
             return true;
         }
@@ -61,6 +68,12 @@ namespace Hadouken.Plugins.Config.Rpc
         {
             _dataStore.Delete(key);
             return true;
+        }
+
+        private void PublishChangedEvent(params string[] keys)
+        {
+            var data = keys ?? new string[] {};
+            _rpcClient.SendEventAsync("config.changed", data);
         }
     }
 }

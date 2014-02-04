@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Hadouken.Framework.Events;
 using Hadouken.Framework.Rpc;
 using OctoTorrent.Client;
 
@@ -24,6 +25,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         private readonly EngineSettings _settings = new EngineSettings();
         private readonly IJsonRpcClient _rpcClient;
+        private readonly IEventListener _eventListener;
 
         public event EventHandler<EngineSettings> EngineSettingsChanged;
 
@@ -44,13 +46,36 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             Getters.Add("bt.connection.globalMaxUploadSpeed", s => s.GlobalMaxUploadSpeed);
         }
 
-        public EngineSettingsFactory(IJsonRpcClient rpcClient)
+        public EngineSettingsFactory(IJsonRpcClient rpcClient, IEventListener eventListener)
         {
             _rpcClient = rpcClient;
+            _eventListener = eventListener;
+            _eventListener.Subscribe<string[]>("config.changed", ConfigChanged);
         }
 
         public EngineSettings Build()
         {
+            var settings = GetSettings();
+
+            // Save on remote end
+            var d = Getters.ToDictionary(k => k.Key, v => v.Value(settings));
+
+            _rpcClient.CallAsync<bool>("config.setMany", d).Wait();
+
+            return settings;
+        }
+
+        protected void OnEngineSettingsChanged(EngineSettings engineSettings)
+        {
+            var e = EngineSettingsChanged;
+
+            if (e != null)
+                e(this, engineSettings);
+        }
+
+        private EngineSettings GetSettings()
+        {
+            var settings = new EngineSettings();
             var keys = Setters.Keys.ToArray();
             var config = _rpcClient.CallAsync<Dictionary<string, object>>("config.getMany", keys).Result;
 
@@ -60,23 +85,21 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                     continue;
 
                 var action = Setters[pair.Key];
-                action(_settings, pair.Value);
+                action(settings, pair.Value);
             }
 
-            // Save on remote end
-            var d = Getters.ToDictionary(k => k.Key, v => v.Value(_settings));
-
-            _rpcClient.CallAsync<bool>("config.setMany", d).Wait();
-
-            return _settings;
+            return settings;
         }
 
-        protected void OnEngineSettingsChanged(EngineSettings engineSettings)
+        private void ConfigChanged(string[] keys)
         {
-            var e = EngineSettingsChanged;
+            if (!Setters.Keys.Any(keys.Contains))
+            {
+                return;
+            }
 
-            if (e != null)
-                e(this, engineSettings);
+            var settings = GetSettings();
+            OnEngineSettingsChanged(settings);
         }
     }
 

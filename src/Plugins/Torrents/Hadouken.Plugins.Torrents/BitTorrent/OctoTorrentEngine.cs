@@ -42,6 +42,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         public OctoTorrentEngine(IEngineSettingsFactory settingsFactory, IJsonRpcClient rpcClient, IBootConfig config)
         {
             _settingsFactory = settingsFactory;
+            _settingsFactory.EngineSettingsChanged += (o, s) => UpdateEngineSettings(s);
             _rpcClient = rpcClient;
             _config = config;
             _managers = new Dictionary<string, IExtendedTorrentManager>(StringComparer.InvariantCultureIgnoreCase);
@@ -58,6 +59,32 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         {
             var settings = _settingsFactory.Build();
             _engine = new ClientEngine(settings);
+            _engine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, settings.ListenPort));
+        }
+
+        private void UpdateEngineSettings(EngineSettings settings)
+        {
+            var listenPortChanged = (_engine.Settings.ListenPort != settings.ListenPort);
+
+            _engine.Settings.AllowedEncryption = settings.AllowedEncryption;
+            _engine.Settings.FastResumePath = settings.FastResumePath;
+            _engine.Settings.GlobalMaxConnections = settings.GlobalMaxConnections;
+            _engine.Settings.GlobalMaxDownloadSpeed = settings.GlobalMaxDownloadSpeed;
+            _engine.Settings.GlobalMaxHalfOpenConnections = settings.GlobalMaxHalfOpenConnections;
+            _engine.Settings.GlobalMaxUploadSpeed = settings.GlobalMaxUploadSpeed;
+            _engine.Settings.HaveSupressionEnabled = settings.HaveSupressionEnabled;
+            _engine.Settings.ListenPort = settings.ListenPort;
+            _engine.Settings.MaxOpenFiles = settings.MaxOpenFiles;
+            _engine.Settings.MaxReadRate = settings.MaxReadRate;
+            _engine.Settings.MaxWriteRate = settings.MaxWriteRate;
+            _engine.Settings.PreferEncryption = settings.PreferEncryption;
+            _engine.Settings.ReportedAddress = settings.ReportedAddress;
+            _engine.Settings.SavePath = settings.SavePath;
+
+            if (listenPortChanged)
+            {
+                _engine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, settings.ListenPort));
+            }
         }
 
         private void LoadDht()
