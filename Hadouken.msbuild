@@ -41,8 +41,15 @@
       <TargetDirectory>$(OutputDirectory)/binaries</TargetDirectory>
     </PropertyGroup>
 
-    <MakeDir Directories="$(OutputDirectory)/binaries" />
+    <ItemGroup>
+      <ConsoleConfig Include="src/Configuration/Console/Hadouken.Service.exe.config" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(TargetDirectory)" />
     <Exec Command="xcopy.exe &quot;$(SourceDirectory)&quot; &quot;$(TargetDirectory)&quot; /e" />
+
+    <!-- Copy the correct configuration file -->
+    <Copy SourceFiles="@(ConsoleConfig)" DestinationFolder="$(TargetDirectory)" />
   </Target>
 
   <Target Name="Zip" DependsOnTargets="Compile">
@@ -74,7 +81,7 @@
     <ItemGroup>
       <CandleDefines Include="BinDir=$(OutputDirectory)\binaries" />
       <CandleDefines Include="BuildVersion=$(Version)" />
-      <CandleDefines Include="ConfigDir=src\Configuration\$(Configuration)" />
+      <CandleDefines Include="ConfigDir=src\Configuration\Service" />
     </ItemGroup>
 
     <ItemGroup>
