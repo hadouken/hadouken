@@ -7,4 +7,4 @@ All development is done in the `develop` branch using the Git Flow extension (wi
 
 Building from source
 --------------------
-You need Ruby installed to build from source. Install Ruby, then run `gem install bundler`, `bundle install` and lastly `rake` to build. This will build zip and MSI packages for both x86 and x64 architectures.
+To compile, test and package Hadouken in its various flavors, just run `build.bat` which executes the build script. This will output everything (zip/msi package) in the `build` folder.
