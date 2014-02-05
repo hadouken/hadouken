@@ -6,41 +6,30 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Hadouken.Framework;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Plugins;
+using Hadouken.Framework.Wcf;
 
 namespace Hadouken.Plugins.HttpJsonRpc
 {
     public class HttpJsonRpcServer : IHttpJsonRpcServer
     {
+        private readonly Uri _gatewayUri;
         private readonly IEventListener _eventListener;
+        private readonly IProxyFactory<IPluginManagerService> _pluginManagerFactory;
         private readonly HttpListener _httpListener = new HttpListener();
         private readonly CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private readonly Task _workerTask;
-        private readonly Lazy<IPluginManagerService> _rpcProxy;
         private NetworkCredential _credentials = null;
 
-        public HttpJsonRpcServer(string listenUri, IEventListener eventListener)
+        public HttpJsonRpcServer(string listenUri, IBootConfig configuration, IEventListener eventListener, IProxyFactory<IPluginManagerService> pluginManagerFactory)
         {
+            _gatewayUri = new Uri(configuration.RpcGatewayUri);
             _eventListener = eventListener;
-            _rpcProxy = new Lazy<IPluginManagerService>(BuildProxy);
+            _pluginManagerFactory = pluginManagerFactory;
             _httpListener.Prefixes.Add(listenUri);
             _workerTask = new Task(ct => Run(_cancellationToken.Token), _cancellationToken.Token);
-        }
-
-        private IPluginManagerService BuildProxy()
-        {
-            var binding = new NetNamedPipeBinding
-            {
-                MaxBufferPoolSize = 10485760,
-                MaxBufferSize = 10485760,
-                MaxConnections = 10,
-                MaxReceivedMessageSize = 10485760
-            };
-
-            // Create proxy
-            var factory = new ChannelFactory<IPluginManagerService>(binding, "net.pipe://localhost/hdkn.jsonrpc");
-            return factory.CreateChannel();
         }
 
         public void SetCredentials(string username, string password)
@@ -102,12 +91,15 @@ namespace Hadouken.Plugins.HttpJsonRpc
 
                 try
                 {
-                    var response = _rpcProxy.Value.RpcAsync(content).Result;
+                    using (var proxy = _pluginManagerFactory.Create(_gatewayUri))
+                    {
+                        var response = proxy.Channel.RpcAsync(content).Result;
 
-                    context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = 200;
+                        context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = 200;
 
-                    writer.Write(response);
+                        writer.Write(response);
+                    }
                 }
                 catch (Exception e)
                 {

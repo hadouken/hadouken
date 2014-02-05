@@ -6,7 +6,8 @@ namespace Hadouken.Framework.Rpc
 {
     public class WcfClientTransport : IClientTransport
     {
-        private readonly IProxy<IPluginManagerService> _pluginManagerService;
+        private readonly IProxyFactory<IPluginManagerService> _proxyFactory;
+        private readonly Uri _endpoint;
 
         public WcfClientTransport(IProxyFactory<IPluginManagerService> proxyFactory, IBootConfig bootConfig)
             : this(proxyFactory, new Uri(bootConfig.RpcGatewayUri))
@@ -15,12 +16,16 @@ namespace Hadouken.Framework.Rpc
 
         public WcfClientTransport(IProxyFactory<IPluginManagerService> proxyFactory, Uri endpoint)
         {
-            _pluginManagerService = proxyFactory.Create(endpoint);
+            _proxyFactory = proxyFactory;
+            _endpoint = endpoint;
         }
 
         public string Send(string data)
         {
-            return _pluginManagerService.Channel.RpcAsync(data).Result;
+            using (var proxy = _proxyFactory.Create(_endpoint))
+            {
+                return proxy.Channel.RpcAsync(data).Result;
+            }
         }
     }
 }

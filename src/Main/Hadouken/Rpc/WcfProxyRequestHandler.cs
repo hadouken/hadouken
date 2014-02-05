@@ -1,22 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Hadouken.Configuration;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
+using Hadouken.Framework.Wcf;
 using NLog;
 
 namespace Hadouken.Rpc
 {
     public class WcfProxyRequestHandler : RequestHandler
     {
+        private readonly IConfiguration _configuration;
         private readonly IEventListener _eventListener;
+        private readonly IProxyFactory<IPluginManagerService> _proxyFactory;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IDictionary<string, IPluginManagerService> _proxyList = new Dictionary<string, IPluginManagerService>();
 
-        public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services, IEventListener eventListener) : base(services)
+        public WcfProxyRequestHandler(IEnumerable<IJsonRpcService> services,
+            IConfiguration configuration,
+            IEventListener eventListener,
+            IProxyFactory<IPluginManagerService> proxyFactory)
+            : base(services)
         {
+            _configuration = configuration;
             _eventListener = eventListener;
+            _proxyFactory = proxyFactory;
             _eventListener.Subscribe<string>("plugin.unloaded", OnPluginUnloaded);
         }
 
@@ -44,61 +54,33 @@ namespace Hadouken.Rpc
                     break;
             }
 
-            if (!_proxyList.ContainsKey(plugin))
+            var endpoint = new Uri(string.Format(_configuration.Rpc.PluginUri, plugin));
+
+            try
             {
-                var binding = new NetNamedPipeBinding
+                using (var proxy = _proxyFactory.Create(endpoint))
                 {
-                    MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
-                    MaxConnections = 10,
-                    MaxReceivedMessageSize = 10485760
-                };
+                    var serializedRequest = request.Serialize();
+                    var result = proxy.Channel.RpcAsync(serializedRequest).Result;
 
-                // Create proxy
-                var factory = new ChannelFactory<IPluginManagerService>(binding,
-                    "net.pipe://localhost/hdkn.plugins." + plugin);
-                var proxy = factory.CreateChannel();
-
-                try
-                {
-                    var result = proxy.RpcAsync(request.Serialize()).Result;
-
-                    Exception responseParseException;
                     JsonRpcResponse response;
+                    Exception exception;
 
-                    if (JsonRpcResponse.TryParse(result, out response, out responseParseException))
+                    if (JsonRpcResponse.TryParse(result, out response, out exception))
                     {
-                        if (!_proxyList.ContainsKey(plugin))
-                            _proxyList.Add(plugin, proxy);
-
                         return response;
                     }
 
-                    _proxyList.Add(plugin, null);
-                }
-                catch (Exception exception)
-                {
-                    return JsonRpcErrorResponse.InternalRpcError(request.Id, exception);
+                    Logger.ErrorException("Could not parse JSONRPC response.", exception);
+
+                    return JsonRpcErrorResponse.ParseError(request.Id);
                 }
             }
-            else if(_proxyList[plugin] != null)
+            catch (Exception e)
             {
-                var wcfProxy = _proxyList[plugin];
-                var result = wcfProxy.RpcAsync(request.Serialize()).Result;
-
-                Exception parseException;
-                JsonRpcResponse response;
-
-                if (JsonRpcResponse.TryParse(result, out response, out parseException)) return response;
-
-                // This proxy does not send valid responses. Remove it from our known proxies.
-                _proxyList.Remove(plugin);
-
-                Logger.Error("Received invalid response from proxy {0}", plugin);
-                return JsonRpcErrorResponse.InternalRpcError(request.Id);
+                Logger.ErrorException("Error when calling JSONRPC service.", e);
+                return JsonRpcErrorResponse.InternalRpcError(request.Id, e);
             }
-
-            return JsonRpcErrorResponse.MethodNotFound(request.Id, request.Method);
         }
     }
 }

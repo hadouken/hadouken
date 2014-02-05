@@ -10,7 +10,7 @@
         {
             _userName = userName;
             _password = password;
-            _hashProvider = HashProvider.Default();
+            _hashProvider = HashProvider.GetDefault();
         }
 
         public bool IsValidUser(string userName, string password)

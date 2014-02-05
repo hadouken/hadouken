@@ -6,7 +6,7 @@
 
         public abstract byte[] ComputeHash(byte[] input);
 
-        public static IHashProvider Default()
+        public static IHashProvider GetDefault()
         {
             return new Sha256HashProvider();
         }

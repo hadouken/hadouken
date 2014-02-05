@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 using System.Web;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Rpc;
+using Hadouken.Framework.Security;
 
 namespace Hadouken.Plugins.Web.Http
 {
     public class HttpFileServer : IHttpFileServer
     {
         private static readonly Regex PluginRegex = new Regex("^/plugins/(?<pluginId>[a-zA-Z0-9\\.]*?)/(?<path>.*)$");
+        private static readonly string DefaultPlugin = "core.web";
+        private static readonly string DefaultFile = "/index.html";
+        private static readonly string DefaultPath = "UI";
+        private static readonly string RootPath = "/";
 
+        private readonly IHashProvider _hashProvider;
         private readonly IJsonRpcClient _rpcClient;
         private readonly IEventListener _eventListener;
         private readonly HttpListener _httpListener;
@@ -21,6 +27,7 @@ namespace Hadouken.Plugins.Web.Http
 
         public HttpFileServer(string listenUri, IJsonRpcClient rpcClient, IEventListener eventListener)
         {
+            _hashProvider = HashProvider.GetDefault();
             _rpcClient = rpcClient;
             _eventListener = eventListener;
 
@@ -47,31 +54,16 @@ namespace Hadouken.Plugins.Web.Http
 
         private bool IsAuthenticatedUser(HttpListenerContext context)
         {
-            if (_httpListener.AuthenticationSchemes == AuthenticationSchemes.None)
+            if (_httpListener.AuthenticationSchemes != AuthenticationSchemes.Basic)
                 return true;
 
             if (_credentials == null)
                 return true;
 
             var id = (HttpListenerBasicIdentity)context.User.Identity;
-            var passwordHash = ComputeHash(id.Password);
+            var passwordHash = _hashProvider.ComputeHash(id.Password);
 
             return id.Name == _credentials.UserName && passwordHash == _credentials.Password;
-        }
-
-        private string ComputeHash(string input)
-        {
-            var bytes = Encoding.UTF8.GetBytes(input);
-            var sha256 = new SHA256Managed();
-            var hash = sha256.ComputeHash(bytes);
-            var sb = new StringBuilder();
-
-            foreach (var b in hash)
-            {
-                sb.AppendFormat("{0:x2}", b);
-            }
-
-            return sb.ToString();
         }
 
         private void GetContext(IAsyncResult ar)
@@ -105,10 +97,10 @@ namespace Hadouken.Plugins.Web.Http
 
             var file = context.Request.Url.AbsolutePath;
 
-            if (file == "/")
-                file = "/index.html";
+            if (file == RootPath)
+                file = DefaultFile;
 
-            var path = "UI" + file;
+            var path = string.Concat(DefaultPath, file);
             var pluginId = "core.web";
 
             if (PluginRegex.IsMatch(context.Request.Url.AbsolutePath))
@@ -116,7 +108,7 @@ namespace Hadouken.Plugins.Web.Http
                 var match = PluginRegex.Match(context.Request.Url.AbsolutePath);
 
                 pluginId = match.Groups["pluginId"].Value;
-                path = "UI/" + match.Groups["path"].Value;
+                path = string.Concat("UI", "/", match.Groups["path"].Value);
             }
 
             var fileContents = _rpcClient.CallAsync<byte[]>(
@@ -127,8 +119,6 @@ namespace Hadouken.Plugins.Web.Http
             if (fileContents == null)
             {
                 context.Response.StatusCode = 404;
-                context.Response.OutputStream.Close();
-                context.Response.Close();
             }
             else
             {
@@ -137,9 +127,10 @@ namespace Hadouken.Plugins.Web.Http
                 context.Response.ContentType = mapping;
                 context.Response.StatusCode = 200;
                 context.Response.OutputStream.Write(fileContents, 0, fileContents.Length);
-                context.Response.OutputStream.Close();
-                context.Response.Close();
             }
+
+            context.Response.OutputStream.Close();
+            context.Response.Close();
         }
 
         public void Stop()
