@@ -6,7 +6,7 @@
   <Product
     Id="*"
     Name="Hadouken"
-    Manufacturer="Viktor Elofsson - vktr.se"
+    Manufacturer="Viktor Elofsson - viktorelofsson.se"
     Version="$(var.BuildVersion)"
     UpgradeCode="248297a1-a2f4-4d0e-94f5-0d363e0b8e5f"
     Language="1033"
@@ -54,6 +54,12 @@
     <UI Id="HdknUI">
       <UIRef Id="WixUI_InstallDir" />
       <UIRef Id="WixUI_ErrorProgressText" />
+
+      <DialogRef Id="ConfigureDlg" />
+      <DialogRef Id="ConfigureInvalidDlg" />
+
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ConfigureDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ConfigureDlg" Order="1">NOT Installed</Publish>
     </UI>
     
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
@@ -65,5 +71,25 @@
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- Set port default value -->
+    <Property Id="HDKN_WEBUI_PORT" Value="7890" />
+
+    <!-- Search for HTTP port in config file -->
+    <CustomAction Id="Xml_SetFileName" Property="XML_FILENAME" Value="[INSTALLDIR]\Hadouken.Service.exe.config" Execute="immediate" />
+    <CustomAction Id="Xml_SelectNodeValue_XPath" Property="XML_XPATH" Value="/configuration/hdkn/http" Execute="immediate" />
+    <CustomAction Id="Xml_SelectAttribute_Value" Property="XML_ATTRIBUTENAME" Value="port" Execute="immediate" />
+    <CustomAction Id="Xml_SelectNodeAttribute" BinaryKey="XmlTools" DllEntry="Xml_SelectNodeAttributeValue" Execute="immediate" Return="check" />
+    <CustomAction Id="Xml_GetAttributeValue" Property="HDKN_WEBUI_PORT" Value="[XML_ATTRIBUTEVALUE]" Execute="immediate" />
+
+    <Binary Id="XmlTools" SourceFile="tools/msiext-1.4/XmlTools.dll" />
+
+    <InstallUISequence>
+      <Custom Action="Xml_SetFileName" After="CostInitialize"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_SelectNodeValue_XPath" After="Xml_SetFileName"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_SelectAttribute_Value" After="Xml_SelectNodeValue_XPath"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_SelectNodeAttribute" After="Xml_SelectAttribute_Value"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_GetAttributeValue" After="Xml_SelectNodeAttribute"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+    </InstallUISequence>
   </Product>
 </Wix>

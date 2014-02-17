@@ -85,7 +85,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <CandleExtensions Include="WixUtilExtension" />
+    </ItemGroup>
+
+    <ItemGroup>
       <LightExtensions Include="WixUIExtension" />
+      <LightExtensions Include="WixUtilExtension" />
       <LightExtensions Include="WixNetFxExtension" />
     </ItemGroup>
     
@@ -96,9 +101,11 @@
       <LightSources Include="$(OutputDirectory)\wixobj\Lib.wixobj" />
       <LightSources Include="$(OutputDirectory)\wixobj\Plugins.wixobj" />
       <LightSources Include="$(OutputDirectory)\wixobj\Service.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\ConfigureDlg.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\ConfigureInvalidDlg.wixobj" />
     </ItemGroup>
     
-    <Candle DefineConstants="@(CandleDefines)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="$(WixPath)" />
+    <Candle DefineConstants="@(CandleDefines)" Extensions="@(CandleExtensions)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="$(WixPath)" />
     
     <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" ToolPath="$(WixPath)" />
   </Target>
