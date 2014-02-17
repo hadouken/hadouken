@@ -64,6 +64,7 @@
     
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="src/Media/HdknSetupDialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="src/Media/License.rtf" />
 
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
