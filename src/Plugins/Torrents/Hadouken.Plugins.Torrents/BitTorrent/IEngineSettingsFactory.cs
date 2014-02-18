@@ -10,24 +10,23 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 {
     public interface IEngineSettingsFactory
     {
-        event EventHandler<EngineSettings> EngineSettingsChanged;
+        event EventHandler<TorrentEngineSettings> EngineSettingsChanged;
 
-        EngineSettings Build();
+        TorrentEngineSettings Build();
     }
 
     class EngineSettingsFactory : IEngineSettingsFactory
     {
-        private static readonly IDictionary<string, Action<EngineSettings, object>> Setters =
-            new Dictionary<string, Action<EngineSettings, object>>();
+        private static readonly IDictionary<string, Action<TorrentEngineSettings, object>> Setters =
+            new Dictionary<string, Action<TorrentEngineSettings, object>>();
 
-        private static readonly IDictionary<string, Func<EngineSettings, object>> Getters =
-            new Dictionary<string, Func<EngineSettings, object>>(); 
+        private static readonly IDictionary<string, Func<TorrentEngineSettings, object>> Getters =
+            new Dictionary<string, Func<TorrentEngineSettings, object>>(); 
 
-        private readonly EngineSettings _settings = new EngineSettings();
         private readonly IJsonRpcClient _rpcClient;
         private readonly IEventListener _eventListener;
 
-        public event EventHandler<EngineSettings> EngineSettingsChanged;
+        public event EventHandler<TorrentEngineSettings> EngineSettingsChanged;
 
         static EngineSettingsFactory()
         {
@@ -53,19 +52,19 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             _eventListener.Subscribe<string[]>("config.changed", ConfigChanged);
         }
 
-        public EngineSettings Build()
+        public TorrentEngineSettings Build()
         {
             var settings = GetSettings();
 
             // Save on remote end
             var d = Getters.ToDictionary(k => k.Key, v => v.Value(settings));
 
-            _rpcClient.CallAsync<bool>("config.setMany", d).Wait();
+            _rpcClient.Call<bool>("config.setMany", d);
 
             return settings;
         }
 
-        protected void OnEngineSettingsChanged(EngineSettings engineSettings)
+        protected void OnEngineSettingsChanged(TorrentEngineSettings engineSettings)
         {
             var e = EngineSettingsChanged;
 
@@ -73,11 +72,11 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
                 e(this, engineSettings);
         }
 
-        private EngineSettings GetSettings()
+        private TorrentEngineSettings GetSettings()
         {
-            var settings = new EngineSettings();
+            var settings = new TorrentEngineSettings();
             var keys = Setters.Keys.ToArray();
-            var config = _rpcClient.CallAsync<Dictionary<string, object>>("config.getMany", keys).Result;
+            var config = _rpcClient.Call<Dictionary<string, object>>("config.getMany", keys);
 
             foreach (var pair in config)
             {

@@ -107,7 +107,7 @@
     
     <Candle DefineConstants="@(CandleDefines)" Extensions="@(CandleExtensions)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="$(WixPath)" />
     
-    <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" ToolPath="$(WixPath)" />
+    <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" SuppressIces="ICE61" ToolPath="$(WixPath)" />
   </Target>
 
   <Target Name="Nuget" DependsOnTargets="Output">

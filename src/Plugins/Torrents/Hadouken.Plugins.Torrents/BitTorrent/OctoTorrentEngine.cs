@@ -58,27 +58,25 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
         private void LoadEngine()
         {
             var settings = _settingsFactory.Build();
-            _engine = new ClientEngine(settings);
+            _engine = new ClientEngine(new EngineSettings
+            {
+                GlobalMaxConnections = settings.GlobalMaxConnections,
+                GlobalMaxDownloadSpeed = settings.GlobalMaxDownloadSpeed,
+                GlobalMaxHalfOpenConnections = settings.GlobalMaxHalfOpenConnections,
+                GlobalMaxUploadSpeed = settings.GlobalMaxUploadSpeed,
+                SavePath = settings.SavePath
+            });
             _engine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, settings.ListenPort));
         }
 
-        private void UpdateEngineSettings(EngineSettings settings)
+        private void UpdateEngineSettings(TorrentEngineSettings settings)
         {
-            var listenPortChanged = (_engine.Settings.ListenPort != settings.ListenPort);
+            var listenPortChanged = (_engine.Listener.Endpoint.Port != settings.ListenPort);
 
-            _engine.Settings.AllowedEncryption = settings.AllowedEncryption;
-            _engine.Settings.FastResumePath = settings.FastResumePath;
             _engine.Settings.GlobalMaxConnections = settings.GlobalMaxConnections;
             _engine.Settings.GlobalMaxDownloadSpeed = settings.GlobalMaxDownloadSpeed;
             _engine.Settings.GlobalMaxHalfOpenConnections = settings.GlobalMaxHalfOpenConnections;
             _engine.Settings.GlobalMaxUploadSpeed = settings.GlobalMaxUploadSpeed;
-            _engine.Settings.HaveSupressionEnabled = settings.HaveSupressionEnabled;
-            _engine.Settings.ListenPort = settings.ListenPort;
-            _engine.Settings.MaxOpenFiles = settings.MaxOpenFiles;
-            _engine.Settings.MaxReadRate = settings.MaxReadRate;
-            _engine.Settings.MaxWriteRate = settings.MaxWriteRate;
-            _engine.Settings.PreferEncryption = settings.PreferEncryption;
-            _engine.Settings.ReportedAddress = settings.ReportedAddress;
             _engine.Settings.SavePath = settings.SavePath;
 
             if (listenPortChanged)
@@ -166,7 +164,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
             if (propagateEvent)
             {
-                _rpcClient.SendEventAsync("torrent.added", new TorrentOverview(extendedManager.Manager));
+                _rpcClient.SendEvent("torrent.added", new TorrentOverview(extendedManager.Manager));
             }
 
             return extendedManager;
@@ -179,7 +177,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             if (EventMap.ContainsKey(tuple))
             {
                 var eventName = EventMap[tuple];
-                _rpcClient.SendEventAsync(eventName, new TorrentOverview(e.TorrentManager));
+                _rpcClient.SendEvent(eventName, new TorrentOverview(e.TorrentManager));
 
                 return;
             }
@@ -187,13 +185,13 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             switch (e.NewState)
             {
                 case TorrentState.Error:
-                    _rpcClient.SendEventAsync("torrent.error", new TorrentOverview(e.TorrentManager));
+                    _rpcClient.SendEvent("torrent.error", new TorrentOverview(e.TorrentManager));
                     break;
                 case TorrentState.Stopped:
-                    _rpcClient.SendEventAsync("torrent.stopped", new TorrentOverview(e.TorrentManager));
+                    _rpcClient.SendEvent("torrent.stopped", new TorrentOverview(e.TorrentManager));
                     break;
                 case TorrentState.Paused:
-                    _rpcClient.SendEventAsync("torrent.paused", new TorrentOverview(e.TorrentManager));
+                    _rpcClient.SendEvent("torrent.paused", new TorrentOverview(e.TorrentManager));
                     break;
             }
         }
@@ -213,7 +211,7 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
             _engine.Unregister(manager.Manager);
             _managers.Remove(infoHash);
 
-            _rpcClient.SendEventAsync("torrent.removed", infoHash);
+            _rpcClient.SendEvent("torrent.removed", infoHash);
         }
 
         private void LoadManagers()

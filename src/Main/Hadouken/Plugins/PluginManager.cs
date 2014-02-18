@@ -57,7 +57,7 @@ namespace Hadouken.Plugins
             return domain.MonitoringSurvivedMemorySize;
         }
 
-        public async void Load()
+        public void Load()
         {
             Logger.Info("Loading plugin {0}", Package.Manifest.Name);
 
@@ -96,7 +96,7 @@ namespace Hadouken.Plugins
 
             State = PluginState.Loaded;
 
-            await _rpcClient.CallAsync<bool>("events.publish", new object[] { "plugin.loaded", new { name = Package.Manifest.Name, version = Package.Manifest.Version } });
+            _rpcClient.Call<bool>("events.publish", new object[] { "plugin.loaded", new { name = Package.Manifest.Name, version = Package.Manifest.Version } });
         }
 
         public void Unload()
@@ -114,7 +114,7 @@ namespace Hadouken.Plugins
 
             State = PluginState.Unloaded;
 
-            _rpcClient.CallAsync<bool>("events.publish", new object[] { "plugin.unloaded", Package.Manifest.Name }).Wait();
+            _rpcClient.Call<bool>("events.publish", new object[] { "plugin.unloaded", Package.Manifest.Name });
         }
     }
 }

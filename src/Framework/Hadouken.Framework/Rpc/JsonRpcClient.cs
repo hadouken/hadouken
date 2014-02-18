@@ -26,7 +26,7 @@ namespace Hadouken.Framework.Rpc
             _transport = transport;
         }
 
-        public async Task<TResult> CallAsync<TResult>(string method, object parameters = null)
+        public TResult Call<TResult>(string method, object parameters = null)
         {
             _requestId++;
 

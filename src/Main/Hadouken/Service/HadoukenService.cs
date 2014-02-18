@@ -46,7 +46,7 @@ namespace Hadouken.Service
 		{
 			Logger.Info("Stopping Hadouken");
 
-		    _rpcClient.CallAsync<bool>("events.publish", new object[] {"sys.unloading", ""});
+		    _rpcClient.Call<bool>("events.publish", new object[] {"sys.unloading", ""});
 
 			_pluginEngine.UnloadAllAsync().Wait();
 

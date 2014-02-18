@@ -73,7 +73,7 @@ namespace Hadouken.Plugins.Config.Rpc
         private void PublishChangedEvent(params string[] keys)
         {
             var data = keys ?? new string[] {};
-            _rpcClient.SendEventAsync("config.changed", data);
+            _rpcClient.SendEvent("config.changed", data);
         }
     }
 }

@@ -8,11 +8,14 @@ using System.Web;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Security;
+using NLog;
 
 namespace Hadouken.Plugins.Web.Http
 {
     public class HttpFileServer : IHttpFileServer
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private static readonly Regex PluginRegex = new Regex("^/plugins/(?<pluginId>[a-zA-Z0-9\\.]*?)/(?<path>.*)$");
         private static readonly string DefaultPlugin = "core.web";
         private static readonly string DefaultFile = "/index.html";
@@ -48,6 +51,8 @@ namespace Hadouken.Plugins.Web.Http
         {
             if (String.IsNullOrEmpty(userName) || String.IsNullOrEmpty(hashedPassword)) return;
 
+            Logger.Info("Changing credentials");
+
             _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
             _credentials = new NetworkCredential(userName, hashedPassword);
         }
@@ -75,12 +80,12 @@ namespace Hadouken.Plugins.Web.Http
                 _httpListener.BeginGetContext(GetContext, null);
                 Task.Run(() => ProcessContext(context));
             }
-            catch (ObjectDisposedException disposedException)
+            catch (ObjectDisposedException)
             {
             }
             catch (Exception exception)
             {
-                // TODO: Add logging. Should we still call BeginGetContext here?
+                Logger.FatalException("Unhandled exception occured.", exception);
             }
         }
 
@@ -88,6 +93,8 @@ namespace Hadouken.Plugins.Web.Http
         {
             if (!IsAuthenticatedUser(context))
             {
+                Logger.Info("Unauthorized access attempt from " + context.Request.RemoteEndPoint);
+
                 context.Response.StatusCode = 401;
                 context.Response.OutputStream.Close();
                 context.Response.Close();
@@ -101,7 +108,7 @@ namespace Hadouken.Plugins.Web.Http
                 file = DefaultFile;
 
             var path = string.Concat(DefaultPath, file);
-            var pluginId = "core.web";
+            var pluginId = DefaultPlugin;
 
             if (PluginRegex.IsMatch(context.Request.Url.AbsolutePath))
             {
@@ -111,10 +118,9 @@ namespace Hadouken.Plugins.Web.Http
                 path = string.Concat("UI", "/", match.Groups["path"].Value);
             }
 
-            var fileContents = _rpcClient.CallAsync<byte[]>(
+            var fileContents = _rpcClient.Call<byte[]>(
                 "plugins.getFileContents",
-                new[] { pluginId, path })
-                .Result;
+                new[] {pluginId, path});
 
             if (fileContents == null)
             {

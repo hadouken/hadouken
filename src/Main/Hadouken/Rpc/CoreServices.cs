@@ -27,7 +27,7 @@ namespace Hadouken.Rpc
 
             foreach (var key in call.Keys)
             {
-                var callResult = _rpcClient.CallAsync<object>(key, call[key]).Result;
+                var callResult = _rpcClient.Call<object>(key, call[key]);
                 result.Add(key, callResult);
             }
 
@@ -58,7 +58,7 @@ namespace Hadouken.Rpc
             _configuration.Http.Authentication.Password = ComputeHash(newPassword);
             _configuration.Save();
 
-            _rpcClient.SendEventAsync("auth.changed", new {UserName = userName, HashedPassword = _configuration.Http.Authentication.Password});
+            _rpcClient.SendEvent("auth.changed", new {UserName = userName, HashedPassword = _configuration.Http.Authentication.Password});
 
             return true;
         }
