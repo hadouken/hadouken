@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using Hadouken.Framework.IO;
 using Hadouken.Framework.Rpc;
 using Hadouken.Plugins.Torrents.BitTorrent;
 using Hadouken.Plugins.Torrents.Dto;
@@ -10,10 +12,12 @@ namespace Hadouken.Plugins.Torrents.Rpc
     public class TorrentsServices : IJsonRpcService
     {
         private readonly IBitTorrentEngine _torrentEngine;
+        private readonly IFileSystem _fileSystem;
 
-        public TorrentsServices(IBitTorrentEngine torrentEngine)
+        public TorrentsServices(IBitTorrentEngine torrentEngine, IFileSystem fileSystem)
         {
             _torrentEngine = torrentEngine;
+            _fileSystem = fileSystem;
         }
 
         [JsonRpcMethod("torrents.start")]
@@ -97,6 +101,39 @@ namespace Hadouken.Plugins.Torrents.Rpc
 
                 return new TorrentOverview(manager.Manager);
             }
+        }
+
+        [JsonRpcMethod("torrents.remove")]
+        public bool Remove(string infoHash, bool removeData)
+        {
+            var manager = _torrentEngine.Get(infoHash);
+
+            if (manager == null)
+                return false;
+
+            var savePath = manager.Manager.SavePath;
+            var isMulti = manager.Manager.Torrent.Files.Length > 1;
+
+            if (!isMulti)
+                savePath = Path.Combine(savePath, manager.Manager.Torrent.Name);
+
+            _torrentEngine.Remove(manager);
+
+            if (removeData)
+            {
+                if (isMulti)
+                {
+                    var dir = _fileSystem.GetDirectory(savePath);
+                    dir.Delete(true);
+                }
+                else
+                {
+                    var file = _fileSystem.GetFile(savePath);
+                    file.Delete();
+                }
+            }
+
+            return true;
         }
     }
 }

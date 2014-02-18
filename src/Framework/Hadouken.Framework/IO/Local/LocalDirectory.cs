@@ -56,9 +56,9 @@ namespace Hadouken.Framework.IO.Local
                 Create();
         }
 
-        public void Delete()
+        public void Delete(bool recursive = false)
         {
-            _directoryInfo.Delete();
+            _directoryInfo.Delete(recursive);
         }
     }
 }

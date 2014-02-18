@@ -16,6 +16,6 @@
 
         void CreateIfNotExists();
 
-        void Delete();
+        void Delete(bool recursive = false);
     }
 }

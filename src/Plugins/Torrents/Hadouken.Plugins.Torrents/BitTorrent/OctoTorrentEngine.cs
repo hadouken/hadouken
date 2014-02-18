@@ -200,7 +200,20 @@ namespace Hadouken.Plugins.Torrents.BitTorrent
 
         public void Remove(IExtendedTorrentManager manager)
         {
-            throw new NotImplementedException();
+            var infoHash = manager.FriendlyInfoHash;
+            manager.Stop();
+
+            while (manager.Manager.State != TorrentState.Stopped)
+            {
+                Thread.Sleep(100);
+            }
+
+            manager.Manager.TorrentStateChanged -= Manager_TorrentStateChanged;
+
+            _engine.Unregister(manager.Manager);
+            _managers.Remove(infoHash);
+
+            _rpcClient.SendEventAsync("torrent.removed", infoHash);
         }
 
         private void LoadManagers()

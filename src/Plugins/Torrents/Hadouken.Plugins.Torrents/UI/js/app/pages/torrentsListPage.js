@@ -43,6 +43,16 @@
             var torrentId = $(this).parents('tr').attr('data-torrent-id');
             that.stopTorrent(torrentId);
         });
+
+        this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-remove', function () {
+            var torrentId = $(this).parents('tr').attr('data-torrent-id');
+            that.removeTorrent(torrentId, false);
+        });
+
+        this.content.find('#tbody-torrents-list').on('click', '.btn-torrent-remove-data', function () {
+            var torrentId = $(this).parents('tr').attr('data-torrent-id');
+            that.removeTorrent(torrentId, true);
+        });
         
         // Setup events
         this.eventListener.subscribe('torrent.added', function (e) { that.torrentAdded(e); });
@@ -136,6 +146,10 @@
 
     TorrentsListPage.prototype.stopTorrent = function(infoHash) {
         this.rpc.callParams('torrents.stop', infoHash, function() {});
+    };
+
+    TorrentsListPage.prototype.removeTorrent = function(infoHash, removeData) {
+        this.rpc.callParams('torrents.remove', [infoHash, removeData], function() {});
     };
 
     TorrentsListPage.prototype.canStart = function(torrent) {
