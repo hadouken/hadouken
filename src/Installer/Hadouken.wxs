@@ -22,7 +22,7 @@
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
-    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Installer does not support downgrading." />
 
     <!-- Check for .NET4Full -->
     <PropertyRef Id="NETFRAMEWORK45"/>
