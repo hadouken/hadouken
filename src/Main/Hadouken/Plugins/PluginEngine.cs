@@ -104,15 +104,44 @@ namespace Hadouken.Plugins
             }
 
             return result;
-        } 
+        }
+
+        private IPackage LoadPackageFromCommandLineArgument()
+        {
+            var args = Environment.GetCommandLineArgs();
+            args = args.SkipWhile(s => s != "--plugin").ToArray();
+
+            if (!args.Any() || args.Length < 2)
+            {
+                return null;
+            }
+
+            if (args.First() != "--plugin")
+            {
+                return null;
+            }
+
+            var path = args.Skip(1).First();
+            var directory = _fileSystem.GetDirectory(path);
+
+            if (!directory.Exists)
+            {
+                return null;
+            }
+
+            IPackage package;
+
+            return !Package.TryParse(directory, out package) ? null : package;
+        }
 
         public void Scan()
         {
             var packages = new List<IPackage>();
             packages.AddRange(LoadPackagesFromBaseDirectory());
             packages.AddRange(LoadPackagesFromExplicitList());
+            packages.Add(LoadPackageFromCommandLineArgument());
 
-            foreach (var package in packages)
+            foreach (var package in packages.Where(p => p != null))
             {
                 lock (_lock)
                 {
