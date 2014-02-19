@@ -46,5 +46,8 @@
     
     <!-- Framework -->
     <file src="src/Framework/Hadouken.Framework/bin/Release/Hadouken.Framework.dll" target="lib/net45" />
+
+    <!-- Readme -->
+    <file src="src/Package/readme.txt" target="" />
   </files>
 </package>
