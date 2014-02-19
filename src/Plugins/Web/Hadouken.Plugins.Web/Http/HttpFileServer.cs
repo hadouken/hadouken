@@ -80,7 +80,7 @@ namespace Hadouken.Plugins.Web.Http
                 _httpListener.BeginGetContext(GetContext, null);
                 Task.Run(() => ProcessContext(context));
             }
-            catch (ObjectDisposedException)
+            catch (HttpListenerException)
             {
             }
             catch (Exception exception)
