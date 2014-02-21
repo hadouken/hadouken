@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Hadouken.Configuration
+﻿namespace Hadouken.Configuration
 {
     public interface IConfiguration
     {
@@ -12,11 +6,11 @@ namespace Hadouken.Configuration
 
         string InstanceName { get; set; }
 
-        PluginsCollection Plugins { get; }
+        IPluginConfigurationCollection Plugins { get; }
 
-        HttpConfiguration Http { get; }
+        IHttpConfiguration Http { get; }
 
-        RpcConfiguration Rpc { get; }
+        IRpcConfiguration Rpc { get; }
 
         void Save();
     }

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using System;
 using Hadouken.Configuration;
+using Hadouken.Configuration.AppConfig;
 using Hadouken.Framework.DI;
 using Hadouken.Framework.Events;
 using Hadouken.Framework.IO;
@@ -10,6 +11,7 @@ using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
 using Hadouken.Gateway;
 using Hadouken.Plugins;
+using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
 using Hadouken.Events;
@@ -27,6 +29,8 @@ namespace Hadouken.Service
 			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
 
 			// Register plugin engine
+		    builder.RegisterType<PackageFactory>().As<IPackageFactory>();
+		    builder.RegisterType<IsolatedEnvironmentFactory>().As<IIsolatedEnvironmentFactory>();
 			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
 
 			// Register file system
@@ -60,7 +64,7 @@ namespace Hadouken.Service
 		    });
 
 			// Register configuration
-			builder.Register(c => ApplicationConfigurationSection.Load()).SingleInstance();
+			builder.Register(c => HadoukenConfigurationSection.Load()).SingleInstance();
 
 		    builder.RegisterType<GatewayPluginManagerService>().As<IPluginManagerService>();
 			builder.RegisterModule(new ServiceHostFactoryModule());

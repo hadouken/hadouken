@@ -83,12 +83,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
-    <Compile Include="Configuration\HttpAuthConfiguration.cs" />
-    <Compile Include="Configuration\HttpConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
+    <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\HttpAuthConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\HttpAuthConfigurationWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\HttpConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\HttpConfigurationWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\PluginConfigurationCollectionWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\PluginElementWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\RpcConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\RpcConfigurationWrapper.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
-    <Compile Include="Configuration\PluginElement.cs" />
-    <Compile Include="Configuration\PluginsCollection.cs" />
+    <Compile Include="Configuration\IHttpAuthConfiguration.cs" />
+    <Compile Include="Configuration\IHttpConfiguration.cs" />
+    <Compile Include="Configuration\IPluginConfiguration.cs" />
+    <Compile Include="Configuration\IRpcConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\PluginElement.cs" />
+    <Compile Include="Configuration\AppConfig\PluginsCollection.cs" />
     <Compile Include="Events\EventServer.cs" />
     <Compile Include="Events\IEventServer.cs" />
     <Compile Include="Events\Rpc\EventsService.cs" />
@@ -98,14 +109,20 @@
     <Compile Include="Plugins\DirectedGraphEdge.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
     <Compile Include="Plugins\IPackage.cs" />
+    <Compile Include="Plugins\IPackageFactory.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
+    <Compile Include="Plugins\Isolation\AppDomainIsolatedEnvironment.cs" />
+    <Compile Include="Plugins\Isolation\IIsolatedEnvironment.cs" />
+    <Compile Include="Plugins\Isolation\IIsolatedEnvironmentFactory.cs" />
+    <Compile Include="Plugins\Isolation\IsolatedEnvironmentFactory.cs" />
     <Compile Include="Plugins\Metadata\Dependency.cs" />
     <Compile Include="Plugins\Metadata\IManifest.cs" />
     <Compile Include="Plugins\Metadata\IManifestReader.cs" />
     <Compile Include="Plugins\Metadata\Manifest.cs" />
     <Compile Include="Plugins\Metadata\ManifestV1Reader.cs" />
     <Compile Include="Plugins\Package.cs" />
+    <Compile Include="Plugins\PackageFactory.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\ManifestNotFoundException.cs" />
@@ -134,6 +151,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

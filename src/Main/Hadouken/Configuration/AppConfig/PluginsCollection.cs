@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Hadouken.Configuration
+namespace Hadouken.Configuration.AppConfig
 {
     public class PluginsCollection : ConfigurationElementCollection
     {

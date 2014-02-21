@@ -192,6 +192,14 @@ namespace Hadouken.Plugins
             return sorted;
         }
 
+        public List<T> TraverseOrder(T root)
+        {
+            var sorted = new List<T>();
+            var visited = new HashSet<T>();
+            this.TraverseOrder(root, sorted, visited);
+            return sorted;
+        }
+
         private bool TraverseReverseOrder(T node, List<T> sorted, HashSet<T> visited)
         {
             if (!visited.Contains(node))
@@ -211,6 +219,32 @@ namespace Hadouken.Plugins
                 return true;
             }
             return false;
+        }
+
+        private bool TraverseOrder(T node, List<T> sorted, HashSet<T> visited)
+        {
+            if (!visited.Contains(node))
+            {
+                visited.Add(node);
+                foreach (var child in this.GetIncomingNodes(node))
+                {
+                    if (this.TraverseOrder(child, sorted, visited))
+                    {
+                        return true;
+                    }
+                }
+                sorted.Add(node);
+            }
+            else if (!sorted.Contains(node))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void DisconnectAll()
+        {
+            _edges.Clear();
         }
     }
 }

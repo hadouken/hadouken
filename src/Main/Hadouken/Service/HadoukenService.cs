@@ -38,8 +38,7 @@ namespace Hadouken.Service
 
 		    _gatewayHost.Open();
 
-			_pluginEngine.ScanAsync().Wait();
-			_pluginEngine.LoadAllAsync().Wait();
+		    _pluginEngine.LoadAll();
 		}
 
 		public void Stop()
@@ -48,7 +47,7 @@ namespace Hadouken.Service
 
 		    _rpcClient.Call<bool>("events.publish", new object[] {"sys.unloading", ""});
 
-			_pluginEngine.UnloadAllAsync().Wait();
+		    _pluginEngine.UnloadAll();
 
 		    _gatewayHost.Close();
 

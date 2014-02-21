@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Hadouken.Configuration
+namespace Hadouken.Configuration.AppConfig
 {
-    public class ApplicationConfigurationSection : ConfigurationSection, IConfiguration
+    public class HadoukenConfigurationSection : ConfigurationSection
     {
         [ConfigurationProperty("instanceName", IsRequired = false, DefaultValue = "Hadouken")]
         public string InstanceName
@@ -64,31 +60,14 @@ namespace Hadouken.Configuration
         public static IConfiguration Load()
         {
             var cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var section = cfg.GetSection("hdkn") as ApplicationConfigurationSection;
+            var section = cfg.GetSection("hdkn") as HadoukenConfigurationSection;
 
             if (section == null)
                 return null;
 
             section._configuration = cfg;
 
-            return section;
-        }
-    }
-
-    public sealed class RpcConfiguration : ConfigurationElement
-    {
-        [ConfigurationProperty("gatewayUri", IsRequired = true)]
-        public string GatewayUri
-        {
-            get { return this["gatewayUri"].ToString(); }
-            set { this["gatewayUri"] = value; }
-        }
-
-        [ConfigurationProperty("pluginUri", IsRequired = true)]
-        public string PluginUri
-        {
-            get { return this["pluginUri"].ToString(); }
-            set { this["pluginUri"] = value; }
+            return new ConfigurationWrapper(section);
         }
     }
 }

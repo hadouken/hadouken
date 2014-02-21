@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.IO;
 
-namespace Hadouken.Configuration
+namespace Hadouken.Configuration.AppConfig
 {
     public class PluginElement : ConfigurationElement
     {

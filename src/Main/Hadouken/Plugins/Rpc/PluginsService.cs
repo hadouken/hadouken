@@ -30,7 +30,7 @@ namespace Hadouken.Plugins.Rpc
 
             try
             {
-                _pluginEngine.LoadAsync(name);
+                _pluginEngine.Load(name);
                 return true;
             }
             catch (Exception e)
@@ -47,7 +47,7 @@ namespace Hadouken.Plugins.Rpc
 
             try
             {
-                _pluginEngine.UnloadAsync(name);
+                _pluginEngine.Unload(name);
                 return true;
             }
             catch (Exception e)

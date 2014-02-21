@@ -54,7 +54,7 @@ namespace Hadouken.Rpc
                     break;
             }
 
-            var endpoint = new Uri(string.Format(_configuration.Rpc.PluginUri, plugin));
+            var endpoint = new Uri(string.Format(_configuration.Rpc.PluginUriTemplate, plugin));
 
             try
             {

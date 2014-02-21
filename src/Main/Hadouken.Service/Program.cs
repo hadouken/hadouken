@@ -1,7 +1,5 @@
 ﻿using System;
 using System.ServiceProcess;
-using Autofac;
-using System.Threading;
 using Hadouken.Service.Hosts;
 
 namespace Hadouken.Service
