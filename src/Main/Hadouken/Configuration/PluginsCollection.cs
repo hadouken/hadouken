@@ -17,6 +17,13 @@ namespace Hadouken.Configuration
             set { this["baseDirectory"] = value; }
         }
 
+        [ConfigurationProperty("repositoryUri")]
+        public Uri RepositoryUri
+        {
+            get { return new Uri(this["repositoryUri"].ToString()); }
+            set { this["repositoryUri"] = value.ToString(); }
+        }
+
         protected override ConfigurationElement CreateNewElement()
         {
             return new PluginElement();
