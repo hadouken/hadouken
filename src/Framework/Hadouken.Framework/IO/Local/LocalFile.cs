@@ -12,6 +12,11 @@ namespace Hadouken.Framework.IO.Local
             _fileInfo = fileInfo;
         }
 
+        public bool Exists
+        {
+            get { return _fileInfo.Exists; }
+        }
+
         public string FullPath
         {
             get { return _fileInfo.FullName; }

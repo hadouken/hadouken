@@ -10,6 +10,7 @@ using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
 using Hadouken.Gateway;
+using Hadouken.Http;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Rpc;
@@ -54,6 +55,9 @@ namespace Hadouken.Service
 
             // Register SignalR event server
 		    builder.RegisterType<EventServer>().As<IEventServer>().SingleInstance();
+
+            // API connection
+		    builder.RegisterType<ApiConnection>().As<IApiConnection>();
 
 		    builder.Register<IEventListener>(c =>
 		    {

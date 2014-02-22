@@ -5,6 +5,8 @@ namespace Hadouken.Framework.IO
 {
     public interface IFile
     {
+        bool Exists { get; }
+
         string FullPath { get; }
 
         string Name { get; }

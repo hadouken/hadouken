@@ -12,6 +12,8 @@ namespace Hadouken.Framework.IO
             _streamFactory = streamFactory;
         }
 
+        public bool Exists { get; set; }
+
         public string FullPath { get; set; }
 
         public string Name { get; set; }

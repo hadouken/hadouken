@@ -104,6 +104,8 @@
     <Compile Include="Events\IEventServer.cs" />
     <Compile Include="Events\Rpc\EventsService.cs" />
     <Compile Include="Gateway\GatewayPluginManagerService.cs" />
+    <Compile Include="Http\ApiConnection.cs" />
+    <Compile Include="Http\IApiConnection.cs" />
     <Compile Include="Plugins\DependencyNotFoundException.cs" />
     <Compile Include="Plugins\DirectedGraph.cs" />
     <Compile Include="Plugins\DirectedGraphEdge.cs" />
