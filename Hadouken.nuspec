@@ -3,8 +3,8 @@
   <metadata>
     <id>Hadouken.SDK</id>
     <version>0.0.0</version>
-    <authors>Viktor</authors>
-    <owners>Viktor</owners>
+    <title>Hadouken SDK</title>
+    <authors>Viktor Elofsson</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright 2014</copyright>
     <tags>Hadouken Hdkn SDK</tags>
