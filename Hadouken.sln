@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Framework", "2. Framewor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Main", "3. Main", "{D7487F5B-8D94-4384-8650-F15A998F4346}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Plugins", "4. Plugins", "{E327D611-9404-4C1D-9695-0D42EBC96483}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Framework", "src\Framework\Hadouken.Framework\Hadouken.Framework.csproj", "{9BD61B3C-6D93-4A2B-AA59-4BB87F817834}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Framework.Tests", "src\Framework\Hadouken.Framework.Tests\Hadouken.Framework.Tests.csproj", "{2310B11A-F3F5-48C3-9D84-1B9CFE7B530A}"
@@ -32,10 +30,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Sandbox", "src\Main\Hadouken.Sandbox\Hadouken.Sandbox.csproj", "{D762E365-CBB8-40EC-BA73-2A39E0101713}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Service", "src\Main\Hadouken.Service\Hadouken.Service.csproj", "{80922004-394C-435F-B6AF-37011C85FAB9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Torrents", "Torrents", "{8F214F84-D549-4225-BF2F-A4E60A948F95}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Torrents", "src\Plugins\Torrents\Hadouken.Plugins.Torrents\Hadouken.Plugins.Torrents.csproj", "{F7D249DF-D25E-471F-9EC6-463FB1A784DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,10 +61,6 @@ Global
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7D249DF-D25E-471F-9EC6-463FB1A784DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7D249DF-D25E-471F-9EC6-463FB1A784DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7D249DF-D25E-471F-9EC6-463FB1A784DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7D249DF-D25E-471F-9EC6-463FB1A784DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,7 +72,5 @@ Global
 		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 		{D762E365-CBB8-40EC-BA73-2A39E0101713} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 		{80922004-394C-435F-B6AF-37011C85FAB9} = {D7487F5B-8D94-4384-8650-F15A998F4346}
-		{8F214F84-D549-4225-BF2F-A4E60A948F95} = {E327D611-9404-4C1D-9695-0D42EBC96483}
-		{F7D249DF-D25E-471F-9EC6-463FB1A784DA} = {8F214F84-D549-4225-BF2F-A4E60A948F95}
 	EndGlobalSection
 EndGlobal
