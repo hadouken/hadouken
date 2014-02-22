@@ -50,8 +50,7 @@ namespace Hadouken.Service
 
 		    try
 		    {
-		        BootstrapCorePlugins();
-                _pluginEngine.Rebuild();
+		        BootstrapCorePlugins(args);
 		    }
 		    catch (Exception e)
 		    {
@@ -78,8 +77,14 @@ namespace Hadouken.Service
 		    _eventServer.Close();
 		}
 
-	    private void BootstrapCorePlugins()
+	    private void BootstrapCorePlugins(string[] args)
 	    {
+	        if (args != null && args.Any(s => s == "--no-http-bootstrap"))
+	        {
+	            Logger.Warn("HTTP bootstrapping disabled. No plugins will be downloaded.");
+	            return;
+	        }
+
 	        var configuredFilePath = Path.Combine(_configuration.ApplicationDataPath, "CONFIGURED");
 	        var configuredFile = _fileSystem.GetFile(configuredFilePath);
 
@@ -130,6 +135,9 @@ namespace Hadouken.Service
             {
                 streamWriter.Write(DateTime.UtcNow.ToString());
             }
+            
+            // Rebuild the plugin cache in pluginengine
+            _pluginEngine.Rebuild();
 	    }
 	}
 }
