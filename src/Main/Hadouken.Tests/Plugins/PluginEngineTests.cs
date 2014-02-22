@@ -48,6 +48,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             var result = engine.Get("pLuGiN");
 
             // Then
@@ -63,6 +64,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             engine.Load("plugin");
 
             // Then
@@ -80,6 +82,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             engine.Load("c");
 
             // Then
@@ -99,6 +102,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             engine.Load("c");
 
             // Then
@@ -119,6 +123,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             engine.Load("d");
 
             // Then
@@ -137,9 +142,10 @@ namespace Hadouken.Tests.Plugins
             var pkgC = CreatePackage("c", "1.0", new Dependency { Name = "a" });
             var factory = CreatePackageFactory(pkgA, pkgB, pkgC);
             var engine = CreatePluginEngine(packageFactory: factory);
-            engine.LoadAll();
 
             // When
+            engine.Rebuild();
+            engine.LoadAll();
             engine.Unload("a");
 
             // Then
@@ -157,9 +163,10 @@ namespace Hadouken.Tests.Plugins
             var pkgC = CreatePackage("c", "1.0", new Dependency { Name = "a" });
             var factory = CreatePackageFactory(pkgA, pkgB, pkgC);
             var engine = CreatePluginEngine(packageFactory: factory);
-            engine.LoadAll();
 
             // When
+            engine.Rebuild();
+            engine.LoadAll();
             engine.Unload("a");
 
             // Then
@@ -178,9 +185,10 @@ namespace Hadouken.Tests.Plugins
             var pkgD = CreatePackage("d", "1.0", new Dependency { Name = "b" }, new Dependency { Name = "c" });
             var factory = CreatePackageFactory(pkgA, pkgB, pkgC, pkgD);
             var engine = CreatePluginEngine(packageFactory: factory);
-            engine.LoadAll();
 
             // When
+            engine.Rebuild();
+            engine.LoadAll();
             engine.Unload("a");
 
             // Then
@@ -198,6 +206,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine();
 
             // When
+            engine.Rebuild();
             engine.LoadAll();
             engine.InstallOrUpgrade(pkg);
 
@@ -214,6 +223,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             engine.LoadAll();
             var upgrade = CreatePackage("a", "1.1");
             engine.InstallOrUpgrade(upgrade);
@@ -234,6 +244,7 @@ namespace Hadouken.Tests.Plugins
             var engine = CreatePluginEngine(packageFactory: factory);
 
             // When
+            engine.Rebuild();
             engine.LoadAll();
             var upgrade = CreatePackage("a", "1.1");
             engine.InstallOrUpgrade(upgrade);
@@ -243,6 +254,25 @@ namespace Hadouken.Tests.Plugins
             Assert.AreEqual(PluginState.Loaded, engine.Get("b").State);
             Assert.AreEqual(PluginState.Loaded, engine.Get("c").State);
             Assert.AreEqual(upgrade.Manifest.Version, engine.Get("a").Package.Manifest.Version);
+        }
+
+        [Test]
+        public void Load_WithMissingDependency_DownloadsAndInstallsDependencyThenLoads()
+        {
+            // Given
+            var pkg = CreatePackage("b", "1.0", new Dependency {Name = "a"});
+            var downloader = new Mock<IPackageDownloader>();
+            downloader.Setup(d => d.Download("a")).Returns(CreatePackage("a", "1.0"));
+            var factory = CreatePackageFactory(pkg);
+            var engine = CreatePluginEngine(packageDownloader: downloader.Object, packageFactory: factory);
+
+            // When
+            engine.Rebuild();
+            engine.Load("b");
+
+            // Then
+            Assert.AreEqual(PluginState.Loaded, engine.Get("a").State);
+            Assert.AreEqual(PluginState.Loaded, engine.Get("b").State);
         }
 
         private IPackage CreatePackage(string name, string version, params Dependency[] dependencies)
@@ -261,6 +291,7 @@ namespace Hadouken.Tests.Plugins
         private PluginEngine CreatePluginEngine(IConfiguration configuration = null,
             IFileSystem fileSystem = null,
             IJsonRpcClient jsonRpcClient = null,
+            IPackageDownloader packageDownloader = null,
             IPackageFactory packageFactory = null,
             IIsolatedEnvironmentFactory environmentFactory = null)
         {
@@ -286,6 +317,11 @@ namespace Hadouken.Tests.Plugins
                 jsonRpcClient = new Mock<IJsonRpcClient>().Object;
             }
 
+            if (packageDownloader == null)
+            {
+                packageDownloader = new Mock<IPackageDownloader>().Object;
+            }
+
             if (packageFactory == null)
             {
                 packageFactory = new Mock<IPackageFactory>().Object;
@@ -300,7 +336,7 @@ namespace Hadouken.Tests.Plugins
                 environmentFactory = envMock.Object;
             }
 
-            return new PluginEngine(configuration, fileSystem, jsonRpcClient, packageFactory, environmentFactory);
+            return new PluginEngine(configuration, fileSystem, jsonRpcClient, packageDownloader, packageFactory, environmentFactory);
         }
 
         private IPackageFactory CreatePackageFactory(params IPackage[] packages)

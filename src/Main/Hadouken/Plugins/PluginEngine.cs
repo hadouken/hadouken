@@ -18,21 +18,20 @@ namespace Hadouken.Plugins
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
         private readonly IJsonRpcClient _rpcClient;
+        private readonly IPackageDownloader _packageDownloader;
         private readonly IPackageFactory _packageFactory;
         private readonly IIsolatedEnvironmentFactory _isolatedEnvironmentFactory;
         private readonly DirectedGraph<IPluginManager> _plugins = new DirectedGraph<IPluginManager>(); 
         private readonly object _lock = new object();
 
-        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IJsonRpcClient rpcClient, IPackageFactory packageFactory, IIsolatedEnvironmentFactory isolatedEnvironmentFactory)
+        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IJsonRpcClient rpcClient, IPackageDownloader packageDownloader, IPackageFactory packageFactory, IIsolatedEnvironmentFactory isolatedEnvironmentFactory)
         {
             _configuration = configuration;
             _fileSystem = fileSystem;
             _rpcClient = rpcClient;
+            _packageDownloader = packageDownloader;
             _packageFactory = packageFactory;
             _isolatedEnvironmentFactory = isolatedEnvironmentFactory;
-
-            // Do not do this....
-            Rebuild();
         }
 
         public IEnumerable<IPluginManager> GetAll()
@@ -104,9 +103,11 @@ namespace Hadouken.Plugins
         {
             Logger.Info("Rebuilding all dependencies.");
 
-            // Connect all plugins
+            // Disconnect all relationships.
             Plugins.DisconnectAll();
-            var nodes = Plugins.Nodes;
+
+            // Create copy of list of nodes.
+            var nodes = Plugins.Nodes.ToList();
 
             foreach (var manager in nodes)
             {
@@ -116,8 +117,19 @@ namespace Hadouken.Plugins
 
                     if (other == null)
                     {
-                        Logger.Fatal("Dependency {0} does not exist.", dependency.Name);
-                        throw new Exception("Dependency does not exist");
+                        Logger.Error("Dependency {0} does not exist. Attempting download...", dependency.Name);
+
+                        var package = _packageDownloader.Download(dependency.Name);
+
+                        if (package == null)
+                        {
+                            Logger.Fatal("Download of dependency {0} failed.", dependency.Name);
+                            throw new Exception("Dependency does not exist");
+                        }
+
+                        // Install dat missing dependency
+                        InstallOrUpgrade(package);
+                        other = Get(package.Manifest.Name);
                     }
 
                     if (dependency.VersionRange != null &&
@@ -146,8 +158,6 @@ namespace Hadouken.Plugins
             {
                 return;
             }
-
-            Logger.Info("Loading plugin {0}", name);
 
             // Get a list of all plugins we must load before this, and make sure they are loaded.
             var dependantPlugins = Plugins.TraverseReverseOrder(plugin);
@@ -179,8 +189,6 @@ namespace Hadouken.Plugins
             {
                 return;
             }
-
-            Logger.Info("Unloading plugin {0}", name);
 
             // Get a list of all plugins we must load before this, and make sure they are loaded.
             var dependantPlugins = Plugins.TraverseOrder(plugin);

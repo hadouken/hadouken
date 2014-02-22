@@ -30,6 +30,7 @@ namespace Hadouken.Service
 			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
 
 			// Register plugin engine
+		    builder.RegisterType<PackageDownloader>().As<IPackageDownloader>();
 		    builder.RegisterType<PackageFactory>().As<IPackageFactory>();
 		    builder.RegisterType<IsolatedEnvironmentFactory>().As<IIsolatedEnvironmentFactory>();
 			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
@@ -39,9 +40,9 @@ namespace Hadouken.Service
 		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
 
 			// Register RPC services
-            builder.RegisterType<PluginsService>().As<IJsonRpcService>().SingleInstance();
-            builder.RegisterType<EventsService>().As<IJsonRpcService>().SingleInstance();
-		    builder.RegisterType<CoreServices>().As<IJsonRpcService>().SingleInstance();
+            builder.RegisterType<PluginsService>().As<IJsonRpcService>();
+            builder.RegisterType<EventsService>().As<IJsonRpcService>();
+		    builder.RegisterType<CoreServices>().As<IJsonRpcService>();
 			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>().SingleInstance();
 			builder.RegisterType<JsonRpcHandler>().As<IJsonRpcHandler>().SingleInstance();
 

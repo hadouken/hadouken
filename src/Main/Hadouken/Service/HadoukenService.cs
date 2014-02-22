@@ -48,6 +48,10 @@ namespace Hadouken.Service
 		{
 			Logger.Info("Starting Hadouken");
 
+            _eventServer.Open();
+
+            _gatewayHost.Open();
+
 		    try
 		    {
 		        BootstrapCorePlugins(args);
@@ -57,10 +61,7 @@ namespace Hadouken.Service
 		        Logger.FatalException("Could not bootstrap the core plugins.", e);
 		    }
 
-		    _eventServer.Open();
-
-		    _gatewayHost.Open();
-
+            _pluginEngine.Rebuild();
 		    _pluginEngine.LoadAll();
 		}
 
@@ -135,9 +136,6 @@ namespace Hadouken.Service
             {
                 streamWriter.Write(DateTime.UtcNow.ToString());
             }
-            
-            // Rebuild the plugin cache in pluginengine
-            _pluginEngine.Rebuild();
 	    }
 	}
 }

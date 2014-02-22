@@ -56,22 +56,43 @@ namespace Hadouken.Plugins
 
             State = PluginState.Loading;
 
-            _isolatedEnvironment.Load();
-            
-            State = PluginState.Loaded;
+            try
+            {
+                _isolatedEnvironment.Load();
 
-            _rpcClient.Call<bool>("events.publish", new object[] { "plugin.loaded", new { name = Package.Manifest.Name, version = Package.Manifest.Version } });
+                State = PluginState.Loaded;
+
+                _rpcClient.Call<bool>("events.publish",
+                    new object[]
+                    {"plugin.loaded", new {name = Package.Manifest.Name, version = Package.Manifest.Version}});
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error when loading plugin " + Package.Manifest.Name, e);
+                ErrorMessage = e.Message;
+                State = PluginState.Error;
+            }
         }
 
         public void Unload()
         {
             State = PluginState.Unloading;
 
-            _isolatedEnvironment.Unload();
+            try
+            {
+                _isolatedEnvironment.Unload();
 
-            State = PluginState.Unloaded;
+                State = PluginState.Unloaded;
 
-            _rpcClient.Call<bool>("events.publish", new object[] { "plugin.unloaded", Package.Manifest.Name });
+                _rpcClient.Call<bool>("events.publish", new object[] {"plugin.unloaded", Package.Manifest.Name});
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error when unloading plugin " + Package.Manifest.Name, e);
+
+                ErrorMessage = e.Message;
+                State = PluginState.Error;
+            }
         }
     }
 }

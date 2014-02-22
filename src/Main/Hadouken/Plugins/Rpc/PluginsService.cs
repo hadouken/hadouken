@@ -111,19 +111,6 @@ namespace Hadouken.Plugins.Rpc
 
             return true;
         }
-
-        [JsonRpcMethod("plugins.install")]
-        public bool Install(string packageUrl, string password)
-        {
-            if (String.IsNullOrEmpty(packageUrl))
-                return false;
-
-            // Validate password
-
-            // 
-
-            throw new NotImplementedException();
-        }
     }
 
     public class PluginDto

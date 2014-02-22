@@ -111,6 +111,7 @@
     <Compile Include="Plugins\DirectedGraphEdge.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
     <Compile Include="Plugins\IPackage.cs" />
+    <Compile Include="Plugins\IPackageDownloader.cs" />
     <Compile Include="Plugins\IPackageFactory.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Plugins\Metadata\Manifest.cs" />
     <Compile Include="Plugins\Metadata\ManifestV1Reader.cs" />
     <Compile Include="Plugins\Package.cs" />
+    <Compile Include="Plugins\PackageDownloader.cs" />
     <Compile Include="Plugins\PackageFactory.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
