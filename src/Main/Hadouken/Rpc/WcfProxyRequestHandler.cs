@@ -42,18 +42,6 @@ namespace Hadouken.Rpc
         {
             var parts = request.Method.Split('.');
             var plugin = parts[0];
-
-            switch (plugin)
-            {
-                case "config":
-                    plugin = "core.config";
-                    break;
-
-                case "torrents":
-                    plugin = "core.torrents";
-                    break;
-            }
-
             var endpoint = new Uri(string.Format(_configuration.Rpc.PluginUriTemplate, plugin));
 
             try

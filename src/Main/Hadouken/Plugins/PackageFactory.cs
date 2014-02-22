@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Hadouken.Configuration;
 using Hadouken.Framework.IO;
@@ -103,6 +104,10 @@ namespace Hadouken.Plugins
             }
 
             var path = args.Skip(1).First();
+
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                path = path + Path.DirectorySeparatorChar;
+
             var directory = _fileSystem.GetDirectory(path);
 
             if (!directory.Exists)

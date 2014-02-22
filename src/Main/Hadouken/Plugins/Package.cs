@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Media;
 using Hadouken.Framework.IO;
 using Hadouken.Plugins.Metadata;
 using Ionic.Zip;
