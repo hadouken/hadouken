@@ -40,6 +40,7 @@ namespace Hadouken.Plugins.Isolation
 
             var setupInfo = new AppDomainSetup
             {
+                ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
             };
 
             var assemblyName = typeof(SandboxedEnvironment).Assembly.Location;
