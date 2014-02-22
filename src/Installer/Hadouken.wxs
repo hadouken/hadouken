@@ -47,7 +47,6 @@
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="LibComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
-      <ComponentGroupRef Id="PluginComponents" />
       <ComponentGroupRef Id="ConfigComponents" />
     </Feature>
     

@@ -20,10 +20,6 @@
   </metadata>
   <files>
     <!-- Portable Hadouken -->
-    <file src="build/binaries/Plugins/core.config.zip" target="tools/hdkn/Plugins" />
-    <file src="build/binaries/Plugins/core.httpjsonrpc.zip" target="tools/hdkn/Plugins" />
-    <file src="build/binaries/Plugins/core.torrents.zip" target="tools/hdkn/Plugins" />
-    <file src="build/binaries/Plugins/core.web.zip" target="tools/hdkn/Plugins" />
     <file src="build/binaries/Autofac.dll" target="tools/hdkn" />
     <file src="build/binaries/Autofac.Integration.Wcf.dll" target="tools/hdkn" />
     <file src="build/binaries/Hadouken.dll" target="tools/hdkn" />
