@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Hadouken.Configuration;
 using Hadouken.Framework.Rpc;
-using Newtonsoft.Json.Linq;
+using Hadouken.Framework.Security;
 
 namespace Hadouken.Rpc
 {
     public class CoreServices : IJsonRpcService
     {
+        private readonly IHashProvider _hashProvider;
         private readonly IConfiguration _configuration;
         private readonly IJsonRpcClient _rpcClient;
 
         public CoreServices(IConfiguration configuration, IJsonRpcClient rpcClient)
         {
+            _hashProvider = HashProvider.GetDefault();
             _configuration = configuration;
             _rpcClient = rpcClient;
         }
@@ -37,25 +38,27 @@ namespace Hadouken.Rpc
         [JsonRpcMethod("core.setAuth")]
         public bool SetAuth(string userName, string newPassword, string oldPassword)
         {
-            if (String.IsNullOrEmpty(userName))
+            if (string.IsNullOrEmpty(userName))
                 return false;
 
-            if (String.IsNullOrEmpty(newPassword))
+            if (string.IsNullOrEmpty(newPassword))
                 return false;
 
             // Only compare if we have an old password
-            if(!String.IsNullOrEmpty(_configuration.Http.Authentication.Password)) {
-                var oldPasswordHash = ComputeHash(oldPassword);
+            if (!string.IsNullOrEmpty(_configuration.Http.Authentication.Password))
+            {
+                var oldPasswordHash = _hashProvider.ComputeHash(oldPassword);
 
-                // If the given old password is incrrect, return.
-                if (!String.Equals(_configuration.Http.Authentication.Password, oldPasswordHash, StringComparison.InvariantCultureIgnoreCase))
+                // If the given old username/password is incrrect, return.
+                if (!string.Equals(_configuration.Http.Authentication.Password, oldPasswordHash, StringComparison.InvariantCultureIgnoreCase)
+                    || !string.Equals(_configuration.Http.Authentication.UserName, userName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return false;
                 }
             }
 
             _configuration.Http.Authentication.UserName = userName;
-            _configuration.Http.Authentication.Password = ComputeHash(newPassword);
+            _configuration.Http.Authentication.Password = _hashProvider.ComputeHash(newPassword);
             _configuration.Save();
 
             _rpcClient.SendEvent("auth.changed", new {UserName = userName, HashedPassword = _configuration.Http.Authentication.Password});
@@ -71,21 +74,6 @@ namespace Hadouken.Rpc
                 _configuration.Http.Authentication.UserName,
                 HasPassword = !String.IsNullOrEmpty(_configuration.Http.Authentication.Password)
             };
-        }
-
-        private string ComputeHash(string input)
-        {
-            var bytes = Encoding.UTF8.GetBytes(input);
-            var sha256 = new SHA256Managed();
-            var hash = sha256.ComputeHash(bytes);
-            var sb = new StringBuilder();
-
-            foreach (var b in hash)
-            {
-                sb.AppendFormat("{0:x2}", b);
-            }
-
-            return sb.ToString();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Hadouken.Configuration;
 using Hadouken.Framework.IO;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.SemVer;
@@ -13,14 +12,10 @@ namespace Hadouken.Plugins.Rpc
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IPluginEngine _pluginEngine;
-        private readonly IConfiguration _configuration;
-        private readonly IFileSystem _fileSystem;
 
-        public PluginsService(IPluginEngine pluginEngine, IConfiguration configuration, IFileSystem fileSystem)
+        public PluginsService(IPluginEngine pluginEngine)
         {
             _pluginEngine = pluginEngine;
-            _configuration = configuration;
-            _fileSystem = fileSystem;
         }
 
         [JsonRpcMethod("plugins.load")]
@@ -61,6 +56,11 @@ namespace Hadouken.Plugins.Rpc
         public PluginDto[] List()
         {
             var plugins = _pluginEngine.GetAll();
+
+            if (plugins == null)
+            {
+                return Enumerable.Empty<PluginDto>().ToArray();
+            }
 
             return (from plugin in plugins
                 select new PluginDto()
