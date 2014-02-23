@@ -10,6 +10,7 @@
   <UsingTask TaskName="Candle" AssemblyFile="$(WixPath)/WixTasks.dll" />
   <UsingTask TaskName="Light" AssemblyFile="$(WixPath)/WixTasks.dll" />
   <UsingTask TaskName="Zip" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
+  <UsingTask TaskName="AssemblyInfo" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
 
   <Target Name="Clean">
     <RemoveDir Directories="$(OutputDirectory)" />
@@ -20,6 +21,11 @@
     <Message Text="##teamcity[buildNumber '$(Version)$(Tag)']" />
     <Message Text="##teamcity[message 'Installing solution-wide Nuget packages.']" />
     <Exec Command=".nuget\nuget.exe install .nuget\packages.config -OutputDirectory packages" />
+
+    <AssemblyInfo CodeLanguage="CS"  
+            OutputFile="src/CommonAssemblyInfo.cs" 
+            AssemblyVersion="$(Version)" 
+            AssemblyFileVersion="$(Version)$(Tag)" />
   </Target>
   
   <Target Name="Compile" DependsOnTargets="Prepare">
