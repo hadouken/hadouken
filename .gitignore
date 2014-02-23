@@ -1,7 +1,6 @@
-# Ignore FAKE
-tools/FAKE.Core/
+# Ignore CommonAssemblyInfo.cs
+src/CommonAssemblyInfo.cs
 
-# Ignore /lib folder
 _ReSharper.Hadouken/
 
 # Build output
@@ -9,7 +8,6 @@ build/
 
 src/**/**/bin
 src/**/**/obj
-src/Shared/CommonAssemblyInfo.cs
 
 # User-specific files
 *.suo

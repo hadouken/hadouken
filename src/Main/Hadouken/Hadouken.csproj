@@ -83,6 +83,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
     <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
     <Compile Include="Configuration\AppConfig\HttpAuthConfiguration.cs" />
@@ -136,7 +140,6 @@
     <Compile Include="Plugins\Repository\IPluginRepository.cs" />
     <Compile Include="Plugins\Repository\Models\Release.cs" />
     <Compile Include="Plugins\Rpc\PluginsService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\CoreServices.cs" />
     <Compile Include="Rpc\WcfProxyRequestHandler.cs" />
     <Compile Include="Service\HadoukenService.cs" />

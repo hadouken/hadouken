@@ -58,6 +58,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BootConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="DefaultBootstrapper.cs" />
@@ -87,7 +91,6 @@
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginHost.cs" />
     <Compile Include="Plugins\PluginManagerService.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\IClientTransport.cs" />
     <Compile Include="Rpc\IJsonRpcClient.cs" />
     <Compile Include="Rpc\IJsonRpcHandler.cs" />
