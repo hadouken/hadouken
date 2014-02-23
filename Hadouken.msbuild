@@ -20,7 +20,7 @@
   <Target Name="Prepare" DependsOnTargets="Clean">
     <Message Text="##teamcity[buildNumber '$(Version)$(Tag)']" />
     <Message Text="##teamcity[message 'Installing solution-wide Nuget packages.']" />
-    <Exec Command=".nuget\nuget.exe install .nuget\packages.config -OutputDirectory packages" />
+    <Exec Command="tools\nuget.exe install packages.config -OutputDirectory packages" />
 
     <AssemblyInfo CodeLanguage="CS"  
             OutputFile="src/CommonAssemblyInfo.cs" 
@@ -105,7 +105,7 @@
   </Target>
 
   <Target Name="Nuget" DependsOnTargets="Output">
-    <Exec Command=".nuget\nuget.exe pack Hadouken.nuspec -Version $(Version)$(Tag) -OutputDirectory $(OutputDirectory)" />
+    <Exec Command="tools\nuget.exe pack Hadouken.nuspec -Version $(Version)$(Tag) -OutputDirectory $(OutputDirectory)" />
   </Target>
 
   <Target Name="All">
