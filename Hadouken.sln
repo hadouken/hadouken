@@ -16,13 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Framework", "src\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Framework.Tests", "src\Framework\Hadouken.Framework.Tests\Hadouken.Framework.Tests.csproj", "{2310B11A-F3F5-48C3-9D84-1B9CFE7B530A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DE2675DB-E5D4-4A43-B876-4636B20EA80A}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Main\Hadouken\Hadouken.csproj", "{1FE7DB08-4B4F-4A13-8453-2703984E32D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tests", "src\Main\Hadouken.Tests\Hadouken.Tests.csproj", "{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041}"
