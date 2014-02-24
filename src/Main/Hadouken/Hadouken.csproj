@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -55,6 +59,18 @@
     </Reference>
     <Reference Include="Microsoft.Owin.Security">
       <HintPath>..\..\..\packages\Microsoft.Owin.Security.2.0.0-rc1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\..\..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Authentication.Forms">
+      <HintPath>..\..\..\packages\Nancy.Authentication.Forms.0.22.2\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Bootstrappers.Autofac">
+      <HintPath>..\..\..\packages\Nancy.Bootstrappers.Autofac.0.22.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\..\..\packages\Nancy.Hosting.Self.0.22.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -86,6 +102,16 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
+    <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
+    <Compile Include="Http\Management\HadoukenUserMapper.cs" />
+    <Compile Include="Http\Management\IManagementServer.cs" />
+    <Compile Include="Http\Management\ManagementModule.cs" />
+    <Compile Include="Http\Management\ManagementServer.cs" />
+    <Compile Include="Http\Management\Models\LoginParameters.cs" />
+    <Compile Include="Http\Management\Modules\Api\PluginsModule.cs" />
+    <Compile Include="Http\Management\Modules\HomeModule.cs" />
+    <Compile Include="Http\Management\Modules\LoginModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
     <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
@@ -158,8 +184,30 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Views\Home\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\Site.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap-theme.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap.min.css" />
+  </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\bootstrap.min.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery-1.11.0.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\SignIn.css" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.sshtml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

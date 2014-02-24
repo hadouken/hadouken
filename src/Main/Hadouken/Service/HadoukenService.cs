@@ -10,6 +10,7 @@ using Hadouken.Framework.Plugins;
 using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
 using Hadouken.Http;
+using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using NLog;
 
@@ -20,6 +21,7 @@ namespace Hadouken.Service
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 	    private readonly IConfiguration _configuration;
+	    private readonly IManagementServer _managementServer;
 	    private readonly IApiConnection _apiConnection;
 	    private readonly IFileSystem _fileSystem;
 	    private readonly IEventServer _eventServer;
@@ -28,6 +30,7 @@ namespace Hadouken.Service
 	    private readonly IServiceHost _gatewayHost;
 
         public HadoukenService(IConfiguration configuration,
+            IManagementServer managementServer,
             IApiConnection apiConnection,
             IFileSystem fileSystem,
             IEventServer eventServer,
@@ -36,6 +39,7 @@ namespace Hadouken.Service
             IServiceHostFactory<IPluginManagerService> serviceHostFactory)
 		{
             _configuration = configuration;
+            _managementServer = managementServer;
             _apiConnection = apiConnection;
             _fileSystem = fileSystem;
             _eventServer = eventServer;
@@ -49,7 +53,7 @@ namespace Hadouken.Service
 			Logger.Info("Starting Hadouken");
 
             _eventServer.Open();
-
+		    _managementServer.Start();
             _gatewayHost.Open();
 
 		    try
@@ -74,7 +78,7 @@ namespace Hadouken.Service
 		    _pluginEngine.UnloadAll();
 
 		    _gatewayHost.Close();
-
+		    _managementServer.Stop();
 		    _eventServer.Close();
 		}
 

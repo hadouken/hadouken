@@ -11,6 +11,7 @@ using Hadouken.Framework.Rpc;
 using Hadouken.Framework.Wcf;
 using Hadouken.Gateway;
 using Hadouken.Http;
+using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Rpc;
@@ -28,6 +29,9 @@ namespace Hadouken.Service
 
 			// Register service
 			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
+
+            // HTTP management interface
+		    builder.RegisterModule(new ManagementModule());
 
 			// Register plugin engine
 		    builder.RegisterType<PackageDownloader>().As<IPackageDownloader>();
