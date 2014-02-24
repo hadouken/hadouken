@@ -14,7 +14,6 @@ using Hadouken.Http;
 using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
-using Hadouken.Plugins.Rpc;
 using Hadouken.Rpc;
 using Hadouken.Events;
 using Hadouken.Events.Rpc;
@@ -44,7 +43,6 @@ namespace Hadouken.Service
 		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
 
 			// Register RPC services
-            builder.RegisterType<PluginsService>().As<IJsonRpcService>();
             builder.RegisterType<EventsService>().As<IJsonRpcService>();
 		    builder.RegisterType<CoreServices>().As<IJsonRpcService>();
 			builder.RegisterType<WcfProxyRequestHandler>().As<IRequestHandler>().SingleInstance();

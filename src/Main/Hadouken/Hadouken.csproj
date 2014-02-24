@@ -169,7 +169,6 @@
     <Compile Include="Plugins\Repository\Models\Plugin.cs" />
     <Compile Include="Plugins\Repository\IPluginRepository.cs" />
     <Compile Include="Plugins\Repository\Models\Release.cs" />
-    <Compile Include="Plugins\Rpc\PluginsService.cs" />
     <Compile Include="Rpc\CoreServices.cs" />
     <Compile Include="Rpc\WcfProxyRequestHandler.cs" />
     <Compile Include="Service\HadoukenService.cs" />

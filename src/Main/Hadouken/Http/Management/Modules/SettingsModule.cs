@@ -2,6 +2,7 @@
 using Hadouken.Configuration;
 using Hadouken.Http.Management.Models;
 using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules
 {
@@ -10,6 +11,8 @@ namespace Hadouken.Http.Management.Modules
         public SettingsModule(IConfiguration configuration)
             : base("settings")
         {
+            this.RequiresAuthentication();
+
             Get["/"] = _ =>
             {
                 var dto = new GetSettingsItem
