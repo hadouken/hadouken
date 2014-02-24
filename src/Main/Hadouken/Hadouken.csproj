@@ -109,9 +109,12 @@
     <Compile Include="Http\Management\ManagementModule.cs" />
     <Compile Include="Http\Management\ManagementServer.cs" />
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
+    <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
+    <Compile Include="Http\Management\Models\PluginListItem.cs" />
     <Compile Include="Http\Management\Modules\Api\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
+    <Compile Include="Http\Management\Modules\PluginsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
     <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
@@ -182,10 +185,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Views\Home\index.html" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.sshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Content\Site.css" />
@@ -194,7 +199,9 @@
     <EmbeddedResource Include="Http\Management\UI\Content\bootstrap-theme.min.css" />
     <EmbeddedResource Include="Http\Management\UI\Content\bootstrap.min.css" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.sshtml" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\bootstrap.min.js" />
     <EmbeddedResource Include="Http\Management\UI\Scripts\jquery-1.11.0.min.js" />
@@ -202,6 +209,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Content\SignIn.css" />
     <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Plugins.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

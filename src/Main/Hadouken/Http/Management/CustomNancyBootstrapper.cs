@@ -45,7 +45,7 @@ namespace Hadouken.Http.Management
             var assembly = typeof(CustomNancyBootstrapper).Assembly;
             var content = EmbeddedStaticContentConventionBuilder.AddDirectory("/Content", assembly,
                 namespaceRoot: "Hadouken.Http.Management.UI");
-            var scripts = EmbeddedStaticContentConventionBuilder.AddDirectory("/Content", assembly,
+            var scripts = EmbeddedStaticContentConventionBuilder.AddDirectory("/Scripts", assembly,
                 namespaceRoot: "Hadouken.Http.Management.UI");
 
             nancyConventions.StaticContentsConventions.Add(content);

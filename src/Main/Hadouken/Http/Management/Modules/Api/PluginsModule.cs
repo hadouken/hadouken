@@ -1,5 +1,6 @@
 ﻿using Hadouken.Plugins;
 using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules.Api
 {
@@ -10,6 +11,8 @@ namespace Hadouken.Http.Management.Modules.Api
         public PluginsModule(IPluginEngine pluginEngine)
             : base("api/plugins")
         {
+            this.RequiresAuthentication();
+
             _pluginEngine = pluginEngine;
             Get["/"] = _ => "List of plugins";
         }
