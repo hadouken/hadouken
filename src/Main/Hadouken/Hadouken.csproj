@@ -187,6 +187,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

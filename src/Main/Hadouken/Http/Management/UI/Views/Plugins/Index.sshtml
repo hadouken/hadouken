@@ -1,10 +1,17 @@
 ﻿@Master['Shared/Layout.sshtml']
 
 @Section['Scripts']
-    <script type="text/javascript" src="/management/Scripts/Plugins.js"></script>
+    <script type="text/javascript" src="/manage/Scripts/Plugins.js"></script>
 @EndSection
 
 @Section['Content']
+@If.HasAlert
+<div class="alert alert-@Model.AlertClass alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    @Model.AlertMessage
+</div>
+@EndIf
+
 <div class="row">
     <div class="col-lg-12">
         <h1>Plugins</h1>
@@ -15,7 +22,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <h2>Your plugins</h2>
+        <h2>Your plugins <button type="button" class="btn btn-sm btn-primary btn-upload-package">Upload package</button></h2>
         
         @IfNot.HasPlugins
         <p><em>You have no plugins installed.</em></p>
@@ -26,6 +33,7 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>State</th>
                     <th>Version</th>
                     <th></th>
                 </tr>
@@ -34,6 +42,7 @@
                 @Each.Plugins
                 <tr data-plugin-id="@Current.Name">
                     <td>@Current.Name</td>
+                    <td>@Current.StateMessage</td>
                     <td>@Current.Version</td>
                     <td style="text-align: right;">
                         <button type="button" class="btn btn-xs btn-info btn-plugin-details">Details</button>

@@ -9,9 +9,9 @@
 
         <title>Hadouken Management</title>
 
-        <link href="/management/Content/bootstrap.min.css" rel="stylesheet">
-        <link href="/management/Content/bootstrap-theme.min.css" rel="stylesheet">
-        <link href="/management/Content/Site.css" rel="stylesheet">
+        <link href="/manage/Content/bootstrap.min.css" rel="stylesheet">
+        <link href="/manage/Content/bootstrap-theme.min.css" rel="stylesheet">
+        <link href="/manage/Content/Site.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -35,8 +35,8 @@
 
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="/management/plugins/">Plugins</a></li>
-                        <li><a href="/management/settings/">Settings</a></li>
+                        <li><a href="/manage/plugins/">Plugins</a></li>
+                        <li><a href="/manage/settings/">Settings</a></li>
                     </ul>
                 </div>
             </div>
@@ -46,8 +46,8 @@
             @Section['Content']
         </div>
 
-        <script type="text/javascript" src="/management/Scripts/jquery-1.11.0.min.js"></script>
-        <script type="text/javascript" src="/management/Scripts/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/manage/Scripts/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="/manage/Scripts/bootstrap.min.js"></script>
         @Section['Scripts']
     </body>
 </html>

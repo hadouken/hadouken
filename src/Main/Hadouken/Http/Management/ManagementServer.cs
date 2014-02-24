@@ -12,7 +12,7 @@ namespace Hadouken.Http.Management
         public ManagementServer(IConfiguration configuration, ILifetimeScope container)
         {
             var uri = new Uri(
-                    string.Format("http://{0}:{1}/management/",
+                    string.Format("http://{0}:{1}/manage/",
                     configuration.Http.HostBinding,
                     configuration.Http.Port));
 
