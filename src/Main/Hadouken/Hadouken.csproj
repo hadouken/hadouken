@@ -108,13 +108,14 @@
     <Compile Include="Http\Management\IManagementServer.cs" />
     <Compile Include="Http\Management\ManagementModule.cs" />
     <Compile Include="Http\Management\ManagementServer.cs" />
+    <Compile Include="Http\Management\Models\GetSettingsItem.cs" />
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
-    <Compile Include="Http\Management\Modules\Api\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
+    <Compile Include="Http\Management\Modules\SettingsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
     <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
@@ -188,6 +189,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
