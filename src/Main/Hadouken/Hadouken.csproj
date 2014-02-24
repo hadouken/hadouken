@@ -190,6 +190,10 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.eot" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +219,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\Plugins.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\font-awesome.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

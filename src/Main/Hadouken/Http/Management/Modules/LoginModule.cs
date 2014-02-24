@@ -47,6 +47,8 @@ namespace Hadouken.Http.Management.Modules
 
                 return this.LoginAndRedirect(Guid.NewGuid(), rememberDate);
             };
+
+            Get["/logout"] = _ => this.Logout("/manage");
         }
 
         private void SetAuthentication(string userName, string password)

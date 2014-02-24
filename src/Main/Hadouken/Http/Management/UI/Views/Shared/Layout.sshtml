@@ -11,6 +11,7 @@
 
         <link href="/manage/Content/bootstrap.min.css" rel="stylesheet">
         <link href="/manage/Content/bootstrap-theme.min.css" rel="stylesheet">
+        <link href="/manage/Content/font-awesome.min.css" rel="stylesheet">
         <link href="/manage/Content/Site.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -35,8 +36,21 @@
 
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="/manage/plugins/">Plugins</a></li>
-                        <li><a href="/manage/settings/">Settings</a></li>
+                        <li><a href="/manage/plugins/"><i class="fa fa-puzzle-piece"></i> Plugins</a></li>
+                        <li><a href="/manage/settings/"><i class="fa fa-wrench"></i> Settings</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i> Service <b class="caret"></b></a>
+
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="fa fa-refresh"></i> Restart</a></li>
+                                <li><a href="#"><i class="fa fa-power-off"></i> Shutdown</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/manage/logout"><i class="fa fa-ban"></i> Sign out</a></li>
                     </ul>
                 </div>
             </div>
