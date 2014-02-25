@@ -9,12 +9,7 @@ namespace Hadouken.Plugins
     public class PluginEngine : IPluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private readonly IDictionary<string, IPluginManager> _plugins =
-            new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase); 
-        private readonly object _pluginsLock = new object();
-        private readonly DirectedGraph<string> _pluginsGraph = new DirectedGraph<string>(); 
-        private readonly object _pluginsGraphLock = new object();
+        private readonly PluginManagerGraph _plugins = new PluginManagerGraph();
 
         private readonly IEnumerable<IPluginScanner> _pluginScanners;
         private readonly IPackageInstaller _packageInstaller;
@@ -29,23 +24,12 @@ namespace Hadouken.Plugins
 
         public IEnumerable<IPluginManager> GetAll()
         {
-            lock (_pluginsLock)
-            {
-                return _plugins.Values;
-            }
-        }
+            return _plugins.GetAll();
+        } 
 
         public IPluginManager Get(string name)
         {
-            lock (_pluginsLock)
-            {
-                if (_plugins.ContainsKey(name))
-                {
-                    return _plugins[name];
-                }
-            }
-
-            return null;
+            return _plugins.Get(name);
         }
 
         public void Scan()
@@ -57,20 +41,13 @@ namespace Hadouken.Plugins
                 select plugin).ToList();
 
             // Add the new plugins
-            foreach (var plugin in plugins)
-            {
-                lock (_pluginsLock)
-                {
-                    _plugins.Add(plugin.Manifest.Name, plugin);
-                }
-            }
-
-            RebuildGraph();
+            _plugins.AddRange(plugins);
+            _plugins.Rebuild();
         }
 
         public void LoadAll()
         {
-            var managerKeys = GetManagerKeys();
+            var managerKeys = _plugins.GetKeys();
 
             foreach (var key in managerKeys)
             {
@@ -80,7 +57,7 @@ namespace Hadouken.Plugins
 
         public void UnloadAll()
         {
-            var managerKeys = GetManagerKeys();
+            var managerKeys = _plugins.GetKeys();
 
             foreach (var key in managerKeys)
             {
@@ -123,14 +100,9 @@ namespace Hadouken.Plugins
 
         public bool CanLoad(string name, out string[] missingDependencies)
         {
+            var dependencies = _plugins.GetLoadOrder(name);
+
             missingDependencies = null;
-            string[] dependencies;
-
-            lock (_pluginsGraphLock)
-            {
-                dependencies = _pluginsGraph.TraverseReverseOrder(name).ToArray();
-            }
-
             var missingDeps = dependencies.Where(dependency => Get(dependency) == null).ToArray();
 
             if (missingDeps.Any())
@@ -176,8 +148,7 @@ namespace Hadouken.Plugins
 
         private void Load(IPluginManager manager)
         {
-            var deps =
-                _pluginsGraph.TraverseReverseOrder(manager.Manifest.Name).TakeWhile(s => s != manager.Manifest.Name);
+            var deps = _plugins.GetLoadOrder(manager.Manifest.Name).TakeWhile(s => s != manager.Manifest.Name);
 
             foreach (var dep in deps)
             {
@@ -185,39 +156,6 @@ namespace Hadouken.Plugins
             }
 
             manager.Load();
-        }
-
-        private void RebuildGraph()
-        {
-            foreach (var name in GetManagerKeys())
-            {
-                var manager = Get(name);
-
-                if (manager == null)
-                {
-                    continue;
-                }
-
-                foreach (var dependency in manager.Manifest.Dependencies)
-                {
-                    lock (_pluginsGraphLock)
-                    {
-                        _pluginsGraph.Connect(name, dependency.Name);
-                    }
-                }
-            }
-        }
-
-        private string[] GetManagerKeys()
-        {
-            string[] managerNames;
-
-            lock (_pluginsLock)
-            {
-                managerNames = _plugins.Keys.ToArray();
-            }
-
-            return managerNames;
         }
     }
 }

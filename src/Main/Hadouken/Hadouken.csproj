@@ -96,6 +96,7 @@
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\PackageInstaller.cs" />
+    <Compile Include="Plugins\PluginManagerGraph.cs" />
     <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />
     <Compile Include="Plugins\Scanners\DirectoryPluginScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
