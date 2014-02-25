@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Hadouken.Configuration;
-using Hadouken.Framework;
 using Hadouken.Framework.IO;
-using Hadouken.Framework.Rpc;
-using Hadouken.Plugins.Isolation;
+using Hadouken.Plugins.Metadata;
 using NLog;
 
 namespace Hadouken.Plugins
@@ -15,328 +13,213 @@ namespace Hadouken.Plugins
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IDictionary<string, IPluginManager> _plugins =
+            new Dictionary<string, IPluginManager>(StringComparer.InvariantCultureIgnoreCase); 
+        private readonly object _pluginsLock = new object();
+        private readonly DirectedGraph<string> _pluginsGraph = new DirectedGraph<string>(); 
+        private readonly object _pluginsGraphLock = new object();
+
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
-        private readonly IJsonRpcClient _rpcClient;
-        private readonly IPackageDownloader _packageDownloader;
-        private readonly IPackageFactory _packageFactory;
-        private readonly IIsolatedEnvironmentFactory _isolatedEnvironmentFactory;
-        private readonly DirectedGraph<IPluginManager> _plugins = new DirectedGraph<IPluginManager>(); 
-        private readonly object _lock = new object();
+        private readonly IPluginManagerFactory _managerFactory;
 
-        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IJsonRpcClient rpcClient, IPackageDownloader packageDownloader, IPackageFactory packageFactory, IIsolatedEnvironmentFactory isolatedEnvironmentFactory)
+        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IPluginManagerFactory managerFactory)
         {
             _configuration = configuration;
             _fileSystem = fileSystem;
-            _rpcClient = rpcClient;
-            _packageDownloader = packageDownloader;
-            _packageFactory = packageFactory;
-            _isolatedEnvironmentFactory = isolatedEnvironmentFactory;
+            _managerFactory = managerFactory;
         }
 
         public IEnumerable<IPluginManager> GetAll()
         {
-            return Plugins.Nodes;
+            lock (_pluginsLock)
+            {
+                return _plugins.Values;
+            }
         }
 
         public IPluginManager Get(string name)
         {
-            lock (_lock)
+            lock (_pluginsLock)
             {
-                return
-                    Plugins.Nodes.SingleOrDefault(
-                        n => string.Equals(n.Package.Manifest.Name, name, StringComparison.InvariantCultureIgnoreCase));
-            }
-        }
-
-        private DirectedGraph<IPluginManager> Plugins
-        {
-            get { return _plugins; }
-        } 
-
-        public void Rebuild()
-        {
-            var packages = _packageFactory.Scan();
-
-            foreach (var package in packages)
-            {
-                AddPackage(package);
-            }
-
-            ConnectDependencies();
-        }
-
-        private void AddPackage(IPackage package)
-        {
-            // If we already have added this to the graph, skip it
-            if (Get(package.Manifest.Name) != null)
-                return;
-
-            Logger.Info("Adding package {0}-{1}", package.Manifest.Name, package.Manifest.Version);
-
-            var pluginDataPath = Path.Combine(_configuration.ApplicationDataPath, package.Manifest.Name);
-
-            var dataDirectory = _fileSystem.GetDirectory(pluginDataPath);
-            dataDirectory.CreateIfNotExists();
-
-            var bootConfig = new BootConfig
-            {
-                DataPath = pluginDataPath,
-                HostBinding = _configuration.Http.HostBinding,
-                Port = _configuration.Http.Port,
-                UserName = _configuration.Http.Authentication.UserName,
-                Password = _configuration.Http.Authentication.Password,
-                RpcGatewayUri = _configuration.Rpc.GatewayUri,
-                RpcPluginUri = String.Format(_configuration.Rpc.PluginUriTemplate, package.Manifest.Name),
-                HttpVirtualPath = "/plugins/" + package.Manifest.Name
-            };
-
-            var manager = new PluginManager(_isolatedEnvironmentFactory, package, bootConfig, _rpcClient);
-
-            lock (_lock)
-            {
-                Plugins.Add(manager);
-            }
-        }
-
-        private void ConnectDependencies()
-        {
-            Logger.Info("Rebuilding all dependencies.");
-
-            // Disconnect all relationships.
-            Plugins.DisconnectAll();
-
-            // Create copy of list of nodes.
-            var nodes = Plugins.Nodes.ToList();
-
-            foreach (var manager in nodes)
-            {
-                foreach (var dependency in manager.Package.Manifest.Dependencies)
+                if (_plugins.ContainsKey(name))
                 {
-                    var other = Get(dependency.Name);
-
-                    if (other == null)
-                    {
-                        Logger.Error("Dependency {0} does not exist. Attempting download...", dependency.Name);
-
-                        var package = _packageDownloader.Download(dependency.Name);
-
-                        if (package == null)
-                        {
-                            Logger.Fatal("Download of dependency {0} failed.", dependency.Name);
-                            throw new Exception("Dependency does not exist");
-                        }
-
-                        // Install dat missing dependency
-                        InstallOrUpgrade(package);
-                        other = Get(package.Manifest.Name);
-                    }
-
-                    if (dependency.VersionRange != null &&
-                        !dependency.VersionRange.IsIncluded(other.Package.Manifest.Version))
-                    {
-                        Logger.Fatal("Dependency {0} has incorrect version {1}. Range was {2}",
-                            dependency.Name,
-                            other.Package.Manifest.Version,
-                            dependency.VersionRange);
-
-                        throw new Exception("Dependency has incorrect version");
-                    }
-
-                    Plugins.Connect(manager, other);
+                    return _plugins[name];
                 }
             }
+
+            return null;
         }
 
-        public void Load(string name)
+        public void Scan()
         {
-            // Get plugin with the specified name.
-            var plugin = Get(name);
+            var baseDirectory = _fileSystem.GetDirectory(_configuration.Plugins.BaseDirectory);
+            var pluginDirectories = baseDirectory.Directories;
 
-            // If it does not exist, return.
-            if (plugin == null)
+            foreach (var directory in pluginDirectories)
             {
-                return;
+                // Find manifest file
+                var manifestFile = directory.Files.SingleOrDefault(f => f.Name == Manifest.FileName);
+                if (manifestFile == null || !manifestFile.Exists)
+                {
+                    continue;
+                }
+
+                using (var manifestStream = manifestFile.OpenRead())
+                {
+                    IManifest manifest;
+                    if (!Manifest.TryParse(manifestStream, out manifest))
+                    {
+                        continue;
+                    }
+
+                    // Check if we already have this plugin
+                    if (Get(manifest.Name) != null)
+                    {
+                        continue;
+                    }
+
+                    // New plugin, create the plugin manager
+                    var manager = _managerFactory.Create(directory, manifest);
+                    lock (_pluginsLock)
+                    {
+                        _plugins.Add(manager.Manifest.Name, manager);
+                    }
+                }
             }
 
-            // Get a list of all plugins we must load before this, and make sure they are loaded.
-            var dependantPlugins = Plugins.TraverseReverseOrder(plugin);
-
-            // Load 'em all!
-            foreach (var dependantPlugin in dependantPlugins)
-            {
-                Load(dependantPlugin);
-            }
+            RebuildGraph();
         }
 
         public void LoadAll()
         {
-            var pluginNames = Plugins.Nodes.Select(p => p.Package.Manifest.Name).ToArray();
+            var managerKeys = GetManagerKeys();
 
-            foreach (var name in pluginNames)
+            foreach (var key in managerKeys)
             {
-                Load(name);
-            }
-        }
-
-        public void Unload(string name)
-        {
-            // Get plugin with the specified name.
-            var plugin = Get(name);
-
-            // If it does not exist, return.
-            if (plugin == null)
-            {
-                return;
-            }
-
-            // Get a list of all plugins we must load before this, and make sure they are loaded.
-            var dependantPlugins = Plugins.TraverseOrder(plugin);
-
-            // Load 'em all!
-            foreach (var dependantPlugin in dependantPlugins)
-            {
-                Unload(dependantPlugin);
-            }
-        }
-
-        private void Load(IPluginManager manager)
-        {
-            if (manager == null)
-                return;
-
-            if (manager.State != PluginState.Unloaded)
-                return;
-
-            manager.Load();
-        }
-
-        private void Unload(IPluginManager manager)
-        {
-            if (manager == null)
-                return;
-
-            if (manager.State != PluginState.Loaded)
-                return;
-
-            manager.Unload();
-        }
-
-        public void InstallOrUpgrade(IPackage package)
-        {
-            // Get the existing package/plugin if we have any
-            var existing = Get(package.Manifest.Name);
-
-            // If the existing version is newer than the provided one, return
-            if (existing != null && existing.Package.Manifest.Version >= package.Manifest.Version)
-            {
-                return;
-            }
-
-            Logger.Info("Installing/upgrading plugin {0}", package.Manifest.Name);
-
-            // The order in which we unload plugins
-            IList<IPluginManager> order = Plugins.TraverseOrder(existing);
-
-            // If the existing one is older than the uploaded one, unload and remove
-            if (existing != null && package.Manifest.Version > existing.Package.Manifest.Version)
-            {
-                Logger.Info("Unloading dependencies before removing old version.");
-
-                // Unload existing plugins
-                foreach (var name in order)
-                {
-                    Unload(name);                    
-                }
-
-                // Remove it from the plugin engine
-                Remove(existing.Package.Manifest.Name);
-
-                // Remove it from disk
-                var packageFileName = string.Format("{0}-{1}.zip", existing.Package.Manifest.Name,
-                    existing.Package.Manifest.Version);
-
-                var existingPath = Path.Combine(_configuration.Plugins.BaseDirectory, packageFileName);
-                var file = _fileSystem.GetFile(existingPath);
-
-                Logger.Info("Removing package {0} from disk", file.FullPath);
-                file.Delete();
-            }
-
-            // Save new package to default plugin location
-            var fileName = string.Format("{0}-{1}.zip", package.Manifest.Name, package.Manifest.Version);
-            var path = Path.Combine(_configuration.Plugins.BaseDirectory, fileName);
-            var packageFile = _fileSystem.GetFile(path);
-
-            Logger.Info("Saving package {0} to disk", packageFile.FullPath);
-
-            using (var stream = packageFile.OpenWrite())
-            using (var ms = new MemoryStream(package.Data))
-            {
-                ms.CopyTo(stream);
-            }
-
-            // Add new plugin manager
-            AddPackage(package);
-            var manager = Get(package.Manifest.Name);
-
-            if (manager == null)
-            {
-                throw new Exception("Could not install plugin.");
-            }
-
-            // Rebuild the dependencies
-            ConnectDependencies();
-
-            var reverseOrder = new List<IPluginManager>();
-            reverseOrder.Add(manager);
-            reverseOrder.AddRange((from man in order
-                where man != null
-                let p = Get(man.Package.Manifest.Name)
-                where p != null
-                where man.Package.Manifest.Name != manager.Package.Manifest.Name
-                select man));
-
-            Logger.Info("Loading dependencies after upgrading.");
-
-            // Reverse order and load 'em back up
-            foreach (var dependantManager in reverseOrder)
-            {
-                Load(dependantManager);
+                Load(key);
             }
         }
 
         public void UnloadAll()
         {
-            var pluginNames = Plugins.Nodes.Select(n => n.Package.Manifest.Name).ToArray();
+            var managerKeys = GetManagerKeys();
 
-            foreach (var name in pluginNames)
+            foreach (var key in managerKeys)
             {
-                Unload(name);
+                Unload(key);
             }
         }
 
-        public void Remove(string name)
+        public void Load(string name)
         {
-            var plugin = Get(name);
+            var manager = Get(name);
 
-            if (plugin == null)
-                return;
-
-            Logger.Info("Removing plugin {0} from graph.", name);
-
-            // If it has no dependant nodes which are loaded, remove it.
-            var dependantPlugins = Plugins.TraverseOrder(plugin);
-
-            if (dependantPlugins.Any(p => p.State == PluginState.Loaded))
+            if (manager == null)
             {
-                Logger.Fatal("Could not remove plugin {0} since the plugins {1} depends on it and are still loaded.",
-                    string.Join(",", dependantPlugins.Select(p => p.Package.Manifest.Name)));
-
-                throw new Exception("Cannot remove plugin which have loaded dependant nodes.");
+                Logger.Debug("Load was called with invalid key: {0}", name);
+                return;
             }
 
-            Plugins.Remove(plugin);
+            // Check state
+            if (manager.State != PluginState.Unloaded)
+            {
+                Logger.Info("PluginManager not in correct state, manager:{0}, state:{1}", name, manager.State);
+                return;
+            }
+
+            string[] missingDependencies;
+            if (!CanLoad(name, out missingDependencies))
+            {
+                Logger.Error(
+                    "Plugin {0} cannot load. Unmet dependencies: {1}.",
+                    name,
+                    string.Join(",", missingDependencies));
+            }
+
+            Load(manager);
+        }
+
+        private void Load(IPluginManager manager)
+        {
+            var deps =
+                _pluginsGraph.TraverseReverseOrder(manager.Manifest.Name).TakeWhile(s => s != manager.Manifest.Name);
+
+            foreach (var dep in deps)
+            {
+                Load(dep);
+            }
+
+            manager.Load();
+        }
+
+        public bool CanLoad(string name, out string[] missingDependencies)
+        {
+            missingDependencies = null;
+            string[] dependencies;
+
+            lock (_pluginsGraphLock)
+            {
+                dependencies = _pluginsGraph.TraverseReverseOrder(name).ToArray();
+            }
+
+            var missingDeps = dependencies.Where(dependency => Get(dependency) == null).ToArray();
+
+            if (missingDeps.Any())
+            {
+                missingDependencies = missingDeps;
+                return false;
+            }
+
+            return true;
+        }
+
+        public void Unload(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InstallOrUpgrade(IPackage package)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Uninstall(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RebuildGraph()
+        {
+            foreach (var name in GetManagerKeys())
+            {
+                var manager = Get(name);
+
+                if (manager == null)
+                {
+                    continue;
+                }
+
+                foreach (var dependency in manager.Manifest.Dependencies)
+                {
+                    lock (_pluginsGraphLock)
+                    {
+                        _pluginsGraph.Connect(name, dependency.Name);
+                    }
+                }
+            }
+        }
+
+        private string[] GetManagerKeys()
+        {
+            string[] managerNames;
+
+            lock (_pluginsLock)
+            {
+                managerNames = _plugins.Keys.ToArray();
+            }
+
+            return managerNames;
         }
     }
 }

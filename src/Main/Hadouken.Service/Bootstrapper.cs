@@ -14,6 +14,7 @@ using Hadouken.Http;
 using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
+using Hadouken.Plugins.Repository;
 using Hadouken.Rpc;
 using Hadouken.Events;
 using Hadouken.Events.Rpc;
@@ -33,6 +34,7 @@ namespace Hadouken.Service
 		    builder.RegisterModule(new ManagementModule());
 
 			// Register plugin engine
+		    builder.RegisterType<PluginManagerFactory>().As<IPluginManagerFactory>();
 		    builder.RegisterType<PackageDownloader>().As<IPackageDownloader>();
 		    builder.RegisterType<PackageFactory>().As<IPackageFactory>();
 		    builder.RegisterType<IsolatedEnvironmentFactory>().As<IIsolatedEnvironmentFactory>();

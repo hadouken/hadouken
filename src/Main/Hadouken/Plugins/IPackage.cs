@@ -1,4 +1,5 @@
-﻿using Hadouken.Framework.IO;
+﻿using System.Collections.Generic;
+using Hadouken.Framework.IO;
 using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins
@@ -7,10 +8,6 @@ namespace Hadouken.Plugins
     {
         IManifest Manifest { get; }
 
-        IFile[] Files { get; }
-
-        byte[] Data { get; }
-
-        IFile GetFile(string path);
+        IReadOnlyCollection<IFile> Files { get; }
     }
 }

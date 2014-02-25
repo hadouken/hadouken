@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hadouken.Plugins
+namespace Hadouken.Plugins.Metadata
 {
     internal class ManifestNotFoundException : Exception
     {

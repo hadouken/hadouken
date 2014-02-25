@@ -24,6 +24,8 @@ namespace Hadouken.Plugins.Metadata
             Dependencies = new Dependency[] {};
         }
 
+        public string AssemblyFile { get; set; }
+
         public string Name { get; set; }
 
         public SemanticVersion Version { get; set; }

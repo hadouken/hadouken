@@ -1,11 +1,10 @@
 using System;
 using System.IO;
 using Hadouken.Configuration;
-using Hadouken.Framework.IO;
 using Hadouken.Http;
 using Newtonsoft.Json;
 
-namespace Hadouken.Plugins
+namespace Hadouken.Plugins.Repository
 {
     public class PackageDownloader : IPackageDownloader
     {
@@ -45,14 +44,11 @@ namespace Hadouken.Plugins
             if (data == null)
                 return null;
 
-            IPackage package;
-
-            if (!Package.TryParse(new InMemoryFile(() => new MemoryStream(data)), out package))
+            using (var ms = new MemoryStream(data))
             {
-                return null;
+                IPackage package;
+                return !Package.TryParse(ms, out package) ? null : package;
             }
-
-            return package;
         }
     }
 }

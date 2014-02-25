@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Hadouken.Framework;
-using Hadouken.Sandbox;
+using Hadouken.Framework.Plugins;
 using NLog;
 
 namespace Hadouken.Plugins.Isolation
@@ -11,71 +12,82 @@ namespace Hadouken.Plugins.Isolation
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IPackage _package;
         private readonly IBootConfig _config;
-        private SandboxedEnvironment _sandbox;
+        private Sandbox _sandbox;
 
-        public AppDomainIsolatedEnvironment(IPackage package, IBootConfig config)
+        public AppDomainIsolatedEnvironment(IBootConfig config)
         {
-            _package = package;
             _config = config;
         }
 
         public void Load()
         {
-            var assemblies = new List<byte[]>();
-
-            foreach (var file in _package.Files)
-            {
-                if (file.Extension != ".dll")
-                    continue;
-
-                using (var stream = file.OpenRead())
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    assemblies.Add(ms.ToArray());
-                }
-            }
-
-            var setupInfo = new AppDomainSetup
-            {
-                ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
-            };
-
-            var assemblyName = typeof(SandboxedEnvironment).Assembly.Location;
-            var typeName = typeof(SandboxedEnvironment).FullName;
-            var domainName = String.Concat(_package.Manifest.Name, "-", _package.Manifest.Version);
-            var domain = AppDomain.CreateDomain(domainName, null, setupInfo);
-
-            Logger.Debug("Creating sandboxed environment");
-            _sandbox = (SandboxedEnvironment)domain.CreateInstanceFromAndUnwrap(assemblyName, typeName);
-
-            Logger.Debug("Loading {0} in sandboxed environment", _package.Manifest.Name);
-
-            _sandbox.Load(_config, assemblies.ToArray());
+            _sandbox = Sandbox.Create(_config);
+            var path = Path.Combine(_config.ApplicationBasePath, _config.AssemblyFile);
+            _sandbox.Load(path);
         }
 
         public void Unload()
         {
-            if (_sandbox == null) return;
+            _sandbox.Unload();
 
             var domain = _sandbox.GetAppDomain();
-
-            if (domain == null) return;
-
-            Logger.Debug("Unloading AppDomain for plugin {0}", _package.Manifest.Name);
             AppDomain.Unload(domain);
+            _sandbox = null;
         }
 
         public long GetMemoryUsage()
         {
-            var domain = _sandbox.GetAppDomain();
+            return -1;
+        }
+    }
 
-            if (domain == null)
-                return -1;
+    public class Sandbox : MarshalByRefObject
+    {
+        private Plugin _plugin;
 
-            return domain.MonitoringTotalAllocatedMemorySize;
+        public static Sandbox Create(IBootConfig bootConfig)
+        {
+            var rand = Path.GetRandomFileName();
+
+            var setup = new AppDomainSetup()
+            {
+                ApplicationBase = bootConfig.ApplicationBasePath,
+                ApplicationName = rand,
+                ConfigurationFile = "", // DO not set to empty string if we want to use the conf file from this domain
+                DisallowBindingRedirects = true,
+                DisallowCodeDownload = true,
+                DisallowPublisherPolicy = true
+            };
+
+            var domain = AppDomain.CreateDomain(rand, null, setup);
+            return (Sandbox)Activator.CreateInstanceFrom(domain, typeof(Sandbox).Assembly.ManifestModule.FullyQualifiedName, typeof(Sandbox).FullName).Unwrap();
+        }
+
+        public void Load(string assemblyFile)
+        {
+            var assembly = Assembly.LoadFile(assemblyFile);
+            
+            Type type = (from t in assembly.GetTypes()
+                         where t.IsClass && !t.IsAbstract
+                         where typeof(Plugin).IsAssignableFrom(t)
+                         select t).FirstOrDefault();
+
+            if (type == null)
+                return;
+
+            _plugin = Activator.CreateInstance(type) as Plugin;
+            _plugin.OnStart();
+        }
+
+        public void Unload()
+        {
+            _plugin.OnStop();
+        }
+
+        public AppDomain GetAppDomain()
+        {
+            return AppDomain.CurrentDomain;
         }
     }
 }

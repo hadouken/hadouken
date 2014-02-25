@@ -1,6 +1,7 @@
 ﻿using System;
 using Hadouken.Framework;
 using Hadouken.Plugins.Isolation;
+using Hadouken.Plugins.Metadata;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
@@ -13,9 +14,7 @@ namespace Hadouken.Plugins
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
 
-        private readonly IPackage _package;
-        private readonly IBootConfig _bootConfig;
-        private readonly IJsonRpcClient _rpcClient;
+        private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
 
         static PluginManager()
@@ -23,19 +22,17 @@ namespace Hadouken.Plugins
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public PluginManager(IIsolatedEnvironmentFactory environmentFactory, IPackage package, IBootConfig bootConfig, IJsonRpcClient rpcClient)
+        public PluginManager(IIsolatedEnvironment environment, IManifest manifest, IBootConfig bootConfig)
         {
             State = PluginState.Unloaded;
 
-            _package = package;
-            _bootConfig = bootConfig;
-            _rpcClient = rpcClient;
-            _isolatedEnvironment = environmentFactory.CreateEnvironment(package, bootConfig);
+            _manifest = manifest;
+            _isolatedEnvironment = environment;
         }
 
-        public IPackage Package
+        public IManifest Manifest
         {
-            get { return _package; }
+            get { return _manifest; }
         }
 
         public PluginState State { get; private set; }
@@ -52,23 +49,17 @@ namespace Hadouken.Plugins
 
         public void Load()
         {
-            Logger.Info("Loading plugin {0}", Package.Manifest.Name);
-
+            Logger.Info("Loading plugin {0}", Manifest.Name);
             State = PluginState.Loading;
 
             try
             {
                 _isolatedEnvironment.Load();
-
                 State = PluginState.Loaded;
-
-                _rpcClient.Call<bool>("events.publish",
-                    new object[]
-                    {"plugin.loaded", new {name = Package.Manifest.Name, version = Package.Manifest.Version}});
             }
             catch (Exception e)
             {
-                Logger.Error("Error when loading plugin " + Package.Manifest.Name, e);
+                Logger.Error("Error when loading plugin " + Manifest.Name, e);
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }
@@ -76,20 +67,17 @@ namespace Hadouken.Plugins
 
         public void Unload()
         {
+            Logger.Info("Unloading plugin {0}", Manifest.Name);
             State = PluginState.Unloading;
 
             try
             {
                 _isolatedEnvironment.Unload();
-
                 State = PluginState.Unloaded;
-
-                _rpcClient.Call<bool>("events.publish", new object[] {"plugin.unloaded", Package.Manifest.Name});
             }
             catch (Exception e)
             {
-                Logger.Error("Error when unloading plugin " + Package.Manifest.Name, e);
-
+                Logger.Error("Error when unloading plugin " + Manifest.Name, e);
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }

@@ -22,8 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tests", "src\Main\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Service", "src\Main\Hadouken.Service\Hadouken.Service.csproj", "{80922004-394C-435F-B6AF-37011C85FAB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Sandbox", "src\Main\Hadouken.Sandbox\Hadouken.Sandbox.csproj", "{D762E365-CBB8-40EC-BA73-2A39E0101713}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,10 +48,6 @@ Global
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D762E365-CBB8-40EC-BA73-2A39E0101713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D762E365-CBB8-40EC-BA73-2A39E0101713}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D762E365-CBB8-40EC-BA73-2A39E0101713}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D762E365-CBB8-40EC-BA73-2A39E0101713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +58,5 @@ Global
 		{1FE7DB08-4B4F-4A13-8453-2703984E32D5} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 		{80922004-394C-435F-B6AF-37011C85FAB9} = {D7487F5B-8D94-4384-8650-F15A998F4346}
-		{D762E365-CBB8-40EC-BA73-2A39E0101713} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 	EndGlobalSection
 EndGlobal

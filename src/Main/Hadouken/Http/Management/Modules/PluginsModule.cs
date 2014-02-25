@@ -11,7 +11,7 @@ namespace Hadouken.Http.Management.Modules
 {
     public class PluginsModule : NancyModule
     {
-        public PluginsModule(IConfiguration configuration, IFileSystem fileSystem, IPluginEngine pluginEngine)
+        public PluginsModule(IConfiguration configuration, IFileSystem fileSystem, IPluginEngine pluginEngine, IPackageFactory packageFactory)
             : base("plugins")
         {
             this.RequiresAuthentication();
@@ -28,9 +28,9 @@ namespace Hadouken.Http.Management.Modules
                 var dto = (from plugin in plugins
                     select new PluginListItem
                     {
-                        Name = plugin.Package.Manifest.Name,
+                        Name = plugin.Manifest.Name,
                         StateMessage = (plugin.State == PluginState.Error ? "Error: " + plugin.ErrorMessage : plugin.State.ToString()),
-                        Version = plugin.Package.Manifest.Version
+                        Version = plugin.Manifest.Version
                     }).ToList();
 
                 return
@@ -57,7 +57,7 @@ namespace Hadouken.Http.Management.Modules
 
                 var dto = new PluginDetailsItem
                 {
-                    Name = plugin.Package.Manifest.Name,
+                    Name = plugin.Manifest.Name,
                     Description = "got this from the internet"
                 };
 
@@ -74,21 +74,7 @@ namespace Hadouken.Http.Management.Modules
                 }
 
                 var postedFile = Request.Files.First();
-                byte[] data;
-
-                using (var ms = new MemoryStream())
-                {
-                    postedFile.Value.CopyTo(ms);
-                    data = ms.ToArray();
-                }
-
-                var memFile = new InMemoryFile(() => new MemoryStream(data));
-                IPackage package;
-
-                if (!Package.TryParse(memFile, out package))
-                {
-                    return Response.AsRedirect("/manage/plugins?t=error&msg=invalid-package");                    
-                }
+                var package = packageFactory.ReadFrom(postedFile.Value);
 
                 var existingPlugin = pluginEngine.Get(package.Manifest.Name);
 
@@ -98,16 +84,8 @@ namespace Hadouken.Http.Management.Modules
                 }
 
                 // Save package to disk
-                var fileName = string.Format("{0}-{1}.zip", package.Manifest.Name, package.Manifest.Version);
-                var path = Path.Combine(configuration.Plugins.BaseDirectory, fileName);
-                var file = fileSystem.GetFile(path);
-
-                using (var stream = file.OpenWrite())
-                {
-                    stream.Write(data, 0, data.Length);
-                }
-
-                pluginEngine.Rebuild();
+                packageFactory.Save(package);
+                pluginEngine.Scan();
 
                 return Response.AsRedirect("/manage/plugins?t=success&msg=package-uploaded");
             };

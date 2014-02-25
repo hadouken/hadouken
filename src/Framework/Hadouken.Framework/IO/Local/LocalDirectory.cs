@@ -25,7 +25,14 @@ namespace Hadouken.Framework.IO.Local
 
         public IDirectory[] Directories
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return
+                  _directoryInfo.GetFileSystemInfos("*", SearchOption.AllDirectories)
+                      .Where(f => Directory.Exists(f.FullName))
+                      .Select(f => new LocalDirectory(new DirectoryInfo(f.FullName)))
+                      .ToArray();
+            }
         }
 
         public IFile[] Files

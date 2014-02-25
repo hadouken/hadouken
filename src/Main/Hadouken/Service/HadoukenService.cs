@@ -26,7 +26,6 @@ namespace Hadouken.Service
 	    private readonly IFileSystem _fileSystem;
 	    private readonly IEventServer _eventServer;
 	    private readonly IPluginEngine _pluginEngine;
-	    private readonly IJsonRpcClient _rpcClient;
 	    private readonly IServiceHost _gatewayHost;
 
         public HadoukenService(IConfiguration configuration,
@@ -35,7 +34,6 @@ namespace Hadouken.Service
             IFileSystem fileSystem,
             IEventServer eventServer,
             IPluginEngine pluginEngine,
-            IJsonRpcClient rpcClient,
             IServiceHostFactory<IPluginManagerService> serviceHostFactory)
 		{
             _configuration = configuration;
@@ -44,7 +42,6 @@ namespace Hadouken.Service
             _fileSystem = fileSystem;
             _eventServer = eventServer;
 		    _pluginEngine = pluginEngine;
-            _rpcClient = rpcClient;
             _gatewayHost = serviceHostFactory.Create(new Uri(configuration.Rpc.GatewayUri));
 		}
 
@@ -65,15 +62,13 @@ namespace Hadouken.Service
 		        Logger.FatalException("Could not bootstrap the core plugins.", e);
 		    }
 
-            _pluginEngine.Rebuild();
+            _pluginEngine.Scan();
 		    _pluginEngine.LoadAll();
 		}
 
 		public void Stop()
 		{
 			Logger.Info("Stopping Hadouken");
-
-		    _rpcClient.Call<bool>("events.publish", new object[] {"sys.unloading", ""});
 
 		    _pluginEngine.UnloadAll();
 
@@ -116,8 +111,7 @@ namespace Hadouken.Service
 
                 // Parse it as a package
 	            IPackage package;
-
-	            if (!Package.TryParse(new InMemoryFile(() => new MemoryStream(data)), out package))
+	            if (!Package.TryParse(new MemoryStream(data), out package))
 	            {
 	                Logger.Error("Could not parse core package from {0}", pluginUri);
 	                continue;

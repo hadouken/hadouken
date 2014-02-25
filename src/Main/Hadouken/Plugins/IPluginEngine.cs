@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Hadouken.Plugins
 {
@@ -9,7 +8,10 @@ namespace Hadouken.Plugins
 
         IPluginManager Get(string name);
 
-        void Rebuild();
+        /// <summary>
+        /// Scans the base directory for new plugins. Will not load anything.
+        /// </summary>
+        void Scan();
 
         /// <summary>
         /// Load all plugins which are in the 'Unloaded' state.
@@ -21,16 +23,26 @@ namespace Hadouken.Plugins
         /// </summary>
         void UnloadAll();
 
+        /// <summary>
+        /// Loads the specific plugin. This will download missing dependencies if there are any.
+        /// </summary>
+        /// <param name="name">The plugin to load.</param>
         void Load(string name);
 
+        bool CanLoad(string name, out string[] missingDependencies);
+
+        /// <summary>
+        /// Unloads the specific plugin.
+        /// </summary>
+        /// <param name="name">The plugin to unload.</param>
         void Unload(string name);
 
         void InstallOrUpgrade(IPackage package);
 
         /// <summary>
-        /// Removes the plugin from the known plugins. The plugin must be in the Unloaded state.
+        /// Uninstalls the plugin. The plugin must be in the Unloaded state.
         /// </summary>
-        /// <param name="name">The plugin to remove.</param>
-        void Remove(string name);
+        /// <param name="name">The plugin to uninstall.</param>
+        void Uninstall(string name);
     }
 }

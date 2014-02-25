@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Net;
 
 namespace Hadouken.Framework
 {
     [Serializable]
     public sealed class BootConfig : IBootConfig
     {
+        public string ApplicationBasePath { get; set; }
+
+        public string AssemblyFile { get; set; }
+
         public string DataPath { get; set; }
 
         public int Port { get; set; }

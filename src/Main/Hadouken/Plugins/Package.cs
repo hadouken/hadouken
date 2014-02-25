@@ -11,9 +11,9 @@ namespace Hadouken.Plugins
     public sealed class Package : IPackage
     {
         private readonly IManifest _manifest;
-        private readonly IFile[] _files;
+        private readonly IReadOnlyCollection<IFile> _files;
 
-        internal Package(IManifest manifest, IFile[] files)
+        internal Package(IManifest manifest, IReadOnlyCollection<IFile> files)
         {
             _manifest = manifest;
             _files = files;
@@ -24,107 +24,12 @@ namespace Hadouken.Plugins
             get { return _manifest; }
         }
 
-        public IFile[] Files
+        public IReadOnlyCollection<IFile> Files
         {
             get { return _files; }
         }
 
-        public byte[] Data { get; set; }
-
-        public Uri BaseUri { get; set; }
-
-        public IFile GetFile(string path)
-        {
-            var requestedUri = new Uri(path, UriKind.Relative);
-
-            if (BaseUri == null)
-            {
-                // Probably an in-memory file.
-
-                return (from file in Files
-                    let root = new Uri(file.FullPath, UriKind.Relative)
-                    where requestedUri == root
-                    select file).FirstOrDefault();
-            }
-
-            var f = (from file in Files
-                let root = new Uri(file.FullPath, UriKind.Absolute)
-                where BaseUri.MakeRelativeUri(root) == requestedUri
-                select file).FirstOrDefault();
-
-            return f;
-        }
-
-        public static bool TryParse(IDirectory directory, out IPackage package)
-        {
-            package = null;
-            Package p;
-
-            if (!TryParse(directory.Files, out p))
-            {
-                return false;
-            }
-
-            p.BaseUri = new Uri(directory.FullPath, UriKind.Absolute);
-            package = p;
-            return true;
-        }
-
-        public static bool TryParse(IFile file, out IPackage package)
-        {
-            package = null;
-            var data = file.ReadAllBytes();
-
-            using (var ms = new MemoryStream(data))
-            {
-                Package p;
-
-                if (!TryParse(ms, out p)) return false;
-
-                p.Data = data;
-                package = p;
-
-                return true;
-            }
-        }
-
-        private static bool TryParse(IFile[] files, out Package package)
-        {
-            package = null;
-
-            if (files == null)
-            {
-                return false;
-            }
-
-            if (!files.Any())
-            {
-                return false;
-            }
-
-            var manifestFile = files.SingleOrDefault(f => f.Name == Metadata.Manifest.FileName);
-
-            if (manifestFile == null)
-            {
-                return false;
-            }
-
-            IManifest manifest;
-
-            using (var stream = manifestFile.OpenRead())
-            {
-                if (!Metadata.Manifest.TryParse(stream, out manifest))
-                {
-                    return false;
-                }
-            }
-
-            // We have a valid manifest. Create package.
-            package = new Package(manifest, files);
-            return true;
-        }
-
-        private static bool TryParse(Stream stream, out Package package)
+        public static bool TryParse(Stream stream, out IPackage package)
         {
             package = null;
 
@@ -151,15 +56,23 @@ namespace Hadouken.Plugins
                         }
                     }
 
-                    Package p;
-
-                    if (!TryParse(files.ToArray(), out p))
+                    var manifestFile = files.SingleOrDefault(f => f.Name == Metadata.Manifest.FileName);
+                    if (manifestFile == null)
                     {
                         return false;
                     }
 
-                    package = p;
-                    return true;
+                    using (var manifestStream = manifestFile.OpenRead())
+                    {
+                        IManifest manifest;
+                        if (!Metadata.Manifest.TryParse(manifestStream, out manifest))
+                        {
+                            return false;
+                        }
+
+                        package = new Package(manifest, files);
+                        return true;
+                    }
                 }
             }
             catch (Exception)

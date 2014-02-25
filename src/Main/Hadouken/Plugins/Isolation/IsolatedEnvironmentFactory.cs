@@ -4,9 +4,9 @@ namespace Hadouken.Plugins.Isolation
 {
     public class IsolatedEnvironmentFactory : IIsolatedEnvironmentFactory
     {
-        public IIsolatedEnvironment CreateEnvironment(IPackage package, IBootConfig config)
+        public IIsolatedEnvironment CreateEnvironment(IBootConfig config)
         {
-            return new AppDomainIsolatedEnvironment(package, config);
+            return new AppDomainIsolatedEnvironment(config);
         }
     }
 }

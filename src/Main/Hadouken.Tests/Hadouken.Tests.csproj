@@ -49,11 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plugins\PackageTests.cs" />
-    <Compile Include="Plugins\PluginEngineTests.cs" />
-    <Compile Include="Plugins\PluginManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\CoreServicesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
