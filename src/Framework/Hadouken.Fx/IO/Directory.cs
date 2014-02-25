@@ -27,6 +27,16 @@ namespace Hadouken.Fx.IO
             get { return _directoryInfo.FullName; }
         }
 
+        public bool Exists
+        {
+            get { return _directoryInfo.Exists; }
+        }
+
+        public void Create()
+        {
+            _directoryInfo.Create();
+        }
+
         private IDirectory[] GetDirectories()
         {
             var directories = _directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly);

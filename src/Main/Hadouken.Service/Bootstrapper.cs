@@ -1,4 +1,7 @@
-﻿using Autofac;
+﻿using System;
+using System.Reflection;
+using Autofac;
+using Hadouken.Configuration;
 using Hadouken.Configuration.AppConfig;
 using Hadouken.Fx.IO;
 using Hadouken.Http;
@@ -6,6 +9,7 @@ using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Repository;
+using Hadouken.Plugins.Scanners;
 
 namespace Hadouken.Service
 {
@@ -22,6 +26,14 @@ namespace Hadouken.Service
 		    builder.RegisterModule(new ManagementModule());
 
 			// Register plugin engine
+		    builder.RegisterType<CmdArgPluginScanner>().As<IPluginScanner>();
+		    builder
+		        .RegisterType<DirectoryPluginScanner>()
+		        .As<IPluginScanner>()
+		        .WithParameter(
+		            (p, ctx) => p.ParameterType == typeof (string),
+		            (p, ctx) => ctx.Resolve<IConfiguration>().Plugins.BaseDirectory);
+
 		    builder.RegisterType<PluginManagerFactory>().As<IPluginManagerFactory>();
 		    builder.RegisterType<PackageDownloader>().As<IPackageDownloader>();
 		    builder.RegisterType<PackageFactory>().As<IPackageFactory>();

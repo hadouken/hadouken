@@ -1,8 +1,6 @@
 ﻿using System;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NLog;
 
 namespace Hadouken.Plugins
@@ -10,15 +8,9 @@ namespace Hadouken.Plugins
     public sealed class PluginManager : IPluginManager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings();
 
         private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
-
-        static PluginManager()
-        {
-            SerializerSettings.Converters.Add(new VersionConverter());
-        }
 
         public PluginManager(IIsolatedEnvironment environment, IManifest manifest)
         {

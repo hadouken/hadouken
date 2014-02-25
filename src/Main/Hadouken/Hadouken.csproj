@@ -91,7 +91,13 @@
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\SettingsModule.cs" />
+    <Compile Include="Plugins\InstallPackageException.cs" />
+    <Compile Include="Plugins\IPackageInstaller.cs" />
+    <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
+    <Compile Include="Plugins\PackageInstaller.cs" />
+    <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />
+    <Compile Include="Plugins\Scanners\DirectoryPluginScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
     <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />

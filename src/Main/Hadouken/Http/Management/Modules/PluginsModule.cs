@@ -9,7 +9,7 @@ namespace Hadouken.Http.Management.Modules
 {
     public class PluginsModule : NancyModule
     {
-        public PluginsModule(IPluginEngine pluginEngine, IPackageFactory packageFactory)
+        public PluginsModule(IPluginEngine pluginEngine, IPackageFactory packageFactory, IPackageInstaller packageInstaller)
             : base("plugins")
         {
             this.RequiresAuthentication();
@@ -87,7 +87,7 @@ namespace Hadouken.Http.Management.Modules
                 }
 
                 // Save package to disk
-                packageFactory.Save(package);
+                packageInstaller.Install(package);
                 pluginEngine.Scan();
 
                 return Response.AsRedirect("/manage/plugins?t=success&msg=package-uploaded");

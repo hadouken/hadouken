@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hadouken.Configuration;
-using Hadouken.Fx.IO;
-using Hadouken.Plugins.Metadata;
+using Hadouken.Plugins.Repository;
 using NLog;
 
 namespace Hadouken.Plugins
@@ -18,15 +16,15 @@ namespace Hadouken.Plugins
         private readonly DirectedGraph<string> _pluginsGraph = new DirectedGraph<string>(); 
         private readonly object _pluginsGraphLock = new object();
 
-        private readonly IConfiguration _configuration;
-        private readonly IFileSystem _fileSystem;
-        private readonly IPluginManagerFactory _managerFactory;
+        private readonly IEnumerable<IPluginScanner> _pluginScanners;
+        private readonly IPackageInstaller _packageInstaller;
+        private readonly IPackageDownloader _packageDownloader;
 
-        public PluginEngine(IConfiguration configuration, IFileSystem fileSystem, IPluginManagerFactory managerFactory)
+        public PluginEngine(IEnumerable<IPluginScanner> pluginScanners, IPackageInstaller packageInstaller, IPackageDownloader packageDownloader)
         {
-            _configuration = configuration;
-            _fileSystem = fileSystem;
-            _managerFactory = managerFactory;
+            _pluginScanners = pluginScanners;
+            _packageInstaller = packageInstaller;
+            _packageDownloader = packageDownloader;
         }
 
         public IEnumerable<IPluginManager> GetAll()
@@ -52,38 +50,18 @@ namespace Hadouken.Plugins
 
         public void Scan()
         {
-            var baseDirectory = _fileSystem.GetDirectory(_configuration.Plugins.BaseDirectory);
-            var pluginDirectories = baseDirectory.Directories;
+            // Select all plugins from all scanners.
+            var plugins = (from scanner in _pluginScanners
+                from plugin in scanner.Scan()
+                where Get(plugin.Manifest.Name) == null
+                select plugin).ToList();
 
-            foreach (var directory in pluginDirectories)
+            // Add the new plugins
+            foreach (var plugin in plugins)
             {
-                // Find manifest file
-                var manifestFile = directory.Files.SingleOrDefault(f => f.Name == Manifest.FileName);
-                if (manifestFile == null || !manifestFile.Exists)
+                lock (_pluginsLock)
                 {
-                    continue;
-                }
-
-                using (var manifestStream = manifestFile.OpenRead())
-                {
-                    IManifest manifest;
-                    if (!Manifest.TryParse(manifestStream, out manifest))
-                    {
-                        continue;
-                    }
-
-                    // Check if we already have this plugin
-                    if (Get(manifest.Name) != null)
-                    {
-                        continue;
-                    }
-
-                    // New plugin, create the plugin manager
-                    var manager = _managerFactory.Create(directory, manifest);
-                    lock (_pluginsLock)
-                    {
-                        _plugins.Add(manager.Manifest.Name, manager);
-                    }
+                    _plugins.Add(plugin.Manifest.Name, plugin);
                 }
             }
 
@@ -130,26 +108,17 @@ namespace Hadouken.Plugins
             string[] missingDependencies;
             if (!CanLoad(name, out missingDependencies))
             {
-                Logger.Error(
-                    "Plugin {0} cannot load. Unmet dependencies: {1}.",
-                    name,
-                    string.Join(",", missingDependencies));
+                Logger.Warn("Unmet dependencies for plugin {0}, ({1}). Will try to download.", name, string.Join(",", missingDependencies));
+
+                if (DownloadAndInstall(missingDependencies))
+                {
+                    Scan();
+                    Load(name);
+                }
+                return;
             }
 
             Load(manager);
-        }
-
-        private void Load(IPluginManager manager)
-        {
-            var deps =
-                _pluginsGraph.TraverseReverseOrder(manager.Manifest.Name).TakeWhile(s => s != manager.Manifest.Name);
-
-            foreach (var dep in deps)
-            {
-                Load(dep);
-            }
-
-            manager.Load();
         }
 
         public bool CanLoad(string name, out string[] missingDependencies)
@@ -186,6 +155,36 @@ namespace Hadouken.Plugins
         public void Uninstall(string name)
         {
             throw new NotImplementedException();
+        }
+
+        private bool DownloadAndInstall(IEnumerable<string> packageIds)
+        {
+            foreach (var packageId in packageIds)
+            {
+                var package = _packageDownloader.Download(packageId);
+
+                if (package == null)
+                {
+                    return false;
+                }
+
+                _packageInstaller.Install(package);
+            }
+
+            return true;
+        }
+
+        private void Load(IPluginManager manager)
+        {
+            var deps =
+                _pluginsGraph.TraverseReverseOrder(manager.Manifest.Name).TakeWhile(s => s != manager.Manifest.Name);
+
+            foreach (var dep in deps)
+            {
+                Load(dep);
+            }
+
+            manager.Load();
         }
 
         private void RebuildGraph()

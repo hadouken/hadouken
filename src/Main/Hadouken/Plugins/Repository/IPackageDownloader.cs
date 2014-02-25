@@ -1,4 +1,4 @@
-﻿namespace Hadouken.Plugins
+﻿namespace Hadouken.Plugins.Repository
 {
     public interface IPackageDownloader
     {

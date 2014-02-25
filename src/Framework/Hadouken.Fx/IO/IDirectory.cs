@@ -6,6 +6,10 @@
 
         IFile[] Files { get; }
 
-        string FullPath { get; } 
+        string FullPath { get; }
+
+        bool Exists { get; }
+
+        void Create();
     }
 }
