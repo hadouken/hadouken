@@ -1,7 +1,5 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Hadouken.Configuration;
-using Hadouken.Framework.IO;
 using Hadouken.Http.Management.Models;
 using Hadouken.Plugins;
 using Nancy;
@@ -11,7 +9,7 @@ namespace Hadouken.Http.Management.Modules
 {
     public class PluginsModule : NancyModule
     {
-        public PluginsModule(IConfiguration configuration, IFileSystem fileSystem, IPluginEngine pluginEngine, IPackageFactory packageFactory)
+        public PluginsModule(IPluginEngine pluginEngine, IPackageFactory packageFactory)
             : base("plugins")
         {
             this.RequiresAuthentication();
@@ -75,6 +73,11 @@ namespace Hadouken.Http.Management.Modules
 
                 var postedFile = Request.Files.First();
                 var package = packageFactory.ReadFrom(postedFile.Value);
+
+                if (package == null)
+                {
+                    return Response.AsRedirect("/manage/plugins?t=error&msg=invalid-package");
+                }
 
                 var existingPlugin = pluginEngine.Get(package.Manifest.Name);
 

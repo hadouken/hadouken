@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Hadouken.Configuration;
-using Hadouken.Framework.IO;
+using Hadouken.Fx.IO;
 using Hadouken.Plugins.Metadata;
 using NLog;
 
@@ -59,7 +58,7 @@ namespace Hadouken.Plugins
             foreach (var directory in pluginDirectories)
             {
                 // Find manifest file
-                var manifestFile = directory.Files.SingleOrDefault(f => f.Name == Manifest.FileName);
+                var manifestFile = directory.Files.SingleOrDefault(f => f.FileName == Manifest.FileName);
                 if (manifestFile == null || !manifestFile.Exists)
                 {
                     continue;

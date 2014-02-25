@@ -21,7 +21,6 @@ namespace Hadouken.Framework.Rpc
             Serializer.ContractResolver = new CamelCasePropertyNamesContractResolver();
             Serializer.Converters.Add(new VersionConverter());
             Serializer.Converters.Add(new StringEnumConverter());
-            Serializer.Converters.Add(new SemanticVersionConverter());
         }
 
         public RequestHandler(IEnumerable<IJsonRpcService> services)

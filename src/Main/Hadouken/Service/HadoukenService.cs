@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Hadouken.Configuration;
-using Hadouken.Events;
-using Hadouken.Framework.IO;
-using Hadouken.Framework.Plugins;
-using Hadouken.Framework.Rpc;
-using Hadouken.Framework.Wcf;
+using Hadouken.Fx.IO;
 using Hadouken.Http;
 using Hadouken.Http.Management;
 using Hadouken.Plugins;
@@ -24,34 +19,26 @@ namespace Hadouken.Service
 	    private readonly IManagementServer _managementServer;
 	    private readonly IApiConnection _apiConnection;
 	    private readonly IFileSystem _fileSystem;
-	    private readonly IEventServer _eventServer;
 	    private readonly IPluginEngine _pluginEngine;
-	    private readonly IServiceHost _gatewayHost;
 
         public HadoukenService(IConfiguration configuration,
             IManagementServer managementServer,
             IApiConnection apiConnection,
             IFileSystem fileSystem,
-            IEventServer eventServer,
-            IPluginEngine pluginEngine,
-            IServiceHostFactory<IPluginManagerService> serviceHostFactory)
+            IPluginEngine pluginEngine)
 		{
             _configuration = configuration;
             _managementServer = managementServer;
             _apiConnection = apiConnection;
             _fileSystem = fileSystem;
-            _eventServer = eventServer;
 		    _pluginEngine = pluginEngine;
-            _gatewayHost = serviceHostFactory.Create(new Uri(configuration.Rpc.GatewayUri));
 		}
 
 		public void Start(string[] args)
 		{
 			Logger.Info("Starting Hadouken");
 
-            _eventServer.Open();
 		    _managementServer.Start();
-            _gatewayHost.Open();
 
 		    try
 		    {
@@ -72,9 +59,7 @@ namespace Hadouken.Service
 
 		    _pluginEngine.UnloadAll();
 
-		    _gatewayHost.Close();
 		    _managementServer.Stop();
-		    _eventServer.Close();
 		}
 
 	    private void BootstrapCorePlugins(string[] args)

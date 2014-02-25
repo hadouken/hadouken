@@ -1,4 +1,4 @@
-﻿namespace Hadouken.Framework.SemVer
+﻿namespace Hadouken.SemVer
 {
     public abstract class Rule
     {

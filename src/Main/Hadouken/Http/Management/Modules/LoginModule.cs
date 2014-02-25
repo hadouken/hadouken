@@ -1,7 +1,7 @@
 ﻿using System;
 using Hadouken.Configuration;
-using Hadouken.Framework.Security;
 using Hadouken.Http.Management.Models;
+using Hadouken.Security;
 using Nancy;
 using Nancy.Authentication.Forms;
 using Nancy.ModelBinding;

@@ -1,4 +1,4 @@
-﻿using Hadouken.Framework.SemVer;
+﻿using Hadouken.SemVer;
 
 namespace Hadouken.Plugins.Repository.Models
 {

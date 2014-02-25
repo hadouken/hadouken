@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Hadouken.Framework.IO;
+using Hadouken.Fx.IO;
 using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins

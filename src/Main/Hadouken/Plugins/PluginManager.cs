@@ -1,11 +1,9 @@
 ﻿using System;
-using Hadouken.Framework;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
-using Hadouken.Framework.Rpc;
 
 namespace Hadouken.Plugins
 {
@@ -22,7 +20,7 @@ namespace Hadouken.Plugins
             SerializerSettings.Converters.Add(new VersionConverter());
         }
 
-        public PluginManager(IIsolatedEnvironment environment, IManifest manifest, IBootConfig bootConfig)
+        public PluginManager(IIsolatedEnvironment environment, IManifest manifest)
         {
             State = PluginState.Unloaded;
 

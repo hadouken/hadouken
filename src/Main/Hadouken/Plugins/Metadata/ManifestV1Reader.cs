@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Hadouken.Framework.SemVer;
+using Hadouken.SemVer;
 using Newtonsoft.Json.Linq;
 
 namespace Hadouken.Plugins.Metadata

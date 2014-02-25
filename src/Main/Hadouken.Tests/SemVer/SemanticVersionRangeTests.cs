@@ -1,4 +1,4 @@
-﻿using Hadouken.Framework.SemVer;
+﻿using Hadouken.SemVer;
 using NUnit.Framework;
 
 namespace Hadouken.Framework.Tests.SemVer

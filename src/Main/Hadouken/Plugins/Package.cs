@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Hadouken.Framework.IO;
+using Hadouken.Fx.IO;
 using Hadouken.Plugins.Metadata;
 using Ionic.Zip;
 
@@ -44,19 +44,13 @@ namespace Hadouken.Plugins
                         using (var memStream = new MemoryStream())
                         {
                             entry.Extract(memStream);
-
                             var data = memStream.ToArray();
-                            var streamFactory = new Func<MemoryStream>(() => new MemoryStream(data));
 
-                            files.Add(new InMemoryFile(streamFactory)
-                            {
-                                Name = entry.FileName,
-                                FullPath = entry.FileName
-                            });
+                            files.Add(new InMemoryFile(entry.FileName, data));
                         }
                     }
 
-                    var manifestFile = files.SingleOrDefault(f => f.Name == Metadata.Manifest.FileName);
+                    var manifestFile = files.SingleOrDefault(f => f.FileName == Metadata.Manifest.FileName);
                     if (manifestFile == null)
                     {
                         return false;

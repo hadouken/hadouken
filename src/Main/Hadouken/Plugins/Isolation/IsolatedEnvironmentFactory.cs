@@ -1,12 +1,17 @@
-using Hadouken.Framework;
+using System.IO;
+using Hadouken.Configuration;
+using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins.Isolation
 {
     public class IsolatedEnvironmentFactory : IIsolatedEnvironmentFactory
     {
-        public IIsolatedEnvironment CreateEnvironment(IBootConfig config)
+        public IIsolatedEnvironment CreateEnvironment(IConfiguration configuration, IManifest manifest)
         {
-            return new AppDomainIsolatedEnvironment(config);
+            var path = Path.Combine(configuration.Plugins.BaseDirectory,
+                string.Concat(manifest.Name, "-", manifest.Version));
+
+            return new AppDomainIsolatedEnvironment(path, manifest.AssemblyFile);
         }
     }
 }

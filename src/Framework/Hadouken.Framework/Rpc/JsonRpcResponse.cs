@@ -15,7 +15,6 @@ namespace Hadouken.Framework.Rpc
         static JsonRpcResponse()
         {
             SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            SerializerSettings.Converters.Add(new SemanticVersionConverter());
             SerializerSettings.Converters.Add(new StringEnumConverter());
             SerializerSettings.Converters.Add(new VersionConverter());
         }

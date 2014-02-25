@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Hadouken.Framework.SemVer
+namespace Hadouken.SemVer
 {
     public class SemanticVersionRange
     {

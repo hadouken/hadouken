@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Hadouken.Configuration;
-using Hadouken.Framework.IO;
+using Hadouken.Fx.IO;
 
 namespace Hadouken.Plugins
 {

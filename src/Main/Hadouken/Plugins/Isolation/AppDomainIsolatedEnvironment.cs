@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Hadouken.Framework;
-using Hadouken.Framework.Plugins;
+using Hadouken.Fx;
+using Hadouken.Fx.IO;
 using NLog;
 
 namespace Hadouken.Plugins.Isolation
@@ -11,19 +11,21 @@ namespace Hadouken.Plugins.Isolation
     public class AppDomainIsolatedEnvironment : IIsolatedEnvironment
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly string _baseDirectory;
+        private readonly string _assemblyFile;
 
-        private readonly IBootConfig _config;
         private Sandbox _sandbox;
 
-        public AppDomainIsolatedEnvironment(IBootConfig config)
+        public AppDomainIsolatedEnvironment(string baseDirectory, string assemblyFile)
         {
-            _config = config;
+            _baseDirectory = baseDirectory;
+            _assemblyFile = assemblyFile;
         }
 
         public void Load()
         {
-            _sandbox = Sandbox.Create(_config);
-            var path = Path.Combine(_config.ApplicationBasePath, _config.AssemblyFile);
+            _sandbox = Sandbox.Create(_baseDirectory);
+            var path = Path.Combine(_baseDirectory, _assemblyFile);
             _sandbox.Load(path);
         }
 
@@ -46,13 +48,13 @@ namespace Hadouken.Plugins.Isolation
     {
         private Plugin _plugin;
 
-        public static Sandbox Create(IBootConfig bootConfig)
+        public static Sandbox Create(string applicationBase)
         {
             var rand = Path.GetRandomFileName();
 
             var setup = new AppDomainSetup()
             {
-                ApplicationBase = bootConfig.ApplicationBasePath,
+                ApplicationBase = applicationBase,
                 ApplicationName = rand,
                 ConfigurationFile = "", // DO not set to empty string if we want to use the conf file from this domain
                 DisallowBindingRedirects = true,
@@ -77,12 +79,12 @@ namespace Hadouken.Plugins.Isolation
                 return;
 
             _plugin = Activator.CreateInstance(type) as Plugin;
-            _plugin.OnStart();
+            _plugin.Load();
         }
 
         public void Unload()
         {
-            _plugin.OnStop();
+            _plugin.Unload();
         }
 
         public AppDomain GetAppDomain()
