@@ -22,7 +22,6 @@ namespace Hadouken.Plugins.Metadata
 
             var manifest = new Manifest
             {
-                AssemblyFile = manifestObject["assembly_file"].Value<string>(),
                 Name = manifestObject["id"].Value<string>(),
                 Version = new SemanticVersion(manifestObject["version"].Value<string>())
             };

@@ -2,6 +2,6 @@
 {
     public interface IRequestHandler
     {
-        string Handle(string request);
+        JsonRpcResponse Handle(JsonRpcRequest request);
     }
 }

@@ -1,7 +1,16 @@
 ﻿{
   "manifest_version": 1,
 
-  "assembly_file": "Hadouken.Plugins.Sample.dll",
   "id": "sample",
-  "version": "1.0"
+  "version": "1.0",
+
+  "dependencies":[
+  ],
+
+  "permissions": {
+	"network": {
+	  "protocol": "tcp",
+	  "type": "full"
+	}
+  }
 }

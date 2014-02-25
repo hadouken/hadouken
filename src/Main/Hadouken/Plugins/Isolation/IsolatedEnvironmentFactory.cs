@@ -9,7 +9,7 @@ namespace Hadouken.Plugins.Isolation
     {
         public IIsolatedEnvironment CreateEnvironment(IDirectory directory, IManifest manifest)
         {
-            return new AppDomainIsolatedEnvironment(directory.FullPath, manifest.AssemblyFile);
+            return new AppDomainIsolatedEnvironment(directory.FullPath);
         }
     }
 }

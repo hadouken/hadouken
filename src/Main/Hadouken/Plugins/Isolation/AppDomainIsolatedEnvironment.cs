@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Hadouken.Fx;
-using Hadouken.Fx.IO;
+using Hadouken.Fx.Reflection;
 using NLog;
 
 namespace Hadouken.Plugins.Isolation
@@ -12,21 +13,18 @@ namespace Hadouken.Plugins.Isolation
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly string _baseDirectory;
-        private readonly string _assemblyFile;
 
         private Sandbox _sandbox;
 
-        public AppDomainIsolatedEnvironment(string baseDirectory, string assemblyFile)
+        public AppDomainIsolatedEnvironment(string baseDirectory)
         {
             _baseDirectory = baseDirectory;
-            _assemblyFile = assemblyFile;
         }
 
         public void Load()
         {
             _sandbox = Sandbox.Create(_baseDirectory);
-            var path = Path.Combine(_baseDirectory, _assemblyFile);
-            _sandbox.Load(path);
+            _sandbox.Load();
         }
 
         public void Unload()
@@ -46,7 +44,7 @@ namespace Hadouken.Plugins.Isolation
 
     public class Sandbox : MarshalByRefObject
     {
-        private Plugin _plugin;
+        private IPluginHost _pluginHost;
 
         public static Sandbox Create(string applicationBase)
         {
@@ -66,10 +64,13 @@ namespace Hadouken.Plugins.Isolation
             return (Sandbox)Activator.CreateInstanceFrom(domain, typeof(Sandbox).Assembly.ManifestModule.FullyQualifiedName, typeof(Sandbox).FullName).Unwrap();
         }
 
-        public void Load(string assemblyFile)
+        public void Load()
         {
-            var assembly = Assembly.LoadFile(assemblyFile);
-            
+            var retriever = new AssemblyNameRetriever();
+            var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            var assemblyNames = retriever.GetAssemblyNames(files);
+
+            var assembly = Assembly.LoadFile(assemblyNames.First().CodeBase.Replace("file:///", ""));
             Type type = (from t in assembly.GetTypes()
                          where t.IsClass && !t.IsAbstract
                          where typeof(Plugin).IsAssignableFrom(t)
@@ -78,13 +79,21 @@ namespace Hadouken.Plugins.Isolation
             if (type == null)
                 return;
 
-            _plugin = Activator.CreateInstance(type) as Plugin;
-            _plugin.Load();
+            // Find bootstrapper
+            var bootstrapperAttribute = type.GetCustomAttribute<PluginBootstrapperAttribute>();
+            
+            // Create and initialize bootstrapper
+            var bootstrapper = (IBootstrapper) Activator.CreateInstance(bootstrapperAttribute.Type);
+            bootstrapper.Initialize();
+
+            // Use it to get the IPluginHost
+            _pluginHost = bootstrapper.GetHost();
+            _pluginHost.Load();
         }
 
         public void Unload()
         {
-            _plugin.Unload();
+            _pluginHost.Unload();
         }
 
         public AppDomain GetAppDomain()
