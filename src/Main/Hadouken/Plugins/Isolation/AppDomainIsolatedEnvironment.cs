@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 using Hadouken.Fx;
 using Hadouken.Fx.Reflection;
 using NLog;
@@ -60,7 +62,9 @@ namespace Hadouken.Plugins.Isolation
                 DisallowPublisherPolicy = true
             };
 
-            var domain = AppDomain.CreateDomain(rand, null, setup);
+            var permissions = new PermissionSet(PermissionState.Unrestricted);
+
+            var domain = AppDomain.CreateDomain(rand, null, setup, permissions);
             return (Sandbox)Activator.CreateInstanceFrom(domain, typeof(Sandbox).Assembly.ManifestModule.FullyQualifiedName, typeof(Sandbox).FullName).Unwrap();
         }
 
@@ -71,6 +75,7 @@ namespace Hadouken.Plugins.Isolation
             var assemblyNames = retriever.GetAssemblyNames(files);
 
             var assembly = Assembly.LoadFile(assemblyNames.First().CodeBase.Replace("file:///", ""));
+
             Type type = (from t in assembly.GetTypes()
                          where t.IsClass && !t.IsAbstract
                          where typeof(Plugin).IsAssignableFrom(t)
