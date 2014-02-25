@@ -15,7 +15,12 @@ namespace Hadouken.Fx.IO
 
         public bool Exists { get; private set; }
 
-        public string FileName
+        public string Name
+        {
+            get { return _fileName; }
+        }
+
+        public string FullPath
         {
             get { return _fileName; } 
         }

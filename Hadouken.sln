@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Service", "src\Mai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Fx", "src\Framework\Hadouken.Fx\Hadouken.Fx.csproj", "{F6BFDDB3-C3F0-4009-8685-136C0700672C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Sample plugin", "4. Sample plugin", "{5D04D920-2206-4306-81F3-C54280F6DEE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Sample", "src\SamplePlugin\Hadouken.Plugins.Sample\Hadouken.Plugins.Sample.csproj", "{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,10 @@ Global
 		{F6BFDDB3-C3F0-4009-8685-136C0700672C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6BFDDB3-C3F0-4009-8685-136C0700672C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6BFDDB3-C3F0-4009-8685-136C0700672C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +59,6 @@ Global
 		{1FE7DB08-4B4F-4A13-8453-2703984E32D5} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041} = {D7487F5B-8D94-4384-8650-F15A998F4346}
 		{80922004-394C-435F-B6AF-37011C85FAB9} = {D7487F5B-8D94-4384-8650-F15A998F4346}
+		{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF} = {5D04D920-2206-4306-81F3-C54280F6DEE0}
 	EndGlobalSection
 EndGlobal

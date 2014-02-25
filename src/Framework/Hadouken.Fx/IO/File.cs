@@ -16,7 +16,12 @@ namespace Hadouken.Fx.IO
             get { return _fileInfo.Exists; }
         }
 
-        public string FileName
+        public string Name
+        {
+            get { return _fileInfo.Name; }
+        }
+
+        public string FullPath
         {
             get { return _fileInfo.FullName; }
         }

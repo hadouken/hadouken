@@ -50,7 +50,7 @@ namespace Hadouken.Plugins
                         }
                     }
 
-                    var manifestFile = files.SingleOrDefault(f => f.FileName == Metadata.Manifest.FileName);
+                    var manifestFile = files.SingleOrDefault(f => f.FullPath == Metadata.Manifest.FileName);
                     if (manifestFile == null)
                     {
                         return false;

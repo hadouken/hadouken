@@ -6,7 +6,9 @@ namespace Hadouken.Fx.IO
     {
         bool Exists { get; }
 
-        string FileName { get; }
+        string Name { get; }
+
+        string FullPath { get; }
 
         Stream OpenRead();
 
