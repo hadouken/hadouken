@@ -9,7 +9,7 @@ namespace Hadouken.Http.Management.Modules
 {
     public class PluginsModule : NancyModule
     {
-        public PluginsModule(IPluginEngine pluginEngine, IPackageFactory packageFactory, IPackageInstaller packageInstaller)
+        public PluginsModule(IPluginEngine pluginEngine, IPackageReader packageReader, IPackageInstaller packageInstaller)
             : base("plugins")
         {
             this.RequiresAuthentication();
@@ -72,7 +72,7 @@ namespace Hadouken.Http.Management.Modules
                 }
 
                 var postedFile = Request.Files.First();
-                var package = packageFactory.ReadFrom(postedFile.Value);
+                var package = packageReader.Read(postedFile.Value);
 
                 if (package == null)
                 {

@@ -2,9 +2,9 @@
 
 namespace Hadouken.Plugins
 {
-    public class PackageFactory : IPackageFactory
+    public class PackageReader : IPackageReader
     {
-        public IPackage ReadFrom(Stream stream)
+        public IPackage Read(Stream stream)
         {
             IPackage package;
             if (!Package.TryParse(stream, out package))
@@ -12,11 +12,6 @@ namespace Hadouken.Plugins
                 return null;
             }
             return package;
-        }
-
-        public void Save(IPackage package)
-        {
-            //
         }
     }
 }

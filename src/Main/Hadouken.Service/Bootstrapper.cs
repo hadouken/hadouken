@@ -36,7 +36,7 @@ namespace Hadouken.Service
 
 		    builder.RegisterType<PluginManagerFactory>().As<IPluginManagerFactory>();
 		    builder.RegisterType<PackageDownloader>().As<IPackageDownloader>();
-		    builder.RegisterType<PackageFactory>().As<IPackageFactory>();
+		    builder.RegisterType<PackageReader>().As<IPackageReader>();
 		    builder.RegisterType<IsolatedEnvironmentFactory>().As<IIsolatedEnvironmentFactory>();
 			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
 
