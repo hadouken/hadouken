@@ -1,3 +1,4 @@
+using System;
 using System.ServiceModel;
 using Hadouken.Fx.JsonRpc;
 
@@ -19,8 +20,10 @@ namespace Hadouken.Fx.ServiceModel
 
         public string HandleJsonRpc(string request)
         {
+            Console.WriteLine("IN: {0}", request);
             var parsedRequest = _requestParser.Parse(request);
             var response = _requestHandler.Handle(parsedRequest);
+            Console.WriteLine("OUT: {0}", _jsonSerializer.Serialize(response));
 
             return _jsonSerializer.Serialize(response);
         }

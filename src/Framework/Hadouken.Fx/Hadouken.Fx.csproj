@@ -42,14 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Bootstrapping\Bootstrapper.cs" />
     <Compile Include="Bootstrapping\TinyIoC\TinyIoCBootstrapper.cs" />
     <Compile Include="Bootstrapping\TinyIoC\TinyIoC.cs" />
     <Compile Include="Bootstrapping\TinyIoC\WcfIntegration\TinyIoCInstanceProvider.cs" />
     <Compile Include="Bootstrapping\TinyIoC\WcfIntegration\TinyIoCServiceBehavior.cs" />
     <Compile Include="Bootstrapping\TinyIoC\WcfIntegration\TinyIoCServiceHost.cs" />
     <Compile Include="Bootstrapping\TinyIoC\WcfIntegration\TinyIoCServiceHostFactory.cs" />
-    <Compile Include="IBootstrapper.cs" />
+    <Compile Include="Bootstrapping\IBootstrapper.cs" />
     <Compile Include="IO\Directory.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="IO\FileSystem.cs" />
@@ -60,6 +60,9 @@
     <Compile Include="IO\IRootPathProvider.cs" />
     <Compile Include="IO\RootPathProvider.cs" />
     <Compile Include="IPluginHost.cs" />
+    <Compile Include="JsonRpc\IClientTransport.cs" />
+    <Compile Include="JsonRpc\IJsonRpcClient.cs" />
+    <Compile Include="JsonRpc\JsonRpcClient.cs" />
     <Compile Include="JsonRpc\MethodCacheBuilder.cs" />
     <Compile Include="JsonRpc\IMethodCacheBuilder.cs" />
     <Compile Include="JsonRpc\IJsonRpcRequestParser.cs" />
@@ -81,8 +84,9 @@
     <Compile Include="JsonRpc\Parameter.cs" />
     <Compile Include="JsonRpc\ParameterResolver.cs" />
     <Compile Include="JsonRpc\RequestHandler.cs" />
+    <Compile Include="JsonRpc\WcfClientTransport.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginBootstrapperAttribute.cs" />
+    <Compile Include="Bootstrapping\BootstrapperAttribute.cs" />
     <Compile Include="PluginHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AssemblyNameRetriever.cs" />

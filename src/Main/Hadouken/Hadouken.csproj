@@ -95,6 +95,7 @@
     <Compile Include="Plugins\IPackageInstaller.cs" />
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
+    <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
     <Compile Include="Plugins\PackageInstaller.cs" />
     <Compile Include="Plugins\PluginManagerFactory.cs" />
     <Compile Include="Plugins\PluginManagerGraph.cs" />
@@ -206,6 +207,10 @@
     <ProjectReference Include="..\..\Framework\Hadouken.Fx\Hadouken.Fx.csproj">
       <Project>{F6BFDDB3-C3F0-4009-8685-136C0700672C}</Project>
       <Name>Hadouken.Fx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Plugins.Isolation\Hadouken.Plugins.Isolation.csproj">
+      <Project>{A0534175-961D-4702-9E75-B8A67B3E0710}</Project>
+      <Name>Hadouken.Plugins.Isolation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

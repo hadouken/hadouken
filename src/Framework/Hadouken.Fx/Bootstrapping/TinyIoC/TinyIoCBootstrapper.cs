@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Hadouken.Fx.Bootstrapping.TinyIoC.WcfIntegration;
 using Hadouken.Fx.IO;
+using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.ServiceModel;
 
 namespace Hadouken.Fx.Bootstrapping.TinyIoC
@@ -25,15 +26,30 @@ namespace Hadouken.Fx.Bootstrapping.TinyIoC
             // Register the plugin host
             container.Register<IPluginHost, PluginHost>();
 
+            // Register IJsonRpcClient
+            container.Register<IJsonSerializer, JsonSerializer>();
+            container.Register<IJsonRpcClient, JsonRpcClient>();
+            container.Register<IClientTransport>((tc, overloads) =>
+            {
+                var serializer = tc.Resolve<IJsonSerializer>();
+                return new WcfClientTransport("net.pipe://localhost/hadouken.plugins.{0}", serializer);
+            });
+
+            // Register the JsonRpc server components
+            container.Register<IJsonRpcRequestParser, JsonRpcRequestParser>();
+            container.Register<IRequestHandler, RequestHandler>().AsSingleton();
+            container.Register<IMethodCacheBuilder, MethodCacheBuilder>();
+            container.Register<IParameterResolver, ParameterResolver>();
+
+            // Register the IJsonRpcService services
+
             // Register IPluginServiceHost to host the WCF service
             container.Register<IPluginServiceHost>((tinyContainer, overloads) =>
             {
-                var rand = Path.GetRandomFileName();
-
                 var serviceHost = new TinyIoCServiceHost(
                     tinyContainer,
                     typeof (PluginService),
-                    new Uri("net.pipe://localhost/test" + rand));
+                    new Uri("net.pipe://localhost/hadouken.plugins.foo"));
 
                 return new PluginServiceHost(serviceHost);
             });

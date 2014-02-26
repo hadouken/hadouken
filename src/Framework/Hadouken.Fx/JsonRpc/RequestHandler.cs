@@ -21,7 +21,7 @@ namespace Hadouken.Fx.JsonRpc
                 var method = _methodCache.Get(request.MethodName);
                 if (method == null)
                 {
-                    return new JsonRpcErrorResponse(request.Id);
+                    return new JsonRpcErrorResponse(request.Id, -32601, "Method not found");
                 }
 
                 // Resolve parameters
@@ -35,7 +35,7 @@ namespace Hadouken.Fx.JsonRpc
             }
             catch (Exception)
             {
-                return new JsonRpcErrorResponse(request.Id);
+                return new JsonRpcErrorResponse(request.Id, -32603, "Internal error");
             }
         }
     }

@@ -20,6 +20,8 @@
   <Target Name="Prepare" DependsOnTargets="Clean">
     <Message Text="##teamcity[buildNumber '$(Version)$(Tag)']" />
     <Message Text="##teamcity[message 'Installing solution-wide Nuget packages.']" />
+
+    <Exec Command="tools\nuget.exe restore Hadouken.sln -OutputDirectory packages" />
     <Exec Command="tools\nuget.exe install packages.config -OutputDirectory packages" />
 
     <AssemblyInfo CodeLanguage="CS"  
