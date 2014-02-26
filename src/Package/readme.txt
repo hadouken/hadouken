@@ -7,15 +7,15 @@ http://wiki.hdkn.net
 
 ---
 
-1. Inherit the abstract class Hadouken.Framework.Plugins.Plugin and override
-the abstract OnStart function. There is also a virtual method called OnStop
-you can override to clean up after yourself.
+1. Inherit the abstract class Hadouken.Fx.Plugin and override
+the abstract Load function. There is also a virtual method called
+Unload you can override to clean up after yourself.
 
-public class MyPlugin : Hadouken.Framework.Plugins.Plugin
+public class MyPlugin : Hadouken.Fx.Plugin
 {
-    public override void OnStart() { }
+    public override void Load() { }
 
-    public override void OnStop() { }
+    public override void Unload() { }
 }
 
 ---
@@ -32,11 +32,11 @@ looks like this,
 
   "dependencies":
   [
-    { "id": "core.config", "version": "0.1" }
+    { "id": "config", "version": "0.1" }
   ]
 }
 
-What we are doing here is just making the `core.config` plugin a dependency, as
+What we are doing here is just making the `config` plugin a dependency, as
 well as requiring the correct version of it. If you do not have any
 dependencies on other plugins you can leave out the dependencies array.
 
@@ -63,7 +63,7 @@ lives in.
 
 ---
 
-4. Set a breakpoint in your OnStart function and press F5. Hadouken should
+4. Set a breakpoint in your Load function and press F5. Hadouken should
 start, do its thing, and then load your plugin as well as hitting your
 breakpoint.
 
