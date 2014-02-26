@@ -105,7 +105,7 @@
   </Target>
 
   <Target Name="Nuget" DependsOnTargets="Output">
-    <Exec Command="tools\nuget.exe pack Hadouken.nuspec -Version $(Version)$(Tag) -OutputDirectory $(OutputDirectory)" />
+    <Exec Command="tools\nuget.exe pack Hadouken.nuspec -Version $(Version)$(Tag) -NoPackageAnalysis -OutputDirectory $(OutputDirectory)" />
   </Target>
 
   <Target Name="All">
