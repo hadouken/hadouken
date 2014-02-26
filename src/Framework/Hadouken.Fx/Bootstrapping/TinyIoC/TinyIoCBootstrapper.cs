@@ -54,6 +54,9 @@ namespace Hadouken.Fx.Bootstrapping.TinyIoC
             // Register IPluginServiceHost to host the WCF service
             container.Register<IPluginServiceHost>((tinyContainer, overloads) =>
             {
+                var cfg = tinyContainer.Resolve<PluginConfiguration>();
+                var uri = string.Format("net.pipe://localhost/hadouken.plugins.{0}", cfg.PluginName);
+
                 var serviceHost = new TinyIoCServiceHost(
                     tinyContainer,
                     typeof (PluginService),

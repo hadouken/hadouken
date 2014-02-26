@@ -90,7 +90,8 @@ namespace Hadouken.Plugins
         {
             return new PluginConfiguration
             {
-                DataPath = Path.Combine(configuration.ApplicationDataPath, _manifest.Name)
+                DataPath = Path.Combine(configuration.ApplicationDataPath, _manifest.Name),
+                PluginName = _manifest.Name
             };
         }
     }
