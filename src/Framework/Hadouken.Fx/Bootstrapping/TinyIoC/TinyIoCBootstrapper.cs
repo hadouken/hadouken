@@ -41,15 +41,13 @@ namespace Hadouken.Fx.Bootstrapping.TinyIoC
             container.Register<IMethodCacheBuilder, MethodCacheBuilder>();
             container.Register<IParameterResolver, ParameterResolver>();
 
-            // Register the IJsonRpcService services
-
             // Register IPluginServiceHost to host the WCF service
             container.Register<IPluginServiceHost>((tinyContainer, overloads) =>
             {
                 var serviceHost = new TinyIoCServiceHost(
                     tinyContainer,
                     typeof (PluginService),
-                    new Uri("net.pipe://localhost/hadouken.plugins.foo"));
+                    new Uri("net.pipe://localhost/hadouken.plugins.sample"));
 
                 return new PluginServiceHost(serviceHost);
             });

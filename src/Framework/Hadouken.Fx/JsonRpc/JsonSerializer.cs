@@ -4,6 +4,11 @@ namespace Hadouken.Fx.JsonRpc
 {
     public class JsonSerializer : IJsonSerializer
     {
+        public Type[] ArrayTypes
+        {
+            get { return new[] {typeof (JsonArray)}; }
+        }
+
         public object Deserialize(string json)
         {
             return SimpleJson.DeserializeObject(json);

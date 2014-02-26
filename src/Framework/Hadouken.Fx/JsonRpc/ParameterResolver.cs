@@ -47,7 +47,7 @@ namespace Hadouken.Fx.JsonRpc
 
             if (IsArray(requestParameters) && targetParameters.Length > 1)
             {
-                var array = requestParameters as object[];
+                var array = _jsonSerializer.Deserialize<object[]>(_jsonSerializer.Serialize(requestParameters));
 
                 if (array == null)
                 {
@@ -78,9 +78,13 @@ namespace Hadouken.Fx.JsonRpc
             throw new NotImplementedException();
         }
 
-        private static bool IsArray(object obj)
+        private bool IsArray(object obj)
         {
-            return obj.GetType().IsArray;
+            var type = obj.GetType();
+            return (type.IsArray
+                || _jsonSerializer.ArrayTypes.Contains(type)
+                || (type.BaseType != null && type.BaseType.IsArray)
+                || type.BaseType == typeof(List<object>));
         }
     }
 }

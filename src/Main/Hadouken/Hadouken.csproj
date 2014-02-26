@@ -91,6 +91,7 @@
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\SettingsModule.cs" />
+    <Compile Include="Http\Management\Modules\ToolsModule.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
     <Compile Include="Plugins\IPackageInstaller.cs" />
     <Compile Include="Plugins\IPluginScanner.cs" />
@@ -173,6 +174,7 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +214,9 @@
       <Project>{A0534175-961D-4702-9E75-B8A67B3E0710}</Project>
       <Name>Hadouken.Plugins.Isolation</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\JsonRpcDebugger.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
