@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Hadouken.Configuration;
 using Hadouken.Fx.IO;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
@@ -208,13 +209,14 @@ namespace Hadouken.Tests.Plugins
         private IPluginManager CreatePluginManager(string name, string version, params Dependency[] dependencies)
         {
             var envMock = new Mock<IIsolatedEnvironment>();
+            var cfg = CreateConfiguration();
             var dirMock = new Mock<IDirectory>();
             var manifestMock = new Mock<IManifest>();
             manifestMock.SetupGet(m => m.Name).Returns(name);
             manifestMock.SetupGet(m => m.Version).Returns(version);
             manifestMock.SetupGet(m => m.Dependencies).Returns(dependencies);
 
-            return new PluginManager(dirMock.Object, envMock.Object, manifestMock.Object);
+            return new PluginManager(cfg, dirMock.Object, envMock.Object, manifestMock.Object);
         }
 
         private IPluginScanner CreatePluginScanner(params IPluginManager[] managers)
@@ -242,6 +244,13 @@ namespace Hadouken.Tests.Plugins
             pkg.SetupGet(p => p.Manifest).Returns(man.Object);
 
             return pkg.Object;
+        }
+
+        private IConfiguration CreateConfiguration()
+        {
+            var cfg = new Mock<IConfiguration>();
+            cfg.SetupGet(c => c.ApplicationDataPath).Returns("test");
+            return cfg.Object;
         }
     }
 }

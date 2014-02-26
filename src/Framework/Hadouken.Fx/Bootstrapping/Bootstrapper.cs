@@ -2,10 +2,13 @@
 {
     public abstract class Bootstrapper<TContainer> : IBootstrapper
     {
+        protected PluginConfiguration Configuration { get; private set; }
+
         protected TContainer ApplicationContainer { get; private set; }
 
-        public void Initialize()
+        public void Initialize(PluginConfiguration configuration)
         {
+            Configuration = configuration;
             ApplicationContainer = CreateContainer();
             RegisterComponents(ApplicationContainer);
         }

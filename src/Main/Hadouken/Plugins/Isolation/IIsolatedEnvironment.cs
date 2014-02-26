@@ -1,8 +1,10 @@
-﻿namespace Hadouken.Plugins.Isolation
+﻿using Hadouken.Fx;
+
+namespace Hadouken.Plugins.Isolation
 {
     public interface IIsolatedEnvironment
     {
-        void Load();
+        void Load(PluginConfiguration configuration);
 
         void Unload();
 

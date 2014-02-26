@@ -87,6 +87,7 @@
     <Compile Include="JsonRpc\WcfClientTransport.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Bootstrapping\BootstrapperAttribute.cs" />
+    <Compile Include="PluginConfiguration.cs" />
     <Compile Include="PluginHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AssemblyNameRetriever.cs" />

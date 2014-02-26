@@ -35,7 +35,7 @@ namespace Hadouken.Plugins.Isolation
             return (Sandbox)Activator.CreateInstanceFrom(domain, typeof(Sandbox).Assembly.ManifestModule.FullyQualifiedName, typeof(Sandbox).FullName).Unwrap();
         }
 
-        public void Load()
+        public void Load(PluginConfiguration configuration)
         {
             var retriever = new AssemblyNameRetriever();
             var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
@@ -67,7 +67,7 @@ namespace Hadouken.Plugins.Isolation
             }
             
             // Create and initialize bootstrapper
-            bootstrapper.Initialize();
+            bootstrapper.Initialize(configuration);
 
             // Use it to get the IPluginHost
             _pluginHost = bootstrapper.GetHost();

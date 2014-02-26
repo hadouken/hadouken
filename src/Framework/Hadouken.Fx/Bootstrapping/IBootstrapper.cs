@@ -2,7 +2,7 @@
 {
     public interface IBootstrapper
     {
-        void Initialize();
+        void Initialize(PluginConfiguration configuration);
 
         IPluginHost GetHost();
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using Hadouken.Fx.Bootstrapping.TinyIoC.WcfIntegration;
 using Hadouken.Fx.IO;
@@ -17,6 +16,9 @@ namespace Hadouken.Fx.Bootstrapping.TinyIoC
 
         protected override void RegisterComponents(TinyIoCContainer container)
         {
+            // Register the plugin configuration to itself
+            container.Register(Configuration);
+
             // Register the file system components
             container.Register<IFileSystem, FileSystem>();
 

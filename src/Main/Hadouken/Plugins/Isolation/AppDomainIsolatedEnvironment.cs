@@ -1,4 +1,5 @@
 ﻿using System;
+using Hadouken.Fx;
 
 namespace Hadouken.Plugins.Isolation
 {
@@ -12,10 +13,10 @@ namespace Hadouken.Plugins.Isolation
             _baseDirectory = baseDirectory;
         }
 
-        public void Load()
+        public void Load(PluginConfiguration configuration)
         {
             _sandbox = Sandbox.Create(_baseDirectory);
-            _sandbox.Load();
+            _sandbox.Load(configuration);
         }
 
         public void Unload()

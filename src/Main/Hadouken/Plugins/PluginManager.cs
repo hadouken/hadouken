@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using Hadouken.Configuration;
+using Hadouken.Fx;
 using Hadouken.Fx.IO;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
@@ -10,17 +13,19 @@ namespace Hadouken.Plugins
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly PluginConfiguration _configuration;
         private readonly IDirectory _baseDirectory;
         private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
 
-        public PluginManager(IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
+        public PluginManager(IConfiguration configuration, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
         {
             State = PluginState.Unloaded;
 
             _baseDirectory = baseDirectory;
             _manifest = manifest;
             _isolatedEnvironment = environment;
+            _configuration = BuildConfiguration(configuration);
         }
 
         public IDirectory BaseDirectory
@@ -52,7 +57,7 @@ namespace Hadouken.Plugins
 
             try
             {
-                _isolatedEnvironment.Load();
+                _isolatedEnvironment.Load(_configuration);
                 State = PluginState.Loaded;
             }
             catch (Exception e)
@@ -79,6 +84,14 @@ namespace Hadouken.Plugins
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }
+        }
+
+        private PluginConfiguration BuildConfiguration(IConfiguration configuration)
+        {
+            return new PluginConfiguration
+            {
+                DataPath = Path.Combine(configuration.ApplicationDataPath, _manifest.Name)
+            };
         }
     }
 }
