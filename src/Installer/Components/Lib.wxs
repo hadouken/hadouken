@@ -16,31 +16,19 @@
       </Component>
 
       <Component>
-        <File Name="Microsoft.AspNet.SignalR.Client.dll" />
+        <File Name="Nancy.Authentication.Forms.dll" />
       </Component>
 
       <Component>
-        <File Name="Microsoft.AspNet.SignalR.Core.dll" />
+        <File Name="Nancy.Bootstrappers.Autofac.dll" />
       </Component>
 
       <Component>
-        <File Name="Microsoft.Owin.Cors.dll" />
+        <File Name="Nancy.dll" />
       </Component>
 
       <Component>
-        <File Name="Microsoft.Owin.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Host.HttpListener.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Hosting.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Security.dll" />
+        <File Name="Nancy.Hosting.Self.dll" />
       </Component>
 
       <Component>
@@ -49,14 +37,6 @@
 
       <Component>
         <File Name="NLog.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Owin.dll" />
-      </Component>
-
-      <Component>
-        <File Name="System.Web.Cors.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

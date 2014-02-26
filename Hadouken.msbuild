@@ -37,7 +37,7 @@
 
   <Target Name="Test" DependsOnTargets="Compile">
     <Message Text="##teamcity[message 'Running unit tests.']" />
-    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=$(OutputDirectory)/TestResult.xml /framework=net-4.5 /nologo /nodots src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll src\Framework\Hadouken.Framework.Tests\bin\$(Configuration)\Hadouken.Framework.Tests.dll" />
+    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=$(OutputDirectory)/TestResult.xml /framework=net-4.5 /nologo /nodots src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll src\Framework\Hadouken.Fx.Tests\bin\$(Configuration)\Hadouken.Fx.Tests.dll" />
     <Message Text="##teamcity[importData type='nunit' path='build/TestResult.xml']" />
   </Target>
 

@@ -8,11 +8,7 @@
       </Component>
 
       <Component>
-        <File Name="Hadouken.Framework.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Sandbox.dll" />
+        <File Name="Hadouken.Fx.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

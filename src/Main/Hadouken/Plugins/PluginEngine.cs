@@ -215,7 +215,7 @@ namespace Hadouken.Plugins
 
             foreach (var dep in deps)
             {
-                Unload(dep);
+                Load(dep);
             }
 
             manager.Load();
