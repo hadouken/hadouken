@@ -29,11 +29,6 @@ looks like this,
 
   "id": "<id of your plugin>",
   "version": "<semver>",
-
-  "dependencies":
-  [
-    { "id": "config", "version": "0.1" }
-  ]
 }
 
 What we are doing here is just making the `config` plugin a dependency, as
@@ -56,7 +51,7 @@ solution file.
 
 The command line arguments must be set to
 
---plugin "<full path to your output folder>"
+--no-http-bootstrap --plugin "<full path to your output folder>"
 
 Finally, set working directory to the same folder as the Hadouken.Service.exe
 lives in.
