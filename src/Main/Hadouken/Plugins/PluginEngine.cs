@@ -135,7 +135,7 @@ namespace Hadouken.Plugins
             Unload(manager);
         }
 
-        public void InstallOrUpgrade(IPackage package)
+        public bool InstallOrUpgrade(IPackage package)
         {
             // Check it we have a plugin with this name already. If we do,
             // we must have a higher version number 
@@ -146,7 +146,7 @@ namespace Hadouken.Plugins
                 if (existing.Manifest.Version >= package.Manifest.Version)
                 {
                     Logger.Error("Downgrades not supported ({0} v{1}).", package.Manifest.Name, package.Manifest.Version);
-                    return;
+                    return false;
                 }
 
                 Unload(existing);
@@ -159,6 +159,8 @@ namespace Hadouken.Plugins
 
             Scan();
             Load(package.Manifest.Name);
+
+            return true;
         }
 
         public bool Uninstall(string name)

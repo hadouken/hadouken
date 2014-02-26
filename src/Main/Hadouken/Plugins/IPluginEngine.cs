@@ -37,7 +37,7 @@ namespace Hadouken.Plugins
         /// <param name="name">The plugin to unload.</param>
         void Unload(string name);
 
-        void InstallOrUpgrade(IPackage package);
+        bool InstallOrUpgrade(IPackage package);
 
         /// <summary>
         /// Uninstalls the plugin. The plugin must be in the Unloaded state.
