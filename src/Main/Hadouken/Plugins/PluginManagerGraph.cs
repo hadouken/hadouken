@@ -23,6 +23,22 @@ namespace Hadouken.Plugins
             }
         }
 
+        public void Remove(string name)
+        {
+            lock (_pluginsLock)
+            {
+                if (_plugins.ContainsKey(name))
+                {
+                    _plugins.Remove(name);
+                }
+            }
+
+            lock (_pluginsGraphLock)
+            {
+                _pluginsGraph.Remove(name);
+            }
+        }
+
         public IEnumerable<IPluginManager> GetAll()
         {
             lock (_pluginsLock)
@@ -70,6 +86,14 @@ namespace Hadouken.Plugins
             lock (_pluginsGraphLock)
             {
                 return _pluginsGraph.TraverseReverseOrder(name).ToArray();
+            }
+        }
+
+        public string[] GetUnloadOrder(string name)
+        {
+            lock (_pluginsGraphLock)
+            {
+                return _pluginsGraph.TraverseOrder(name).ToArray();
             }
         }
 

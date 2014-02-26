@@ -11,5 +11,7 @@
         bool Exists { get; }
 
         void Create();
+
+        void Delete(bool recursive = false);
     }
 }

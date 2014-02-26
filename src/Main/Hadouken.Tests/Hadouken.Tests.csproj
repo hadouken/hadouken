@@ -58,6 +58,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Hadouken.Fx\Hadouken.Fx.csproj">
+      <Project>{F6BFDDB3-C3F0-4009-8685-136C0700672C}</Project>
+      <Name>Hadouken.Fx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{1FE7DB08-4B4F-4A13-8453-2703984E32D5}</Project>
       <Name>Hadouken</Name>

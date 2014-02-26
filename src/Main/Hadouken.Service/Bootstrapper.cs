@@ -34,6 +34,13 @@ namespace Hadouken.Service
 		            (p, ctx) => p.ParameterType == typeof (string),
 		            (p, ctx) => ctx.Resolve<IConfiguration>().Plugins.BaseDirectory);
 
+            builder
+                .RegisterType<PackageInstaller>()
+                .As<IPackageInstaller>()
+                .WithParameter(
+                    (p, ctx) => p.ParameterType == typeof(string),
+                    (p, ctx) => ctx.Resolve<IConfiguration>().Plugins.BaseDirectory);
+
 		    builder.RegisterType<PluginManagerFactory>().As<IPluginManagerFactory>();
 		    builder.RegisterType<PackageDownloader>().As<IPackageDownloader>();
 		    builder.RegisterType<PackageReader>().As<IPackageReader>();

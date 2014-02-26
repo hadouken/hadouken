@@ -68,7 +68,6 @@ namespace Hadouken.Plugins
         public void Load(string name)
         {
             var manager = Get(name);
-
             if (manager == null)
             {
                 Logger.Debug("Load was called with invalid key: {0}", name);
@@ -116,17 +115,81 @@ namespace Hadouken.Plugins
 
         public void Unload(string name)
         {
-            throw new NotImplementedException();
+            var manager = Get(name);
+            if (manager == null)
+            {
+                Logger.Debug("Unload was called with invalid key: {0}", name);
+                return;
+            }
+
+            // Check state
+            if (manager.State != PluginState.Loaded)
+            {
+                Logger.Info("PluginManager not in correct state, manager:{0}, state:{1}", name, manager.State);
+                return;
+            }
+
+            Unload(manager);
         }
 
         public void InstallOrUpgrade(IPackage package)
         {
-            throw new NotImplementedException();
+            // Check it we have a plugin with this name already. If we do,
+            // we must have a higher version number 
+            // the existing to be able to upgrade. Otherwise - out of luck.
+            var existing = Get(package.Manifest.Name);
+
+            if (existing != null)
+            {
+                if (existing.Manifest.Version <= package.Manifest.Version)
+                {
+                    Logger.Error("Downgrades not supported ({0} v{1}).", package.Manifest.Name, package.Manifest.Version);
+                    return;
+                }
+
+                Unload(existing);
+                Uninstall(existing);
+            }
+
+            // Install dat package!
+            Logger.Info("Installing package {0} v{1}", package.Manifest.Name, package.Manifest.Version);
+            _packageInstaller.Install(package);
+
+            Scan();
+            Load(package.Manifest.Name);
         }
 
         public void Uninstall(string name)
         {
-            throw new NotImplementedException();
+            var manager = Get(name);
+            if (manager == null)
+            {
+                return;
+            }
+
+            Uninstall(manager);
+        }
+
+        private void Uninstall(IPluginManager manager)
+        {
+            // Check dependencies
+            var dependencies = _plugins.GetLoadOrder(manager.Manifest.Name);
+            if (dependencies.Any(d => d != manager.Manifest.Name))
+            {
+                Logger.Error("Cannot uninstall plugin {0}. Plugins {1} still depend on it.", manager.Manifest.Name,
+                    string.Join(",", dependencies));
+                return;
+            }
+
+            if (manager.State != PluginState.Unloaded)
+            {
+                Logger.Info("Tried to uninstall plugin that was not unloaded.");
+                return;
+            }
+
+            // Delete directory
+            manager.BaseDirectory.Delete(true);
+            _plugins.Remove(manager.Manifest.Name);
         }
 
         private bool DownloadAndInstall(IEnumerable<string> packageIds)
@@ -152,10 +215,22 @@ namespace Hadouken.Plugins
 
             foreach (var dep in deps)
             {
-                Load(dep);
+                Unload(dep);
             }
 
             manager.Load();
+        }
+
+        private void Unload(IPluginManager manager)
+        {
+            var deps = _plugins.GetUnloadOrder(manager.Manifest.Name).TakeWhile(s => s != manager.Manifest.Name);
+
+            foreach (var dep in deps)
+            {
+                Unload(dep);
+            }
+
+            manager.Unload();
         }
     }
 }

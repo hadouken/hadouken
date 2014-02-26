@@ -37,6 +37,11 @@ namespace Hadouken.Fx.IO
             _directoryInfo.Create();
         }
 
+        public void Delete(bool recursive)
+        {
+            _directoryInfo.Delete(recursive);
+        }
+
         private IDirectory[] GetDirectories()
         {
             var directories = _directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly);

@@ -1,4 +1,5 @@
 ﻿using System;
+using Hadouken.Fx.IO;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
 using NLog;
@@ -9,15 +10,22 @@ namespace Hadouken.Plugins
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IDirectory _baseDirectory;
         private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
 
-        public PluginManager(IIsolatedEnvironment environment, IManifest manifest)
+        public PluginManager(IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
         {
             State = PluginState.Unloaded;
 
+            _baseDirectory = baseDirectory;
             _manifest = manifest;
             _isolatedEnvironment = environment;
+        }
+
+        public IDirectory BaseDirectory
+        {
+            get { return _baseDirectory; }
         }
 
         public IManifest Manifest
