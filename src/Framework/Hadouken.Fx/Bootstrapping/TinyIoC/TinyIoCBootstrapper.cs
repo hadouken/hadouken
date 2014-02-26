@@ -41,6 +41,14 @@ namespace Hadouken.Fx.Bootstrapping.TinyIoC
             container.Register<IMethodCacheBuilder, MethodCacheBuilder>();
             container.Register<IParameterResolver, ParameterResolver>();
 
+            // Register all IJsonRpcService implementations
+            var jsonRpcServiceTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                from t in asm.GetTypes()
+                where t.IsClass && !t.IsAbstract
+                where typeof (IJsonRpcService).IsAssignableFrom(t)
+                select t).ToArray();
+            container.RegisterMultiple<IJsonRpcService>(jsonRpcServiceTypes);
+
             // Register IPluginServiceHost to host the WCF service
             container.Register<IPluginServiceHost>((tinyContainer, overloads) =>
             {
