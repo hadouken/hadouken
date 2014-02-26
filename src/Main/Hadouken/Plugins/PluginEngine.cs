@@ -40,6 +40,8 @@ namespace Hadouken.Plugins
                 where Get(plugin.Manifest.Name) == null
                 select plugin).ToList();
 
+            Logger.Debug("Scan found {0} plugins to add", plugins.Count);
+
             // Add the new plugins
             _plugins.AddRange(plugins);
             _plugins.Rebuild();
@@ -70,21 +72,22 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Load was called with invalid key: {0}", name);
+                Logger.Debug("Plugin does not exist: '{0}'", name);
                 return;
             }
 
             // Check state
             if (manager.State != PluginState.Unloaded)
             {
-                Logger.Info("PluginManager not in correct state, manager:{0}, state:{1}", name, manager.State);
+                Logger.Info("Plugin cannot be loaded since it is not unloaded: '{0}' [state '{1}']", name, manager.State);
                 return;
             }
 
             string[] missingDependencies;
             if (!CanLoad(name, out missingDependencies))
             {
-                Logger.Warn("Unmet dependencies for plugin {0}, ({1}). Will try to download.", name, string.Join(",", missingDependencies));
+                Logger.Warn("Plugin is missing dependencies. Downloading... [plugin '{0}'], [deps '{1}']", name,
+                    string.Join(",", missingDependencies));
 
                 if (DownloadAndInstall(missingDependencies))
                 {
@@ -118,14 +121,14 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Unload was called with invalid key: {0}", name);
+                Logger.Debug("Plugin does not exist: '{0}'", name);
                 return;
             }
 
             // Check state
             if (manager.State != PluginState.Loaded)
             {
-                Logger.Info("PluginManager not in correct state, manager:{0}, state:{1}", name, manager.State);
+                Logger.Info("Plugin cannot be unloaded since it is not loaded: '{0}' [state '{1}']", name, manager.State);
                 return;
             }
 
@@ -138,10 +141,9 @@ namespace Hadouken.Plugins
             // we must have a higher version number 
             // the existing to be able to upgrade. Otherwise - out of luck.
             var existing = Get(package.Manifest.Name);
-
             if (existing != null)
             {
-                if (existing.Manifest.Version <= package.Manifest.Version)
+                if (existing.Manifest.Version >= package.Manifest.Version)
                 {
                     Logger.Error("Downgrades not supported ({0} v{1}).", package.Manifest.Name, package.Manifest.Version);
                     return;
@@ -164,6 +166,7 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
+                Logger.Debug("Plugin does not exist: '{0}'", name);
                 return;
             }
 
@@ -187,6 +190,8 @@ namespace Hadouken.Plugins
                 return;
             }
 
+            Logger.Info("Uninstalling existing plugin '{0}'.", manager.Manifest.Name);
+
             // Delete directory
             manager.BaseDirectory.Delete(true);
             _plugins.Remove(manager.Manifest.Name);
@@ -196,10 +201,12 @@ namespace Hadouken.Plugins
         {
             foreach (var packageId in packageIds)
             {
-                var package = _packageDownloader.Download(packageId);
+                Logger.Info("Downloading package '{0}'", packageId);
 
+                var package = _packageDownloader.Download(packageId);
                 if (package == null)
                 {
+                    Logger.Warn("Package '{0}' was not found. Aborting...", packageId);
                     return false;
                 }
 

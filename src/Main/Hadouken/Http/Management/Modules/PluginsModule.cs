@@ -79,16 +79,7 @@ namespace Hadouken.Http.Management.Modules
                     return Response.AsRedirect("/manage/plugins?t=error&msg=invalid-package");
                 }
 
-                var existingPlugin = pluginEngine.Get(package.Manifest.Name);
-
-                if (existingPlugin != null)
-                {
-                    return Response.AsRedirect("/manage/plugins?t=error&msg=package-already-exists");
-                }
-
-                // Save package to disk
-                packageInstaller.Install(package);
-                pluginEngine.Scan();
+                pluginEngine.InstallOrUpgrade(package);
 
                 return Response.AsRedirect("/manage/plugins?t=success&msg=package-uploaded");
             };
