@@ -43,6 +43,6 @@ namespace Hadouken.Plugins
         /// Uninstalls the plugin. The plugin must be in the Unloaded state.
         /// </summary>
         /// <param name="name">The plugin to uninstall.</param>
-        void Uninstall(string name);
+        bool Uninstall(string name);
     }
 }

@@ -161,19 +161,19 @@ namespace Hadouken.Plugins
             Load(package.Manifest.Name);
         }
 
-        public void Uninstall(string name)
+        public bool Uninstall(string name)
         {
             var manager = Get(name);
             if (manager == null)
             {
                 Logger.Debug("Plugin does not exist: '{0}'", name);
-                return;
+                return false;
             }
 
-            Uninstall(manager);
+            return Uninstall(manager);
         }
 
-        private void Uninstall(IPluginManager manager)
+        private bool Uninstall(IPluginManager manager)
         {
             // Check dependencies
             var dependencies = _plugins.GetLoadOrder(manager.Manifest.Name);
@@ -181,13 +181,13 @@ namespace Hadouken.Plugins
             {
                 Logger.Error("Cannot uninstall plugin {0}. Plugins {1} still depend on it.", manager.Manifest.Name,
                     string.Join(",", dependencies));
-                return;
+                return false;
             }
 
             if (manager.State != PluginState.Unloaded)
             {
                 Logger.Info("Tried to uninstall plugin that was not unloaded.");
-                return;
+                return false;
             }
 
             Logger.Info("Uninstalling existing plugin '{0}'.", manager.Manifest.Name);
@@ -195,6 +195,8 @@ namespace Hadouken.Plugins
             // Delete directory
             manager.BaseDirectory.Delete(true);
             _plugins.Remove(manager.Manifest.Name);
+
+            return true;
         }
 
         private bool DownloadAndInstall(IEnumerable<string> packageIds)
