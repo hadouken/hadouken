@@ -60,7 +60,7 @@ namespace Hadouken.Fx.Bootstrapping.TinyIoC
                 var serviceHost = new TinyIoCServiceHost(
                     tinyContainer,
                     typeof (PluginService),
-                    new Uri("net.pipe://localhost/hadouken.plugins.sample"));
+                    new Uri(uri));
 
                 return new PluginServiceHost(serviceHost);
             });

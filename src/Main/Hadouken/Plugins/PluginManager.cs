@@ -91,6 +91,10 @@ namespace Hadouken.Plugins
             return new PluginConfiguration
             {
                 DataPath = Path.Combine(configuration.ApplicationDataPath, _manifest.Name),
+                HttpHostBinding = configuration.Http.HostBinding,
+                HttpPort = configuration.Http.Port,
+                HttpUserName = configuration.Http.Authentication.UserName,
+                HttpPasswordHash = configuration.Http.Authentication.Password,
                 PluginName = _manifest.Name
             };
         }

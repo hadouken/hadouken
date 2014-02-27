@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Reflection;
+using System.ServiceModel;
 using Autofac;
+using Autofac.Integration.Wcf;
 using Hadouken.Configuration;
 using Hadouken.Configuration.AppConfig;
 using Hadouken.Fx.IO;
+using Hadouken.Fx.JsonRpc;
+using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
 using Hadouken.Http.Management;
+using Hadouken.JsonRpc;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Repository;
@@ -50,6 +55,29 @@ namespace Hadouken.Service
 			// Register file system
 			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 		    builder.RegisterType<RootPathProvider>().As<IRootPathProvider>().SingleInstance();
+
+            // JSONRPC service stuff
+		    builder.RegisterType<JsonRpcRequestParser>().As<IJsonRpcRequestParser>();
+		    builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
+		    builder.RegisterType<MethodCacheBuilder>().As<IMethodCacheBuilder>();
+		    builder.RegisterType<ParameterResolver>().As<IParameterResolver>();
+		    builder.RegisterType<JsonSerializer>().As<IJsonSerializer>();
+
+            // JSONRPC services
+            builder.RegisterType<AuthService>().As<IJsonRpcService>();
+            builder.RegisterType<PluginsService>().As<IJsonRpcService>();
+
+            // Register wcf stuff
+            builder.RegisterType<PluginService>();
+		    builder.Register<IPluginServiceHost>(c =>
+		    {
+		        var scope = c.Resolve<ILifetimeScope>();
+
+		        var host = new ServiceHost(typeof (PluginService), new Uri("net.pipe://localhost/hadouken.plugins.core"));
+                host.AddDependencyInjectionBehavior(typeof(PluginService), scope);
+
+		        return new PluginServiceHost(host);
+		    });
 
             // API connection
 		    builder.RegisterType<ApiConnection>().As<IApiConnection>();

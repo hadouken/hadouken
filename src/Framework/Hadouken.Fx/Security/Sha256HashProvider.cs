@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Hadouken.Security
+namespace Hadouken.Fx.Security
 {
     public class Sha256HashProvider : HashProvider
     {

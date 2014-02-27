@@ -250,6 +250,8 @@ namespace Hadouken.Tests.Plugins
         {
             var cfg = new Mock<IConfiguration>();
             cfg.SetupGet(c => c.ApplicationDataPath).Returns("test");
+            cfg.SetupGet(c => c.Http).Returns(new Mock<IHttpConfiguration>().Object);
+            cfg.SetupGet(c => c.Http.Authentication).Returns(new Mock<IHttpAuthConfiguration>().Object);
             return cfg.Object;
         }
     }

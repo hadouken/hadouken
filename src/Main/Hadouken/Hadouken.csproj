@@ -92,6 +92,8 @@
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\SettingsModule.cs" />
     <Compile Include="Http\Management\Modules\ToolsModule.cs" />
+    <Compile Include="JsonRpc\AuthService.cs" />
+    <Compile Include="JsonRpc\PluginsService.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
     <Compile Include="Plugins\IPackageInstaller.cs" />
     <Compile Include="Plugins\IPluginScanner.cs" />
@@ -151,9 +153,6 @@
     <Compile Include="Plugins\Repository\Models\Plugin.cs" />
     <Compile Include="Plugins\Repository\IPluginRepository.cs" />
     <Compile Include="Plugins\Repository\Models\Release.cs" />
-    <Compile Include="Security\HashProvider.cs" />
-    <Compile Include="Security\IHashProvider.cs" />
-    <Compile Include="Security\Sha256HashProvider.cs" />
     <Compile Include="SemVer\EqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanRule.cs" />

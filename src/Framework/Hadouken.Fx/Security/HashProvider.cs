@@ -1,4 +1,4 @@
-﻿namespace Hadouken.Security
+﻿namespace Hadouken.Fx.Security
 {
     public abstract class HashProvider : IHashProvider
     {

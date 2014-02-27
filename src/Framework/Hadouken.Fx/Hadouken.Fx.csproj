@@ -91,6 +91,9 @@
     <Compile Include="PluginHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AssemblyNameRetriever.cs" />
+    <Compile Include="Security\HashProvider.cs" />
+    <Compile Include="Security\IHashProvider.cs" />
+    <Compile Include="Security\Sha256HashProvider.cs" />
     <Compile Include="ServiceModel\IPluginService.cs" />
     <Compile Include="ServiceModel\IPluginServiceHost.cs" />
     <Compile Include="ServiceModel\PluginService.cs" />

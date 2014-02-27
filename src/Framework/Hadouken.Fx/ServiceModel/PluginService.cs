@@ -3,7 +3,7 @@ using Hadouken.Fx.JsonRpc;
 
 namespace Hadouken.Fx.ServiceModel
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, IncludeExceptionDetailInFaults = true)]
     public class PluginService : IPluginService
     {
         private readonly IRequestHandler _requestHandler;

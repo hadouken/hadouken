@@ -62,4 +62,7 @@ lives in.
 start, do its thing, and then load your plugin as well as hitting your
 breakpoint.
 
+IMPORTANT! To manage Hadouken, the default endpoint is http://localhost:7890/manage
+so point your browser of choice there and explore.
+
 Now go do magic. Happy coding!
