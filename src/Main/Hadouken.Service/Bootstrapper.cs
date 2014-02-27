@@ -7,6 +7,7 @@ using Hadouken.Configuration;
 using Hadouken.Configuration.AppConfig;
 using Hadouken.Fx.IO;
 using Hadouken.Fx.JsonRpc;
+using Hadouken.Fx.JsonRpc.Services;
 using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
 using Hadouken.Http.Management;

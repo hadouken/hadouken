@@ -8,6 +8,7 @@ using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
 using Hadouken.Http.Management;
 using Hadouken.Plugins;
+using Hadouken.Plugins.Repository;
 using NLog;
 
 namespace Hadouken.Service
@@ -21,6 +22,8 @@ namespace Hadouken.Service
 	    private readonly IManagementServer _managementServer;
 	    private readonly IApiConnection _apiConnection;
 	    private readonly IFileSystem _fileSystem;
+	    private readonly IPackageReader _packageReader;
+	    private readonly IPackageInstaller _packageInstaller;
 	    private readonly IPluginEngine _pluginEngine;
 
         public HadoukenService(IConfiguration configuration,
@@ -28,6 +31,8 @@ namespace Hadouken.Service
             IManagementServer managementServer,
             IApiConnection apiConnection,
             IFileSystem fileSystem,
+            IPackageReader packageReader,
+            IPackageInstaller packageInstaller,
             IPluginEngine pluginEngine)
 		{
             _configuration = configuration;
@@ -35,7 +40,9 @@ namespace Hadouken.Service
             _managementServer = managementServer;
             _apiConnection = apiConnection;
             _fileSystem = fileSystem;
-		    _pluginEngine = pluginEngine;
+            _packageReader = packageReader;
+            _packageInstaller = packageInstaller;
+            _pluginEngine = pluginEngine;
 		}
 
 		public void Start(string[] args)
@@ -101,22 +108,19 @@ namespace Hadouken.Service
 	            var data = _apiConnection.DownloadData(pluginUri);
 
                 // Parse it as a package
-	            IPackage package;
-	            if (!Package.TryParse(new MemoryStream(data), out package))
+	            using (var ms = new MemoryStream(data))
 	            {
-	                Logger.Error("Could not parse core package from {0}", pluginUri);
-	                continue;
+	                var package = _packageReader.Read(ms);
+
+	                if (package == null)
+	                {
+                        Logger.Error("Could not parse core package from {0}", pluginUri);
+	                    continue;
+	                }
+
+	                _packageInstaller.Install(package);
+                    Logger.Info("Core package {0} downloaded successfully.", package.Manifest.Name);
 	            }
-
-	            var packageFileName = string.Format("{0}-{1}.zip", package.Manifest.Name, package.Manifest.Version);
-	            var packageFile = _fileSystem.GetFile(Path.Combine(_configuration.Plugins.BaseDirectory, packageFileName));
-
-	            using (var stream = packageFile.OpenWrite())
-	            {
-	                stream.Write(data, 0, data.Length);
-	            }
-
-	            Logger.Info("Core package {0} downloaded successfully.", package.Manifest.Name);
 	        }
             
             // Create the file.

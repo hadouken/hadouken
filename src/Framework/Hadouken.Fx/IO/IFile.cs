@@ -13,5 +13,7 @@ namespace Hadouken.Fx.IO
         Stream OpenRead();
 
         Stream OpenWrite();
+
+        void Delete();
     }
 }

@@ -34,5 +34,10 @@ namespace Hadouken.Fx.IO
         {
             throw new System.NotImplementedException();
         }
+
+        public void Delete()
+        {
+            //
+        }
     }
 }

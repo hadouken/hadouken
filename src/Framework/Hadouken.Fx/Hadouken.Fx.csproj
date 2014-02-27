@@ -84,6 +84,7 @@
     <Compile Include="JsonRpc\Parameter.cs" />
     <Compile Include="JsonRpc\ParameterResolver.cs" />
     <Compile Include="JsonRpc\RequestHandler.cs" />
+    <Compile Include="JsonRpc\Services\ResourceService.cs" />
     <Compile Include="JsonRpc\WcfClientTransport.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Bootstrapping\BootstrapperAttribute.cs" />

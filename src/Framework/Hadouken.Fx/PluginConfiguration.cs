@@ -11,10 +11,6 @@ namespace Hadouken.Fx
 
         public int HttpPort { get; set; }
 
-        public string HttpUserName { get; set; }
-
-        public string HttpPasswordHash { get; set; }
-
         public string PluginName { get; set; }
     }
 }

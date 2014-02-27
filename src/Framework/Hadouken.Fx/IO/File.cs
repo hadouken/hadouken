@@ -35,5 +35,10 @@ namespace Hadouken.Fx.IO
         {
             return _fileInfo.OpenWrite();
         }
+
+        public void Delete()
+        {
+            _fileInfo.Delete();
+        }
     }
 }
