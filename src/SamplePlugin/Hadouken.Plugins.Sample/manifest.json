@@ -5,6 +5,7 @@
   "version": "1.0",
 
   "dependencies":[
+    { "id": "torrents", "version": "1.0" }
   ],
 
   "permissions": {
