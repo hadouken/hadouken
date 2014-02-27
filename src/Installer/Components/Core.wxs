@@ -10,6 +10,10 @@
       <Component>
         <File Name="Hadouken.Fx.dll" />
       </Component>
+
+      <Component>
+        <File Name="Hadouken.Plugins.Isolation.dll" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>
