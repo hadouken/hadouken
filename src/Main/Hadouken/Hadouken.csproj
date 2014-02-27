@@ -217,6 +217,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\JsonRpcDebugger.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\Images\256.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
