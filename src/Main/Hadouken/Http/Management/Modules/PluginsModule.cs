@@ -56,7 +56,8 @@ namespace Hadouken.Http.Management.Modules
                 var dto = new PluginDetailsItem
                 {
                     Name = plugin.Manifest.Name,
-                    Description = "got this from the internet"
+                    Description = "got this from the internet",
+                    Path = plugin.BaseDirectory.FullPath
                 };
 
                 return View["Details", dto];
