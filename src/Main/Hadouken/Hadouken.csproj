@@ -174,6 +174,7 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

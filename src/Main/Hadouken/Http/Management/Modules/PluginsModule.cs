@@ -9,7 +9,7 @@ namespace Hadouken.Http.Management.Modules
 {
     public class PluginsModule : NancyModule
     {
-        public PluginsModule(IPluginEngine pluginEngine, IPackageReader packageReader, IPackageInstaller packageInstaller)
+        public PluginsModule(IPluginEngine pluginEngine, IPackageReader packageReader)
             : base("plugins")
         {
             this.RequiresAuthentication();
@@ -56,11 +56,39 @@ namespace Hadouken.Http.Management.Modules
                 var dto = new PluginDetailsItem
                 {
                     Name = plugin.Manifest.Name,
-                    Description = "got this from the internet",
-                    Path = plugin.BaseDirectory.FullPath
+                    Path = plugin.BaseDirectory.FullPath,
+                    Version = plugin.Manifest.Version
                 };
 
                 return View["Details", dto];
+            };
+
+            Get["/uninstall/{id}"] = _ =>
+            {
+                IPluginManager plugin = pluginEngine.Get(_.id);
+
+                if (plugin == null)
+                {
+                    return 404;
+                }
+
+                return View["Uninstall", new {CanUninstall = true, PluginId = _.id}];
+            };
+
+            Post["/uninstall"] = _ =>
+            {
+                string id = Request.Form.id;
+                IPluginManager plugin = pluginEngine.Get(id);
+
+                if (plugin == null)
+                {
+                    return 404;
+                }
+
+                pluginEngine.Unload(id);
+                pluginEngine.Uninstall(id);
+
+                return 200;
             };
 
             Get["/upload"] = _ => View["Upload"];

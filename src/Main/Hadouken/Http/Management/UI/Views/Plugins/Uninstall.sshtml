@@ -1,0 +1,16 @@
+﻿<div class="row">
+    <h4>Confirm uninstall</h4>
+    <p>
+        This will uninstall the plugin '@Model.PluginId'. Confirm uninstall by typing the plugin name
+        in the textbox and clicking 'Confirm uninstall'.
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-9">
+        <input type="text" class="form-control" id="confirmed-plugin-id" />
+    </div>
+    <div class="col-md-3">
+        <button id="btn-confirm-uninstall" type="button" class="btn btn-sm btn-danger">Confirm uninstall</button>
+    </div>
+</div>
