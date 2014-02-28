@@ -6,7 +6,7 @@ namespace Hadouken.Http
 {
     public interface IApiConnection
     {
-        Task<T> GetAsync<T>(Uri uri) where T : class, new();
+        Task<T> GetAsync<T>(Uri uri) where T : class;
 
         byte[] DownloadData(Uri uri);
     }

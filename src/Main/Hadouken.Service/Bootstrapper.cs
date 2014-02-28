@@ -82,6 +82,7 @@ namespace Hadouken.Service
 
             // API connection
 		    builder.RegisterType<ApiConnection>().As<IApiConnection>();
+		    builder.RegisterType<PluginRepository>().As<IPluginRepository>();
 
 			// Register configuration
 			builder.Register(c => HadoukenConfigurationSection.Load()).SingleInstance();

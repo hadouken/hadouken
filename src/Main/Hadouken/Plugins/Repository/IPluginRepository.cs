@@ -5,8 +5,10 @@ namespace Hadouken.Plugins.Repository
 {
     public interface IPluginRepository
     {
-        IEnumerable<Plugin> Search(string query);
+        IEnumerable<PluginListItem> Search(string query);
 
+        IEnumerable<PluginListItem> GetAll();
 
+        Plugin GetById(string id);
     }
 }

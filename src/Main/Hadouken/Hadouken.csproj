@@ -65,6 +65,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
@@ -87,9 +88,11 @@
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
+    <Compile Include="Http\Management\Modules\Api\RepositoryModule.cs" />
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
+    <Compile Include="Http\Management\Modules\RepositoryModule.cs" />
     <Compile Include="Http\Management\Modules\SettingsModule.cs" />
     <Compile Include="Http\Management\Modules\ToolsModule.cs" />
     <Compile Include="JsonRpc\AuthService.cs" />
@@ -102,6 +105,9 @@
     <Compile Include="Plugins\PackageInstaller.cs" />
     <Compile Include="Plugins\PluginManagerFactory.cs" />
     <Compile Include="Plugins\PluginManagerGraph.cs" />
+    <Compile Include="Plugins\Repository\Models\PluginListItem.cs" />
+    <Compile Include="Plugins\Repository\Models\ReleaseItem.cs" />
+    <Compile Include="Plugins\Repository\PluginRepository.cs" />
     <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />
     <Compile Include="Plugins\Scanners\DirectoryPluginScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -175,6 +181,7 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +227,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Content\Images\256.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Repository.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

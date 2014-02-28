@@ -8,7 +8,7 @@ namespace Hadouken.Http
 {
     public class ApiConnection : IApiConnection
     {
-        public async Task<T> GetAsync<T>(Uri uri) where T : class, new()
+        public async Task<T> GetAsync<T>(Uri uri) where T : class
         {
             using (var client = new HttpClient())
             {
