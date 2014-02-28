@@ -83,7 +83,7 @@
     <Compile Include="Http\Management\IManagementServer.cs" />
     <Compile Include="Http\Management\ManagementModule.cs" />
     <Compile Include="Http\Management\ManagementServer.cs" />
-    <Compile Include="Http\Management\Models\GetSettingsItem.cs" />
+    <Compile Include="Http\Management\Models\SettingsItem.cs" />
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />

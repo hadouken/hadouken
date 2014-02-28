@@ -2,6 +2,7 @@
 using Hadouken.Configuration;
 using Hadouken.Http.Management.Models;
 using Nancy;
+using Nancy.ModelBinding;
 using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules
@@ -15,17 +16,30 @@ namespace Hadouken.Http.Management.Modules
 
             Get["/"] = _ =>
             {
-                var dto = new GetSettingsItem
+                var dto = new SettingsItem
                 {
                     DataPath = configuration.ApplicationDataPath,
                     HttpHostBinding = configuration.Http.HostBinding,
                     HttpPort = configuration.Http.Port,
                     InstanceName = configuration.InstanceName,
                     PluginsBaseDirectory = configuration.Plugins.BaseDirectory,
-                    PluginsRepositoryUri = configuration.Plugins.RepositoryUri,
-                    RpcGatewayUri = new Uri(configuration.Rpc.GatewayUri),
-                    RpcPluginUriTemplate = configuration.Rpc.PluginUriTemplate
+                    PluginsRepositoryUri = configuration.Plugins.RepositoryUri
                 };
+
+                return View["Index", dto];
+            };
+
+            Post["/"] = _ =>
+            {
+                var dto = this.Bind<SettingsItem>();
+
+                configuration.ApplicationDataPath = dto.DataPath;
+                configuration.Http.HostBinding = dto.HttpHostBinding;
+                configuration.Http.Port = dto.HttpPort;
+                configuration.InstanceName = dto.InstanceName;
+                configuration.Plugins.BaseDirectory = dto.PluginsBaseDirectory;
+                configuration.Plugins.RepositoryUri = dto.PluginsRepositoryUri;
+                configuration.Save();
 
                 return View["Index", dto];
             };
