@@ -125,8 +125,8 @@
     <Compile Include="Http\ApiConnection.cs" />
     <Compile Include="Http\IApiConnection.cs" />
     <Compile Include="Plugins\DependencyNotFoundException.cs" />
-    <Compile Include="Plugins\DirectedGraph.cs" />
-    <Compile Include="Plugins\DirectedGraphEdge.cs" />
+    <Compile Include="Collections\DirectedGraph.cs" />
+    <Compile Include="Collections\DirectedGraphEdge.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
     <Compile Include="Plugins\IPackage.cs" />
     <Compile Include="Plugins\Repository\IPackageDownloader.cs" />

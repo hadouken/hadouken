@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Hadouken.Plugins
+namespace Hadouken.Collections
 {
     internal sealed class DirectedGraphEdge<T>
         where T : class

@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hadouken.Plugins
+namespace Hadouken.Collections
 {
     internal class DirectedGraph<T>
     where T : class
