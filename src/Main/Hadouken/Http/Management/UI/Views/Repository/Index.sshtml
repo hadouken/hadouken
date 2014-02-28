@@ -1,6 +1,9 @@
 ﻿@Master['Shared/Layout.sshtml']
 
 @Section['Scripts']
+<script type="text/javascript">
+    var installedPlugins = @Model.InstalledPlugins;
+</script>
 <script type="text/javascript" src="/manage/Scripts/Repository.js"></script>
 @EndSection
 

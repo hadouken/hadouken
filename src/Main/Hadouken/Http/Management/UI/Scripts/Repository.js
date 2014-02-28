@@ -3,36 +3,66 @@
         $('#plugins-list').empty();
 
         for (var i = 0; i < plugins.length; i++) {
-            var plugin = plugins[i];
+            (function (plugin) {
 
-            var row = $('<tr></tr>');
-            row.append($('<td></td>').text(plugin.id));
-            row.append($('<td></td>').text(plugin.description));
+                var row = $('<tr></tr>');
+                row.append($('<td></td>').text(plugin.id));
+                row.append($('<td></td>').text(plugin.description));
 
-            var latestVersion = '';
+                var latestVersion = '';
 
-            if (typeof plugin.latestRelease !== 'undefined') {
-                latestVersion = plugin.latestRelease.version;
-            }
+                if (typeof plugin.latestRelease !== 'undefined') {
+                    latestVersion = plugin.latestRelease.version;
+                }
 
-            row.append($('<td></td>').text(latestVersion));
+                row.append($('<td></td>').text(latestVersion));
 
-            var detailsButton = $('<button type="button" class="btn btn-primary btn-xs pull-right">Details</button>');
-            detailsButton.on('click', function() {
-                showDetails(plugin.id);
-            });
+                var installButton = $('<button type="button" class="btn btn-primary btn-xs pull-right">Install</button>');
+                installButton.on('click', function () {
+                    prepareInstall(plugin.id);
+                });
 
-            row.append($('<td></td>').append(detailsButton));
+                var alreadyInstalled = $('<span class="pull-right"><em>(installed)</em></span>');
 
-            $('#plugins-list').append(row);
+                if (installedPlugins.indexOf(plugin.id) != -1) {
+                    row.append($('<td></td>').append(alreadyInstalled));
+                } else {
+                    row.append($('<td></td>').append(installButton));
+                }
+
+                $('#plugins-list').append(row);
+
+            })(plugins[i]);
         }
     }
 
-    function showDetails(pluginId) {
-        $.getJSON('/manage/api/repository/' + pluginId, function() {
+    function prepareInstall(pluginId) {
+        $.getJSON('/manage/api/repository/' + pluginId, function (data) {
+            (function(plugin) {
+                $.get('/manage/repository/install/' + plugin.id, function(html) {
+                    var content = $(html);
+                    $('body').append(html);
 
+                    content.modal();
+                    content.on('hidden.bs.modal', function() { content.modal('hide'); });
+
+                    content.find('.plugin-name').text(plugin.id);
+
+                    content.find('#btn-confirm-install').on('click', function() {
+                        install(plugin.id, function() {
+                            content.modal('hide');
+                        });
+                    });
+                });
+            })(data);
         });
     }
+
+    function install(pluginId, callback) {
+        $.post('/manage/api/repository/install', { id: pluginId }, function(response) {
+            callback();
+        });
+    };
 
     $.getJSON('/manage/api/repository', function (plugins) {
         loadPlugins(plugins);

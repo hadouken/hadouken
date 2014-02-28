@@ -158,7 +158,6 @@
     <Compile Include="Plugins\PluginState.cs" />
     <Compile Include="Plugins\Repository\Models\Plugin.cs" />
     <Compile Include="Plugins\Repository\IPluginRepository.cs" />
-    <Compile Include="Plugins\Repository\Models\Release.cs" />
     <Compile Include="SemVer\EqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanRule.cs" />
@@ -182,6 +181,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -1,53 +1,45 @@
-using System;
 using System.IO;
-using Hadouken.Configuration;
+using System.Linq;
 using Hadouken.Http;
-using Newtonsoft.Json;
 
 namespace Hadouken.Plugins.Repository
 {
     public class PackageDownloader : IPackageDownloader
     {
-        public class PluginDto
-        {
-            public string Name { get; set; }
-
-            [JsonProperty("latest_release")]
-            public PluginLatestReleaseDto LatestRelease { get; set; }
-        }
-
-        public class PluginLatestReleaseDto
-        {
-            [JsonProperty("download_uri")]
-            public Uri DownloadUri { get; set; }
-        }
-
-        private readonly IConfiguration _configuration;
+        private readonly IPluginRepository _pluginRepository;
         private readonly IApiConnection _apiConnection;
+        private readonly IPackageReader _packageReader;
 
-        public PackageDownloader(IConfiguration configuration, IApiConnection apiConnection)
+        public PackageDownloader(IPluginRepository pluginRepository, IApiConnection apiConnection, IPackageReader packageReader)
         {
-            _configuration = configuration;
+            _pluginRepository = pluginRepository;
             _apiConnection = apiConnection;
+            _packageReader = packageReader;
         }
 
         public IPackage Download(string packageId)
         {
-            var pluginUri = new Uri(_configuration.Plugins.RepositoryUri, "plugins/" + packageId);
-            var dto = _apiConnection.GetAsync<PluginDto>(pluginUri).Result;
-
-            if (dto == null || dto.LatestRelease == null)
+            var plugin = _pluginRepository.GetById(packageId);
+            if (plugin == null)
+            {
                 return null;
+            }
 
-            var data = _apiConnection.DownloadData(dto.LatestRelease.DownloadUri);
+            var latestRelease = plugin.Releases.First();
+            if (latestRelease == null)
+            {
+                return null;
+            }
 
+            var data = _apiConnection.DownloadData(latestRelease.DownloadUri);
             if (data == null)
+            {
                 return null;
+            }
 
             using (var ms = new MemoryStream(data))
             {
-                IPackage package;
-                return !Package.TryParse(ms, out package) ? null : package;
+                return _packageReader.Read(ms);
             }
         }
     }
