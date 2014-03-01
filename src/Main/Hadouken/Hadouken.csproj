@@ -246,6 +246,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\semver.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\Images\loader.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

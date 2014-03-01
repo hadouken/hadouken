@@ -63,6 +63,8 @@
                                 <li><a href="/manage/tools/log"><i class="fa fa-book"></i> Log viewer</a></li>
                             </ul>
                         </li>
+
+                        <li><img src="/manage/Content/Images/loader.gif" id="ajaxloader" style="margin-top:13px;" /></li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
