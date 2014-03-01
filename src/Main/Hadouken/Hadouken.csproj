@@ -236,6 +236,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\ejs.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Rpc.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Shared.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

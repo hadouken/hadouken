@@ -47,7 +47,6 @@
                     <td>
                         <div class="pull-right">
                             <button type="button" class="btn btn-xs btn-primary btn-plugin-details pull-right">Details</button>
-                            <a href="/manage/plugins/settings/@Current.Name" class="btn btn-xs btn-warning pull-right">Configure</a>
                         </div>
                     </td>
                 </tr>

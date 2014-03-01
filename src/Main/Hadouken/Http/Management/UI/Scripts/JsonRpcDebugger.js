@@ -7,12 +7,11 @@
 
         var startTime = new Date().getTime();
 
-        $.post("/manage/jsonrpc", { pluginId: pluginId, json: json }, function (result) {
+        var data = JSON.parse(json);
+        rpc(pluginId, data.method, data.params, function(result) {
             var responseTime = new Date().getTime() - startTime;
             $('#responseTime').text(responseTime);
-
-            var jsonResult = JSON.parse(result);
-            $('#result').val(JSON.stringify(jsonResult, undefined, 2));
+            $('#result').val(JSON.stringify(result, undefined, 2));
         });
     });
 });

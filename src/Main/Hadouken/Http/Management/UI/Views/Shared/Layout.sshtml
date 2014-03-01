@@ -45,8 +45,16 @@
                             </ul>
                         </li>
 
-                        <li><a href="/manage/settings/"><i class="fa fa-pencil-square-o"></i> Settings</a></li>
-                        
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil-square-o"></i> Settings <b class="caret"></b></a>
+
+                            <ul class="dropdown-menu" id="settings-items-list">
+                                <li><a href="/manage/settings">Hadouken</a></li>
+                                <li class="divider"></li>
+                                <li role="presentation" class="dropdown-header">Plugins</li>
+                            </ul>
+                        </li>
+
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i> Tools <b class="caret"></b></a>
 
@@ -69,6 +77,8 @@
 
         <script type="text/javascript" src="/manage/Scripts/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="/manage/Scripts/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/manage/Scripts/Rpc.js"></script>
+        <script type="text/javascript" src="/manage/Scripts/Shared.js"></script>
         @Section['Scripts']
     </body>
 </html>

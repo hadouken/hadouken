@@ -18,20 +18,11 @@
         });
     });
 
-    var requestId = 0;
-
     function savePluginSettings(data) {
         var pluginId = '@Model.PluginId';
-        requestId += 1;
+        var method = pluginId + '.config.set';
 
-        var json = {
-            id: requestId,
-            jsonrpc: '2.0',
-            method: pluginId + '.config.set',
-            params: data
-        };
-
-        $.post("/manage/jsonrpc", { pluginId: pluginId, json: JSON.stringify(json) }, function (result) {
+        rpc(pluginId, method, data, function () {
             console.log('settings saved');
         });
     };
