@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using Hadouken.Configuration;
 using Hadouken.Http.Management.Models;
 using Hadouken.Plugins;
@@ -13,7 +14,7 @@ namespace Hadouken.Http.Management.Modules
             : base("plugins")
         {
             this.RequiresAuthentication();
-
+            
             Get["/"] = _ =>
             {
                 var type = Request.Query.t;
