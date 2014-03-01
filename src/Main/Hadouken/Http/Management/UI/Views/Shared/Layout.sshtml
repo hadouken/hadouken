@@ -60,6 +60,7 @@
 
                             <ul class="dropdown-menu">
                                 <li><a href="/manage/tools/jsonrpc-debugger"><i class="fa fa-bug"></i> JSON RPC debugger</a></li>
+                                <li><a href="/manage/tools/log"><i class="fa fa-book"></i> Log viewer</a></li>
                             </ul>
                         </li>
                     </ul>

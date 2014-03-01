@@ -184,6 +184,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Settings.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
