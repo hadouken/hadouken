@@ -63,6 +63,10 @@ namespace Hadouken.Service
 		    builder.RegisterType<MethodCacheBuilder>().As<IMethodCacheBuilder>();
 		    builder.RegisterType<ParameterResolver>().As<IParameterResolver>();
 		    builder.RegisterType<JsonSerializer>().As<IJsonSerializer>();
+		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
+		    builder.RegisterType<WcfClientTransport>()
+		        .As<IClientTransport>()
+		        .WithParameter("uriTemplate", "net.pipe://localhost/hadouken.plugins.{0}");
 
             // JSONRPC services
             builder.RegisterType<AuthService>().As<IJsonRpcService>();

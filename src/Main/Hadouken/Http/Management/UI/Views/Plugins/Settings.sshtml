@@ -1,0 +1,50 @@
+﻿@Master['Shared/Layout.sshtml']
+
+@Section['Scripts']
+<script type="text/javascript" src="/manage/Scripts/ejs.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.getJSON('/manage/plugins/settings/@Model.PluginId/get', function (data) {
+
+            var viewModel = {
+                data: data,
+                save: function (data) {
+                    savePluginSettings(data);
+                }
+            };
+
+            var html = new EJS({ url: '/manage/plugins/settings/@Model.PluginId/template' }).render({ viewModel: viewModel });
+            $('#settings-container').html(html);
+        });
+    });
+
+    var requestId = 0;
+
+    function savePluginSettings(data) {
+        var pluginId = '@Model.PluginId';
+        requestId += 1;
+
+        var json = {
+            id: requestId,
+            jsonrpc: '2.0',
+            method: pluginId + '.config.set',
+            params: data
+        };
+
+        $.post("/manage/jsonrpc", { pluginId: pluginId, json: JSON.stringify(json) }, function (result) {
+            console.log('settings saved');
+        });
+    };
+</script>
+@EndSection
+
+@Section['Content']
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Settings for '@Model.PluginId'</h1>
+    </div>
+</div>
+
+<div id="settings-container">
+</div>
+@EndSection

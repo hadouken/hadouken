@@ -90,6 +90,7 @@
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
     <Compile Include="Http\Management\Modules\Api\RepositoryModule.cs" />
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
+    <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\RepositoryModule.cs" />
@@ -182,6 +183,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Settings.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +232,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\Repository.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\ejs.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

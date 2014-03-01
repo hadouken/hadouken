@@ -7,7 +7,7 @@
 
         var startTime = new Date().getTime();
 
-        $.post("/manage/tools/jsonrpc-debugger", { pluginId: pluginId, json: json }, function (result) {
+        $.post("/manage/jsonrpc", { pluginId: pluginId, json: json }, function (result) {
             var responseTime = new Date().getTime() - startTime;
             $('#responseTime').text(responseTime);
 

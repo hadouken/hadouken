@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonRpc\ConfigService.cs" />
     <Compile Include="JsonRpc\MathService.cs" />
     <Compile Include="SamplePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,6 +54,9 @@
     <Content Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\template.ejs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

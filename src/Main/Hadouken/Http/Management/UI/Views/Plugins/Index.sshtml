@@ -44,8 +44,11 @@
                     <td>@Current.Name</td>
                     <td>@Current.StateMessage</td>
                     <td>@Current.Version</td>
-                    <td style="text-align: right;">
-                        <button type="button" class="btn btn-xs btn-info btn-plugin-details">Details</button>
+                    <td>
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-xs btn-primary btn-plugin-details pull-right">Details</button>
+                            <a href="/manage/plugins/settings/@Current.Name" class="btn btn-xs btn-warning pull-right">Configure</a>
+                        </div>
                     </td>
                 </tr>
                 @EndEach

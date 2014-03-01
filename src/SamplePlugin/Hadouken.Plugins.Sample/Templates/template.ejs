@@ -1,0 +1,13 @@
+﻿<button type="button" class="btn btn-primary" onclick="save();">Save stuffs</button>
+
+<input type="text" id="foo" />
+
+<%= viewModel.data[0] %>
+
+<%
+var save = function () {
+    viewModel.save([1, 4, 2, 5]);
+}
+
+window.save = save;
+%>
