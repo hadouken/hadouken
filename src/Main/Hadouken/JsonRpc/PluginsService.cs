@@ -18,5 +18,17 @@ namespace Hadouken.JsonRpc
         {
             return _pluginEngine.GetAll().Select(p => p.Manifest.Name).ToArray();
         }
+
+        [JsonRpcMethod("core.plugins.getVersion")]
+        public string GetVersion(string pluginId)
+        {
+            var plugin = _pluginEngine.Get(pluginId);
+            if (plugin == null)
+            {
+                return null;
+            }
+
+            return plugin.Manifest.Version.ToString();
+        }
     }
 }

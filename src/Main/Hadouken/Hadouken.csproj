@@ -242,6 +242,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\Shared.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\semver.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

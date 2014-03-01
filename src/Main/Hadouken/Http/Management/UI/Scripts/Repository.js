@@ -15,6 +15,8 @@
                     return;
                 }
 
+                latestVersion = plugin.latestRelease.version;
+
                 row.append($('<td></td>').text(latestVersion));
 
                 var installButton = $('<button type="button" class="btn btn-primary btn-xs pull-right">Install</button>');
@@ -22,15 +24,30 @@
                     prepareInstall(plugin.id);
                 });
 
+                var updateButton = $('<button type="button" class="btn btn-warning btn-xs pull-right">Update</button>');
+                updateButton.on('click', function () {
+                    $(this).attr('disabled', true);
+
+                    install(plugin.id, function() {
+                        location.reload();
+                    });
+                });
+
                 var alreadyInstalled = $('<span class="pull-right"><em>(installed)</em></span>');
 
-                if (installedPlugins.indexOf(plugin.id) != -1) {
-                    row.append($('<td></td>').append(alreadyInstalled));
-                } else {
-                    row.append($('<td></td>').append(installButton));
-                }
+                rpc('core', 'core.plugins.getVersion', plugin.id, function(version) {
+                    if (installedPlugins.indexOf(plugin.id) != -1) {
+                        if (semver.gt(latestVersion, version.result)) {
+                            row.append($('<td></td>').append(updateButton)).addClass('warning');
+                        } else {
+                            row.append($('<td></td>').append(alreadyInstalled));
+                        }
+                    } else {
+                        row.append($('<td></td>').append(installButton));
+                    }
 
-                $('#plugins-list').append(row);
+                    $('#plugins-list').append(row);
+                });
 
             })(plugins[i]);
         }
