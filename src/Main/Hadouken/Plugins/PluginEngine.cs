@@ -116,6 +116,22 @@ namespace Hadouken.Plugins
             return true;
         }
 
+        public bool CanUnload(string name, out string[] dependencies)
+        {
+            var deps = _plugins.GetUnloadOrder(name);
+
+            dependencies = null;
+            var existingDeps = deps.Where(dependency => Get(dependency) != null && dependency != name).ToArray();
+
+            if (existingDeps.Any())
+            {
+                dependencies = existingDeps;
+                return false;
+            }
+
+            return true;
+        }
+
         public void Unload(string name)
         {
             var manager = Get(name);
@@ -178,7 +194,7 @@ namespace Hadouken.Plugins
         private bool Uninstall(IPluginManager manager)
         {
             // Check dependencies
-            var dependencies = _plugins.GetLoadOrder(manager.Manifest.Name);
+            var dependencies = _plugins.GetUnloadOrder(manager.Manifest.Name);
             if (dependencies.Any(d => d != manager.Manifest.Name))
             {
                 Logger.Error("Cannot uninstall plugin {0}. Plugins {1} still depend on it.", manager.Manifest.Name,

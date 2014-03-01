@@ -44,6 +44,8 @@ namespace Hadouken.Plugins
         /// <returns>True if the <see cref="IPluginManager"/> can load. Otherwise false.</returns>
         bool CanLoad(string name, out string[] missingDependencies);
 
+        bool CanUnload(string name, out string[] dependencies);
+
         /// <summary>
         /// Unloads the specific plugin.
         /// </summary>

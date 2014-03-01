@@ -2,6 +2,7 @@
 using Hadouken.Plugins;
 using Hadouken.Plugins.Repository;
 using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules.Api
 {
@@ -10,6 +11,8 @@ namespace Hadouken.Http.Management.Modules.Api
         public RepositoryModule(IPluginRepository pluginRepository, IPackageDownloader packageDownloader, IPluginEngine pluginEngine)
             : base("api/repository")
         {
+            this.RequiresAuthentication();
+
             Get["/"] = _ => Negotiate.WithModel(pluginRepository.GetAll());
 
             Get["/{id}"] = _ =>

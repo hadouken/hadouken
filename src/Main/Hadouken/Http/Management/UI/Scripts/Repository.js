@@ -11,8 +11,8 @@
 
                 var latestVersion = '';
 
-                if (typeof plugin.latestRelease !== 'undefined') {
-                    latestVersion = plugin.latestRelease.version;
+                if (typeof plugin.latestRelease === 'undefined' || plugin.latestRelease === null) {
+                    return;
                 }
 
                 row.append($('<td></td>').text(latestVersion));
@@ -48,9 +48,12 @@
 
                     content.find('.plugin-name').text(plugin.id);
 
-                    content.find('#btn-confirm-install').on('click', function() {
+                    content.find('#btn-confirm-install').on('click', function () {
+                        content.find('#btn-confirm-install').attr('disabled', true);
+
                         install(plugin.id, function() {
                             content.modal('hide');
+                            location.reload();
                         });
                     });
                 });

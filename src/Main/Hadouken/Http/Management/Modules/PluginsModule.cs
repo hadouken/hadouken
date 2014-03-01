@@ -72,7 +72,10 @@ namespace Hadouken.Http.Management.Modules
                     return 404;
                 }
 
-                return View["Uninstall", new {CanUninstall = true, PluginId = _.id}];
+                string[] deps;
+                var canUninstall = pluginEngine.CanUnload(_.id, out deps);
+
+                return View["Uninstall", new {CanUninstall = canUninstall, Dependencies = deps, PluginId = _.id}];
             };
 
             Post["/uninstall"] = _ =>
