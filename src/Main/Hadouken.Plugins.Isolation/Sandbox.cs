@@ -35,6 +35,11 @@ namespace Hadouken.Plugins.Isolation
             return (Sandbox)Activator.CreateInstanceFrom(domain, typeof(Sandbox).Assembly.ManifestModule.FullyQualifiedName, typeof(Sandbox).FullName).Unwrap();
         }
 
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
         public void Load(PluginConfiguration configuration)
         {
             var retriever = new AssemblyNameRetriever();
