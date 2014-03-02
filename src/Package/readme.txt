@@ -28,7 +28,7 @@ looks like this,
   "manifest_version": 1,
 
   "id": "<id of your plugin>",
-  "version": "<semver>",
+  "version": "<semver>"
 }
 
 What we are doing here is just making the `config` plugin a dependency, as

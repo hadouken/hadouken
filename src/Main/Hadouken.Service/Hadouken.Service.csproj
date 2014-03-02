@@ -44,6 +44,9 @@
     <Reference Include="Autofac.Integration.Wcf">
       <HintPath>..\..\..\packages\Autofac.Wcf.3.0.0\lib\net40\Autofac.Integration.Wcf.dll</HintPath>
     </Reference>
+    <Reference Include="Hadouken.Fx">
+      <HintPath>..\..\..\packages\Hadouken.Fx.1.0.14\lib\net45\Hadouken.Fx.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
@@ -80,10 +83,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Framework\Hadouken.Fx\Hadouken.Fx.csproj">
-      <Project>{F6BFDDB3-C3F0-4009-8685-136C0700672C}</Project>
-      <Name>Hadouken.Fx</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{1FE7DB08-4B4F-4A13-8453-2703984E32D5}</Project>
       <Name>Hadouken</Name>

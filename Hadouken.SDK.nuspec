@@ -9,6 +9,10 @@
     <copyright>Copyright 2014</copyright>
     <tags>Hadouken Hdkn SDK</tags>
     <description>The Hadouken SDK is used when developing plugins for the Hadouken BitTorrent client.</description>
+
+    <dependencies>
+      <dependency id="Hadouken.Fx" version="1.0" />
+    </dependencies>
   </metadata>
   <files>
     <!-- Portable Hadouken -->
@@ -27,8 +31,8 @@
     <file src="build/binaries/Newtonsoft.Json.dll" target="tools/hdkn" />
     <file src="build/binaries/NLog.dll" target="tools/hdkn" />
 
-    <!-- Framework -->
-    <file src="src/Framework/Hadouken.Fx/bin/Release/Hadouken.Fx.dll" target="lib/net45" />
+    <!-- Dummy file to get around NuGet insanity -->
+    <file src="src/Package/DUMMY.txt" target="lib/net45" />
 
     <!-- Readme -->
     <file src="src/Package/readme.txt" target="" />

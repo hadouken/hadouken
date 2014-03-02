@@ -36,6 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Hadouken.Fx">
+      <HintPath>..\..\..\packages\Hadouken.Fx.1.0.14\lib\net45\Hadouken.Fx.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
@@ -216,10 +219,6 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.svg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Framework\Hadouken.Fx\Hadouken.Fx.csproj">
-      <Project>{F6BFDDB3-C3F0-4009-8685-136C0700672C}</Project>
-      <Name>Hadouken.Fx</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Hadouken.Plugins.Isolation\Hadouken.Plugins.Isolation.csproj">
       <Project>{A0534175-961D-4702-9E75-B8A67B3E0710}</Project>
       <Name>Hadouken.Plugins.Isolation</Name>
