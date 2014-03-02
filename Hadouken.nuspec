@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Hadouken.SDK</id>
+    <version>0.0.0</version>
+    <title>Hadouken SDK</title>
+    <authors>Viktor Elofsson</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright 2014</copyright>
+    <tags>Hadouken Hdkn SDK</tags>
+    <description>The Hadouken SDK is used when developing plugins for the Hadouken BitTorrent client.</description>
+  </metadata>
+  <files>
+    <!-- Portable Hadouken -->
+    <file src="build/binaries/Autofac.dll" target="tools/hdkn" />
+    <file src="build/binaries/Autofac.Integration.Wcf.dll" target="tools/hdkn" />
+    <file src="build/binaries/Hadouken.dll" target="tools/hdkn" />
+    <file src="build/binaries/Hadouken.Fx.dll" target="tools/hdkn" />
+    <file src="build/binaries/Hadouken.Plugins.Isolation.dll" target="tools/hdkn" />
+    <file src="build/binaries/Hadouken.Service.exe" target="tools/hdkn" />
+    <file src="build/binaries/Hadouken.Service.exe.config" target="tools/hdkn" />
+    <file src="build/binaries/Ionic.Zip.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.Hosting.Self.dll" target="tools/hdkn" />
+    <file src="build/binaries/Newtonsoft.Json.dll" target="tools/hdkn" />
+    <file src="build/binaries/NLog.dll" target="tools/hdkn" />
+
+    <!-- Framework -->
+    <file src="src/Framework/Hadouken.Fx/bin/Release/Hadouken.Fx.dll" target="lib/net45" />
+
+    <!-- Readme -->
+    <file src="src/Package/readme.txt" target="" />
+  </files>
+</package>

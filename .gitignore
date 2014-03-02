@@ -1,5 +1,6 @@
-# Ignore /lib folder
-lib/
+# Ignore CommonAssemblyInfo.cs
+src/CommonAssemblyInfo.cs
+
 _ReSharper.Hadouken/
 
 # Build output
@@ -7,7 +8,6 @@ build/
 
 src/**/**/bin
 src/**/**/obj
-src/Shared/CommonAssemblyInfo.cs
 
 # User-specific files
 *.suo
@@ -24,3 +24,7 @@ src/Shared/CommonAssemblyInfo.cs
 
 #Config
 config/config.yml
+packages/
+src/**/**/**/obj
+src/**/**/**/bin
+docs/_build

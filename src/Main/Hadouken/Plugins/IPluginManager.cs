@@ -1,15 +1,22 @@
-﻿using System;
+﻿using Hadouken.Fx.IO;
+using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins
 {
     public interface IPluginManager
     {
-        string Name { get; }
-        Version Version { get; }
+        IDirectory BaseDirectory { get; }
+
+        IManifest Manifest { get; }
+
+        PluginState State { get; }
+
+        string ErrorMessage { get; }
+
+        long GetMemoryUsage();
 
         void Load();
-        void Unload();
 
-        byte[] GetResource(string name);
+        void Unload();
     }
 }

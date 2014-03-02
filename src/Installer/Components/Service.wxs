@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<?if $(var.Platform) = x64?>
-    <?define IsWin64     = "yes"?>
-<?else?>
-    <?define IsWin64     = "no"?>
-<?endif?>
-
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-	   xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+           xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
   <Fragment>
     <ComponentGroup Id="ServiceComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
-      <Component Id="HadoukenService" Guid="{AFDC9F44-F9F3-4DBC-BBE0-8A49E272F9CE}" Win64="$(var.IsWin64)">
-        <File Id="HadoukenServiceExecutable" Name="Hadouken.Hosts.WindowsService.exe" />
+      <Component Id="HadoukenService">
+        <File Id="HadoukenServiceExecutable" Name="Hadouken.Service.exe" />
 
         <ServiceInstall Id="ServiceInstaller"
                     Type="ownProcess"

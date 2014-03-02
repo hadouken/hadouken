@@ -1,7 +1,0 @@
----
-sftp:
-    host: <server where files are hosted>
-    user: <user to access host>
-    keys: <array of paths to private keys>
-    path: <path on server where to base file uploads>
-  

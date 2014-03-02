@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<?if $(var.Platform) = x64?>
-    <?define IsWin64     = "yes"?>
-<?else?>
-    <?define IsWin64     = "no"?>
-<?endif?>
-
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
   <Fragment>
-    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
-      <Component Win64="$(var.IsWin64)">
-        <File Id="HdknWinSrvCfg" Name="Hadouken.Hosts.WindowsService.exe.config" />
+    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.ConfigDir)/">
+      <Component>
+        <File Id="HdknWinSrvCfg" Name="Hadouken.Service.exe.config" />
+        <util:XmlFile Id="ModifyWebUIPort"
+                      File="[#HdknWinSrvCfg]"              
+                      Action="setValue"
+                      ElementPath="//configuration/hdkn/http/@port"
+                      Value="[HDKN_WEBUI_PORT]" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
+      <Component>
         <RegistryKey Root="HKLM" Key="Software\Hadouken">
           <RegistryValue Type="string" Name="InstallDir" Value="[INSTALLDIR]"/>
-        </RegistryKey>
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <RegistryKey Root="HKLM" Key="Software\Hadouken">
-          <RegistryValue Type="string" Name="webui.port" Value="[HDKN_WEBUI_PORT]"/>
         </RegistryKey>
       </Component>
     </ComponentGroup>

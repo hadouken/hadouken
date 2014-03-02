@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</ProjectGuid>
+    <ProjectGuid>{1FE7DB08-4B4F-4A13-8453-2703984E32D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Hadouken</RootNamespace>
@@ -14,45 +13,61 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\Hadouken.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\Hadouken.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\..\..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Authentication.Forms">
+      <HintPath>..\..\..\packages\Nancy.Authentication.Forms.0.22.2\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Bootstrappers.Autofac">
+      <HintPath>..\..\..\packages\Nancy.Bootstrappers.Autofac.0.22.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\..\..\packages\Nancy.Hosting.Self.0.22.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,87 +75,181 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitTorrent\EncryptionTypes.cs" />
-    <Compile Include="BitTorrent\IBitField.cs" />
-    <Compile Include="BitTorrent\IBitTorrentEngine.cs" />
-    <Compile Include="BitTorrent\IPeer.cs" />
-    <Compile Include="BitTorrent\ITorrent.cs" />
-    <Compile Include="BitTorrent\ITorrentFile.cs" />
-    <Compile Include="BitTorrent\ITorrentManager.cs" />
-    <Compile Include="BitTorrent\ITorrentSettings.cs" />
-    <Compile Include="BitTorrent\ITracker.cs" />
-    <Compile Include="BitTorrent\Priority.cs" />
-    <Compile Include="BitTorrent\TorrentState.cs" />
-    <Compile Include="BitTorrent\TrackerState.cs" />
-    <Compile Include="ComponentAttribute.cs" />
-    <Compile Include="ComponentLifestyle.cs" />
-    <Compile Include="Configuration\AppSettingsManager.cs" />
-    <Compile Include="Configuration\HdknConfig.cs" />
-    <Compile Include="Configuration\IConfigManager.cs" />
-    <Compile Include="Configuration\IKeyValueStore.cs" />
-    <Compile Include="Configuration\IRegistryReader.cs" />
-    <Compile Include="Configuration\Options.cs" />
-    <Compile Include="Configuration\Permissions.cs" />
-    <Compile Include="Data\IDataRepository.cs" />
-    <Compile Include="Data\IMigrationRunner.cs" />
-    <Compile Include="Data\Model.cs" />
-    <Compile Include="Data\Models\Setting.cs" />
-    <Compile Include="Data\Models\TorrentInfo.cs" />
-    <Compile Include="Data\TableAttribute.cs" />
-    <Compile Include="DI\IDependencyResolver.cs" />
-    <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Extensions\HttpListenerResponseExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Hosting\IHost.cs" />
-    <Compile Include="Http\ApiActionAttribute.cs" />
-    <Compile Include="Http\Api\AddFile.cs" />
-    <Compile Include="Http\Api\AddUrl.cs" />
-    <Compile Include="Http\Api\GetPeers.cs" />
-    <Compile Include="Http\Api\GetPluginFile.cs" />
-    <Compile Include="Http\Api\GetPlugins.cs" />
-    <Compile Include="Http\Api\GetProperties.cs" />
-    <Compile Include="Http\Api\GetSettings.cs" />
-    <Compile Include="Http\Api\GetSystemInfo.cs" />
-    <Compile Include="Http\Api\GetTorrentFiles.cs" />
-    <Compile Include="Http\Api\GetTorrents.cs" />
-    <Compile Include="Http\Api\ListDirectories.cs" />
-    <Compile Include="Http\Api\PauseTorrent.cs" />
-    <Compile Include="Http\Api\RemoveTorrent.cs" />
-    <Compile Include="Http\Api\SetProperties.cs" />
-    <Compile Include="Http\Api\SetSetting.cs" />
-    <Compile Include="Http\Api\StartTorrent.cs" />
-    <Compile Include="Http\Api\StopTorrent.cs" />
-    <Compile Include="Http\ContentResult.cs" />
-    <Compile Include="Http\ActionResult.cs" />
-    <Compile Include="Http\ApiAction.cs" />
-    <Compile Include="Http\IApiAction.cs" />
-    <Compile Include="Http\IHttpPostedFile.cs" />
-    <Compile Include="Http\IHttpContext.cs" />
-    <Compile Include="Http\IHttpRequest.cs" />
-    <Compile Include="Http\IHttpResponse.cs" />
-    <Compile Include="Http\IHttpServer.cs" />
-    <Compile Include="Http\JsonResult.cs" />
-    <Compile Include="Http\RedirectResult.cs" />
-    <Compile Include="IO\IFileSystem.cs" />
-    <Compile Include="Kernel.cs" />
-    <Compile Include="Messaging\IMessage.cs" />
-    <Compile Include="Messaging\IMessageBus.cs" />
-    <Compile Include="Plugins\IPlugin.cs" />
-    <Compile Include="Plugins\IPluginEngine.cs" />
-    <Compile Include="Plugins\IPluginLoader.cs" />
-    <Compile Include="Plugins\IPluginManager.cs" />
-    <Compile Include="Plugins\PluginAttribute.cs" />
-    <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Reflection\BuildCommitAttribute.cs" />
-    <Compile Include="Reflection\BuildDateAttribute.cs" />
-    <Compile Include="Reflection\ReflectionExtensions.cs" />
-    <Compile Include="Security\Hash.cs" />
+    <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
+    <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
+    <Compile Include="Http\Management\HadoukenUserMapper.cs" />
+    <Compile Include="Http\Management\IManagementServer.cs" />
+    <Compile Include="Http\Management\ManagementModule.cs" />
+    <Compile Include="Http\Management\ManagementServer.cs" />
+    <Compile Include="Http\Management\Models\SettingsItem.cs" />
+    <Compile Include="Http\Management\Models\LoginParameters.cs" />
+    <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
+    <Compile Include="Http\Management\Models\PluginListItem.cs" />
+    <Compile Include="Http\Management\Modules\Api\RepositoryModule.cs" />
+    <Compile Include="Http\Management\Modules\HomeModule.cs" />
+    <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />
+    <Compile Include="Http\Management\Modules\LoginModule.cs" />
+    <Compile Include="Http\Management\Modules\PluginsModule.cs" />
+    <Compile Include="Http\Management\Modules\RepositoryModule.cs" />
+    <Compile Include="Http\Management\Modules\SettingsModule.cs" />
+    <Compile Include="Http\Management\Modules\ToolsModule.cs" />
+    <Compile Include="JsonRpc\AuthService.cs" />
+    <Compile Include="JsonRpc\PluginsService.cs" />
+    <Compile Include="Plugins\InstallPackageException.cs" />
+    <Compile Include="Plugins\IPackageInstaller.cs" />
+    <Compile Include="Plugins\IPluginScanner.cs" />
+    <Compile Include="Plugins\IPluginManagerFactory.cs" />
+    <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
+    <Compile Include="Plugins\PackageInstaller.cs" />
+    <Compile Include="Plugins\PluginManagerFactory.cs" />
+    <Compile Include="Plugins\PluginManagerGraph.cs" />
+    <Compile Include="Plugins\Repository\Models\PluginListItem.cs" />
+    <Compile Include="Plugins\Repository\Models\ReleaseItem.cs" />
+    <Compile Include="Plugins\Repository\PluginRepository.cs" />
+    <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />
+    <Compile Include="Plugins\Scanners\DirectoryPluginScanner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
+    <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\HttpAuthConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\HttpAuthConfigurationWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\HttpConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\HttpConfigurationWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\PluginConfigurationCollectionWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\PluginElementWrapper.cs" />
+    <Compile Include="Configuration\AppConfig\RpcConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\RpcConfigurationWrapper.cs" />
+    <Compile Include="Configuration\IConfiguration.cs" />
+    <Compile Include="Configuration\IHttpAuthConfiguration.cs" />
+    <Compile Include="Configuration\IHttpConfiguration.cs" />
+    <Compile Include="Configuration\IPluginConfiguration.cs" />
+    <Compile Include="Configuration\IRpcConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig\PluginElement.cs" />
+    <Compile Include="Configuration\AppConfig\PluginsCollection.cs" />
+    <Compile Include="Http\ApiConnection.cs" />
+    <Compile Include="Http\IApiConnection.cs" />
+    <Compile Include="Plugins\DependencyNotFoundException.cs" />
+    <Compile Include="Collections\DirectedGraph.cs" />
+    <Compile Include="Collections\DirectedGraphEdge.cs" />
+    <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
+    <Compile Include="Plugins\IPackage.cs" />
+    <Compile Include="Plugins\Repository\IPackageDownloader.cs" />
+    <Compile Include="Plugins\IPackageReader.cs" />
+    <Compile Include="Plugins\IPluginEngine.cs" />
+    <Compile Include="Plugins\IPluginManager.cs" />
+    <Compile Include="Plugins\Isolation\AppDomainIsolatedEnvironment.cs" />
+    <Compile Include="Plugins\Isolation\IIsolatedEnvironment.cs" />
+    <Compile Include="Plugins\Isolation\IIsolatedEnvironmentFactory.cs" />
+    <Compile Include="Plugins\Isolation\IsolatedEnvironmentFactory.cs" />
+    <Compile Include="Plugins\Metadata\Dependency.cs" />
+    <Compile Include="Plugins\Metadata\IManifest.cs" />
+    <Compile Include="Plugins\Metadata\IManifestReader.cs" />
+    <Compile Include="Plugins\Metadata\Manifest.cs" />
+    <Compile Include="Plugins\Metadata\ManifestV1Reader.cs" />
+    <Compile Include="Plugins\Package.cs" />
+    <Compile Include="Plugins\Repository\PackageDownloader.cs" />
+    <Compile Include="Plugins\PackageReader.cs" />
+    <Compile Include="Plugins\PluginEngine.cs" />
+    <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\Metadata\ManifestNotFoundException.cs" />
+    <Compile Include="Plugins\Metadata\ManifestParseException.cs" />
+    <Compile Include="Plugins\PluginState.cs" />
+    <Compile Include="Plugins\Repository\Models\Plugin.cs" />
+    <Compile Include="Plugins\Repository\IPluginRepository.cs" />
+    <Compile Include="SemVer\EqualsRule.cs" />
+    <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
+    <Compile Include="SemVer\GreaterThanRule.cs" />
+    <Compile Include="SemVer\LessThanOrEqualsRule.cs" />
+    <Compile Include="SemVer\LessThanRule.cs" />
+    <Compile Include="SemVer\Rule.cs" />
+    <Compile Include="SemVer\SemanticVersion.cs" />
+    <Compile Include="SemVer\SemanticVersionRange.cs" />
+    <Compile Include="Service\HadoukenService.cs" />
+    <Compile Include="Service\IHadoukenService.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.eot" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Settings.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.sshtml" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\Site.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap-theme.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\bootstrap.min.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery-1.11.0.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\SignIn.css" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Plugins.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\font-awesome.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Hadouken.Fx\Hadouken.Fx.csproj">
+      <Project>{F6BFDDB3-C3F0-4009-8685-136C0700672C}</Project>
+      <Name>Hadouken.Fx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Plugins.Isolation\Hadouken.Plugins.Isolation.csproj">
+      <Project>{A0534175-961D-4702-9E75-B8A67B3E0710}</Project>
+      <Name>Hadouken.Plugins.Isolation</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\JsonRpcDebugger.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\Images\256.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Repository.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\ejs.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Rpc.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Shared.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\semver.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\Images\loader.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\tools\nuget-1.8.40002\nuget.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

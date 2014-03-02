@@ -1,14 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-
-<?if $(var.Platform) = x64?>
-    <?define UpgradeCode = "20ECE40F-2E63-4A9A-A5EB-341154EFB798"?>
-    <?define InstallDir  = "ProgramFiles64Folder"?>
-    <?define IsWin64     = "yes"?>
-<?else?>
-    <?define UpgradeCode = "52A66249-5BE7-4F0B-BE83-7C7B7AED65D1"?>
-    <?define InstallDir  = "ProgramFilesFolder"?>
-    <?define IsWin64     = "no"?>
-<?endif?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
@@ -16,24 +6,23 @@
   <Product
     Id="*"
     Name="Hadouken"
-    Manufacturer="Viktor Elofsson - vktr.se"
+    Manufacturer="Viktor Elofsson - viktorelofsson.se"
     Version="$(var.BuildVersion)"
-    UpgradeCode="$(var.UpgradeCode)"
+    UpgradeCode="248297a1-a2f4-4d0e-94f5-0d363e0b8e5f"
     Language="1033"
     Codepage="1252">
 
     <Package Id="*"
-             Description="Hadouken $(var.BuildVersion) ($(var.Platform)) Installer"
+             Description="Hadouken $(var.BuildVersion) Installer"
              InstallerVersion="300"
              Languages="1033"
              Compressed="yes"
              SummaryCodepage="1252"
-             Platform="$(var.Platform)"
              InstallScope="perMachine" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
-    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Installer does not support downgrading." Schedule="afterInstallInitialize" />
 
     <!-- Check for .NET4Full -->
     <PropertyRef Id="NETFRAMEWORK45"/>
@@ -43,16 +32,21 @@
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="$(var.InstallDir)" Name="PFiles">
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="INSTALLDIR" Name="Hadouken" />
+      </Directory>
+
+      <Directory Id="CommonAppDataFolder" Name="ProgramDataFolder">
+        <Directory Id="HdknData" Name="Hadouken">
+          <Directory Id="PLUGINDIR" Name="Plugins" />
+        </Directory>
       </Directory>
     </Directory>
 
-    <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="The full monty. The works." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
+    <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="Fully equipped." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="LibComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
-      <ComponentGroupRef Id="FirewallComponents" />
       <ComponentGroupRef Id="ConfigComponents" />
     </Feature>
     
@@ -60,26 +54,42 @@
       <UIRef Id="WixUI_InstallDir" />
       <UIRef Id="WixUI_ErrorProgressText" />
 
-      <DialogRef Id="ConfigDlg" />
-      <DialogRef Id="ConfigInvalidDlg" />
+      <DialogRef Id="ConfigureDlg" />
+      <DialogRef Id="ConfigureInvalidDlg" />
 
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ConfigDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ConfigDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ConfigureDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ConfigureDlg" Order="1">NOT Installed</Publish>
     </UI>
     
     <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="src/Media/HdknSetupDialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="src/Media/License.rtf" />
 
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" Win64="$(var.IsWin64)" />
-    </Property>
-    
-    <!-- Search for webui.port in registry -->
-    <Property Id="HDKN_WEBUI_PORT" Value="8080">
-      <RegistrySearch Id="SearchWebUIPortRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="webui.port" Win64="$(var.IsWin64)" />
+      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- Set port default value -->
+    <Property Id="HDKN_WEBUI_PORT" Value="7890" />
+
+    <!-- Search for HTTP port in config file -->
+    <CustomAction Id="Xml_SetFileName" Property="XML_FILENAME" Value="[INSTALLDIR]\Hadouken.Service.exe.config" Execute="immediate" />
+    <CustomAction Id="Xml_SelectNodeValue_XPath" Property="XML_XPATH" Value="/configuration/hdkn/http" Execute="immediate" />
+    <CustomAction Id="Xml_SelectAttribute_Value" Property="XML_ATTRIBUTENAME" Value="port" Execute="immediate" />
+    <CustomAction Id="Xml_SelectNodeAttribute" BinaryKey="XmlTools" DllEntry="Xml_SelectNodeAttributeValue" Execute="immediate" Return="check" />
+    <CustomAction Id="Xml_GetAttributeValue" Property="HDKN_WEBUI_PORT" Value="[XML_ATTRIBUTEVALUE]" Execute="immediate" />
+
+    <Binary Id="XmlTools" SourceFile="tools/msiext-1.4/XmlTools.dll" />
+
+    <InstallUISequence>
+      <Custom Action="Xml_SetFileName" After="CostInitialize"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_SelectNodeValue_XPath" After="Xml_SetFileName"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_SelectAttribute_Value" After="Xml_SelectNodeValue_XPath"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_SelectNodeAttribute" After="Xml_SelectAttribute_Value"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+      <Custom Action="Xml_GetAttributeValue" After="Xml_SelectNodeAttribute"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
+    </InstallUISequence>
   </Product>
 </Wix>

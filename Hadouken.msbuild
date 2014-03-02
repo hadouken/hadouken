@@ -1,0 +1,116 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
+  <PropertyGroup>
+    <WixPath>packages/WiX.Toolset.3.8.1128.0/tools/wix</WixPath>
+    <Version>$([System.IO.File]::ReadAllText("VERSION"))</Version>
+    <Tag Condition="$(Tag) == ''"></Tag>
+    <Configuration>Release</Configuration>
+    <OutputDirectory>build/</OutputDirectory>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Candle" AssemblyFile="$(WixPath)/WixTasks.dll" />
+  <UsingTask TaskName="Light" AssemblyFile="$(WixPath)/WixTasks.dll" />
+  <UsingTask TaskName="Zip" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
+  <UsingTask TaskName="AssemblyInfo" AssemblyFile="tools/msbuild/MSBuild.Community.Tasks.dll" />
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(OutputDirectory)" />
+    <MakeDir Directories="$(OutputDirectory)" />
+  </Target>
+  
+  <Target Name="Prepare" DependsOnTargets="Clean">
+    <Message Text="##teamcity[buildNumber '$(Version)$(Tag)']" />
+    <Message Text="##teamcity[message 'Installing solution-wide Nuget packages.']" />
+
+    <Exec Command="tools\nuget.exe restore Hadouken.sln -OutputDirectory packages" />
+    <Exec Command="tools\nuget.exe install packages.config -OutputDirectory packages" />
+
+    <AssemblyInfo CodeLanguage="CS"  
+            OutputFile="src/CommonAssemblyInfo.cs" 
+            AssemblyVersion="$(Version)" 
+            AssemblyFileVersion="$(Version)$(Tag)" />
+  </Target>
+  
+  <Target Name="Compile" DependsOnTargets="Prepare">
+    <MSBuild
+      Projects="Hadouken.sln"
+      Properties="Configuration=$(Configuration)"
+      Targets="Rebuild" />
+  </Target>
+
+  <Target Name="Test" DependsOnTargets="Compile">
+    <Message Text="##teamcity[message 'Running unit tests.']" />
+    <Exec Command="packages\NUnit.Runners.2.6.3\tools\nunit-console-x86.exe /result=$(OutputDirectory)/TestResult.xml /framework=net-4.5 /nologo /nodots src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll src\Framework\Hadouken.Fx.Tests\bin\$(Configuration)\Hadouken.Fx.Tests.dll" />
+    <Message Text="##teamcity[importData type='nunit' path='build/TestResult.xml']" />
+  </Target>
+
+  <Target Name="Output" DependsOnTargets="Compile">
+    <PropertyGroup>
+      <SourceDirectory>src/Main/Hadouken.Service/bin/$(Configuration)</SourceDirectory>
+      <TargetDirectory>$(OutputDirectory)/binaries</TargetDirectory>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ConsoleConfig Include="src/Configuration/Console/Hadouken.Service.exe.config" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(TargetDirectory)" />
+    <Exec Command="xcopy.exe &quot;$(SourceDirectory)&quot; &quot;$(TargetDirectory)&quot; /e" />
+
+    <!-- Copy the correct configuration file -->
+    <Copy SourceFiles="@(ConsoleConfig)" DestinationFolder="$(TargetDirectory)" />
+  </Target>
+
+  <Target Name="Zip" DependsOnTargets="Compile">
+    <ItemGroup>
+      <HadoukenFiles Include="src\Main\Hadouken.Service\bin\$(Configuration)\**\*.*" />
+    </ItemGroup>
+    
+    <Message Text="##teamcity[message 'Packaging zip files.']" />
+
+    <Zip Files="@(HadoukenFiles)" ZipFileName="$(OutputDirectory)/hdkn-$(Version)$(Tag).zip" WorkingDirectory="src\Main\Hadouken.Service\bin\$(Configuration)\" />
+  </Target>
+
+  <Target Name="MSI" DependsOnTargets="Compile">
+    <ItemGroup>
+      <CandleSources Include="src\Installer\**\*.wxs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <CandleDefines Include="BinDir=$(OutputDirectory)\binaries" />
+      <CandleDefines Include="BuildVersion=$(Version)" />
+      <CandleDefines Include="ConfigDir=src\Configuration\Service" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <CandleExtensions Include="WixUtilExtension" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <LightExtensions Include="WixUIExtension" />
+      <LightExtensions Include="WixUtilExtension" />
+      <LightExtensions Include="WixNetFxExtension" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <LightSources Include="$(OutputDirectory)\wixobj\Config.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Core.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Hadouken.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Lib.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\Service.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\ConfigureDlg.wixobj" />
+      <LightSources Include="$(OutputDirectory)\wixobj\ConfigureInvalidDlg.wixobj" />
+    </ItemGroup>
+    
+    <Candle DefineConstants="@(CandleDefines)" Extensions="@(CandleExtensions)" OutputFile="$(OutputDirectory)\wixobj\" SourceFiles="@(CandleSources)" ToolPath="$(WixPath)" />
+    
+    <Light Extensions="@(LightExtensions)" ObjectFiles="@(LightSources)" OutputFile="$(OutputDirectory)\hdkn-$(Version)$(Tag).msi" SuppressIces="ICE61" ToolPath="$(WixPath)" />
+  </Target>
+
+  <Target Name="Nuget" DependsOnTargets="Output">
+    <Exec Command="tools\nuget.exe pack Hadouken.nuspec -Version $(Version)$(Tag) -NoPackageAnalysis -OutputDirectory $(OutputDirectory)" />
+  </Target>
+
+  <Target Name="All">
+    <CallTarget Targets="Clean; Prepare; Compile; Test; Output; Zip; MSI; Nuget" />
+  </Target>
+</Project>

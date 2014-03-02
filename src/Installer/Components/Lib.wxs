@@ -1,72 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<?if $(var.Platform) = x64?>
-    <?define IsWin64     = "yes"?>
-<?else?>
-    <?define IsWin64     = "no"?>
-<?endif?>
-
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
-	 xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension">
-
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Fragment>
     <ComponentGroup Id="LibComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Castle.Core.dll" />
+      <Component>
+        <File Name="Autofac.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="FluentNHibernate.dll" />
+      <Component>
+        <File Name="Autofac.Integration.Wcf.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Iesi.Collections.dll" />
-      </Component>
-
-      <Component Win64="$(var.IsWin64)">
+      <Component>
         <File Name="Ionic.Zip.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Migrator.dll" />
+      <Component>
+        <File Name="Nancy.Authentication.Forms.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Migrator.Framework.dll" />
+      <Component>
+        <File Name="Nancy.Bootstrappers.Autofac.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Migrator.Providers.dll" />
+      <Component>
+        <File Name="Nancy.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="MonoTorrent.dll" />
+      <Component>
+        <File Name="Nancy.Hosting.Self.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="NHibernate.dll" />
+      <Component>
+        <File Name="Newtonsoft.Json.dll" />
       </Component>
 
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Ninject.dll" />
-      </Component>
-      
-      <Component Win64="$(var.IsWin64)">
-        <File Name="Ninject.Extensions.ChildKernel.dll" />
-      </Component>
-
-      <Component Win64="$(var.IsWin64)">
+      <Component>
         <File Name="NLog.dll" />
-      </Component>
-
-      <Component Win64="$(var.IsWin64)">
-        <File Name="System.Data.SQLite.dll" />
-      </Component>
-
-      <Component Win64="$(var.IsWin64)">
-        <File Name="SQLite.Interop.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>
