@@ -44,9 +44,9 @@
     <Reference Include="Autofac.Integration.Wcf">
       <HintPath>..\..\..\packages\Autofac.Wcf.3.0.0\lib\net40\Autofac.Integration.Wcf.dll</HintPath>
     </Reference>
-    <Reference Include="Hadouken.Fx, Version=1.0.15.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Hadouken.Fx, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Hadouken.Fx.1.0.15\lib\net45\Hadouken.Fx.dll</HintPath>
+      <HintPath>..\..\..\packages\Hadouken.Fx.1.0.17\lib\net45\Hadouken.Fx.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
