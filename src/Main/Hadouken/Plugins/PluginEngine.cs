@@ -49,6 +49,8 @@ namespace Hadouken.Plugins
 
         public void LoadAll()
         {
+            Logger.Debug("Loading all plugins.");
+
             var managerKeys = _plugins.GetKeys();
 
             foreach (var key in managerKeys)
@@ -59,6 +61,8 @@ namespace Hadouken.Plugins
 
         public void UnloadAll()
         {
+            Logger.Debug("Unloading all plugins.");
+
             var managerKeys = _plugins.GetKeys();
 
             foreach (var key in managerKeys)
@@ -72,21 +76,21 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Plugin does not exist: '{0}'", name);
+                Logger.Debug("Plugin '{0}' does not exist.", name);
                 return;
             }
 
             // Check state
             if (manager.State != PluginState.Unloaded)
             {
-                Logger.Info("Plugin cannot be loaded since it is not unloaded: '{0}' [state '{1}']", name, manager.State);
+                Logger.Info("Skipping load of plugin '{0}' since it is already loaded.", name);
                 return;
             }
 
             string[] missingDependencies;
             if (!CanLoad(name, out missingDependencies))
             {
-                Logger.Warn("Plugin is missing dependencies. Downloading... [plugin '{0}'], [deps '{1}']", name,
+                Logger.Warn("Plugin '{0}' is missing dependencies {1}. Downloading...", name,
                     string.Join(",", missingDependencies));
 
                 if (DownloadAndInstall(missingDependencies))
@@ -94,6 +98,7 @@ namespace Hadouken.Plugins
                     Scan();
                     Load(name);
                 }
+
                 return;
             }
 
@@ -137,14 +142,14 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Plugin does not exist: '{0}'", name);
+                Logger.Debug("Plugin '{0}' does not exist.", name);
                 return;
             }
 
             // Check state
             if (manager.State != PluginState.Loaded)
             {
-                Logger.Info("Plugin cannot be unloaded since it is not loaded: '{0}' [state '{1}']", name, manager.State);
+                Logger.Info("Skipping unload of plugin '{0}' since it is already unloaded.", name);
                 return;
             }
 
@@ -204,7 +209,7 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Plugin does not exist: '{0}'", name);
+                Logger.Debug("Plugin '{0}' does not exist.", name);
                 return false;
             }
 
@@ -249,7 +254,7 @@ namespace Hadouken.Plugins
                 var package = _packageDownloader.Download(packageId);
                 if (package == null)
                 {
-                    Logger.Warn("Package '{0}' was not found. Aborting...", packageId);
+                    Logger.Error("Package '{0}' was not found. Aborting...", packageId);
                     return false;
                 }
 
