@@ -26,7 +26,8 @@ namespace Hadouken.Plugins.Isolation
                 ConfigurationFile = "", // DO not set to empty string if we want to use the conf file from this domain
                 DisallowBindingRedirects = true,
                 DisallowCodeDownload = true,
-                DisallowPublisherPolicy = true
+                DisallowPublisherPolicy = true,
+                ShadowCopyFiles = "true"
             };
 
             var permissions = new PermissionSet(PermissionState.Unrestricted);

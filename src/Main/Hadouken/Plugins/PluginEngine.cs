@@ -157,6 +157,8 @@ namespace Hadouken.Plugins
             // we must have a higher version number 
             // the existing to be able to upgrade. Otherwise - out of luck.
             var existing = Get(package.Manifest.Name);
+            string[] loadOrder = null;
+
             if (existing != null)
             {
                 if (existing.Manifest.Version >= package.Manifest.Version)
@@ -165,8 +167,13 @@ namespace Hadouken.Plugins
                     return false;
                 }
 
-                Unload(existing);
-                Uninstall(existing);
+                // Set the load order to the reverse unload order
+                loadOrder = _plugins.GetUnloadOrder(package.Manifest.Name).Reverse().ToArray();
+
+                if (!Uninstall(existing))
+                {
+                    return false;
+                }
             }
 
             // Install dat package!
@@ -174,7 +181,20 @@ namespace Hadouken.Plugins
             _packageInstaller.Install(package);
 
             Scan();
-            Load(package.Manifest.Name);
+
+            // If we have no load order, just load the installed package.
+            if (loadOrder == null)
+            {
+                Load(package.Manifest.Name);
+            }
+            else
+            {
+                // If we have a load order, load in that order
+                foreach (var plugin in loadOrder)
+                {
+                    Load(plugin);
+                }
+            }
 
             return true;
         }
@@ -193,22 +213,25 @@ namespace Hadouken.Plugins
 
         private bool Uninstall(IPluginManager manager)
         {
-            // Check dependencies
-            var dependencies = _plugins.GetUnloadOrder(manager.Manifest.Name);
-            if (dependencies.Any(d => d != manager.Manifest.Name))
+            Logger.Debug("Beginning uninstall of plugin {0}", manager.Manifest.Name);
+
+            // Unload the manager
+            Unload(manager);
+
+            // Get dependencies and check that all are unloaded
+            var dependencies =
+                _plugins.GetUnloadOrder(manager.Manifest.Name)
+                    .Where(d => Get(d).State != PluginState.Unloaded)
+                    .ToArray();
+
+            if (dependencies.Any())
             {
-                Logger.Error("Cannot uninstall plugin {0}. Plugins {1} still depend on it.", manager.Manifest.Name,
+                Logger.Error("Cannot uninstall plugin {0}. The plugins {1} could not be unloaded.", manager.Manifest.Name,
                     string.Join(",", dependencies));
                 return false;
             }
 
-            if (manager.State != PluginState.Unloaded)
-            {
-                Logger.Info("Tried to uninstall plugin that was not unloaded.");
-                return false;
-            }
-
-            Logger.Info("Uninstalling existing plugin '{0}'.", manager.Manifest.Name);
+            Logger.Info("Uninstalling plugin '{0}'.", manager.Manifest.Name);
 
             // Delete directory
             manager.BaseDirectory.Delete(true);
