@@ -27,7 +27,8 @@
     <AssemblyInfo CodeLanguage="CS"  
             OutputFile="src/CommonAssemblyInfo.cs" 
             AssemblyVersion="$(Version)" 
-            AssemblyFileVersion="$(Version)$(Tag)" />
+            AssemblyFileVersion="$(Version)$(Tag)"
+            AssemblyInformationalVersion="$(Version)$(Tag)" />
   </Target>
   
   <Target Name="Compile" DependsOnTargets="Prepare">
