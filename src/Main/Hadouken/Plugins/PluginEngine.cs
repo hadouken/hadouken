@@ -82,7 +82,7 @@ namespace Hadouken.Plugins
             // Check state
             if (manager.State != PluginState.Unloaded)
             {
-                Logger.Info("Skipping load of plugin '{0}' since it is already loaded.", name);
+                Logger.Debug("Skipping load of plugin '{0}' since it is already loaded.", name);
                 return;
             }
 
@@ -148,7 +148,7 @@ namespace Hadouken.Plugins
             // Check state
             if (manager.State != PluginState.Loaded)
             {
-                Logger.Info("Skipping unload of plugin '{0}' since it is already unloaded.", name);
+                Logger.Debug("Skipping unload of plugin '{0}' since it is already unloaded.", name);
                 return;
             }
 
