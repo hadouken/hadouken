@@ -247,6 +247,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.jsonrpc.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.bootstrap-growl.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
