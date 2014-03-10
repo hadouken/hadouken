@@ -5,6 +5,7 @@ using Hadouken.Http.Management.Models;
 using Hadouken.Plugins;
 using Nancy;
 using Nancy.Security;
+using System.Text;
 
 namespace Hadouken.Http.Management.Modules
 {
@@ -122,16 +123,25 @@ namespace Hadouken.Http.Management.Modules
 
             Get["/settings/{id}"] = _ =>
             {
-                var plugin = pluginEngine.Get(_.id);
+                string id = _.id;
+                var plugin = pluginEngine.Get(id);
                 if (plugin == null)
                 {
                     return 404;
                 }
 
-                return View["Settings", new {PluginId = _.id}];
+                var templateData = rpcClient.Call<byte[]>(string.Format("{0}.config.template", id), null);
+                if (templateData == null)
+                {
+                    return 404;
+                }
+
+                var template = Encoding.UTF8.GetString(templateData);
+
+                return View["Settings", new {PluginId = _.id, Template = template}];
             };
 
-            Get["/settings/{id}/get"] = _ =>
+            Get["/settings/{id}/script.js"] = _ =>
             {
                 string id = _.id;
                 var plugin = pluginEngine.Get(id);
@@ -140,31 +150,13 @@ namespace Hadouken.Http.Management.Modules
                     return 404;
                 }
 
-                var data = rpcClient.Call(string.Format("{0}.config.get", id), null);
+                var data = rpcClient.Call<byte[]>(string.Format("{0}.config.script", id), null);
                 if (data == null)
                 {
                     return 404;
                 }
 
-                return Response.AsJson(data);
-            };
-
-            Get["/settings/{id}/template.ejs"] = _ =>
-            {
-                string id = _.id;
-                var plugin = pluginEngine.Get(id);
-                if (plugin == null)
-                {
-                    return 404;
-                }
-
-                var data = rpcClient.Call<byte[]>(string.Format("{0}.config.template", id), null);
-                if (data == null)
-                {
-                    return 404;
-                }
-
-                return Response.FromStream(() => new MemoryStream(data), "text/html");
+                return Response.FromStream(() => new MemoryStream(data), "text/javascript");
             };
         }
     }

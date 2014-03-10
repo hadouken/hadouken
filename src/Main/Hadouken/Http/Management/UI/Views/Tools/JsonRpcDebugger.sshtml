@@ -28,17 +28,7 @@
         </div>
         
         <div class="row">
-            <div class="col-md-6">
-                Target:
-                <select id="pluginId">
-					<option value="core">core</option>
-                    @Each.Plugins
-                    <option value="@Current">@Current</option>
-                    @EndEach
-                </select>
-            </div>
-
-            <div class="col-md-6">
+            <div class="col-md-offset-6 col-md-6">
                 <button type="button" class="btn btn-primary pull-right" id="btn-send-json">Send JSON</button>
             </div>
         </div>

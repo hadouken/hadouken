@@ -79,8 +79,8 @@
         </div>
 
         <script type="text/javascript" src="/manage/Scripts/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="/manage/Scripts/jquery.jsonrpc.js"></script>
         <script type="text/javascript" src="/manage/Scripts/bootstrap.min.js"></script>
-        <script type="text/javascript" src="/manage/Scripts/Rpc.js"></script>
         <script type="text/javascript" src="/manage/Scripts/Shared.js"></script>
         @Section['Scripts']
     </body>
