@@ -20,8 +20,19 @@ namespace Hadouken.Plugins.Sample.JsonRpc
         [JsonRpcMethod("sample.config.template")]
         public byte[] GetTemplate()
         {
-            var resourceName = "Hadouken.Plugins.Sample.Templates.template.ejs";
-            var assembly = typeof (ConfigService).Assembly;
+            return GetResource("config.html");
+        }
+
+        [JsonRpcMethod("sample.config.script")]
+        public byte[] GetScript()
+        {
+            return GetResource("js.config.js");
+        }
+
+        private byte[] GetResource(string name)
+        {
+            var resourceName = "Hadouken.Plugins.Sample.UI." + name;
+            var assembly = typeof(ConfigService).Assembly;
 
             using (var resource = assembly.GetManifestResourceStream(resourceName))
             using (var ms = new MemoryStream())

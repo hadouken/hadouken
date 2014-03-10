@@ -52,9 +52,10 @@
     <Content Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="UI\js\config.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\template.ejs" />
+    <EmbeddedResource Include="UI\config.html" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
