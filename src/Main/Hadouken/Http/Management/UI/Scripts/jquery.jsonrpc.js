@@ -42,16 +42,16 @@
             withOptions: function (params, callback) {
                 this._validateConfigParams(params);
                 // No point in running if there isn't a callback received to run
-                if (callback === undefined) throw ("No callback specified");
+                if (callback === undefined || callback == null) throw ("No callback specified");
 
-                origParams = { endPoint: this.endPoint, namespace: this.namespace };
+                var origParams = { endPoint: this.endPoint, namespace: this.namespace };
                 this.setup(params);
                 callback.call(this);
                 this.setup(origParams);
             },
 
             /*
-             * Performas a single RPC request
+             * Performs a single RPC request
              *
              * @param {string} method The name of the rpc method to be called
              * @param {object} options A collection of object which can contains
@@ -68,7 +68,7 @@
              * @return {undefined}
              */
             request: function (method, options) {
-                if (options === undefined) {
+                if (options === undefined || options == null) {
                     options = { id: 1 };
                 }
                 if (options.id === undefined) {
@@ -104,7 +104,7 @@
              * @return {undefined}
              */
             batchRequest: function (requests, options) {
-                if (options === undefined) {
+                if (options === undefined || options == null) {
                     options = {};
                 }
 
@@ -112,10 +112,10 @@
                 if (!$.isArray(requests) || requests.length === 0) throw ("Invalid requests supplied for jsonRPC batchRequest. Must be an array object that contain at least a method attribute");
 
                 // Make sure each of our request objects are valid
-                var _that = this;
+                var that = this;
                 $.each(requests, function (i, req) {
-                    _that._validateRequestMethod(req.method);
-                    _that._validateRequestParams(req.params);
+                    that._validateRequestMethod(req.method);
+                    that._validateRequestParams(req.params);
                     if (req.id === undefined) {
                         req.id = i + 1;
                     }
@@ -136,7 +136,7 @@
 
             // Validate a params hash
             _validateConfigParams: function (params) {
-                if (params === undefined) {
+                if (params === undefined || params == null) {
                     throw ("No params specified");
                 }
                 else {
@@ -151,7 +151,7 @@
 
             // Request method must be a string
             _validateRequestMethod: function (method) {
-                if (typeof (method) !== 'string') throw ("Invalid method supplied for jsonRPC request")
+                if (typeof (method) !== 'string') throw ("Invalid method supplied for jsonRPC request");
                 return true;
             },
 
@@ -177,7 +177,7 @@
 
             // Internal method used for generic ajax requests
             _doRequest: function (data, options) {
-                var _that = this;
+                var that = this;
                 $.ajax({
                     type: 'POST',
                     async: false !== options.async,
@@ -188,12 +188,12 @@
                     cache: options.cache,
                     processData: false,
                     error: function (json) {
-                        _that._requestError.call(_that, json, options.error);
+                        that._requestError.call(that, json, options.error);
                     },
                     success: function (json) {
-                        _that._requestSuccess.call(_that, json, options.success, options.error);
+                        that._requestSuccess.call(that, json, options.success, options.error);
                     }
-                })
+                });
             },
 
             // Determines the appropriate request URL to call for a request
@@ -217,7 +217,7 @@
                     method: this.namespace ? this.namespace + '.' + method : method,
                     id: id,
                     params: null
-                }
+                };
                 if (params !== undefined) {
                     dataObj.params = params;
                 }
@@ -261,7 +261,7 @@
 
             // Returns a generic RPC 2.0 compatible response object
             _response: function (json) {
-                if (json === undefined) {
+                if (json === undefined || json == null) {
                     return {
                         error: 'Internal server error',
                         version: '2.0'
@@ -284,7 +284,7 @@
                         return {
                             error: 'Internal server error: ' + e,
                             version: '2.0'
-                        }
+                        };
                     }
                 }
             }
