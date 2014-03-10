@@ -7,6 +7,7 @@
         var data = JSON.parse(json);
 
         $.jsonRPC.request(data.method, {
+            params: data.params,
             success: function(result) {
                 var responseTime = new Date().getTime() - startTime;
                 $('#responseTime').text(responseTime);

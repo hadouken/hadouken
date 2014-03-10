@@ -11,7 +11,7 @@ namespace Hadouken.JsonRpc
         private readonly object _loggersLock = new object();
 
         [JsonRpcMethod("core.logging.log")]
-        public bool Log(string source, string logLevel, string message)
+        public bool Log(string source, int logLevel, string message)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -26,9 +26,9 @@ namespace Hadouken.JsonRpc
             return true;
         }
 
-        private NLog.LogLevel TranslateLogLevel(string level)
+        private LogLevel TranslateLogLevel(int level)
         {
-            var logLevel = NLog.LogLevel.FromString(level);
+            var logLevel = LogLevel.FromOrdinal(level);
 
             if (logLevel != null)
             {
@@ -50,24 +50,5 @@ namespace Hadouken.JsonRpc
                 return _loggers[source];
             }
         }
-    }
-
-    public class LogEntry
-    {
-        public string Level { get; set; }
-
-        public string Source { get; set; }
-
-        public string Message { get; set; }
-    }
-
-    public enum LogLevel
-    {
-        Trace = 0,
-        Debug = 1,
-        Info = 2,
-        Warning = 3,
-        Error = 4,
-        Fatal = 5
     }
 }
