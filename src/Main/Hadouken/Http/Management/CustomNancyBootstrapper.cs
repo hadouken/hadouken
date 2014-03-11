@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Nancy;
+using Nancy.Authentication.Basic;
 using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
@@ -21,13 +23,27 @@ namespace Hadouken.Http.Management
             return _container;
         }
 
-        protected override void ApplicationStartup(ILifetimeScope container, IPipelines pipelines)
+        protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
         {
-            FormsAuthentication.Enable(pipelines, new FormsAuthenticationConfiguration
+            base.RequestStartup(container, pipelines, context);
+
+            // On a per-request basis, look to see what kind of authentication we want.
+            // We support both Basic Auth and Forms Auth.
+
+            if (!string.IsNullOrEmpty(context.Request.Headers.Authorization)
+                && context.Request.Headers.Authorization.StartsWith("Basic"))
             {
-                RedirectUrl = "~/login",
-                UserMapper = container.Resolve<IUserMapper>()
-            });
+                var validator = container.Resolve<IUserValidator>();
+                pipelines.EnableBasicAuthentication(new BasicAuthenticationConfiguration(validator, "Hadouken"));
+            }
+            else
+            {
+                FormsAuthentication.Enable(pipelines, new FormsAuthenticationConfiguration
+                {
+                    RedirectUrl = "~/login",
+                    UserMapper = container.Resolve<IUserMapper>()
+                });
+            }
         }
 
         protected override void ConfigureApplicationContainer(ILifetimeScope container)

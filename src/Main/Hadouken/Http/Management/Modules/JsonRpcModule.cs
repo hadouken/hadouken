@@ -4,6 +4,7 @@ using System.Text;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.ServiceModel;
 using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules
 {
@@ -11,6 +12,8 @@ namespace Hadouken.Http.Management.Modules
     {
         public JsonRpcModule(IJsonRpcRequestParser requestParser)
         {
+            this.RequiresAuthentication();
+
             Post["/jsonrpc"] = _ =>
             {
                 using (var ms = new MemoryStream())

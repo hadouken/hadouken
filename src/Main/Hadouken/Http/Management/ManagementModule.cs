@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Nancy.Authentication.Basic;
 using Nancy.Authentication.Forms;
 
 namespace Hadouken.Http.Management
@@ -9,6 +10,7 @@ namespace Hadouken.Http.Management
         {
             builder.RegisterType<ManagementServer>().As<IManagementServer>();
             builder.RegisterType<HadoukenUserMapper>().As<IUserMapper>();
+            builder.RegisterType<HadoukenUserValidator>().As<IUserValidator>();
         }
     }
 }

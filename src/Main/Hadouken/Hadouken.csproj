@@ -47,6 +47,9 @@
     <Reference Include="Nancy">
       <HintPath>..\..\..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Authentication.Basic">
+      <HintPath>..\..\..\packages\Nancy.Authentication.Basic.0.22.2\lib\net40\Nancy.Authentication.Basic.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Authentication.Forms">
       <HintPath>..\..\..\packages\Nancy.Authentication.Forms.0.22.2\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
     </Reference>
@@ -85,6 +88,7 @@
     <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Http\Management\HadoukenUserMapper.cs" />
+    <Compile Include="Http\Management\HadoukenUserValidator.cs" />
     <Compile Include="Http\Management\IManagementServer.cs" />
     <Compile Include="Http\Management\ManagementModule.cs" />
     <Compile Include="Http\Management\ManagementServer.cs" />
