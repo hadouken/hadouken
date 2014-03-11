@@ -105,6 +105,7 @@
     <Compile Include="Http\Management\Modules\SettingsModule.cs" />
     <Compile Include="Http\Management\Modules\ToolsModule.cs" />
     <Compile Include="JsonRpc\AuthService.cs" />
+    <Compile Include="JsonRpc\CoreService.cs" />
     <Compile Include="JsonRpc\LogService.cs" />
     <Compile Include="JsonRpc\PluginsService.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
