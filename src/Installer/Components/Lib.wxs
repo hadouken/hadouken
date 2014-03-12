@@ -16,6 +16,10 @@
       </Component>
 
       <Component>
+        <File Name="Nancy.Authentication.Basic.dll" />
+      </Component>
+
+      <Component>
         <File Name="Nancy.Authentication.Forms.dll" />
       </Component>
 
