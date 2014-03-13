@@ -35,18 +35,23 @@
 
                 var alreadyInstalled = $('<span class="pull-right"><em>(installed)</em></span>');
 
-                rpc('core', 'core.plugins.getVersion', plugin.id, function(version) {
-                    if (installedPlugins.indexOf(plugin.id) != -1) {
-                        if (semver.gt(latestVersion, version.result)) {
-                            row.append($('<td></td>').append(updateButton)).addClass('warning');
-                        } else {
-                            row.append($('<td></td>').append(alreadyInstalled));
-                        }
-                    } else {
-                        row.append($('<td></td>').append(installButton));
-                    }
+                $.jsonRPC.request('core.plugins.getVersion', {
+                    params: [plugin.id],
+                    success: function (response) {
+                        var version = response.result;
 
-                    $('#plugins-list').append(row);
+                        if (installedPlugins.indexOf(plugin.id) != -1) {
+                            if (semver.gt(latestVersion, version)) {
+                                row.append($('<td></td>').append(updateButton)).addClass('warning');
+                            } else {
+                                row.append($('<td></td>').append(alreadyInstalled));
+                            }
+                        } else {
+                            row.append($('<td></td>').append(installButton));
+                        }
+
+                        $('#plugins-list').append(row);
+                    }
                 });
 
             })(plugins[i]);
