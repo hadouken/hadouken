@@ -59,7 +59,9 @@ namespace Hadouken.Service
 		    builder.RegisterType<JsonRpcRequestParser>().As<IJsonRpcRequestParser>();
 		    builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
 		    builder.RegisterType<MethodCacheBuilder>().As<IMethodCacheBuilder>();
-		    builder.RegisterType<ParameterResolver>().As<IParameterResolver>();
+            builder.RegisterType<ByNameResolver>().As<IParameterResolver>();
+            builder.RegisterType<ByPositionResolver>().As<IParameterResolver>();
+            builder.RegisterType<NullResolver>().As<IParameterResolver>();
 		    builder.RegisterType<JsonSerializer>().As<IJsonSerializer>();
 		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
 		    builder.RegisterType<WcfClientTransport>()

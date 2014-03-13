@@ -36,9 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Hadouken.Fx, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Hadouken.Fx, Version=1.0.20.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Hadouken.Fx.1.0.17\lib\net45\Hadouken.Fx.dll</HintPath>
+      <HintPath>..\..\..\packages\Hadouken.Fx.1.0.20\lib\net45\Hadouken.Fx.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

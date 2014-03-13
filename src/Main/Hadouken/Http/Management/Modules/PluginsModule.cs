@@ -130,7 +130,7 @@ namespace Hadouken.Http.Management.Modules
                     return 404;
                 }
 
-                var templateData = rpcClient.Call<byte[]>(string.Format("{0}.config.template", id), null);
+                var templateData = rpcClient.Call<byte[]>(string.Format("{0}.config.template", id));
                 if (templateData == null)
                 {
                     return 404;
@@ -150,7 +150,7 @@ namespace Hadouken.Http.Management.Modules
                     return 404;
                 }
 
-                var data = rpcClient.Call<byte[]>(string.Format("{0}.config.script", id), null);
+                var data = rpcClient.Call<byte[]>(string.Format("{0}.config.script", id));
                 if (data == null)
                 {
                     return 404;
