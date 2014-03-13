@@ -109,10 +109,12 @@
     <Compile Include="JsonRpc\LogService.cs" />
     <Compile Include="JsonRpc\PluginsService.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
+    <Compile Include="Plugins\IPackageDownloader.cs" />
     <Compile Include="Plugins\IPackageInstaller.cs" />
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
+    <Compile Include="Plugins\PackageDownloader.cs" />
     <Compile Include="Plugins\PackageInstaller.cs" />
     <Compile Include="Plugins\PluginManagerFactory.cs" />
     <Compile Include="Plugins\PluginManagerGraph.cs" />
@@ -146,7 +148,6 @@
     <Compile Include="Collections\DirectedGraphEdge.cs" />
     <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
     <Compile Include="Plugins\IPackage.cs" />
-    <Compile Include="Plugins\Repository\IPackageDownloader.cs" />
     <Compile Include="Plugins\IPackageReader.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
@@ -160,7 +161,6 @@
     <Compile Include="Plugins\Metadata\Manifest.cs" />
     <Compile Include="Plugins\Metadata\ManifestV1Reader.cs" />
     <Compile Include="Plugins\Package.cs" />
-    <Compile Include="Plugins\Repository\PackageDownloader.cs" />
     <Compile Include="Plugins\PackageReader.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\PluginManager.cs" />

@@ -1,8 +1,9 @@
 using System.IO;
 using System.Linq;
 using Hadouken.Http;
+using Hadouken.Plugins.Repository;
 
-namespace Hadouken.Plugins.Repository
+namespace Hadouken.Plugins
 {
     public class PackageDownloader : IPackageDownloader
     {
