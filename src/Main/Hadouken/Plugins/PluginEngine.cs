@@ -146,13 +146,15 @@ namespace Hadouken.Plugins
             }
 
             // Check state
-            if (manager.State != PluginState.Loaded)
+            if (manager.State == PluginState.Loaded || manager.State == PluginState.Error)
+            {
+                Unload(manager);
+            }
+            else
             {
                 Logger.Debug("Skipping unload of plugin '{0}' since it is already unloaded.", name);
-                return;
+                
             }
-
-            Unload(manager);
         }
 
         public bool InstallOrUpgrade(IPackage package)
