@@ -24,6 +24,7 @@
     <file src="build/binaries/Hadouken.Service.exe" target="tools/hdkn" />
     <file src="build/binaries/Hadouken.Service.exe.config" target="tools/hdkn" />
     <file src="build/binaries/Ionic.Zip.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.Authentication.Basic.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.dll" target="tools/hdkn" />
