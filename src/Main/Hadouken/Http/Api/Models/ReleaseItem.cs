@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Hadouken.Http.Api.Plugins.Models
+namespace Hadouken.Http.Api.Models
 {
     [DataContract]
     public class ReleaseItem

@@ -8,7 +8,7 @@ using Hadouken.Fx.IO;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
-using Hadouken.Http.Api.Plugins;
+using Hadouken.Http.Api;
 using Hadouken.Http.Management;
 using Hadouken.JsonRpc;
 using Hadouken.Plugins;
@@ -87,6 +87,7 @@ namespace Hadouken.Service
             // API connection
 		    builder.RegisterType<ApiConnection>().As<IApiConnection>();
 		    builder.RegisterType<PluginRepository>().As<IPluginRepository>();
+		    builder.RegisterType<ReleasesRepository>().As<IReleasesRepository>();
 
 			// Register configuration
 			builder.Register(c => HadoukenConfigurationSection.Load()).SingleInstance();

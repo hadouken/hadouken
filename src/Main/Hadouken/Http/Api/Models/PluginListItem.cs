@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Hadouken.Http.Api.Plugins.Models
+namespace Hadouken.Http.Api.Models
 {
     [DataContract]
-    public sealed class Plugin
+    public class PluginListItem
     {
-        public Plugin()
-        {
-            Releases = new List<ReleaseItem>();
-        }
-
         [DataMember(Name = "id")]
         public string Id { get; set; }
 
@@ -24,7 +18,7 @@ namespace Hadouken.Http.Api.Plugins.Models
         [DataMember(Name = "description")]
         public string Description { get; set; }
 
-        [DataMember(Name = "releases")]
-        public IEnumerable<ReleaseItem> Releases { get; set; }
+        [DataMember(Name = "latestRelease")]
+        public ReleaseItem LatestRelease { get; set; }
     }
 }

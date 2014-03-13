@@ -85,11 +85,13 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Http\Api\Plugins\IPluginRepository.cs" />
-    <Compile Include="Http\Api\Plugins\Models\Plugin.cs" />
-    <Compile Include="Http\Api\Plugins\Models\PluginListItem.cs" />
-    <Compile Include="Http\Api\Plugins\PluginRepository.cs" />
-    <Compile Include="Http\Api\Plugins\Models\ReleaseItem.cs" />
+    <Compile Include="Http\Api\IPluginRepository.cs" />
+    <Compile Include="Http\Api\Models\Plugin.cs" />
+    <Compile Include="Http\Api\Models\PluginListItem.cs" />
+    <Compile Include="Http\Api\PluginRepository.cs" />
+    <Compile Include="Http\Api\Models\ReleaseItem.cs" />
+    <Compile Include="Http\Api\IReleasesRepository.cs" />
+    <Compile Include="Http\Api\ReleasesRepository.cs" />
     <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Http\Management\HadoukenUserMapper.cs" />
@@ -101,6 +103,7 @@
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
+    <Compile Include="Http\Management\Modules\Api\ReleasesModule.cs" />
     <Compile Include="Http\Management\Modules\Api\RepositoryModule.cs" />
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
     <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />

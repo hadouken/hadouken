@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Hadouken.Http.Api.Plugins;
+using Hadouken.Http.Api;
 using Hadouken.Plugins;
 using Nancy;
 using Nancy.Security;
