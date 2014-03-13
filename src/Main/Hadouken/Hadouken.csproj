@@ -85,6 +85,11 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Http\Api\Plugins\IPluginRepository.cs" />
+    <Compile Include="Http\Api\Plugins\Models\Plugin.cs" />
+    <Compile Include="Http\Api\Plugins\Models\PluginListItem.cs" />
+    <Compile Include="Http\Api\Plugins\PluginRepository.cs" />
+    <Compile Include="Http\Api\Plugins\Models\ReleaseItem.cs" />
     <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Http\Management\HadoukenUserMapper.cs" />
@@ -118,9 +123,6 @@
     <Compile Include="Plugins\PackageInstaller.cs" />
     <Compile Include="Plugins\PluginManagerFactory.cs" />
     <Compile Include="Plugins\PluginManagerGraph.cs" />
-    <Compile Include="Plugins\Repository\Models\PluginListItem.cs" />
-    <Compile Include="Plugins\Repository\Models\ReleaseItem.cs" />
-    <Compile Include="Plugins\Repository\PluginRepository.cs" />
     <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />
     <Compile Include="Plugins\Scanners\DirectoryPluginScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,8 +169,6 @@
     <Compile Include="Plugins\Metadata\ManifestNotFoundException.cs" />
     <Compile Include="Plugins\Metadata\ManifestParseException.cs" />
     <Compile Include="Plugins\PluginState.cs" />
-    <Compile Include="Plugins\Repository\Models\Plugin.cs" />
-    <Compile Include="Plugins\Repository\IPluginRepository.cs" />
     <Compile Include="SemVer\EqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanOrEqualsRule.cs" />
     <Compile Include="SemVer\GreaterThanRule.cs" />

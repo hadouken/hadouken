@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 using Hadouken.Http;
-using Hadouken.Plugins.Repository;
+using Hadouken.Http.Api.Plugins;
 
 namespace Hadouken.Plugins
 {

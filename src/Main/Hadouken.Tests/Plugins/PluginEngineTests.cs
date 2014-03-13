@@ -5,7 +5,6 @@ using Hadouken.Fx.IO;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
-using Hadouken.Plugins.Repository;
 using Moq;
 using NUnit.Framework;
 

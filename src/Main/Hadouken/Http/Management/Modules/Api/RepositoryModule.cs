@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+using Hadouken.Http.Api.Plugins;
 using Hadouken.Plugins;
-using Hadouken.Plugins.Repository;
 using Nancy;
 using Nancy.Security;
 

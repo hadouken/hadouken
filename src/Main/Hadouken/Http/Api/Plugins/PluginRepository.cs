@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hadouken.Configuration;
-using Hadouken.Http;
-using Hadouken.Plugins.Repository.Models;
+using Hadouken.Http.Api.Plugins.Models;
 
-namespace Hadouken.Plugins.Repository
+namespace Hadouken.Http.Api.Plugins
 {
     public class PluginRepository : IPluginRepository
     {

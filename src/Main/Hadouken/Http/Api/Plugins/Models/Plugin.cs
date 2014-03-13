@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Hadouken.Plugins.Repository.Models
+namespace Hadouken.Http.Api.Plugins.Models
 {
     [DataContract]
     public sealed class Plugin

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Hadouken.Plugins.Repository.Models;
+using Hadouken.Http.Api.Plugins.Models;
 
-namespace Hadouken.Plugins.Repository
+namespace Hadouken.Http.Api.Plugins
 {
     public interface IPluginRepository
     {

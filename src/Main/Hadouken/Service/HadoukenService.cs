@@ -8,7 +8,6 @@ using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
 using Hadouken.Http.Management;
 using Hadouken.Plugins;
-using Hadouken.Plugins.Repository;
 using NLog;
 
 namespace Hadouken.Service
