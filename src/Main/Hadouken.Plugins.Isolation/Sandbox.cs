@@ -17,14 +17,15 @@ namespace Hadouken.Plugins.Isolation
 
         public static Sandbox Create(string applicationBase)
         {
+            var configFile = Directory.GetFiles(applicationBase, "*.config").FirstOrDefault();
             var rand = Path.GetRandomFileName();
 
             var setup = new AppDomainSetup()
             {
                 ApplicationBase = applicationBase,
                 ApplicationName = rand,
-                ConfigurationFile = "", // DO not set to empty string if we want to use the conf file from this domain
-                DisallowBindingRedirects = true,
+                ConfigurationFile = configFile,
+                DisallowBindingRedirects = false,
                 DisallowCodeDownload = true,
                 DisallowPublisherPolicy = true,
                 ShadowCopyFiles = "true"
