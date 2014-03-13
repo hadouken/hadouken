@@ -33,9 +33,22 @@
                     });
                 })(plugins[i]);
             }
-        },
-        error: function(result) {
-            console.log(result);
+        }
+    });
+
+    // Get our version, then compare to the latest release
+    $.jsonRPC.request('core.getVersion', {
+        success: function(response) {
+            var localVersion = response.result;
+
+            $.getJSON('/manage/api/releases', function(releases) {
+                var latestRelease = releases[0];
+
+                if (semver.gt(latestRelease.version, localVersion)) {
+                    var text = '<strong>Update available!</strong><br/><a href="' + latestRelease.downloadUri + '">Download Hadouken v' + latestRelease.version + '</a>.';
+                    $.bootstrapGrowl(text, { delay: 0 });
+                }
+            });
         }
     });
 });

@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="container" role="main">
+        <div class="container" role="main" id="main-container">
             @Section['Content']
         </div>
 
@@ -82,6 +82,7 @@
         <script type="text/javascript" src="/manage/Scripts/jquery.jsonrpc.js"></script>
         <script type="text/javascript" src="/manage/Scripts/bootstrap.min.js"></script>
         <script type="text/javascript" src="/manage/Scripts/jquery.bootstrap-growl.js"></script>
+        <script type="text/javascript" src="/manage/Scripts/semver.js"></script>
         <script type="text/javascript" src="/manage/Scripts/Shared.js"></script>
         @Section['Scripts']
     </body>
