@@ -75,7 +75,7 @@
 
     <Exec Command=".\$(WixPath)\candle.exe -dBinDir=$(OutputDirectory)\binaries -dBuildVersion=$(Version) -dConfigDir=src\Configuration\Service -ext WixUtilExtension -o $(OutputDirectory)\wixobj\ $(CandleSources)\Hadouken.wxs $(CandleSources)\Components\Config.wxs $(CandleSources)\Components\Core.wxs $(CandleSources)\Components\Lib.wxs $(CandleSources)\Components\Service.wxs $(CandleSources)\UI\ConfigureDlg.wxs $(CandleSources)\UI\ConfigureInvalidDlg.wxs" />
 
-    <Exec Command=".\$(WixPath)\light.exe -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -o $(OutputDirectory)hdkn-$(Version)$(Tag).msi -sice:ICE61 $(LightSources)\Config.wixobj $(LightSources)\Core.wixobj $(LightSources)\Hadouken.wixobj $(LightSources)\Lib.wixobj $(LightSources)\Service.wixobj $(LightSources)\ConfigureDlg.wixobj $(LightSources)\ConfigureInvalidDlg.wixobj" />
+    <Exec Command=".\$(WixPath)\light.exe -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -o $(OutputDirectory)hdkn-$(Version)$(Tag).msi -sval $(LightSources)\Config.wixobj $(LightSources)\Core.wixobj $(LightSources)\Hadouken.wixobj $(LightSources)\Lib.wixobj $(LightSources)\Service.wixobj $(LightSources)\ConfigureDlg.wixobj $(LightSources)\ConfigureInvalidDlg.wixobj" />
   </Target>
 
   <Target Name="Nuget" DependsOnTargets="Output">
