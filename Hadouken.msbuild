@@ -39,9 +39,7 @@
   </Target>
 
   <Target Name="Test" DependsOnTargets="Compile">
-    <Message Text="##teamcity[message 'Running unit tests.']" />
     <Exec Command="packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll /nunit $(OutputDirectory)/TestResult.xml" />
-    <Message Text="##teamcity[importData type='nunit' path='build/TestResult.xml']" />
   </Target>
 
   <Target Name="Output" DependsOnTargets="Compile">
