@@ -444,6 +444,7 @@
             <Computer>
               <Output TaskParameter="Name" PropertyName="BuildMachineName" />
               <Output TaskParameter="IPAddress" PropertyName="BuildMachineIPAddress" />
+              <Output TaskParameter="IPAddressV4" PropertyName="BuildMachineIPAddressV4" />
               <Output TaskParameter="OSPlatform" PropertyName="BuildMachineOSPlatform" />
               <Output TaskParameter="OSVersion" PropertyName="BuildMachineOSVersion" />
             </Computer>
@@ -471,6 +472,11 @@
         <member name="P:MSBuild.Community.Tasks.Computer.IPAddress">
             <summary>
             Gets the IP address of the build computer.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Computer.IPAddressV4">
+            <summary>
+            Gets the IP v4 address of the build computer.
             </summary>
         </member>
         <member name="P:MSBuild.Community.Tasks.Computer.OSPlatform">
@@ -572,6 +578,37 @@
             </summary>
             <value>The deleted directories.</value>
         </member>
+        <member name="T:MSBuild.Community.Tasks.EmbedNativeResource">
+            <summary>
+            A task for embedded native resource.
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.EmbedNativeResource.Execute">
+            <summary>
+            Executes the task.
+            </summary>
+            <returns>Success or failure of the task.</returns>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.EmbedNativeResource.TargetAssemblyPath">
+            <summary>
+            Gets or sets the target assembly path.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.EmbedNativeResource.ResourcePath">
+            <summary>
+            Gets or sets the resource path.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.EmbedNativeResource.ResourceName">
+            <summary>
+            Gets or sets the resource name.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.EmbedNativeResource.ResourceType">
+            <summary>
+            Gets or sets the resource type.
+            </summary>
+        </member>
         <member name="T:MSBuild.Community.Tasks.FtpUpload">
             <summary>
             Uploads a group of files using File Transfer Protocol (FTP).
@@ -669,6 +706,17 @@
             Gets or sets the behavior of a client application's data transfer process.
             </summary>
             <value><c>true</c> if [use passive]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.FtpUpload.KeepAlive">
+            <summary>
+            Gets or sets a value that indicates whether to make a persistent connection to the Internet resource.
+            </summary>        
+        </member>
+        <member name="P:MSBuild.Community.Tasks.FtpUpload.Timeout">
+            <summary>
+            Gets or sets the time-out value in milliseconds
+            </summary>  
+            <value>The number of milliseconds to wait before the request times out. The default value is 7000 milliseconds (7 seconds).</value>
         </member>
         <member name="T:MSBuild.Community.Tasks.IFtpWebRequest">
             <summary>
@@ -1333,14 +1381,19 @@
             <param name="assemblyName">Name of the assembly.</param>
             <returns>An <see cref="T:System.Reflection.AssemblyName"/> instance.</returns>
         </member>
-        <member name="T:MSBuild.Community.Tasks.Git.GitBranch">
+        <member name="T:MSBuild.Community.Tasks.Git.GitDescribe">
             <summary>
-            A task to get the name of the branch or tag of git repository
+            A task for git to get the most current tag, commit count since tag, and commit hash.
             </summary>
         </member>
         <member name="T:MSBuild.Community.Tasks.Git.GitClient">
             <summary>
             A task for Git commands.
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitClient.#ctor">
+            <summary>
+            Default constructor. Creates a new GitClient task.
             </summary>
         </member>
         <member name="M:MSBuild.Community.Tasks.Git.GitClient.GenerateCommandLineCommands">
@@ -1430,6 +1483,54 @@
             The name of the executable file to run.
             </returns>
         </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitDescribe.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:MSBuild.Community.Tasks.Git.GitDescribe"/> class.
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitDescribe.GenerateArguments(Microsoft.Build.Utilities.CommandLineBuilder)">
+            <summary>
+            Make sure we specify abbrev=40 to get full CommitHash
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitDescribe.LogEventsFromTextOutput(System.String,Microsoft.Build.Framework.MessageImportance)">
+            <summary>
+            Parses a single line of text to identify any errors or warnings in canonical format.
+            </summary>
+            <param name="singleLine">A single line of text for the method to parse.</param>
+            <param name="messageImportance">A value of <see cref="T:Microsoft.Build.Framework.MessageImportance"/> that indicates the importance level with which to log the message.</param>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitDescribe.CommitCount">
+            <summary>
+            Gets the number of commits in this branch since the last tag
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitDescribe.CommitHash">
+            <summary>
+            Gets or sets the commit hash.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitDescribe.Tag">
+            <summary>
+            Gets the last tagname for this branch
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitDescribe.ErrorMessage">
+            <summary>
+            Not active yet
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitDescribe.SoftErrorMode">
+            <summary>
+            When true, any processing errors will push error status out into <see cref="P:MSBuild.Community.Tasks.Git.GitDescribe.Tag"/>
+            </summary>
+        </member>
+        <member name="T:MSBuild.Community.Tasks.Git.GitBranch">
+            <summary>
+            A task to get the name of the branch or tag of git repository
+            </summary>
+        </member>
         <member name="M:MSBuild.Community.Tasks.Git.GitBranch.#ctor">
             <summary>
             Default constructor
@@ -1465,6 +1566,67 @@
         <member name="P:MSBuild.Community.Tasks.Git.GitBranch.Branch">
             <summary>
             Return the branch or tag.
+            </summary>
+        </member>
+        <member name="T:MSBuild.Community.Tasks.Git.GitCommits">
+            <summary>
+            A task for git to retrieve the number of commits on a revision.
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitCommits.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:MSBuild.Community.Tasks.Git.GitCommits"/> class.
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitCommits.GenerateArguments(Microsoft.Build.Utilities.CommandLineBuilder)">
+            <summary>
+            Generates the arguments.
+            </summary>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitCommits.LogEventsFromTextOutput(System.String,Microsoft.Build.Framework.MessageImportance)">
+            <summary>
+            Parses a single line of text to identify any errors or warnings in canonical format.
+            </summary>
+            <param name="singleLine">A single line of text for the method to parse.</param>
+            <param name="messageImportance">A value of <see cref="T:Microsoft.Build.Framework.MessageImportance"/> that indicates the importance level with which to log the message.</param>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitCommits.Revision">
+            <summary>
+            Gets or sets the revision to get the total number of commits from. Default is HEAD.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitCommits.CommitsCount">
+            <summary>
+            Gets or sets the commitscount.
+            </summary>
+        </member>
+        <member name="T:MSBuild.Community.Tasks.Git.GitPendingChanges">
+            <summary>
+            A task for git to detect if there are pending changes
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitPendingChanges.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:MSBuild.Community.Tasks.Git.GitPendingChanges"/> class.
+            </summary>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitPendingChanges.GenerateArguments(Microsoft.Build.Utilities.CommandLineBuilder)">
+            <summary>
+            Generates the arguments.
+            </summary>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:MSBuild.Community.Tasks.Git.GitPendingChanges.LogEventsFromTextOutput(System.String,Microsoft.Build.Framework.MessageImportance)">
+            <summary>
+            Parses a single line of text to identify any errors or warnings in canonical format.
+            </summary>
+            <param name="singleLine">A single line of text for the method to parse.</param>
+            <param name="messageImportance">A value of <see cref="T:Microsoft.Build.Framework.MessageImportance"/> that indicates the importance level with which to log the message.</param>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Git.GitPendingChanges.HasPendingChanges">
+            <summary>
+            Gets or sets whether the working directory has pending changes.
             </summary>
         </member>
         <member name="T:MSBuild.Community.Tasks.Git.GitVersion">
@@ -1856,6 +2018,26 @@
         <member name="P:MSBuild.Community.Tasks.Net.HttpRequest.FailOnNon2xxResponse">
             <summary>
             Default is true.  When true, if the web server returns a status code less than 200 or greater than 299 then the task fails.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Net.HttpRequest.Method">
+            <summary>
+            Optional, default is GET. The HTTP method to use for the request.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Net.HttpRequest.Username">
+            <summary>
+            Optional. The username to use with basic authentication.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Net.HttpRequest.Password">
+            <summary>
+            Optional. The password to use with basic authentication.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Net.HttpRequest.ReadRequestFrom">
+            <summary>
+            Optional; the name of the file to reqd the request from.
             </summary>
         </member>
         <member name="P:MSBuild.Community.Tasks.Net.HttpRequest.WriteResponseTo">
@@ -4299,6 +4481,12 @@
             The path to which the SourcePath should be copied
             </summary>
         </member>
+        <member name="P:MSBuild.Community.Tasks.Subversion.SvnCopy.BuildTree">
+            <summary>
+            Specifies whether to create any missing directories and subdirectories 
+            in the specified <see cref="P:MSBuild.Community.Tasks.Subversion.SvnCopy.DestinationPath"/>
+            </summary>
+        </member>
         <member name="T:MSBuild.Community.Tasks.Subversion.Info">
             <remarks/>
         </member>
@@ -5187,6 +5375,11 @@
 />]]>
       </code>
     </example>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Xml.XmlMassUpdate.IgnoreMissingSubstitutionsRoot">
+            <summary>
+            If set to true, the task won't fail if the substitution root is missing
+            </summary>
         </member>
         <member name="P:MSBuild.Community.Tasks.Xml.XmlMassUpdate.ContentPathUsedByTask">
             <summary>
@@ -8735,24 +8928,24 @@
             true if the task successfully executed; otherwise, false.
             </returns>
         </member>
-        <member name="T:MSBuild.Community.Tasks.Move">
+        <member name="T:MSBuild.Community.Tasks.MV">
             <summary>
             Moves files on the filesystem to a new location.
             </summary>
             <example>
             <para>Move a file to another folder</para>
             <code><![CDATA[
-            <Move SourceFiles="Test\MoveMe.txt"
+            <MV SourceFiles="Test\MoveMe.txt"
                 DestinationFolder="Test\Move" />
             ]]></code>
             <para>Rename a file</para>
             <code><![CDATA[
-            <Move SourceFiles="Test\Move\MoveMe.txt"
+            <MV SourceFiles="Test\Move\MoveMe.txt"
                 DestinationFiles="Test\Move\Renamed.txt" />
             ]]></code>
             </example>
         </member>
-        <member name="M:MSBuild.Community.Tasks.Move.Execute">
+        <member name="M:MSBuild.Community.Tasks.MV.Execute">
             <summary>
             When overridden in a derived class, executes the task.
             </summary>
@@ -8760,13 +8953,13 @@
             true if the task successfully executed; otherwise, false.
             </returns>
         </member>
-        <member name="P:MSBuild.Community.Tasks.Move.MovedFiles">
+        <member name="P:MSBuild.Community.Tasks.MV.MovedFiles">
             <summary>
             Gets the items that were successfully moved.
             </summary>
             <value>The moved files.</value>
         </member>
-        <member name="P:MSBuild.Community.Tasks.Move.DestinationFiles">
+        <member name="P:MSBuild.Community.Tasks.MV.DestinationFiles">
             <summary>
             Gets or sets the list of files to moved the source files to. 
             </summary>
@@ -8778,13 +8971,13 @@
             </remarks>
             <value>The destination files.</value>
         </member>
-        <member name="P:MSBuild.Community.Tasks.Move.DestinationFolder">
+        <member name="P:MSBuild.Community.Tasks.MV.DestinationFolder">
             <summary>
             Gets or sets the directory to which you want to move the files.
             </summary>
             <value>The destination folder.</value>
         </member>
-        <member name="P:MSBuild.Community.Tasks.Move.SourceFiles">
+        <member name="P:MSBuild.Community.Tasks.MV.SourceFiles">
             <summary>
             Gets or sets the source files to move.
             </summary>
@@ -9010,6 +9203,11 @@
         <member name="P:MSBuild.Community.Tasks.NUnit.Framework">
             <summary>
             Determines the framework to run aganist.
+            </summary>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.NUnit.ShowLabels">
+            <summary>
+            Whether or not to show test labels in output
             </summary>
         </member>
         <member name="P:MSBuild.Community.Tasks.NUnit.ToolName">
@@ -10563,6 +10761,18 @@
             </summary>
             <value>The zip level.</value>
             <remarks>0 - store only to 9 - means best compression</remarks>
+        </member>
+        <member name="P:MSBuild.Community.Tasks.Zip.Zip64">
+            <summary>
+            Gets or sets whether to use ZIP64 extensions.
+            </summary>
+            <value><c>true</c> to use ZIP64 extensions when necessary; otherwise, <c>false</c>.</value>
+            <remarks>
+            When ZIP64 is specified, then ZIP64 extension is used when necessary.
+            For example, when a single entry exceeds 0xFFFFFFFF in size, or when the archive 
+            as a whole exceeds 0xFFFFFFFF in size, or when there are more than 65535 entries 
+            in an archive.
+            </remarks>
         </member>
         <member name="P:MSBuild.Community.Tasks.Zip.Files">
             <summary>
