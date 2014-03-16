@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Plugins;
 
@@ -10,6 +11,11 @@ namespace Hadouken.JsonRpc
 
         public PluginsService(IPluginEngine pluginEngine)
         {
+            if (pluginEngine == null)
+            {
+                throw new ArgumentNullException("pluginEngine");
+            }
+
             _pluginEngine = pluginEngine;
         }
 

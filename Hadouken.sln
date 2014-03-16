@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Main\Hadouken\Hadouken.csproj", "{1FE7DB08-4B4F-4A13-8453-2703984E32D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tests", "src\Main\Hadouken.Tests\Hadouken.Tests.csproj", "{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Service", "src\Main\Hadouken.Service\Hadouken.Service.csproj", "{80922004-394C-435F-B6AF-37011C85FAB9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample plugin", "Sample plugin", "{5D04D920-2206-4306-81F3-C54280F6DEE0}"
@@ -14,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Sample", "src\SamplePlugin\Hadouken.Plugins.Sample\Hadouken.Plugins.Sample.csproj", "{6AC7530E-0A97-4EA6-BF5C-18FCE8B54FFF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Isolation", "src\Main\Hadouken.Plugins.Isolation\Hadouken.Plugins.Isolation.csproj", "{A0534175-961D-4702-9E75-B8A67B3E0710}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tests", "src\Main\Hadouken.Tests\Hadouken.Tests.csproj", "{0478CADF-8517-4E72-A5EB-999F526B716A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FE7DB08-4B4F-4A13-8453-2703984E32D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6EB5B7D7-31D1-4BE1-90ED-B5CB6616E041}.Release|Any CPU.Build.0 = Release|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80922004-394C-435F-B6AF-37011C85FAB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,6 +37,10 @@ Global
 		{A0534175-961D-4702-9E75-B8A67B3E0710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0534175-961D-4702-9E75-B8A67B3E0710}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0534175-961D-4702-9E75-B8A67B3E0710}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0478CADF-8517-4E72-A5EB-999F526B716A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0478CADF-8517-4E72-A5EB-999F526B716A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0478CADF-8517-4E72-A5EB-999F526B716A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0478CADF-8517-4E72-A5EB-999F526B716A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

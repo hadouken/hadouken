@@ -1,4 +1,5 @@
-﻿using Hadouken.Configuration;
+﻿using System;
+using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.Security;
 
@@ -11,6 +12,11 @@ namespace Hadouken.JsonRpc
 
         public AuthService(IConfiguration configuration)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException("configuration");
+            }
+
             _configuration = configuration;
         }
 

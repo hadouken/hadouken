@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using Hadouken.Http;
@@ -13,6 +14,21 @@ namespace Hadouken.Plugins
 
         public PackageDownloader(IPluginRepository pluginRepository, IApiConnection apiConnection, IPackageReader packageReader)
         {
+            if (pluginRepository == null)
+            {
+                throw new ArgumentNullException("pluginRepository");
+            }
+
+            if (apiConnection == null)
+            {
+                throw new ArgumentNullException("apiConnection");
+            }
+
+            if (packageReader == null)
+            {
+                throw new ArgumentNullException("packageReader");
+            }
+
             _pluginRepository = pluginRepository;
             _apiConnection = apiConnection;
             _packageReader = packageReader;
@@ -26,7 +42,7 @@ namespace Hadouken.Plugins
                 return null;
             }
 
-            var latestRelease = plugin.Releases.First();
+            var latestRelease = plugin.Releases.FirstOrDefault();
             if (latestRelease == null)
             {
                 return null;

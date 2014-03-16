@@ -12,6 +12,16 @@ namespace Hadouken.Http.Api
 
         public ReleasesRepository(IConfiguration configuration, IApiConnection apiConnection)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException("configuration");
+            }
+
+            if (apiConnection == null)
+            {
+                throw new ArgumentNullException("apiConnection");
+            }
+
             _configuration = configuration;
             _apiConnection = apiConnection;
         }

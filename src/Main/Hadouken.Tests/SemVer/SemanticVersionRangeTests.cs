@@ -1,235 +1,646 @@
 ﻿using Hadouken.SemVer;
-using NUnit.Framework;
+using Xunit;
 
-namespace Hadouken.Framework.Tests.SemVer
+namespace Hadouken.Tests.SemVer
 {
     public class SemanticVersionRangeTests
     {
-        [Test]
-        public void TryParse_SingleVersion()
+        public class TheTryParseMethod
         {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("1.0", out range);
+            [Fact]
+            public void Should_Return_False_If_Range_Is_Invalid()
+            {
+                // Given
+                SemanticVersionRange range;
+                
+                // When
+                var result = SemanticVersionRange.TryParse("invalid", out range);
 
-            Assert.AreEqual(1, range.Rules.Length);
-            Assert.AreEqual(typeof (GreaterThanOrEqualsRule), range.Rules[0].GetType());
+                // Then
+                Assert.False(result);
+                Assert.Null(range);
+            }
+
+            [Fact]
+            public void Should_Return_False_If_Range_Lower_Is_Invalid()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                var result = SemanticVersionRange.TryParse("(invalid,1.0)", out range);
+
+                // Then
+                Assert.False(result);
+                Assert.Null(range);
+            }
+
+            [Fact]
+            public void Should_Return_False_If_Range_Upper_Is_Invalid()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                var result = SemanticVersionRange.TryParse("(1.0,invalid)", out range);
+
+                // Then
+                Assert.False(result);
+                Assert.Null(range);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("1.0", out range);
+
+                // Then
+                Assert.IsType<GreaterThanOrEqualsRule>(range.Rules[0]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Exclusive_No_Lower_With_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(,1.0]", out range);
+
+                // Then
+                Assert.IsType<LessThanOrEqualsRule>(range.Rules[0]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Exclusive_No_Lower_With_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(,1.0)", out range);
+
+                // Then
+                Assert.IsType<LessThanRule>(range.Rules[0]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Inclusive_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0]", out range);
+
+                // Then
+                Assert.IsType<EqualsRule>(range.Rules[0]);
+            }
+
+            [Fact]
+            public void Should_Give_No_Rule_When_Range_Is_Exclusive_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                var result = SemanticVersionRange.TryParse("(1.0)", out range);
+
+                // Then
+                Assert.False(result);
+                Assert.Null(range);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Exclusive_Lower_With_Exclusive_No_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,)", out range);
+
+                // Then
+                Assert.IsType<GreaterThanRule>(range.Rules[0]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Exclusive_Lower_With_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+
+                // Then
+                Assert.IsType<GreaterThanRule>(range.Rules[0]);
+                Assert.IsType<LessThanRule>(range.Rules[1]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Inclusive_Lower_With_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+
+                // Then
+                Assert.IsType<GreaterThanOrEqualsRule>(range.Rules[0]);
+                Assert.IsType<LessThanOrEqualsRule>(range.Rules[1]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Inclusive_Lower_With_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+
+                // Then
+                Assert.IsType<GreaterThanOrEqualsRule>(range.Rules[0]);
+                Assert.IsType<LessThanRule>(range.Rules[1]);
+            }
+
+            [Fact]
+            public void Should_Give_Correct_Rule_When_Range_Is_Exclusive_Lower_With_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+
+                // Then
+                Assert.IsType<GreaterThanRule>(range.Rules[0]);
+                Assert.IsType<LessThanOrEqualsRule>(range.Rules[1]);
+            }
         }
 
-        [Test]
-        public void TryParse_ExclusiveNoLowerInclusiveUpper()
+        public class TheIsIncludedMethod
         {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(,1.0]", out range);
+            [Fact]
+            public void Should_Return_True_For_Same_Version_When_Range_Is_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
 
-            Assert.AreEqual(1, range.Rules.Length);
-            Assert.AreEqual(typeof (LessThanOrEqualsRule), range.Rules[0].GetType());
-        }
+                // When
+                SemanticVersionRange.TryParse("1.0", out range);
 
-        [Test]
-        public void TryParse_ExlusiveNoLowerExclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(,1.0)", out range);
+                // Then
+                Assert.True(range.IsIncluded("1.0"));
+            }
 
-            Assert.AreEqual(1, range.Rules.Length);
-            Assert.AreEqual(typeof (LessThanRule), range.Rules[0].GetType());
-        }
+            [Fact]
+            public void Should_Return_True_For_Higher_Version_When_Range_Is_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void TryParse_InclusiveSingleVersion()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("[1.0]", out range);
+                // When
+                SemanticVersionRange.TryParse("1.0", out range);
 
-            Assert.AreEqual(1, range.Rules.Length);
-            Assert.AreEqual(typeof (EqualsRule), range.Rules[0].GetType());
-        }
+                // Then
+                Assert.True(range.IsIncluded("1.1"));
+            }
 
-        [Test]
-        public void TryParse_ExclusiveSingleVersion()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0)", out range);
+            [Fact]
+            public void Should_Return_False_For_Lower_Version_When_Range_Is_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
 
-            Assert.IsNull(range);
-        }
+                // When
+                SemanticVersionRange.TryParse("1.0", out range);
 
-        [Test]
-        public void TryParse_ExclusiveLowerExclusiveNoUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0,)", out range);
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
 
-            Assert.AreEqual(1, range.Rules.Length);
-            Assert.AreEqual(typeof (GreaterThanRule), range.Rules[0].GetType());
-        }
+            [Fact]
+            public void Should_Return_True_For_Same_Version_When_Range_Is_Exclusive_No_Lower_With_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void TryParse_ExclusiveLowerExclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+                // When
+                SemanticVersionRange.TryParse("(,1.0]", out range);
 
-            Assert.AreEqual(2, range.Rules.Length);
-            Assert.AreEqual(typeof (GreaterThanRule), range.Rules[0].GetType());
-            Assert.AreEqual(typeof (LessThanRule), range.Rules[1].GetType());
-        }
+                // Then
+                Assert.True(range.IsIncluded("1.0"));
+            }
 
-        [Test]
-        public void TryParse_InclusiveLowerInclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+            [Fact]
+            public void Should_Return_True_For_Lower_Version_When_Range_Is_Exclusive_No_Lower_With_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-            Assert.AreEqual(2, range.Rules.Length);
-            Assert.AreEqual(typeof (GreaterThanOrEqualsRule), range.Rules[0].GetType());
-            Assert.AreEqual(typeof (LessThanOrEqualsRule), range.Rules[1].GetType());
-        }
+                // When
+                SemanticVersionRange.TryParse("(,1.0]", out range);
 
-        [Test]
-        public void TryParse_InclusiveLowerExclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+                // Then
+                Assert.True(range.IsIncluded("0.9"));
+            }
 
-            Assert.AreEqual(2, range.Rules.Length);
-            Assert.AreEqual(typeof(GreaterThanOrEqualsRule), range.Rules[0].GetType());
-            Assert.AreEqual(typeof(LessThanRule), range.Rules[1].GetType());
-        }
+            [Fact]
+            public void Should_Return_False_For_Higher_Version_When_Range_Is_Exclusive_No_Lower_With_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void TryParse_ExclusiveLowerInclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+                // When
+                SemanticVersionRange.TryParse("(,1.0]", out range);
 
-            Assert.AreEqual(2, range.Rules.Length);
-            Assert.AreEqual(typeof(GreaterThanRule), range.Rules[0].GetType());
-            Assert.AreEqual(typeof(LessThanOrEqualsRule), range.Rules[1].GetType());
-        }
+                // Then
+                Assert.False(range.IsIncluded("1.1"));
+            }
 
-        [Test]
-        public void TryParse_SilentlyHandlesGarbageRange()
-        {
-            SemanticVersionRange range;
-            Assert.DoesNotThrow(() => SemanticVersionRange.TryParse("/garbage", out range));
-        }
+            [Fact]
+            public void Should_Return_True_For_Lower_Version_When_Range_Is_Exclusive_No_Lower_With_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void TryParse_SilentlyHandlesInvalidLower()
-        {
-            SemanticVersionRange range;
-            Assert.DoesNotThrow(() => SemanticVersionRange.TryParse("(garbage,1.0)", out range));
-        }
+                // When
+                SemanticVersionRange.TryParse("(,1.0)", out range);
 
-        [Test]
-        public void TryParse_SilentlyHandlesInvalidUpper()
-        {
-            SemanticVersionRange range;
-            Assert.DoesNotThrow(() => SemanticVersionRange.TryParse("(1.0,garbage)", out range));
-        }
+                // Then
+                Assert.True(range.IsIncluded("0.9"));
+            }
 
-        [Test]
-        public void IsIncluded_SingleVersion()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("1.0", out range);
+            [Fact]
+            public void Should_Return_False_For_Same_Version_When_Range_Is_Exclusive_No_Lower_With_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-            Assert.IsTrue(range.IsIncluded("1.0"));
-            Assert.IsTrue(range.IsIncluded("1.1"));
-            Assert.IsFalse(range.IsIncluded("0.9"));
-        }
+                // When
+                SemanticVersionRange.TryParse("(,1.0)", out range);
 
-        [Test]
-        public void IsIncluded_ExclusiveNoLowerInclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(,1.0]", out range);
+                // Then
+                Assert.False(range.IsIncluded("1.0"));
+            }
 
-            Assert.IsTrue(range.IsIncluded("1.0"));
-            Assert.IsTrue(range.IsIncluded("0.9"));
-            Assert.IsFalse(range.IsIncluded("1.1"));
-        }
+            [Fact]
+            public void Should_Return_False_For_Higher_Version_When_Range_Is_Exclusive_No_Lower_With_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void IsIncluded_ExclusiveNoLowerExclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(,1.0)", out range);
+                // When
+                SemanticVersionRange.TryParse("(,1.0)", out range);
 
-            Assert.IsTrue(range.IsIncluded("0.9"));
-            Assert.IsFalse(range.IsIncluded("1.0"));
-            Assert.IsFalse(range.IsIncluded("1.1"));
-        }
+                // Then
+                Assert.False(range.IsIncluded("1.0"));
+            }
 
-        [Test]
-        public void IsIncluded_InclusiveSingleVersion()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("[1.0]", out range);
+            [Fact]
+            public void Should_Return_True_For_Same_Version_When_Range_Is_Inclusive_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
 
-            Assert.IsTrue(range.IsIncluded("1.0"));
-            Assert.IsFalse(range.IsIncluded("1.1"));
-            Assert.IsFalse(range.IsIncluded("0.9"));
-        }
+                // When
+                SemanticVersionRange.TryParse("[1.0]", out range);
 
-        [Test]
-        public void IsIncluded_ExclusiveLowerExclusiveNoUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0,)", out range);
+                // Then
+                Assert.True(range.IsIncluded("1.0"));
+            }
 
-            Assert.IsTrue(range.IsIncluded("1.1"));
-            Assert.IsFalse(range.IsIncluded("1.0"));
-            Assert.IsFalse(range.IsIncluded("0.9"));
-        }
+            [Fact]
+            public void Should_Return_False_For_Lower_Version_When_Range_Is_Inclusive_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void IsIncluded_ExclusiveLowerExclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+                // When
+                SemanticVersionRange.TryParse("[1.0]", out range);
 
-            Assert.IsTrue(range.IsIncluded("1.5"));
-            Assert.IsFalse(range.IsIncluded("1.0"));
-            Assert.IsFalse(range.IsIncluded("2.0"));
-        }
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
 
-        [Test]
-        public void IsIncluded_InclusiveLowerInclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+            [Fact]
+            public void Should_Return_False_For_Higher_Version_When_Range_Is_Inclusive_Single_Version()
+            {
+                // Given
+                SemanticVersionRange range;
 
-            Assert.IsTrue(range.IsIncluded("1.0"));
-            Assert.IsTrue(range.IsIncluded("1.5"));
-            Assert.IsTrue(range.IsIncluded("2.0"));
-            Assert.IsFalse(range.IsIncluded("0.9"));
-            Assert.IsFalse(range.IsIncluded("2.1"));
-        }
+                // When
+                SemanticVersionRange.TryParse("[1.0]", out range);
 
-        [Test]
-        public void IsIncluded_InclusiveLowerExclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+                // Then
+                Assert.False(range.IsIncluded("1.1"));
+            }
 
-            Assert.IsTrue(range.IsIncluded("1.0"));
-            Assert.IsTrue(range.IsIncluded("1.5"));
-            Assert.IsFalse(range.IsIncluded("2.0"));
-            Assert.IsFalse(range.IsIncluded("2.1"));
-        }
+            [Fact]
+            public void Should_Return_True_For_Higher_Version_When_Range_Is_Exclusive_Lower_Exclusive_No_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
 
-        [Test]
-        public void IsIncluded_ExclusiveLowerInclusiveUpper()
-        {
-            SemanticVersionRange range;
-            SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+                // When
+                SemanticVersionRange.TryParse("(1.0,)", out range);
 
-            Assert.IsTrue(range.IsIncluded("1.5"));
-            Assert.IsTrue(range.IsIncluded("2.0"));
-            Assert.IsFalse(range.IsIncluded("1.0"));
-            Assert.IsFalse(range.IsIncluded("2.1"));
+                // Then
+                Assert.True(range.IsIncluded("1.1"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Same_Version_When_Range_Is_Exclusive_Lower_Exclusive_No_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("1.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Lower_Version_When_Range_Is_Exclusive_Lower_Exclusive_No_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Between_Lower_And_Upper_When_Range_Is_Exclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("1.5"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Same_As_Lower_When_Range_Is_Exclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("1.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Lower_Than_Lower_When_Range_Is_Exclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Same_As_Upper_When_Range_Is_Exclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("2.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Higher_Than_Upper_When_Range_Is_Exclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("2.1"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Between_Lower_And_Upper_When_Range_Is_Inclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("1.5"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Same_As_Lower_When_Range_Is_Inclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("1.0"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Same_As_Upper_When_Range_Is_Inclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("2.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Lower_Than_Lower_When_Range_Is_Inclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Higher_Than_Upper_When_Range_Is_Inclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0]", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("2.1"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Between_Lower_And_Upper_When_Range_Is_Inclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("1.5"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Same_As_Lower_When_Range_Is_Inclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("1.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Lower_Than_Lower_When_Range_Is_Inclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Same_As_Upper_When_Range_Is_Inclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("2.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Higher_Than_Upper_When_Range_Is_Inclusive_Lower_Exclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("[1.0,2.0)", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("2.1"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Between_Lower_And_Upper_When_Range_Is_Exclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("1.5"));
+            }
+
+            [Fact]
+            public void Should_Return_True_For_Version_Same_As_Upper_When_Range_Is_Exclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+
+                // Then
+                Assert.True(range.IsIncluded("2.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Higher_Than_Upper_When_Range_Is_Exclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("2.1"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Same_As_Lower_When_Range_Is_Exclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("1.0"));
+            }
+
+            [Fact]
+            public void Should_Return_False_For_Version_Lower_Than_Lower_When_Range_Is_Exclusive_Lower_Inclusive_Upper()
+            {
+                // Given
+                SemanticVersionRange range;
+
+                // When
+                SemanticVersionRange.TryParse("(1.0,2.0]", out range);
+
+                // Then
+                Assert.False(range.IsIncluded("0.9"));
+            }
         }
     }
 }

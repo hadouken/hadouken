@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog;
 
@@ -15,6 +16,21 @@ namespace Hadouken.Plugins
 
         public PluginEngine(IEnumerable<IPluginScanner> pluginScanners, IPackageInstaller packageInstaller, IPackageDownloader packageDownloader)
         {
+            if (pluginScanners == null)
+            {
+                throw new ArgumentNullException("pluginScanners");
+            }
+
+            if (packageInstaller == null)
+            {
+                throw new ArgumentNullException("packageInstaller");
+            }
+
+            if (packageDownloader == null)
+            {
+                throw new ArgumentNullException("packageDownloader");
+            }
+
             _pluginScanners = pluginScanners;
             _packageInstaller = packageInstaller;
             _packageDownloader = packageDownloader;
@@ -79,7 +95,7 @@ namespace Hadouken.Plugins
             }
 
             // Check state
-            if (manager.State != PluginState.Unloaded)
+            if (manager.State == PluginState.Loaded)
             {
                 Logger.Debug("Skipping load of plugin '{0}' since it is already loaded.", name);
                 return;
@@ -91,16 +107,16 @@ namespace Hadouken.Plugins
                 Logger.Warn("Plugin '{0}' is missing dependencies {1}. Downloading...", name,
                     string.Join(",", missingDependencies));
 
-                if (DownloadAndInstall(missingDependencies))
-                {
-                    Scan();
-                    Load(name);
-                }
+                if (!DownloadAndInstall(missingDependencies)) return;
 
-                return;
+                Scan();
+                Load(name);
+            }
+            else
+            {
+                Load(manager);                
             }
 
-            Load(manager);
         }
 
         public bool CanLoad(string name, out string[] missingDependencies)

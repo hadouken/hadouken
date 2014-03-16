@@ -1,111 +1,524 @@
-﻿using Hadouken.SemVer;
-using NUnit.Framework;
+﻿using System;
+using Hadouken.SemVer;
+using Xunit;
 
-namespace Hadouken.Framework.Tests.SemVer
+namespace Hadouken.Tests.SemVer
 {
     public class SemanticVersionTests
     {
-        [Test]
-        public void CanConstructSemanticVersionFromDefault()
+        public class TheConstructor
         {
-            var semver = new SemanticVersion();
-            Assert.AreEqual("0.0.0", semver.ToString());
+            [Fact]
+            public void Should_Set_Correct_Version_When_Given_No_Arguments()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When, Then
+                Assert.Equal("0.0.0", version.ToString());
+            }
+
+            [Fact]
+            public void Should_Set_Correct_Version_When_Given_Major()
+            {
+                // Given
+                var version = new SemanticVersion(1);
+
+                // When, Then
+                Assert.Equal("1.0.0", version.ToString());
+            }
+
+            [Fact]
+            public void Should_Set_Correct_Version_When_Given_Major_Minor()
+            {
+                // Given
+                var version = new SemanticVersion(1, 1);
+
+                // When, Then
+                Assert.Equal("1.1.0", version.ToString());
+            }
+
+            [Fact]
+            public void Should_Set_Correct_Version_When_Given_Major_Minor_Patch()
+            {
+                // Given
+                var version = new SemanticVersion(1, 1, 1);
+
+                // When, Then
+                Assert.Equal("1.1.1", version.ToString());
+            }
+
+            [Fact]
+            public void Should_Set_Correct_Version_When_Given_Major_Minor_Patch_Label()
+            {
+                // Given
+                var version = new SemanticVersion(1, 1, 1, "test");
+
+                // When, Then
+                Assert.Equal("1.1.1-test", version.ToString());
+            }
         }
 
-        [Test]
-        public void CanConstructSemanticVersionFromMajor()
+        public class TheMajorProperty
         {
-            var semver = new SemanticVersion(1);
-            Assert.AreEqual("1.0.0", semver.ToString());
+            [Fact]
+            public void Should_Return_Major_Version()
+            {
+                // Given
+                var version = new SemanticVersion(1);
+
+                // When, Then
+                Assert.Equal(1, version.Major);
+            }
+
+            [Fact]
+            public void Should_Accept_Any_Positive_Integer()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When
+                version.Major = 1;
+
+                // Then
+                Assert.Equal(1, version.Major);
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentOutOfRangeException_If_Setting_Negative_Value()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When, Then
+                Assert.Throws<ArgumentOutOfRangeException>(() => version.Major = -1);
+            }
         }
 
-        [Test]
-        public void CanConstructSemanticVersionFromMajorMinor()
+        public class TheMinorProperty
         {
-            var semver = new SemanticVersion(1, 1);
-            Assert.AreEqual("1.1.0", semver.ToString());
+            [Fact]
+            public void Should_Return_Minor_Version()
+            {
+                // Given
+                var version = new SemanticVersion(1, 1);
+
+                // When, Then
+                Assert.Equal(1, version.Minor);
+            }
+
+            [Fact]
+            public void Should_Accept_Any_Positive_Integer()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When
+                version.Minor = 1;
+
+                // Then
+                Assert.Equal(1, version.Minor);
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentOutOfRangeException_If_Setting_Negative_Value()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When, Then
+                Assert.Throws<ArgumentOutOfRangeException>(() => version.Minor = -1);
+            }
         }
 
-        [Test]
-        public void CanConstructSemanticVersionFromMajorMinorPatch()
+        public class ThePatchProperty
         {
-            var semver = new SemanticVersion(1, 1, 1);
-            Assert.AreEqual("1.1.1", semver.ToString());
+            [Fact]
+            public void Should_Return_The_Patch_Version()
+            {
+                // Given
+                var version = new SemanticVersion(0, 0, 1);
+
+                // When, Then
+                Assert.Equal(1, version.Patch);
+            }
+
+            [Fact]
+            public void Should_Accept_Any_Positive_Integer()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When
+                version.Patch = 1;
+
+                // Then
+                Assert.Equal(1, version.Patch);
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentOutOfRangeException_If_Setting_Negative_Value()
+            {
+                // Given
+                var version = new SemanticVersion();
+
+                // When, Then
+                Assert.Throws<ArgumentOutOfRangeException>(() => version.Patch = -1);
+            }
         }
 
-        [Test]
-        public void CanConstructSemanticVersionFromMajorMinorPatchLabel()
+        public class TheLessThanOperator
         {
-            var semver = new SemanticVersion(1, 1, 1, "label");
-            Assert.AreEqual("1.1.1-label", semver.ToString());
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_Left_Value_Is_Null()
+            {
+                // Given
+                var left = (SemanticVersion) null;
+                var right = new SemanticVersion();
+
+                // When, Then
+                Assert.Throws<ArgumentNullException>(() => left < right);
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_Right_Value_Is_Null()
+            {
+                // Given
+                var left = new SemanticVersion();
+                var right = (SemanticVersion) null;
+
+                // When, Then
+                Assert.Throws<ArgumentNullException>(() => left < right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Left_Major_Is_Less_Than_Right_Major()
+            {
+                // Given
+                var left = new SemanticVersion(1);
+                var right = new SemanticVersion(2);
+
+                // When, Then
+                Assert.True(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Left_Major_Is_Greater_Than_Right_Major()
+            {
+                // Given
+                var left = new SemanticVersion(2);
+                var right = new SemanticVersion(1);
+
+                // When, Then
+                Assert.False(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Are_Same_And_Left_Minor_Is_Less_Than_Right_Minor()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0);
+                var right = new SemanticVersion(1, 1);
+
+                // When, Then
+                Assert.True(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Are_Same_And_Left_Minor_Is_Greater_Than_Right_Minor()
+            {
+                // Given
+                var left = new SemanticVersion(1, 1);
+                var right = new SemanticVersion(1, 0);
+
+                // When, Then
+                Assert.False(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Minor_Are_Same_And_Left_Patch_Is_Less_Than_Right_Patch()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0);
+                var right = new SemanticVersion(1, 0, 1);
+
+                // When, Then
+                Assert.True(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Minor_Are_Same_And_Left_Patch_Is_Greater_Than_Right_Patch()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 1);
+                var right = new SemanticVersion(1, 0, 0);
+
+                // When, Then
+                Assert.False(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Minor_Patch_Are_Same_And_Left_Has_Label_When_Right_Has_Not()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "a");
+                var right = new SemanticVersion(1, 0, 0);
+
+                // When, Then
+                Assert.True(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Minor_Patch_Are_Same_And_Left_Has_No_Label_When_Right_Has()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0);
+                var right = new SemanticVersion(1, 0, 0, "a");
+
+                // When, Then
+                Assert.False(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Minor_Patch_Are_Same_And_Left_Label_Is_Less_Than_Right_Label()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "a");
+                var right = new SemanticVersion(1, 0, 0, "b");
+
+                // When, Then
+                Assert.True(left < right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Minor_Patch_Are_Same_And_Left_Label_Is_Greater_Than_Right_Label()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "b");
+                var right = new SemanticVersion(1, 0, 0, "a");
+
+                // When, Then
+                Assert.False(left < right);
+            }
         }
 
-        [Test]
-        public void CanConstructSemanticVersionFromString()
+        public class TheGreaterThanOperator
         {
-            var semver = new SemanticVersion("1.0.1-label");
-            Assert.AreEqual("1.0.1-label", semver.ToString());
+            [Fact]
+            public void Should_Throw_ArgumentNullException_When_Left_Value_Is_Null()
+            {
+                // Given
+                var left = (SemanticVersion)null;
+                var right = new SemanticVersion();
+
+                // When, Then
+                Assert.Throws<ArgumentNullException>(() => left > right);
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentNullException_When_Right_Value_Is_Null()
+            {
+                // Given
+                var left = new SemanticVersion();
+                var right = (SemanticVersion)null;
+
+                // When, Then
+                Assert.Throws<ArgumentNullException>(() => left > right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Left_Major_Is_Greater_Than_Right_Major()
+            {
+                // Given
+                var left = new SemanticVersion(2);
+                var right = new SemanticVersion(1);
+
+                // When, Then
+                Assert.True(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Left_Major_Is_Less_Than_Right_Major()
+            {
+                // Given
+                var left = new SemanticVersion(1);
+                var right = new SemanticVersion(2);
+
+                // When, Then
+                Assert.False(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Are_Same_And_Left_Minor_Is_Greater_Than_Right_Minor()
+            {
+                // Given
+                var left = new SemanticVersion(1, 1);
+                var right = new SemanticVersion(1, 0);
+
+                // When, Then
+                Assert.True(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Are_Same_And_Left_Minor_Is_Lower_Than_Right_Minor()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0);
+                var right = new SemanticVersion(1, 1);
+
+                // When, Then
+                Assert.False(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Minor_Are_Same_And_Left_Patch_Is_Greater_Than_Right_Patch()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 1);
+                var right = new SemanticVersion(1, 0, 0);
+
+                // When, Then
+                Assert.True(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Minor_Are_Same_And_Left_Patch_Is_Lower_Than_Right_Patch()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0);
+                var right = new SemanticVersion(1, 0, 1);
+
+                // When, Then
+                Assert.False(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Minor_Patch_Are_Same_And_Left_Has_No_Label_When_Right_Has()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0);
+                var right = new SemanticVersion(1, 0, 0, "a");
+
+                // When, Then
+                Assert.True(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Minor_Patch_Are_Same_And_Left_Has_Label_When_Right_Has_Not()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "a");
+                var right = new SemanticVersion(1, 0, 0);
+
+                // When, Then
+                Assert.False(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Major_Minor_Patch_Are_Same_And_Left_Label_Is_Greater_Than_Right_Label()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "b");
+                var right = new SemanticVersion(1, 0, 0, "a");
+
+                // When, Then
+                Assert.True(left > right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Major_Minor_Patch_Are_Same_And_Left_Label_Is_Less_Than_Right_Label()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "a");
+                var right = new SemanticVersion(1, 0, 0, "b");
+
+                // When, Then
+                Assert.False(left > right);
+            }
         }
 
-        [Test]
-        public void LessThanComparisonWithMajorMinorSucceeds()
+        public class TheEqualsOperator
         {
-            var lower = new SemanticVersion("1.0");
-            var upper = new SemanticVersion("1.1");
+            [Fact]
+            public void Should_Return_True_When_Left_And_Right_Are_Same_Instance()
+            {
+                // Given
+                var left = new SemanticVersion();
+                var right = left;
 
-            Assert.IsTrue(lower < upper);
+                // When, Then
+                Assert.True(left == right);
+            }
+
+            [Fact]
+            public void Should_Return_False_If_Left_Is_Null()
+            {
+                // Given
+                var left = (SemanticVersion) null;
+                var right = new SemanticVersion();
+
+                // When, Then
+                Assert.False(left == right);
+            }
+
+            [Fact]
+            public void Should_Return_False_If_Right_Is_Null()
+            {
+                // Given
+                var left = new SemanticVersion();
+                var right = (SemanticVersion) null;
+
+                // When, Then
+                Assert.False(left == right);
+            }
+
+            [Fact]
+            public void Should_Return_True_When_Left_And_Right_Are_Same_Version()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 0, "a");
+                var right = new SemanticVersion(1, 0, 0, "a");
+
+                // When, Then
+                Assert.True(left == right);
+            }
+
+            [Fact]
+            public void Should_Return_False_When_Left_And_Right_Differs()
+            {
+                // Given
+                var left = new SemanticVersion(1, 0, 1, "a");
+                var right = new SemanticVersion(1, 2, 1, "c");
+
+                // When, Then
+                Assert.False(left == right);
+            }
         }
 
-        [Test]
-        public void LessThanComparisonWithMajorMinorPatchSucceeds()
+        public class TheImplicitStringOperator
         {
-            var lower = new SemanticVersion("1.1.132");
-            var upper = new SemanticVersion("1.1.133");
+            [Fact]
+            public void Should_Throw_ArgumentNullException_When_Argument_Is_Null()
+            {
+                // Given
+                var version = (SemanticVersion) null;
 
-            Assert.IsTrue(lower < upper);
-        }
+                // When, Then
+                Assert.Throws<ArgumentNullException>(() => { string v = version; });
+            }
 
-        [Test]
-        public void LessThanComparisonWithMajorMinorPatchLabelSucceeds()
-        {
-            var lower = new SemanticVersion("0.1.123-label.1");
-            var upper = new SemanticVersion("1.1.2-label.2");
+            [Fact]
+            public void Should_Return_Correctly_Presented_String_When_Given_A_Valid_Version()
+            {
+                // Given
+                var version = new SemanticVersion(1, 2, 3, "label");
 
-            Assert.IsTrue(lower < upper);
-        }
+                // When
+                string v = version;
 
-        [Test]
-        public void LessThanComparisonWithOneSideLabelSucceeds()
-        {
-            var lower = new SemanticVersion("1.1.1-abc");
-            var upper = new SemanticVersion("1.1.1");
-
-            Assert.IsTrue(lower < upper);
-        }
-
-        [Test]
-        public void ImplicitStringOperatorSucceeds()
-        {
-            SemanticVersion semver = "1.2.3-label";
-            Assert.AreEqual("1.2.3-label", semver.ToString());
-        }
-
-        [Test]
-        public void SetsCorrectLabel()
-        {
-            var semver = new SemanticVersion("1.9.0-sweet.label");
-            Assert.AreEqual("sweet.label", semver.Label);
-        }
-
-        [Test]
-        public void DifferentInstancesWithSameVersionAreEqual()
-        {
-            var semver1 = new SemanticVersion("1.0.0-foo");
-            var semver2 = new SemanticVersion("1.0.0-foo");
-
-            Assert.AreEqual(semver1, semver2);
-            Assert.IsTrue(semver1 == semver2);
-            Assert.IsTrue(semver1.Equals(semver2));
+                // Then
+                Assert.Equal("1.2.3-label", v);
+            }
         }
     }
 }

@@ -1,257 +1,263 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Hadouken.Configuration;
-using Hadouken.Fx.IO;
 using Hadouken.Plugins;
-using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
-using Moq;
-using NUnit.Framework;
+using NSubstitute;
+using Xunit;
 
 namespace Hadouken.Tests.Plugins
 {
-    [TestFixture]
     public class PluginEngineTests
     {
-        [Test]
-        public void Scan_WithNoPlugins_GivesEmptyResult()
+        public class TheConstructor
         {
-            // Given
-            var scanner = CreatePluginScanner();
-            var engine = new PluginEngine(new[] {scanner},
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-
-            // Then
-            Assert.AreEqual(0, engine.GetAll().Count());
-        }
-
-        [Test]
-        public void Scan_WithPlugins_GivesCorrectResult()
-        {
-            // Given
-            var manager1 = CreatePluginManager("a", "1.0");
-            var manager2 = CreatePluginManager("b", "1.0");
-            var scanner = CreatePluginScanner(manager1, manager2);
-            var engine = new PluginEngine(new[] { scanner },
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-
-            // Then
-            Assert.AreEqual(2, engine.GetAll().Count());
-        }
-
-        [Test]
-        public void Scan_WithPluginsHavingMissingDependencies_GivesCorrectResult()
-        {
-            // Given
-            var manager1 = CreatePluginManager("a", "1.0");
-            var manager2 = CreatePluginManager("b", "1.0", new Dependency { Name = "c" });
-            var scanner = CreatePluginScanner(manager1, manager2);
-            var engine = new PluginEngine(new[] { scanner },
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-
-            // Then
-            Assert.AreEqual(2, engine.GetAll().Count());
-        }
-
-        [Test]
-        public void Load_WithPluginHavingMissingDependency_DoesNotLoad()
-        {
-            // Given
-            var manager = CreatePluginManager("a", "1.0", new Dependency { Name = "test-missing-dependency" });
-            var scanner = CreatePluginScanner(manager);
-            var engine = new PluginEngine(new[] { scanner },
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-            engine.Load("a");
-
-            // Then
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("a").State);
-        }
-
-        [Test]
-        public void Load_WithValidPlugin_Loads()
-        {
-            // Given
-            var manager = CreatePluginManager("a", "1.0");
-            var scanner = CreatePluginScanner(manager);
-            var engine = new PluginEngine(new[] { scanner },
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-            engine.Load("a");
-
-            // Then
-            Assert.AreEqual(PluginState.Loaded, engine.Get("a").State);
-        }
-
-        [Test]
-        public void Load_WithPluginHavingComplexDependencies_LoadsAllDependencies()
-        {
-            // Given
-            var manager1 = CreatePluginManager("a", "1.0");
-            var manager2 = CreatePluginManager("b", "1.0", new Dependency {Name = "a"});
-            var manager3 = CreatePluginManager("c", "1.0", new Dependency {Name = "b"}, new Dependency {Name = "a"});
-            var manager4 = CreatePluginManager("d", "1.0", new Dependency {Name = "c"});
-            var scanner = CreatePluginScanner(manager1, manager2, manager3, manager4);
-            var engine = new PluginEngine(new[] { scanner },
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-            engine.Load("d");
-
-            // Then
-            Assert.AreEqual(PluginState.Loaded, engine.Get("a").State);
-            Assert.AreEqual(PluginState.Loaded, engine.Get("b").State);
-            Assert.AreEqual(PluginState.Loaded, engine.Get("c").State);
-            Assert.AreEqual(PluginState.Loaded, engine.Get("d").State);
-        }
-
-        [Test]
-        public void Load_WithPluginHavingComplexDependenciesAndOneIsMissing_DoesNotLoadAnyPlugin()
-        {
-            // Given
-            var manager1 = CreatePluginManager("a", "1.0", new Dependency {Name = "missing"});
-            var manager2 = CreatePluginManager("b", "1.0", new Dependency {Name = "a"});
-            var manager3 = CreatePluginManager("c", "1.0", new Dependency {Name = "b"}, new Dependency {Name = "a"});
-            var manager4 = CreatePluginManager("d", "1.0", new Dependency {Name = "c"});
-            var scanner = CreatePluginScanner(manager1, manager2, manager3, manager4);
-            var engine = new PluginEngine(new[] { scanner },
-                new Mock<IPackageInstaller>().Object,
-                new Mock<IPackageDownloader>().Object);
-
-            // When
-            engine.Scan();
-            engine.Load("d");
-
-            // Then
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("a").State);
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("b").State);
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("c").State);
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("d").State);
-        }
-
-        [Test]
-        public void Load_WithPluginHavingMissingDependency_DownloadsAndInstallsMissingDependency()
-        {
-            // Given
-            var manager = CreatePluginManager("a", "1.0", new Dependency {Name = "missing"});
-            var scanner = CreatePluginScannerMock(manager);
-            var installer = new Mock<IPackageInstaller>();
-            installer.Setup(i => i.Install(It.IsAny<IPackage>()))
-                .Callback(
-                    () => scanner.Setup(s => s.Scan()).Returns(new[] { manager, CreatePluginManager("missing", "1.0") }));
-            var downloader = new Mock<IPackageDownloader>();
-            downloader.Setup(d => d.Download("missing")).Returns(CreatePackage("missing", "1.0"));
-            var engine = new PluginEngine(new[]{scanner.Object}, installer.Object, downloader.Object);
-            
-            // When
-            engine.Scan();
-            engine.Load("a");
-
-            // Then
-            downloader.Verify(d => d.Download("missing"), Times.Once());
-            installer.Verify(i => i.Install(It.IsAny<IPackage>()), Times.Once());
-
-            Assert.AreEqual(PluginState.Loaded, engine.Get("missing").State);
-            Assert.AreEqual(PluginState.Loaded, engine.Get("a").State);
-        }
-
-        [Test]
-        public void Load_WithDownloadedDependencyHavingMissingDependency_DoesNotLoadAnything()
-        {
-            // Given
-            var manager = CreatePluginManager("a", "1.0", new Dependency { Name = "missing" });
-            var scanner = CreatePluginScannerMock(manager);
-            var installer = new Mock<IPackageInstaller>();
-            installer.Setup(i => i.Install(It.IsAny<IPackage>()))
-                .Callback(
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_PluginScanners_Is_Null()
+            {
+                // Given, When, Then
+                Assert.Throws<ArgumentNullException>(
                     () =>
-                        scanner.Setup(s => s.Scan())
-                            .Returns(new[]
-                            {manager, CreatePluginManager("missing", "1.0", new Dependency {Name = "another-missing"})}));
-            var downloader = new Mock<IPackageDownloader>();
-            downloader.Setup(d => d.Download("missing")).Returns(CreatePackage("missing", "1.0"));
-            var engine = new PluginEngine(new[] { scanner.Object }, installer.Object, downloader.Object);
+                        new PluginEngine(null, Substitute.For<IPackageInstaller>(), Substitute.For<IPackageDownloader>()));
+            }
 
-            // When
-            engine.Scan();
-            engine.Load("a");
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_PackageInstaller_Is_Null()
+            {
+                // Given, When, Then
+                Assert.Throws<ArgumentNullException>(
+                    () =>
+                        new PluginEngine(new[] { Substitute.For<IPluginScanner>() }, null, Substitute.For<IPackageDownloader>()));
+            }
 
-            // Then
-            downloader.Verify(d => d.Download("missing"), Times.Once());
-            downloader.Verify(d => d.Download("another-missing"), Times.Once());
-            installer.Verify(i => i.Install(It.IsAny<IPackage>()), Times.Once());
-
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("missing").State);
-            Assert.AreEqual(PluginState.Unloaded, engine.Get("a").State);
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_PackageDownloader_Is_Null()
+            {
+                // Given, When, Then
+                Assert.Throws<ArgumentNullException>(
+                    () =>
+                        new PluginEngine(new[] { Substitute.For<IPluginScanner>() }, Substitute.For<IPackageInstaller>(), null));
+            }
         }
 
-        private IPluginManager CreatePluginManager(string name, string version, params Dependency[] dependencies)
+        public class TheScanMethod
         {
-            var envMock = new Mock<IIsolatedEnvironment>();
-            var cfg = CreateConfiguration();
-            var dirMock = new Mock<IDirectory>();
-            var manifestMock = new Mock<IManifest>();
-            manifestMock.SetupGet(m => m.Name).Returns(name);
-            manifestMock.SetupGet(m => m.Version).Returns(version);
-            manifestMock.SetupGet(m => m.Dependencies).Returns(dependencies);
+            [Fact]
+            public void Should_Not_Add_The_Same_Plugin_When_Scanning_Multiple_Times()
+            {
+                // Given
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(new[] {Substitute.For<IPluginManager>()});
+                var engine = new PluginEngine(
+                    new[] {scanner},
+                    Substitute.For<IPackageInstaller>(),
+                    Substitute.For<IPackageDownloader>());
 
-            return new PluginManager(cfg, dirMock.Object, envMock.Object, manifestMock.Object);
+                // When
+                engine.Scan();
+                engine.Scan(); // Scan a second time
+
+                // Then
+                Assert.Equal(1, engine.GetAll().Count());
+            }
+
+            [Fact]
+            public void Should_Add_New_Plugins_When_Called_A_Second_Time()
+            {
+                // Given
+                var scanner = Substitute.For<IPluginScanner>();
+                var engine = new PluginEngine(
+                    new[] { scanner },
+                    Substitute.For<IPackageInstaller>(),
+                    Substitute.For<IPackageDownloader>());
+
+                // When, Then
+                engine.Scan();
+                Assert.Equal(0, engine.GetAll().Count());
+
+
+                // When
+                scanner.Scan().Returns(new[] { Substitute.For<IPluginManager>() });
+                engine.Scan(); // Scan a second time
+
+                // Then
+                Assert.Equal(1, engine.GetAll().Count());
+            }
         }
 
-        private IPluginScanner CreatePluginScanner(params IPluginManager[] managers)
+        public class TheLoadMethod
         {
-            var mock = new Mock<IPluginScanner>();
-            mock.Setup(m => m.Scan()).Returns(managers);
-            return mock.Object;
-        }
+            [Fact]
+            public void Should_Not_Load_Plugin_That_Has_Missing_Dependency()
+            {
+                // Given
+                var manager = Substitute.For<IPluginManager>();
+                manager.Manifest.Name.Returns("a");
+                manager.Manifest.Dependencies.Returns(new[] {new Dependency {Name = "missing"}});
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(new[] {manager});
+                var downloader = Substitute.For<IPackageDownloader>();
+                downloader.Download(Arg.Any<string>()).Returns(c => null);
+                var engine = new PluginEngine(
+                    new[] { scanner },
+                    Substitute.For<IPackageInstaller>(),
+                    downloader);
 
-        private Mock<IPluginScanner> CreatePluginScannerMock(params IPluginManager[] managers)
-        {
-            var mock = new Mock<IPluginScanner>();
-            mock.Setup(m => m.Scan()).Returns(managers);
-            return mock;
-        }
+                // When
+                engine.Scan();
+                engine.Load("a");
 
-        private IPackage CreatePackage(string name, string version, params Dependency[] dependencies)
-        {
-            var pkg = new Mock<IPackage>();
-            var man = new Mock<IManifest>();
-            man.SetupGet(m => m.Dependencies).Returns(dependencies);
-            man.SetupGet(m => m.Name).Returns(name);
-            man.SetupGet(m => m.Version).Returns(version);
+                // Then
+                manager.DidNotReceive().Load();
+            }
 
-            pkg.SetupGet(p => p.Manifest).Returns(man.Object);
+            [Fact]
+            public void Should_Load_Plugin_Having_No_Dependencies()
+            {
+                // Given
+                var manager = Substitute.For<IPluginManager>();
+                manager.Manifest.Name.Returns("a");
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(new[] { manager });
+                var engine = new PluginEngine(
+                    new[] { scanner },
+                    Substitute.For<IPackageInstaller>(),
+                    Substitute.For<IPackageDownloader>());
 
-            return pkg.Object;
-        }
+                // When
+                engine.Scan();
+                engine.Load("a");
 
-        private IConfiguration CreateConfiguration()
-        {
-            var cfg = new Mock<IConfiguration>();
-            cfg.SetupGet(c => c.ApplicationDataPath).Returns("test");
-            cfg.SetupGet(c => c.Http).Returns(new Mock<IHttpConfiguration>().Object);
-            cfg.SetupGet(c => c.Http.Authentication).Returns(new Mock<IHttpAuthConfiguration>().Object);
-            return cfg.Object;
+                // Then
+                manager.Received(1).Load();
+            }
+
+            [Fact]
+            public void Should_Load_Plugin_And_All_Its_Dependencies()
+            {
+                // Given
+                var m1 = CreatePluginManager("a");
+                var m2 = CreatePluginManager("b", "a");
+                var m3 = CreatePluginManager("c", "b", "a");
+                var m4 = CreatePluginManager("d", "c");
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(new[] {m1, m2, m3, m4});
+                var engine = new PluginEngine(new[]{scanner},
+                    Substitute.For<IPackageInstaller>(),
+                    Substitute.For<IPackageDownloader>());
+
+                // When
+                engine.Scan();
+                engine.Load("d");
+
+                // Then
+                m1.Received().Load();
+                m2.Received().Load();
+                m3.Received().Load();
+                m4.Received().Load();
+            }
+
+            [Fact]
+            public void Should_Not_Load_Any_Plugin_If_Chain_Has_Missing_Dependency()
+            {
+                // Given
+                var m1 = CreatePluginManager("a", "x");
+                var m2 = CreatePluginManager("b", "a");
+                var m3 = CreatePluginManager("c", "b", "a");
+                var m4 = CreatePluginManager("d", "c");
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(new[] { m1, m2, m3, m4 });
+                var downloader = Substitute.For<IPackageDownloader>();
+                downloader.Download(Arg.Any<string>()).Returns(_ => null);
+                var engine = new PluginEngine(new[] { scanner },
+                    Substitute.For<IPackageInstaller>(),
+                    downloader);
+
+                // When
+                engine.Scan();
+                engine.Load("d");
+
+                // Then
+                downloader.Received().Download("x");
+                m1.DidNotReceive().Load();
+                m2.DidNotReceive().Load();
+                m3.DidNotReceive().Load();
+                m4.DidNotReceive().Load();
+            }
+
+            [Fact]
+            public void Should_Download_And_Install_Missing_Dependency()
+            {
+                // Given
+                var list = new List<IPluginManager>();
+                var m = CreatePluginManager("a", "x");
+                list.Add(m);
+
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(list);
+                var installer = Substitute.For<IPackageInstaller>();
+                installer.When(i => i.Install(Arg.Any<IPackage>())).Do(_ => list.Add(CreatePluginManager("x")));
+                var downloader = Substitute.For<IPackageDownloader>();
+                var pkg = Substitute.For<IPackage>();
+                pkg.Manifest.Name.Returns("x");
+                downloader.Download("x").Returns(pkg);
+                var engine = new PluginEngine(new[] { scanner }, installer, downloader);
+
+                // When
+                engine.Scan();
+                engine.Load("a");
+
+                // Then
+                downloader.Received().Download("x");
+                installer.Received().Install(Arg.Any<IPackage>());
+                m.Received().Load();
+            }
+
+            [Fact]
+            public void Should_Not_Load_Any_Plugin_If_Downloaded_Dependency_Has_Missing_Dependency()
+            {
+                // Given
+                var list = new List<IPluginManager>();
+                var m = CreatePluginManager("a", "x");
+                list.Add(m);
+
+                var scanner = Substitute.For<IPluginScanner>();
+                scanner.Scan().Returns(list);
+                var installer = Substitute.For<IPackageInstaller>();
+                installer.When(i => i.Install(Arg.Any<IPackage>())).Do(_ => list.Add(CreatePluginManager("x", "y")));
+                var downloader = Substitute.For<IPackageDownloader>();
+                var pkg = Substitute.For<IPackage>();
+                pkg.Manifest.Name.Returns("x");
+                downloader.Download("x").Returns(pkg);
+                downloader.Download("y").Returns(_ => null);
+                var engine = new PluginEngine(new[] { scanner }, installer, downloader);
+
+                // When
+                engine.Scan();
+                engine.Load("a");
+
+                // Then
+                downloader.Received().Download("x");
+                downloader.Received().Download("y");
+                installer.Received(1).Install(Arg.Any<IPackage>());
+                m.DidNotReceive().Load();
+            }
+
+            private static IPluginManager CreatePluginManager(string name, params string[] dependencies)
+            {
+                var m = Substitute.For<IPluginManager>();
+                m.Manifest.Name.Returns(name);
+
+                var deps = new List<Dependency>();
+
+                if (dependencies != null && dependencies.Any())
+                {
+                    deps.AddRange(dependencies.Select(dependency => new Dependency {Name = dependency}));
+                    m.Manifest.Dependencies.Returns(deps.ToArray());
+                }
+
+                return m;
+            }
         }
     }
 }

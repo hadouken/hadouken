@@ -89,6 +89,15 @@ namespace Hadouken.SemVer
                 && String.IsNullOrEmpty(y.Label))
                 return true;
 
+            // if left side (x) has no label and right side (y) does, left side is larger
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch == y.Patch
+                && String.IsNullOrEmpty(x.Label)
+                && !String.IsNullOrEmpty(y.Label))
+                return false;
+
+            // if both sides has a label but x.Label is less than y.Label, left side is smaller
             if (x.Major == y.Major
                 && x.Minor == y.Minor
                 && x.Patch == y.Patch
@@ -125,6 +134,14 @@ namespace Hadouken.SemVer
                 && String.IsNullOrEmpty(x.Label)
                 && !String.IsNullOrEmpty(y.Label))
                 return true;
+
+            // if left side (x) has label and right side (y) does not, left side is smaller
+            if (x.Major == y.Major
+                && x.Minor == y.Minor
+                && x.Patch == y.Patch
+                && !String.IsNullOrEmpty(x.Label)
+                && String.IsNullOrEmpty(y.Label))
+                return false;
 
             if (x.Major == y.Major
                 && x.Minor == y.Minor
