@@ -20,6 +20,26 @@ namespace Hadouken.Plugins
 
         public PluginManager(IConfiguration configuration, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
         {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException("configuration");
+            }
+
+            if (baseDirectory == null)
+            {
+                throw new ArgumentNullException("baseDirectory");
+            }
+
+            if (environment == null)
+            {
+                throw new ArgumentNullException("environment");
+            }
+
+            if (manifest == null)
+            {
+                throw new ArgumentNullException("manifest");
+            }
+
             State = PluginState.Unloaded;
 
             _baseDirectory = baseDirectory;
@@ -44,10 +64,10 @@ namespace Hadouken.Plugins
 
         public long GetMemoryUsage()
         {
-            if (State != PluginState.Loaded)
-                return -1;
+            if (State == PluginState.Loaded)
+                return _isolatedEnvironment.GetMemoryUsage();
 
-            return _isolatedEnvironment.GetMemoryUsage();
+            return -1;
         }
 
         public void Load()

@@ -55,6 +55,7 @@
     <Compile Include="JsonRpc\PluginsServiceTests.cs" />
     <Compile Include="Plugins\PackageDownloaderTests.cs" />
     <Compile Include="Plugins\PluginEngineTests.cs" />
+    <Compile Include="Plugins\PluginManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SemVer\SemanticVersionRangeTests.cs" />
     <Compile Include="SemVer\SemanticVersionTests.cs" />
