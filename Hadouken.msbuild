@@ -37,7 +37,7 @@
   </Target>
 
   <Target Name="Test" DependsOnTargets="Compile">
-    <Exec Command="packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll /nunit $(OutputDirectory)/TestResult.xml" />
+    <Exec Command="packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe src\Main\Hadouken.Tests\bin\$(Configuration)\Hadouken.Tests.dll" />
   </Target>
 
   <Target Name="Output" DependsOnTargets="Compile">
