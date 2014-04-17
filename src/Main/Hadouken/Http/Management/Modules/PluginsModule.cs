@@ -138,22 +138,26 @@ namespace Hadouken.Http.Management.Modules
                 return View["Settings", new {PluginId = _.id, Template = template}];
             };
 
-            Get["/settings/{id}/script.js"] = _ =>
+            Get["/{id}/{path*}"] = _ =>
             {
                 string id = _.id;
+                string path = _.path;
+
                 var plugin = pluginEngine.Get(id);
                 if (plugin == null)
                 {
                     return 404;
                 }
 
-                var data = rpcClient.Call<byte[]>(string.Format("{0}.config.script", id));
+                var data = rpcClient.Call<byte[]>(string.Format("{0}.resource.get", id), new[] {path});
                 if (data == null)
                 {
                     return 404;
                 }
 
-                return Response.FromStream(() => new MemoryStream(data), "text/javascript");
+                var contentType = MimeTypes.GetMimeType(path);
+
+                return Response.FromStream(() => new MemoryStream(data), contentType);
             };
         }
     }

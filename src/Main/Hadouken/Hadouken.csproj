@@ -86,6 +86,9 @@
     <Reference Include="Nancy.Owin">
       <HintPath>..\..\..\packages\Nancy.Owin.0.22.2\lib\net40\Nancy.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.ViewEngines.Razor">
+      <HintPath>..\..\..\packages\Nancy.Viewengines.Razor.0.22.2\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -105,6 +108,9 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.Razor.Unofficial">
+      <HintPath>..\..\..\packages\System.Web.Razor.Unofficial.2.0.2\lib\net40\System.Web.Razor.Unofficial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -223,7 +229,7 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
     <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.sshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Settings.sshtml" />
@@ -232,7 +238,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.sshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Events.sshtml" />
@@ -274,7 +280,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-    </PostBuildEvent>
+if $(ConfigurationName) == Debug (
+xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.0.22.2\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
+xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.0.22.2\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

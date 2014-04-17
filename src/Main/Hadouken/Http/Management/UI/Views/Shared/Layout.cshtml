@@ -76,16 +76,22 @@
         </div>
 
         <div class="container" role="main" id="main-container">
-            @Section['Content']
+            @RenderBody()
         </div>
 
         <script type="text/javascript" src="/Scripts/jquery-1.11.0.min.js"></script>
-		<script type="text/javascript" src="/Scripts/jquery.signalr-2.0.2.min.js"></script>
+		    <script type="text/javascript" src="/Scripts/jquery.signalr-2.0.2.min.js"></script>
         <script type="text/javascript" src="/Scripts/jquery.jsonrpc.js"></script>
         <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>
         <script type="text/javascript" src="/Scripts/jquery.bootstrap-growl.js"></script>
         <script type="text/javascript" src="/Scripts/semver.js"></script>
         <script type="text/javascript" src="/Scripts/Shared.js"></script>
-        @Section['Scripts']
+      
+      @foreach (var script in ViewBag.BackgroundScripts)
+      {
+          <script src="/plugins/@script"></script>
+      }
+
+      @RenderSection("Scripts", false)
     </body>
 </html>

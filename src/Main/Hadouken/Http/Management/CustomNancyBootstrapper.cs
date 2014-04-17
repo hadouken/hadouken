@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using Autofac;
+using Hadouken.Plugins;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
@@ -12,6 +14,9 @@ namespace Hadouken.Http.Management
 {
     public class CustomNancyBootstrapper : AutofacNancyBootstrapper
     {
+        private static readonly Nancy.ViewEngines.Razor.DefaultRazorConfiguration conf__;
+        private static readonly System.Web.Razor.RazorCodeLanguage lang__;
+
         private readonly ILifetimeScope _container;
         private readonly Assembly _assembly;
 
@@ -46,7 +51,7 @@ namespace Hadouken.Http.Management
                 }
 
                 var auth = context.GetAuthenticationManager();
-                return (auth == null || auth.User == null || auth.User.Identity == null || !auth.User.Identity.IsAuthenticated)
+                return (auth == null || auth.User == null || !auth.User.Identity.IsAuthenticated)
                     ? HttpStatusCode.Unauthorized
                     : (Response)null;
             });
@@ -56,6 +61,22 @@ namespace Hadouken.Http.Management
                 if (context.Response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     context.Response = new RedirectResponse("/login");
+                }
+                else
+                {
+                    var engine = _container.Resolve<IPluginEngine>();
+                    var plugins =
+                        engine.GetAll()
+                            .Where(
+                                p =>
+                                    p.Manifest.UserInterface != null && p.Manifest.UserInterface.BackgroundScripts.Any());
+
+
+                    var scripts = (from plugin in plugins
+                        from bgs in plugin.Manifest.UserInterface.BackgroundScripts
+                        select string.Concat(plugin.Manifest.Name, "/", bgs)).ToArray();
+
+                    context.ViewBag.BackgroundScripts = scripts;
                 }
             });
         }

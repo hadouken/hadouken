@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JsonRpc\ConfigService.cs" />
+    <Compile Include="JsonRpc\ResourceService.cs" />
     <Compile Include="JsonRpc\MathService.cs" />
     <Compile Include="SamplePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,10 +52,11 @@
     <Content Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="UI\js\config.js" />
+    <EmbeddedResource Include="UI\js\background.js" />
+    <EmbeddedResource Include="UI\js\settings.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\config.html" />
+    <EmbeddedResource Include="UI\settings.html" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
