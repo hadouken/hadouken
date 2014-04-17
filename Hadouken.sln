@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Plugins.Isolation"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tests", "src\Main\Hadouken.Tests\Hadouken.Tests.csproj", "{0478CADF-8517-4E72-A5EB-999F526B716A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Web", "src\Main\Hadouken.Web\Hadouken.Web.csproj", "{5221465D-D70D-47AC-8686-D091E86B96FE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +41,6 @@ Global
 		{0478CADF-8517-4E72-A5EB-999F526B716A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0478CADF-8517-4E72-A5EB-999F526B716A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0478CADF-8517-4E72-A5EB-999F526B716A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5221465D-D70D-47AC-8686-D091E86B96FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5221465D-D70D-47AC-8686-D091E86B96FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5221465D-D70D-47AC-8686-D091E86B96FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5221465D-D70D-47AC-8686-D091E86B96FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

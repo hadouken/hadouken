@@ -43,10 +43,27 @@
     <Compile Include="WebPage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="login.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="login.html" />
+    <EmbeddedResource Include="Scripts\bootstrap.min.js" />
+    <EmbeddedResource Include="Scripts\jquery-1.11.0.min.js" />
+    <EmbeddedResource Include="Scripts\jquery.bootstrap-growl.js" />
+    <EmbeddedResource Include="Scripts\jquery.jsonrpc.js" />
+    <EmbeddedResource Include="Scripts\JsonRpcDebugger.js" />
+    <EmbeddedResource Include="Scripts\Plugins.js" />
+    <EmbeddedResource Include="Scripts\Repository.js" />
+    <EmbeddedResource Include="Scripts\semver.js" />
+    <EmbeddedResource Include="Scripts\Shared.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Shared\Layout.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Home\Index.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Login\Index.sshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

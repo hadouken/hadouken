@@ -1,0 +1,26 @@
+﻿<div class="modal fade">
+    <div class="modal-dialog">
+        <form class="form-horizontal" role="form" action="/plugins/upload" method="POST" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Upload plugin package</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Use the form below to manually upload a plugin package. <em>If it has dependencies which can not be met, it will fail to load.</em></p>
+
+                    <div class="form-group">
+                        <label for="package" class="col-md-3 control-label">Package file</label>
+                        <div class="col-md-9">
+                            <input type="file" class="form-control" name="package" id="package" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload package</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

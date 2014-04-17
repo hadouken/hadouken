@@ -1,0 +1,48 @@
+﻿@Master['Shared/Layout.sshtml']
+
+@Section['Scripts']
+<script type="text/javascript">
+    var installedPlugins = @Model.InstalledPlugins;
+</script>
+<script type="text/javascript" src="/Scripts/Repository.js"></script>
+@EndSection
+
+@Section['Content']
+<div class="row">
+    <div class="col-md-12">
+        <h1>Plugin repository browser</h1>
+
+        <p>Browse and install plugins from the repository you've configured.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Available plugins</h2>
+
+        <div class="row">
+            <div class="col-md-offset-9 col-md-3">
+                <div class="input-group pull-right">
+                    <input type="text" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Version</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="plugins-list">
+            </tbody>
+        </table>
+    </div>
+</div>
+@EndSection

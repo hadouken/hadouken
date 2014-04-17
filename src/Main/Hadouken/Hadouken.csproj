@@ -74,6 +74,18 @@
     <Reference Include="Microsoft.Owin.StaticFiles">
       <HintPath>..\..\..\packages\Microsoft.Owin.StaticFiles.2.1.0\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\..\..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Bootstrappers.Autofac">
+      <HintPath>..\..\..\packages\Nancy.Bootstrappers.Autofac.0.22.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.MSOwinSecurity">
+      <HintPath>..\..\..\packages\Nancy.MSOwinSecurity.1.0.1\lib\net45\Nancy.MSOwinSecurity.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Owin">
+      <HintPath>..\..\..\packages\Nancy.Owin.0.22.2\lib\net40\Nancy.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -110,8 +122,25 @@
     <Compile Include="Http\Api\Models\ReleaseItem.cs" />
     <Compile Include="Http\Api\IReleasesRepository.cs" />
     <Compile Include="Http\Api\ReleasesRepository.cs" />
-    <Compile Include="Http\HttpManagementServer.cs" />
-    <Compile Include="Http\IHttpManagementServer.cs" />
+    <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
+    <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
+    <Compile Include="Http\Management\HttpBackendServer.cs" />
+    <Compile Include="Http\Management\Hubs\EventHub.cs" />
+    <Compile Include="Http\Management\IHttpBackendServer.cs" />
+    <Compile Include="Http\Management\Models\LoginParameters.cs" />
+    <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
+    <Compile Include="Http\Management\Models\PluginListItem.cs" />
+    <Compile Include="Http\Management\Models\SettingsItem.cs" />
+    <Compile Include="Http\Management\Modules\Api\ReleasesModule.cs" />
+    <Compile Include="Http\Management\Modules\Api\RepositoryModule.cs" />
+    <Compile Include="Http\Management\Modules\HomeModule.cs" />
+    <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />
+    <Compile Include="Http\Management\Modules\LoginModule.cs" />
+    <Compile Include="Http\Management\Modules\PluginsModule.cs" />
+    <Compile Include="Http\Management\Modules\RepositoryModule.cs" />
+    <Compile Include="Http\Management\Modules\SettingsModule.cs" />
+    <Compile Include="Http\Management\Modules\ToolsModule.cs" />
+    <Compile Include="Http\Management\Security\CustomClientAuthorizeAttribute.cs" />
     <Compile Include="JsonRpc\AuthService.cs" />
     <Compile Include="JsonRpc\CoreService.cs" />
     <Compile Include="JsonRpc\LogService.cs" />
@@ -184,6 +213,23 @@
     <Compile Include="Service\IHadoukenService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.eot" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Settings.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -191,10 +237,27 @@
       <Project>{A0534175-961D-4702-9E75-B8A67B3E0710}</Project>
       <Name>Hadouken.Plugins.Isolation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Hadouken.Web\Hadouken.Web.csproj">
-      <Project>{5221465d-d70d-47ac-8686-d091e86b96fe}</Project>
-      <Name>Hadouken.Web</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap-theme.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\font-awesome.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.svg" />
+    <EmbeddedResource Include="Http\Management\UI\Content\Images\256.png" />
+    <EmbeddedResource Include="Http\Management\UI\Content\Images\loader.gif" />
+    <EmbeddedResource Include="Http\Management\UI\Content\SignIn.css" />
+    <EmbeddedResource Include="Http\Management\UI\Content\Site.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\bootstrap.min.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery-1.11.0.min.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.bootstrap-growl.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.jsonrpc.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\JsonRpcDebugger.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Plugins.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Repository.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\semver.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Shared.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

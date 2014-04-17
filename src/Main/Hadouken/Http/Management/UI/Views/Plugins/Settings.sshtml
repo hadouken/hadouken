@@ -1,0 +1,17 @@
+﻿@Master['Shared/Layout.sshtml']
+
+@Section['Scripts']
+<script type="text/javascript" src="/plugins/settings/@Model.PluginId/script.js"></script>
+@EndSection
+
+@Section['Content']
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Settings for '@Model.PluginId'</h1>
+    </div>
+</div>
+
+<div id="settings-container">
+    @Model.Template
+</div>
+@EndSection

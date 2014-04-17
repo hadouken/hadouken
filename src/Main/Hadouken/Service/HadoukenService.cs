@@ -6,6 +6,7 @@ using Hadouken.Configuration;
 using Hadouken.Fx.IO;
 using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
+using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using NLog;
 
@@ -17,7 +18,7 @@ namespace Hadouken.Service
 
 	    private readonly IConfiguration _configuration;
 	    private readonly IPluginServiceHost _rpcServiceHost;
-	    private readonly IHttpManagementServer _managementServer;
+	    private readonly IHttpBackendServer _backendServer;
 	    private readonly IApiConnection _apiConnection;
 	    private readonly IFileSystem _fileSystem;
 	    private readonly IPackageReader _packageReader;
@@ -26,7 +27,7 @@ namespace Hadouken.Service
 
         public HadoukenService(IConfiguration configuration,
             IPluginServiceHost rpcServiceHost,
-            IHttpManagementServer managementServer,
+            IHttpBackendServer backendServer,
             IApiConnection apiConnection,
             IFileSystem fileSystem,
             IPackageReader packageReader,
@@ -35,7 +36,7 @@ namespace Hadouken.Service
 		{
             _configuration = configuration;
             _rpcServiceHost = rpcServiceHost;
-            _managementServer = managementServer;
+            _backendServer = backendServer;
             _apiConnection = apiConnection;
             _fileSystem = fileSystem;
             _packageReader = packageReader;
@@ -47,7 +48,7 @@ namespace Hadouken.Service
 		{
 			Logger.Info("Starting Hadouken");
 
-		    _managementServer.Start();
+		    _backendServer.Start();
 		    _rpcServiceHost.Open();
 
 		    try
@@ -70,7 +71,7 @@ namespace Hadouken.Service
 		    _pluginEngine.UnloadAll();
 
 		    _rpcServiceHost.Close();
-		    _managementServer.Stop();
+		    _backendServer.Stop();
 		}
 
 	    private void BootstrapCorePlugins(string[] args)

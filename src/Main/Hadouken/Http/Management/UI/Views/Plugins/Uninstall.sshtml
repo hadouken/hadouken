@@ -1,0 +1,32 @@
+﻿<div class="row">
+    @If.CanUninstall
+    <h4>Confirm uninstall</h4>
+    <p>
+        This will uninstall the plugin '@Model.PluginId'. Confirm uninstall by typing the plugin name
+        in the textbox and clicking 'Confirm uninstall'.
+    </p>
+    @EndIf
+
+    @IfNot.CanUninstall
+    <div class="alert alert-danger">
+        <p><strong>Error:</strong> Other plugins still depend on this plugin. Please uninstall them first.</p>
+
+        <ul>
+            @Each.Dependencies
+            <li>@Current</li>
+            @EndEach
+        </ul>
+    </div>
+    @EndIf
+</div>
+
+@If.CanUninstall
+<div class="row">
+    <div class="col-md-9">
+        <input type="text" class="form-control" id="confirmed-plugin-id" />
+    </div>
+    <div class="col-md-3">
+        <button id="btn-confirm-uninstall" type="button" class="btn btn-sm btn-danger">Confirm uninstall</button>
+    </div>
+</div>
+@EndIf
