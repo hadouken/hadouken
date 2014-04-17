@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Security.Claims;
-using System.Text;
 using Hadouken.Web;
 using Microsoft.Owin;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.Hosting;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.StaticFiles;
 using Owin;
@@ -27,7 +25,11 @@ namespace Hadouken.Http
 
         public void Start()
         {
-            _httpServer = WebApp.Start("http://localhost:7891/", BuildApplication);
+            var opts = new StartOptions();
+            opts.Urls.Add("http://localhost:7891/");
+            opts.Urls.Add("http://192.168.0.21:7891/");
+
+            _httpServer = WebApp.Start(opts, BuildApplication);
         }
 
         public void Stop()
@@ -45,56 +47,79 @@ namespace Hadouken.Http
                 LogoutPath = new PathString("/logout")
             };
 
-            builder.UseCookieAuthentication(cookieOpts);
-
-            builder.Use(async (context, next) =>
-            {
-                if (context.Request.Path.Value.Contains(cookieOpts.LoginPath.Value))
+            builder.MapWhen(
+                ctx => !(ctx.Request.RemoteIpAddress == "127.0.0.1" || ctx.Request.RemoteIpAddress == "::1"),
+                appBuilder =>
                 {
-                    if (context.Request.Method == "POST")
+                    appBuilder.UseCookieAuthentication(cookieOpts);
+
+                    MapShared(appBuilder);
+
+                    appBuilder.Use(async (context, next) =>
                     {
-                        // Login
-                        var form = await context.Request.ReadFormAsync();
-                        var userName = form["userName"];
-                        var password = form["password"];
-
-                        if (userName == "asdf" && password == "asdf")
+                        if (context.Request.Path.Value.Contains(cookieOpts.LoginPath.Value))
                         {
-                            var identity = new ClaimsIdentity(cookieOpts.AuthenticationType);
-                            identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+                            if (context.Request.Method == "POST")
+                            {
+                                // Login
+                                var form = await context.Request.ReadFormAsync();
+                                var userName = form["userName"];
+                                var password = form["password"];
 
-                            // Sign in
-                            context.Authentication.SignIn(identity);
-                            context.Response.Redirect("/index.html");
+                                if (userName == "asdf" && password == "asdf")
+                                {
+                                    var identity = new ClaimsIdentity(cookieOpts.AuthenticationType);
+                                    identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+
+                                    // Sign in
+                                    context.Authentication.SignIn(identity);
+                                    context.Response.Redirect("/index.html");
+                                }
+                                else
+                                {
+                                    var page = WebPage.GetLoginPage();
+
+                                    context.Response.ContentType = "text/html";
+                                    await context.Response.WriteAsync(page);
+                                }
+                            }
+                            else
+                            {
+                                var page = WebPage.GetLoginPage();
+
+                                context.Response.ContentType = "text/html";
+                                await context.Response.WriteAsync(page);
+                            }
+                        }
+                        else if (context.Request.Path.Value.Contains(cookieOpts.LogoutPath.Value))
+                        {
+                            context.Authentication.SignOut(cookieOpts.AuthenticationType);
+                            context.Response.Redirect(cookieOpts.LoginPath.Value);
+                        }
+                        else if (context.Request.User == null || !context.Request.User.Identity.IsAuthenticated)
+                        {
+                            context.Response.Redirect(cookieOpts.LoginPath.Value);
                         }
                         else
                         {
-                            var page = WebPage.GetLoginPage();
-
-                            context.Response.ContentType = "text/html";
-                            await context.Response.WriteAsync(page);
+                            await next();
                         }
-                    }
-                    else
-                    {
-                        var page = WebPage.GetLoginPage();
+                    });
+                });
 
-                        context.Response.ContentType = "text/html";
-                        await context.Response.WriteAsync(page);
-                    }
-                }
-                else if (context.Request.Path.Value.Contains(cookieOpts.LogoutPath.Value))
+            // SignalR
+            builder.MapWhen(
+                ctx => (ctx.Request.RemoteIpAddress == "127.0.0.1" || ctx.Request.RemoteIpAddress == "::1"),
+                MapShared);
+        }
+
+        private void MapShared(IAppBuilder builder)
+        {
+            builder.Use(async (ctx, next) =>
+            {
+                if (ctx.Request.Path.Value == "/")
                 {
-                    context.Authentication.SignOut(cookieOpts.AuthenticationType);
-                    context.Response.Redirect(cookieOpts.LoginPath.Value);
-                }
-                else if (context.Request.Path.Value == "/")
-                {
-                    context.Response.Redirect("/index.html");
-                }
-                else if (context.Request.User == null || !context.Request.User.Identity.IsAuthenticated)
-                {
-                    context.Response.Redirect(cookieOpts.LoginPath.Value);
+                    ctx.Response.Redirect("/index.html");
                 }
                 else
                 {
@@ -109,6 +134,9 @@ namespace Hadouken.Http
             };
 
             builder.UseStaticFiles(fileOpts);
+
+            // SignalR
+            builder.MapSignalR();
         }
     }
 }
