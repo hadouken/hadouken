@@ -6,7 +6,6 @@ using Hadouken.Configuration;
 using Hadouken.Fx.IO;
 using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
-using Hadouken.Http.Management;
 using Hadouken.Plugins;
 using NLog;
 
@@ -18,7 +17,7 @@ namespace Hadouken.Service
 
 	    private readonly IConfiguration _configuration;
 	    private readonly IPluginServiceHost _rpcServiceHost;
-	    private readonly IManagementServer _managementServer;
+	    private readonly IHttpManagementServer _managementServer;
 	    private readonly IApiConnection _apiConnection;
 	    private readonly IFileSystem _fileSystem;
 	    private readonly IPackageReader _packageReader;
@@ -27,7 +26,7 @@ namespace Hadouken.Service
 
         public HadoukenService(IConfiguration configuration,
             IPluginServiceHost rpcServiceHost,
-            IManagementServer managementServer,
+            IHttpManagementServer managementServer,
             IApiConnection apiConnection,
             IFileSystem fileSystem,
             IPackageReader packageReader,

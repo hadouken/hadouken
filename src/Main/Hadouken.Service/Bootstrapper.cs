@@ -9,7 +9,6 @@ using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
 using Hadouken.Http.Api;
-using Hadouken.Http.Management;
 using Hadouken.JsonRpc;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
@@ -27,7 +26,7 @@ namespace Hadouken.Service
 			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
 
             // HTTP management interface
-		    builder.RegisterModule(new ManagementModule());
+		    builder.RegisterType<HttpManagementServer>().As<IHttpManagementServer>();
 
 			// Register plugin engine
 		    builder.RegisterType<CmdArgPluginScanner>().As<IPluginScanner>();
