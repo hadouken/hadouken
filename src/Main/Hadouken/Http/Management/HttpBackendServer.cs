@@ -1,5 +1,7 @@
 ﻿using System;
 using Autofac;
+using Hadouken.Configuration;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Security.Cookies;
@@ -10,21 +12,22 @@ namespace Hadouken.Http.Management
 {
     public class HttpBackendServer : IHttpBackendServer
     {
+        private readonly IConfiguration _configuration;
         private readonly ILifetimeScope _lifetimeScope;
         private readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener listener__;
 
         private IDisposable _httpServer;
 
-        public HttpBackendServer(ILifetimeScope lifetimeScope)
+        public HttpBackendServer(IConfiguration configuration, ILifetimeScope lifetimeScope)
         {
+            _configuration = configuration;
             _lifetimeScope = lifetimeScope;
         }
 
         public void Start()
         {
             var opts = new StartOptions();
-            opts.Urls.Add("http://localhost:7891/");
-            opts.Urls.Add("http://192.168.0.21:7891/");
+            opts.Urls.Add(string.Format("http://{0}:{1}/", _configuration.Http.HostBinding, _configuration.Http.Port));
 
             _httpServer = WebApp.Start(opts, BuildApplication);
         }
@@ -48,7 +51,7 @@ namespace Hadouken.Http.Management
             builder.UseCookieAuthentication(cookieOpts);
 
             // SignalR
-            builder.MapSignalR();
+            builder.MapSignalR(new HubConfiguration {EnableDetailedErrors = true});
 
             // Nancy
             var nancyOpts = new NancyOptions

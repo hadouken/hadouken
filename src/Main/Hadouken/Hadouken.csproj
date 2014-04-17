@@ -230,6 +230,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Events.sshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +262,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.signalr-2.0.2.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\Events.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

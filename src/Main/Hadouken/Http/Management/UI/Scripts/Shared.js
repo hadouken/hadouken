@@ -41,7 +41,7 @@
         success: function(response) {
             var localVersion = response.result;
 
-            $.getJSON('/manage/api/releases', function(releases) {
+            $.getJSON('/api/releases', function(releases) {
                 var latestRelease = releases[0];
 
                 if (semver.gt(latestRelease.version, localVersion)) {

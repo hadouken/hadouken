@@ -16,5 +16,10 @@ namespace Hadouken.Http.Management.Security
 
             return base.AuthorizeHubConnection(hubDescriptor, request);
         }
+
+        public override bool AuthorizeHubMethodInvocation(IHubIncomingInvokerContext hubIncomingInvokerContext, bool appliesToMethod)
+        {
+            return true;
+        }
     }
 }

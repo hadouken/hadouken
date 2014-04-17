@@ -13,6 +13,8 @@ namespace Hadouken.Http.Management.Modules
         public ToolsModule(IPluginEngine pluginEngine, IFileSystem fileSystem)
             : base("tools")
         {
+            Get["/events"] = _ => View["Events"];
+
             Get["/jsonrpc-debugger"] = _ =>
             {
                 var pluginIds = pluginEngine.GetAll().Select(p => p.Manifest.Name).ToArray();
