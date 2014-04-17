@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Hadouken.SemVer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,20 +18,46 @@ namespace Hadouken.Plugins.Metadata
         static Manifest()
         {
             ManifestReaders.Add(1, () => new ManifestV1Reader());
+            ManifestReaders.Add(2, () => new ManifestV2Reader());
         }
 
-        public Manifest()
+        private readonly string _name;
+        private readonly SemanticVersion _version;
+        private readonly IEnumerable<Dependency> _dependencies;
+        private readonly IUserInterface _userInterface;
+
+        public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies)
+            : this(name, version, dependencies, null)
         {
-            Dependencies = new Dependency[] {};
         }
 
-        public string AssemblyFile { get; set; }
+        public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies, IUserInterface userInterface)
+        {
+            _name = name;
+            _version = version;
+            _dependencies = dependencies ?? Enumerable.Empty<Dependency>();
+            _userInterface = userInterface;
+        }
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return _name; }
+        }
 
-        public SemanticVersion Version { get; set; }
+        public SemanticVersion Version
+        {
+            get { return _version; }
+        }
 
-        public Dependency[] Dependencies { get; set; }
+        public IEnumerable<Dependency> Dependencies
+        {
+            get { return _dependencies; }
+        }
+
+        public IUserInterface UserInterface
+        {
+            get { return _userInterface; }
+        }
 
         public static bool TryParse(Stream json, out IManifest manifest)
         {

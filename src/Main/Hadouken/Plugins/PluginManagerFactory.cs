@@ -18,7 +18,7 @@ namespace Hadouken.Plugins
 
         public IPluginManager Create(IDirectory directory, IManifest manifest)
         {
-            var environment = _isolatedEnvironmentFactory.CreateEnvironment(directory, manifest);
+            var environment = _isolatedEnvironmentFactory.CreateEnvironment(directory);
             return new PluginManager(_configuration, directory, environment, manifest);
         }
     }

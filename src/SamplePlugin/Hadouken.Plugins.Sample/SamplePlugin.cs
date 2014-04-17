@@ -14,8 +14,6 @@ namespace Hadouken.Plugins.Sample
 
         public override void Load()
         {
-            _rpcClient.Call("core.logging.log",
-                new []{"Foo.Hadouken", "Debug", "Zip fooooo's?!"});
         }
     }
 }

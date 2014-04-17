@@ -1,17 +1,32 @@
 ﻿{
-  "manifest_version": 1,
+  "manifest_version": 2,
 
   "id": "sample",
   "version": "1.0",
 
+  "ui": {
+    "background": [
+	  "js/background.js"
+	],
+
+	"settings": {
+	  "scripts": [
+	    "js/settings.js"
+	  ],
+	  "html": "settings.html"
+	}
+  },
+
   "dependencies":[
-    { "id": "torrents", "version": "1.0" }
   ],
 
   "permissions": {
 	"network": {
-	  "protocol": "tcp",
-	  "type": "full"
+	  "protocols": [ "tcp" ],
+	  "endpoints": [ "<all>" ]
+	},
+	"filesystem": {
+	  "paths": [ "<all>" ]
 	}
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Hadouken.SemVer;
 using Newtonsoft.Json.Linq;
 
@@ -20,37 +21,33 @@ namespace Hadouken.Plugins.Metadata
             if (manifestVersion != 1)
                 return null;
 
-            var manifest = new Manifest
-            {
-                Name = manifestObject["id"].Value<string>(),
-                Version = new SemanticVersion(manifestObject["version"].Value<string>())
-            };
-
             // Read all dependencies
             var dependencies = manifestObject["dependencies"] as JArray;
             var dependencyList = new List<Dependency>();
 
-            if (dependencies == null) return manifest;
-
-            foreach (var dependency in dependencies.Children())
+            if (dependencies != null)
             {
-                SemanticVersionRange range;
-
-                if (!SemanticVersionRange.TryParse(dependency["version"].Value<string>(), out range))
-                    continue;
-
-                var d = new Dependency
+                foreach (var dependency in dependencies.Children())
                 {
-                    Name = dependency["id"].Value<string>(),
-                    VersionRange = range
-                };
+                    SemanticVersionRange range;
 
-                dependencyList.Add(d);
+                    if (!SemanticVersionRange.TryParse(dependency["version"].Value<string>(), out range))
+                        continue;
+
+                    var d = new Dependency
+                    {
+                        Name = dependency["id"].Value<string>(),
+                        VersionRange = range
+                    };
+
+                    dependencyList.Add(d);
+                }
             }
 
-            manifest.Dependencies = dependencyList.ToArray();
+            var name = manifestObject["id"].Value<string>();
+            var version = new SemanticVersion(manifestObject["version"].Value<string>());
 
-            return manifest;
+            return new Manifest(name, version, dependencyList);
         }
     }
 }

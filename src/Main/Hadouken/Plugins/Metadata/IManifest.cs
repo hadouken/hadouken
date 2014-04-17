@@ -1,15 +1,16 @@
-﻿using Hadouken.SemVer;
+﻿using System.Collections.Generic;
+using Hadouken.SemVer;
 
 namespace Hadouken.Plugins.Metadata
 {
     public interface IManifest
     {
-        string AssemblyFile { get; }
-
         string Name { get; }
 
         SemanticVersion Version { get; }
 
-        Dependency[] Dependencies { get; }
+        IEnumerable<Dependency> Dependencies { get; }
+
+        IUserInterface UserInterface { get; }
     }
 }
