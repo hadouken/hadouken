@@ -259,6 +259,9 @@
     <EmbeddedResource Include="Http\Management\UI\Scripts\semver.js" />
     <EmbeddedResource Include="Http\Management\UI\Scripts\Shared.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.signalr-2.0.2.min.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -9,12 +9,12 @@ namespace Hadouken.Http.Management.Security
         {
             var remoteIp = request.Environment["server.RemoteIpAddress"] as string;
 
-            if (remoteIp == null)
+            if (remoteIp != null && (remoteIp == "127.0.0.1" || remoteIp == "::1"))
             {
-                return base.AuthorizeHubConnection(hubDescriptor, request);
+                return true;
             }
 
-            return remoteIp == "127.0.0.1" || remoteIp == "::1";
+            return base.AuthorizeHubConnection(hubDescriptor, request);
         }
     }
 }
