@@ -237,7 +237,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.sshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.cshtml" />
