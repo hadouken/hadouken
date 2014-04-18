@@ -241,7 +241,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.sshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Events.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Events.cshtml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
