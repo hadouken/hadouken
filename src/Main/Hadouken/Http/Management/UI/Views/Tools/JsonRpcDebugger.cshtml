@@ -1,10 +1,12 @@
-﻿@Master['Shared/Layout.sshtml']
+﻿@{
+    Layout = "Shared/Layout.cshtml";
+}
 
-@Section['Scripts']
-<script type="text/javascript" src="/Scripts/JsonRpcDebugger.js"></script>
-@EndSection
+@section Scripts
+{
+    <script type="text/javascript" src="/Scripts/JsonRpcDebugger.js"></script>
+}
 
-@Section['Content']
 <div class="row">
     <div class="col-md-12">
         <h1>JSON RPC Debugger</h1>
@@ -50,4 +52,3 @@
         </div>
     </div>
 </div>
-@EndSection
