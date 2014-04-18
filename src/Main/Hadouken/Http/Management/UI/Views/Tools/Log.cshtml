@@ -1,9 +1,7 @@
-﻿@Master['Shared/Layout.sshtml']
+﻿@{
+    Layout = "Shared/Layout.cshtml";
+}
 
-@Section['Scripts']
-@EndSection
-
-@Section['Content']
 <div class="row">
     <div class="col-md-12">
         <h1>Log files</h1>
@@ -16,4 +14,3 @@
         <pre>@Model.Log</pre>
     </div>
 </div>
-@EndSection
