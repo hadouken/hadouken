@@ -228,7 +228,7 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.ttf" />
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.sshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.sshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.sshtml" />

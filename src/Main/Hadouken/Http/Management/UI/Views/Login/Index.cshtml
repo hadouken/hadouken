@@ -17,25 +17,27 @@
             <form class="form-signin" role="form" method="POST">
 				<div class="text-center"><img src="/Content/Images/256.png" /></div>
 
-                @If.AccountConfigured
-                <h2 class="form-signin-heading">Sign in</h2>
-                @EndIf
-
-                @IfNot.AccountConfigured
-                <h2 class="form-signin-heading">Create account</h2>
-                <p><em>This is the first time you are here!</em> Please create your account below to finish configuration.</p>
-                @EndIf
+                @if (Model.AccountConfigured)
+                {
+                    <h2 class="form-signin-heading">Sign in</h2>
+                }
+                else
+                {
+                    <h2 class="form-signin-heading">Create account</h2>
+                    <p><em>This is the first time you are here!</em> Please create your account below to finish configuration.</p>   
+                }
 
                 <input type="text" class="form-control" placeholder="Username" name="userName" required autofocus>
                 <input type="password" class="form-control" placeholder="Password" name="password" required>
 
-                @If.AccountConfigured
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-                @EndIf
-
-                @IfNot.AccountConfigured
-                <button class="btn btn-lg btn-success btn-block" type="submit">Create account</button>
-                @EndIf
+                @if (Model.AccountConfigured)
+                {
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                }
+                else
+                {
+                    <button class="btn btn-lg btn-success btn-block" type="submit">Create account</button>
+                }
             </form>
         </div>
     </body>
