@@ -149,6 +149,7 @@
     <Compile Include="Http\Management\Security\CustomClientAuthorizeAttribute.cs" />
     <Compile Include="JsonRpc\AuthService.cs" />
     <Compile Include="JsonRpc\CoreService.cs" />
+    <Compile Include="JsonRpc\EventsService.cs" />
     <Compile Include="JsonRpc\LogService.cs" />
     <Compile Include="JsonRpc\PluginsService.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
