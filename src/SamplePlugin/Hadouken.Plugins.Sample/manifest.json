@@ -9,11 +9,17 @@
 	  "js/background.js"
 	],
 
-	"settings": {
-	  "scripts": [
-	    "js/settings.js"
-	  ],
-	  "html": "settings.html"
+	"pages": {
+	  "about": {
+		"html": "about.html"
+	  },
+
+	  "settings": {
+		"scripts": [
+		  "js/settings.js"
+		],
+		"html": "settings.html"
+	  }
 	}
   },
 

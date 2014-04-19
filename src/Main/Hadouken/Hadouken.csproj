@@ -157,10 +157,10 @@
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
-    <Compile Include="Plugins\Metadata\ISettingsPage.cs" />
+    <Compile Include="Plugins\Metadata\IPage.cs" />
     <Compile Include="Plugins\Metadata\IUserInterface.cs" />
     <Compile Include="Plugins\Metadata\ManifestV2Reader.cs" />
-    <Compile Include="Plugins\Metadata\SettingsPage.cs" />
+    <Compile Include="Plugins\Metadata\Page.cs" />
     <Compile Include="Plugins\Metadata\UserInterface.cs" />
     <Compile Include="Plugins\PackageDownloader.cs" />
     <Compile Include="Plugins\PackageInstaller.cs" />
@@ -232,7 +232,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Settings.cshtml" />
+    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Template.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.cshtml" />

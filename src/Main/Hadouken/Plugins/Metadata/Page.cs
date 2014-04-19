@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace Hadouken.Plugins.Metadata
 {
-    public sealed class SettingsPage : ISettingsPage
+    public sealed class Page : IPage
     {
         private readonly string _htmlFile;
         private readonly IEnumerable<string> _scripts;
 
-        public SettingsPage(string htmlFile, IEnumerable<string> scripts)
+        public Page(string htmlFile, IEnumerable<string> scripts)
         {
             _htmlFile = htmlFile;
             _scripts = scripts ?? Enumerable.Empty<string>();

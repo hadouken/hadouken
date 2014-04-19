@@ -118,48 +118,11 @@ namespace Hadouken.Http.Management.Modules
                 return Response.AsRedirect("/manage/plugins?t=success&msg=package-uploaded");
             };
 
-            Get["/{id}/settings"] = _ =>
-            {
-                string id = _.id;
-                var plugin = pluginEngine.Get(id);
-                if (plugin == null)
-                {
-                    return 404;
-                }
-
-                if (plugin.Manifest.UserInterface == null
-                    || plugin.Manifest.UserInterface.SettingsPage == null
-                    || string.IsNullOrEmpty(plugin.Manifest.UserInterface.SettingsPage.HtmlFile))
-                {
-                    return 404;
-                }
-
-                var templateData =
-                    rpcClient.Call<byte[]>(string.Format("{0}.resource.get", id),
-                        new[] {plugin.Manifest.UserInterface.SettingsPage.HtmlFile});
-
-                if (templateData == null)
-                {
-                    return 404;
-                }
-
-                var template = Encoding.UTF8.GetString(templateData);
-
-                return
-                    View[
-                        "Settings",
-                        new
-                        {
-                            PluginId = id,
-                            Scripts = plugin.Manifest.UserInterface.SettingsPage.Scripts.ToArray(),
-                            Template = template
-                        }];
-            };
-
             Get["/{id}/{path*}"] = _ =>
             {
                 string id = _.id;
                 string path = _.path;
+                bool hasExtension = Path.HasExtension(path);
 
                 var plugin = pluginEngine.Get(id);
                 if (plugin == null)
@@ -167,15 +130,39 @@ namespace Hadouken.Http.Management.Modules
                     return 404;
                 }
 
-                var data = rpcClient.Call<byte[]>(string.Format("{0}.resource.get", id), new[] {path});
-                if (data == null)
+                if (hasExtension)
+                {
+                    var data = rpcClient.Call<byte[]>(string.Format("{0}.resource.get", id), new[] { path });
+                    if (data == null)
+                    {
+                        return 404;
+                    }
+
+                    var contentType = MimeTypes.GetMimeType(path);
+
+                    return Response.FromStream(() => new MemoryStream(data), contentType);
+                }
+
+                // Return route instead
+                if (!plugin.Manifest.UserInterface.Pages.ContainsKey(path))
                 {
                     return 404;
                 }
 
-                var contentType = MimeTypes.GetMimeType(path);
+                var page = plugin.Manifest.UserInterface.Pages[path];
+                var htmlData = rpcClient.Call<byte[]>(string.Format("{0}.resource.get", id), new[] {page.HtmlFile});
 
-                return Response.FromStream(() => new MemoryStream(data), contentType);
+                if (htmlData == null)
+                {
+                    return 404;
+                }
+
+                return View["Template", new
+                {
+                    PluginId = plugin.Manifest.Name,
+                    Scripts = page.Scripts,
+                    Template = Encoding.UTF8.GetString(htmlData)
+                }];
             };
         }
     }

@@ -58,24 +58,29 @@ namespace Hadouken.Plugins.Metadata
                     backgroundScripts = backgroundScriptsElement.Select(t => t.Value<string>()).ToList();
                 }
 
-                var settingsPageObject = ui["settings"] as JObject;
-                ISettingsPage settingsPage = null;
+                var pagesObject = ui["pages"] as JObject;
+                var pages = new Dictionary<string, IPage>();
 
-                // Read "settings" element
-                if (settingsPageObject != null)
+                // Read "pages" elements
+                if (pagesObject != null)
                 {
-                    var scriptsElement = settingsPageObject["scripts"] as JArray;
-                    var scripts = Enumerable.Empty<string>();
-
-                    if (scriptsElement != null)
+                    foreach (var pageObject in pagesObject.Children<JProperty>())
                     {
-                        scripts = scriptsElement.Select(t => t.Value<string>());
-                    }
+                        var obj = (JObject) pageObject.Value;
 
-                    settingsPage = new SettingsPage(settingsPageObject["html"].Value<string>(), scripts);
+                        var scriptsElement = obj["scripts"] as JArray;
+                        var scripts = Enumerable.Empty<string>();
+
+                        if (scriptsElement != null)
+                        {
+                            scripts = scriptsElement.Select(t => t.Value<string>());
+                        }
+
+                        pages.Add(pageObject.Name, new Page(obj["html"].Value<string>(), scripts));
+                    }
                 }
 
-                userInterface = new UserInterface(backgroundScripts, settingsPage);
+                userInterface = new UserInterface(backgroundScripts, pages);
             }
 
             var name = manifestObject["id"].Value<string>();

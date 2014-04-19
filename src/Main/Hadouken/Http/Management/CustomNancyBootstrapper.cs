@@ -80,17 +80,14 @@ namespace Hadouken.Http.Management
                     context.ViewBag.BackgroundScripts = scripts;
 
                     // Get all plugins which have settings to show
-                    var pluginsSettings =
-                        engine.GetAll()
-                            .Where(
-                                p =>
-                                    p.Manifest.UserInterface != null
-                                    && p.Manifest.UserInterface.SettingsPage != null
-                                    && !string.IsNullOrEmpty(p.Manifest.UserInterface.SettingsPage.HtmlFile))
-                            .Select(p => p.Manifest.Name)
-                            .ToArray();
+                    var settingsPages = (from plugin in engine.GetAll()
+                        where plugin.Manifest.UserInterface != null
+                        let pages = plugin.Manifest.UserInterface.Pages
+                        from page in pages
+                        where page.Key == "settings"
+                        select plugin.Manifest.Name).ToArray();
 
-                    context.ViewBag.SettingsPages = pluginsSettings; 
+                    context.ViewBag.SettingsPages = settingsPages; 
                 }
             });
         }

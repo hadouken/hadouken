@@ -6,6 +6,6 @@ namespace Hadouken.Plugins.Metadata
     {
         IEnumerable<string> BackgroundScripts { get; }
 
-        ISettingsPage SettingsPage { get; }
+        IDictionary<string, IPage> Pages { get; }
     }
 }

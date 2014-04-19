@@ -2,7 +2,7 @@
 
 namespace Hadouken.Plugins.Metadata
 {
-    public interface ISettingsPage
+    public interface IPage
     {
         IEnumerable<string> Scripts { get; }
 

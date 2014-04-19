@@ -52,6 +52,7 @@
     <Content Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="UI\about.html" />
     <EmbeddedResource Include="UI\js\background.js" />
     <EmbeddedResource Include="UI\js\settings.js" />
   </ItemGroup>
