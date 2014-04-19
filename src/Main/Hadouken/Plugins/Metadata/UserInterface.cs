@@ -25,6 +25,9 @@ namespace Hadouken.Plugins.Metadata
             get { return _backgroundScripts; }
         }
 
-        public ISettingsPage SettingsPage { get; set; }
+        public ISettingsPage SettingsPage
+        {
+            get { return _settingsPage; }
+        }
     }
 }

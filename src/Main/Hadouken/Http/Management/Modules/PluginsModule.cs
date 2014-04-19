@@ -118,7 +118,7 @@ namespace Hadouken.Http.Management.Modules
                 return Response.AsRedirect("/manage/plugins?t=success&msg=package-uploaded");
             };
 
-            Get["/settings/{id}"] = _ =>
+            Get["/{id}/settings"] = _ =>
             {
                 string id = _.id;
                 var plugin = pluginEngine.Get(id);
@@ -127,7 +127,17 @@ namespace Hadouken.Http.Management.Modules
                     return 404;
                 }
 
-                var templateData = rpcClient.Call<byte[]>(string.Format("{0}.config.template", id));
+                if (plugin.Manifest.UserInterface == null
+                    || plugin.Manifest.UserInterface.SettingsPage == null
+                    || string.IsNullOrEmpty(plugin.Manifest.UserInterface.SettingsPage.HtmlFile))
+                {
+                    return 404;
+                }
+
+                var templateData =
+                    rpcClient.Call<byte[]>(string.Format("{0}.resource.get", id),
+                        new[] {plugin.Manifest.UserInterface.SettingsPage.HtmlFile});
+
                 if (templateData == null)
                 {
                     return 404;
@@ -135,7 +145,15 @@ namespace Hadouken.Http.Management.Modules
 
                 var template = Encoding.UTF8.GetString(templateData);
 
-                return View["Settings", new {PluginId = _.id, Template = template}];
+                return
+                    View[
+                        "Settings",
+                        new
+                        {
+                            PluginId = id,
+                            Scripts = plugin.Manifest.UserInterface.SettingsPage.Scripts.ToArray(),
+                            Template = template
+                        }];
             };
 
             Get["/{id}/{path*}"] = _ =>

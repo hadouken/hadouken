@@ -50,8 +50,14 @@
 
                             <ul class="dropdown-menu" id="settings-items-list">
                                 <li><a href="/settings">Hadouken</a></li>
+                                
                                 <li class="divider"></li>
                                 <li role="presentation" class="dropdown-header">Plugins</li>
+
+                                @foreach (var settingsPage in ViewBag.SettingsPages)
+                                {
+                                    <li><a href="/plugins/@settingsPage/settings">@settingsPage</a></li>
+                                }
                             </ul>
                         </li>
 

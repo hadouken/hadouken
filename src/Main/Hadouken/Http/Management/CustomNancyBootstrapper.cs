@@ -65,18 +65,32 @@ namespace Hadouken.Http.Management
                 else
                 {
                     var engine = _container.Resolve<IPluginEngine>();
-                    var plugins =
+                    var pluginsBackgroundScripts =
                         engine.GetAll()
                             .Where(
                                 p =>
                                     p.Manifest.UserInterface != null && p.Manifest.UserInterface.BackgroundScripts.Any());
 
 
-                    var scripts = (from plugin in plugins
+                    // Get all background scripts
+                    var scripts = (from plugin in pluginsBackgroundScripts
                         from bgs in plugin.Manifest.UserInterface.BackgroundScripts
                         select string.Concat(plugin.Manifest.Name, "/", bgs)).ToArray();
 
                     context.ViewBag.BackgroundScripts = scripts;
+
+                    // Get all plugins which have settings to show
+                    var pluginsSettings =
+                        engine.GetAll()
+                            .Where(
+                                p =>
+                                    p.Manifest.UserInterface != null
+                                    && p.Manifest.UserInterface.SettingsPage != null
+                                    && !string.IsNullOrEmpty(p.Manifest.UserInterface.SettingsPage.HtmlFile))
+                            .Select(p => p.Manifest.Name)
+                            .ToArray();
+
+                    context.ViewBag.SettingsPages = pluginsSettings; 
                 }
             });
         }

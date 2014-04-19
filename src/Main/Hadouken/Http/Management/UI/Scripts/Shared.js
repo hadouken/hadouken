@@ -16,29 +16,7 @@
         endPoint: '/jsonrpc'
     });
 
-    $.jsonRPC.request('core.plugins.list', {
-        success: function(result) {
-            var container = $('#settings-items-list');
-            var plugins = result.result;
-
-            for (var i = 0; i < plugins.length; i++) {
-
-                (function (plugin) {
-                    $.get('/plugins/settings/' + plugin, function () {
-                        var item = $('<li><a href="#"></a></li>');
-                        item.find('a').attr('href', '/plugins/settings/' + plugin);
-                        item.find('a').text(plugin);
-
-                        container.append(item);
-                    });
-                })(plugins[i]);
-            }
-        }
-    });
-
     // Get our version, then compare to the latest release
-    return;
-
     $.jsonRPC.request('core.getVersion', {
         success: function(response) {
             var localVersion = response.result;

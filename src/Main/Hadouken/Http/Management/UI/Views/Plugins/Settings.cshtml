@@ -4,7 +4,10 @@
 
 @section Scripts
 {
-    <script type="text/javascript" src="/plugins/settings/@Model.PluginId/script.js"></script>   
+    @foreach (var script in Model.Scripts)
+    {
+        <script type="text/javascript" src="/plugins/@Model.PluginId/@script"></script>   
+    }
 }
 
 <div class="row">
@@ -14,5 +17,5 @@
 </div>
 
 <div id="settings-container">
-    @Model.Template
+    @Html.Raw(Model.Template)
 </div>
