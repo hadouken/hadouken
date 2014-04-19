@@ -56,6 +56,10 @@
       </Component>
 
       <Component>
+        <File Name="Nancy.ViewEngines.Razor.dll" />
+      </Component>
+
+      <Component>
         <File Name="Newtonsoft.Json.dll" />
       </Component>
 
