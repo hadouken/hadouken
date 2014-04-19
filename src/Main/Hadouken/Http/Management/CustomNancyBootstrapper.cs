@@ -14,8 +14,10 @@ namespace Hadouken.Http.Management
 {
     public class CustomNancyBootstrapper : AutofacNancyBootstrapper
     {
+#pragma warning disable 169
         private static readonly Nancy.ViewEngines.Razor.DefaultRazorConfiguration conf__;
         private static readonly System.Web.Razor.RazorCodeLanguage lang__;
+#pragma warning restore 169
 
         private readonly ILifetimeScope _container;
         private readonly Assembly _assembly;

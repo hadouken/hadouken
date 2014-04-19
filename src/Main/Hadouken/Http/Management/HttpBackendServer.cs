@@ -12,9 +12,12 @@ namespace Hadouken.Http.Management
 {
     public class HttpBackendServer : IHttpBackendServer
     {
+#pragma warning disable 169
+        private readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener listener__;
+#pragma warning restore 169
+
         private readonly IConfiguration _configuration;
         private readonly ILifetimeScope _lifetimeScope;
-        private readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener listener__;
 
         private IDisposable _httpServer;
 
