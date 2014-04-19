@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "Shared/Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script type="text/javascript" src="/Scripts/Plugins.js"></script>
+}
+
+@if(Model.HasAlert)
+{ 
+    <div class="alert alert-@Model.AlertClass alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @Model.AlertMessage
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Plugins</h1>
+        
+        <p>From here you can list your installed plugins, install new ones from the repository or uninstall the ones you're unhappy with.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Your plugins <button type="button" class="btn btn-sm btn-primary btn-upload-package">Upload package</button></h2>
+        
+        @if (!Model.HasPlugins)
+        {
+            <p><em>You have no plugins installed.</em></p>
+        }
+        else
+        {
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>State</th>
+                        <th>Version</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="plugins-list">
+                    @foreach (var plugin in Model.Plugins)
+                    {
+                        <tr data-plugin-id="@plugin.Name">
+                            <td>@plugin.Name</td>
+                            <td>@plugin.StateMessage</td>
+                            <td>@plugin.Version</td>
+                            <td>
+                                <div class="pull-right">
+                                    <button type="button" class="btn btn-xs btn-primary btn-plugin-details pull-right">Details</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

@@ -37,6 +37,8 @@
     });
 
     // Get our version, then compare to the latest release
+    return;
+
     $.jsonRPC.request('core.getVersion', {
         success: function(response) {
             var localVersion = response.result;

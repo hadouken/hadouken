@@ -1,0 +1,35 @@
+﻿<div class="row">
+    @if (Model.CanUninstall)
+    {
+        <h4>Confirm uninstall</h4>
+        <p>
+            This will uninstall the plugin '@Model.PluginId'. Confirm uninstall by typing the plugin name
+            in the textbox and clicking 'Confirm uninstall'.
+        </p>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <p><strong>Error:</strong> Other plugins still depend on this plugin. Please uninstall them first.</p>
+
+            <ul>
+                @foreach (var dependency in Model.Dependencies)
+                {
+                    <li>@dependency</li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+@if (Model.CanUninstall)
+{
+    <div class="row">
+        <div class="col-md-9">
+            <input type="text" class="form-control" id="confirmed-plugin-id" />
+        </div>
+        <div class="col-md-3">
+            <button id="btn-confirm-uninstall" type="button" class="btn btn-sm btn-danger">Confirm uninstall</button>
+        </div>
+    </div>
+}
