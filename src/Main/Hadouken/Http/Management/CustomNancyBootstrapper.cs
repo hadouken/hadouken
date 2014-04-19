@@ -26,6 +26,8 @@ namespace Hadouken.Http.Management
         {
             _container = container;
             _assembly = GetType().Assembly;
+
+            StaticConfiguration.DisableErrorTraces = false;
         }
 
         protected override ILifetimeScope GetApplicationContainer()

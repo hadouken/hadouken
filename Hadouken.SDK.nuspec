@@ -34,9 +34,11 @@
     <file src="build/binaries/Nancy.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.MSOwinSecurity.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.Owin.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.ViewEngines.Razor.dll" target="tools/hdkn" />
     <file src="build/binaries/Newtonsoft.Json.dll" target="tools/hdkn" />
     <file src="build/binaries/NLog.dll" target="tools/hdkn" />
     <file src="build/binaries/Owin.dll" target="tools/hdkn" />
+    <file src="build/binaries/System.Web.Razor.Unofficial.dll" target="tools/hdkn" />
 
     <!-- Dummy file to get around NuGet insanity -->
     <file src="src/Package/DUMMY.txt" target="lib/net45" />

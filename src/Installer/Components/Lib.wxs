@@ -70,6 +70,10 @@
       <Component>
         <File Name="Owin.dll" />
       </Component>
+
+      <Component>
+        <File Name="System.Web.Razor.Unofficial.dll" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>
