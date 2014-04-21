@@ -2,7 +2,10 @@
     var connection = $.hubConnection();
     var hub = connection.createHubProxy("events");
 
-    hub.on('publishEvent', function(name, data) {
+    hub.on('publishEvent', function (obj) {
+        var name = obj.name;
+        var data = obj.data;
+
         var row = $('<tr><td class="event-time"></td><td class="event-name"></td><td><pre class="event-data"></pre></td></tr>');
 
         var date = new Date();
