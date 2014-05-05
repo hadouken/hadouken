@@ -73,10 +73,13 @@
 
                         <li><img src="/Content/Images/loader.gif" id="ajaxloader" style="margin-top:13px;" /></li>
                     </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/logout"><i class="fa fa-ban"></i> Sign out</a></li>
-                    </ul>
+                    
+                    @if (!ViewBag.IsLocal)
+                    {
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="/logout"><i class="fa fa-ban"></i> Sign out</a></li>
+                        </ul>
+                    }
                 </div>
             </div>
         </div>

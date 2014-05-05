@@ -91,7 +91,10 @@ namespace Hadouken.Http.Management
                         where page.Key == "settings"
                         select plugin.Manifest.Name).ToArray();
 
-                    context.ViewBag.SettingsPages = settingsPages; 
+                    context.ViewBag.SettingsPages = settingsPages;
+
+                    context.ViewBag.IsLocal = (context.Request.UserHostAddress == "127.0.0.1"
+                                               || context.Request.UserHostAddress == "::1");
                 }
             });
         }
