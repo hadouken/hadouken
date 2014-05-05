@@ -21,12 +21,14 @@
         success: function(response) {
             var localVersion = response.result;
 
-            $.getJSON('/api/releases', function(releases) {
-                var latestRelease = releases[0];
+            $.jsonRPC.request('core.releases.list', {
+                success: function(data) {
+                    var latestRelease = data.result[0];
 
-                if (semver.gt(latestRelease.version, localVersion)) {
-                    var text = '<strong>Update available!</strong><br/><a href="' + latestRelease.downloadUri + '">Download Hadouken v' + latestRelease.version + '</a>.';
-                    $.bootstrapGrowl(text, { delay: 0 });
+                    if (semver.gt(latestRelease.version, localVersion)) {
+                        var text = '<strong>Update available!</strong><br/><a href="' + latestRelease.downloadUri + '">Download Hadouken v' + latestRelease.version + '</a>.';
+                        $.bootstrapGrowl(text, { delay: 0 });
+                    }
                 }
             });
         }

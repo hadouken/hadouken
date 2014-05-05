@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    function loadPlugins(plugins) {
+    function loadPlugins(plugins, installedPlugins) {
         $('#plugins-list').empty();
 
         for (var i = 0; i < plugins.length; i++) {
@@ -21,7 +21,28 @@
 
                 var installButton = $('<button type="button" class="btn btn-primary btn-xs pull-right">Install</button>');
                 installButton.on('click', function () {
-                    prepareInstall(plugin.id);
+                    bootbox.dialog({
+                        title: 'Confirm installation',
+                        message: 'This will install <strong>' + plugin.id + '</strong> and any dependencies it might have.',
+                        buttons: {
+                            main: {
+                                label: 'Install ' + plugin.id,
+                                className: 'btn-primary',
+                                callback: function (e) {
+                                    var target = $(e.target);
+
+                                    target.prepend($('<i class="fa fa-spinner fa-spin"></i>'));
+                                    target.attr('disabled', true);
+
+                                    install(plugin.id, function () {
+                                        location.reload();
+                                    });
+
+                                    return false;
+                                }
+                            }
+                        }
+                    });
                 });
 
                 var updateButton = $('<button type="button" class="btn btn-warning btn-xs pull-right">Update</button>');
@@ -58,38 +79,22 @@
         }
     }
 
-    function prepareInstall(pluginId) {
-        $.getJSON('/api/repository/' + pluginId, function (data) {
-            (function(plugin) {
-                $.get('/repository/install/' + plugin.id, function(html) {
-                    var content = $(html);
-                    $('body').append(html);
-
-                    content.modal();
-                    content.on('hidden.bs.modal', function() { content.modal('hide'); });
-
-                    content.find('.plugin-name').text(plugin.id);
-
-                    content.find('#btn-confirm-install').on('click', function () {
-                        content.find('#btn-confirm-install').attr('disabled', true);
-
-                        install(plugin.id, function() {
-                            content.modal('hide');
-                            location.reload();
-                        });
-                    });
-                });
-            })(data);
-        });
-    }
-
     function install(pluginId, callback) {
-        $.post('/api/repository/install', { id: pluginId }, function(response) {
-            callback();
+        $.jsonRPC.request('core.repository.install', {
+            params: [pluginId],
+            success: function() {
+                callback();
+            }
         });
     };
 
-    $.getJSON('/api/repository', function (plugins) {
-        loadPlugins(plugins);
+    $.jsonRPC.request('core.repository.list', {
+        success: function (data) {
+            $.jsonRPC.request('core.plugins.list', {
+                success: function(data2) {
+                    loadPlugins(data.result, data2.result);
+                }
+            });
+        }
     });
 });

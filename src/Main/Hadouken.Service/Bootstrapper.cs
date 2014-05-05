@@ -74,6 +74,8 @@ namespace Hadouken.Service
             builder.RegisterType<PluginsService>().As<IJsonRpcService>();
 		    builder.RegisterType<LogService>().As<IJsonRpcService>();
 		    builder.RegisterType<CoreService>().As<IJsonRpcService>();
+		    builder.RegisterType<ReleasesService>().As<IJsonRpcService>();
+		    builder.RegisterType<RepositoryService>().As<IJsonRpcService>();
 
             // Register wcf stuff
             builder.RegisterType<PluginService>();

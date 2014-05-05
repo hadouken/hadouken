@@ -137,8 +137,6 @@
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
     <Compile Include="Http\Management\Models\SettingsItem.cs" />
-    <Compile Include="Http\Management\Modules\Api\ReleasesModule.cs" />
-    <Compile Include="Http\Management\Modules\Api\RepositoryModule.cs" />
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
     <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
@@ -152,6 +150,8 @@
     <Compile Include="JsonRpc\EventsService.cs" />
     <Compile Include="JsonRpc\LogService.cs" />
     <Compile Include="JsonRpc\PluginsService.cs" />
+    <Compile Include="JsonRpc\ReleasesService.cs" />
+    <Compile Include="JsonRpc\RepositoryService.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
     <Compile Include="Plugins\IPackageDownloader.cs" />
     <Compile Include="Plugins\IPackageInstaller.cs" />
@@ -237,7 +237,6 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Install.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.cshtml" />
@@ -277,6 +276,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\Events.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\bootbox.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

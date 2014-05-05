@@ -55,7 +55,7 @@ namespace Hadouken.Plugins
         /// <summary>
         /// Installs or upgrades the provided package. If the package upgrades an
         /// existing plugin, the plugin will be unloaded and then uninstalled before
-        /// the new version.
+        /// the new version is installed/upgraded.
         /// </summary>
         /// <param name="package">The <see cref="IPackage"/> to install or upgrade.</param>
         /// <returns>True if the install/upgrade was successful. Otherwise false.</returns>
