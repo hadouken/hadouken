@@ -83,7 +83,17 @@ namespace Hadouken.Service
 		    {
 		        var scope = c.Resolve<ILifetimeScope>();
 
-		        var host = new ServiceHost(typeof (PluginService), new Uri("net.pipe://localhost/hadouken.plugins.core"));
+                var binding = new NetNamedPipeBinding
+                {
+                    MaxBufferPoolSize = 10485760,
+                    MaxBufferSize = 10485760,
+                    MaxReceivedMessageSize = 10485760,
+                    MaxConnections = 100
+                };
+
+		        var host = new ServiceHost(typeof (PluginService));
+		        host.AddServiceEndpoint(typeof (IPluginService), binding,
+		            new Uri("net.pipe://localhost/hadouken.plugins.core"));
                 host.AddDependencyInjectionBehavior(typeof(PluginService), scope);
 
 		        return new PluginServiceHost(host);

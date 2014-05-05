@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.ServiceModel;
 using System.Text;
+using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.ServiceModel;
 using Nancy;
@@ -9,7 +10,7 @@ namespace Hadouken.Http.Management.Modules
 {
     public class JsonRpcModule : NancyModule
     {
-        public JsonRpcModule(IJsonRpcRequestParser requestParser)
+        public JsonRpcModule(IConfiguration configuration, IJsonRpcRequestParser requestParser)
         {
             Post["/jsonrpc"] = _ =>
             {
@@ -21,7 +22,7 @@ namespace Hadouken.Http.Management.Modules
                     var request = requestParser.Parse(json);
                     var plugin = request.MethodName.Split('.')[0];
                     var binding = new NetNamedPipeBinding();
-                    var endpoint = new EndpointAddress(string.Format("net.pipe://localhost/hadouken.plugins.{0}", plugin));
+                    var endpoint = new EndpointAddress(string.Format(configuration.Rpc.PluginUriTemplate, plugin));
 
                     using (var factory = new ChannelFactory<IPluginService>(binding, endpoint))
                     {

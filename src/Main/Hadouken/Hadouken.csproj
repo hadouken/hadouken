@@ -235,7 +235,6 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Template.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Upload.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.cshtml" />

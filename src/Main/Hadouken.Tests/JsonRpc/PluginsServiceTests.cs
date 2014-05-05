@@ -15,7 +15,7 @@ namespace Hadouken.Tests.JsonRpc
             [Fact]
             public void Should_Throw_ArgumentNullException_If_PluginEngine_Is_Null()
             {
-                Assert.Throws<ArgumentNullException>(() => new PluginsService(null));
+                Assert.Throws<ArgumentNullException>(() => new PluginsService(null, null));
             }
         }
 
@@ -26,10 +26,11 @@ namespace Hadouken.Tests.JsonRpc
             {
                 // Given
                 var engine = Substitute.For<IPluginEngine>();
+                var reader = Substitute.For<IPackageReader>();
                 var manager = Substitute.For<IPluginManager>();
                 manager.Manifest.Name.Returns("TestPlugin");
                 engine.GetAll().Returns(new[] {manager});
-                var service = new PluginsService(engine);
+                var service = new PluginsService(engine, reader);
 
                 // When
                 var result = service.ListPlugins();
@@ -46,8 +47,9 @@ namespace Hadouken.Tests.JsonRpc
             {
                 // Given
                 var engine = Substitute.For<IPluginEngine>();
+                var reader = Substitute.For<IPackageReader>();
                 engine.Get("non-existent").Returns(info => null);
-                var service = new PluginsService(engine);
+                var service = new PluginsService(engine, reader);
 
                 // When
                 var result = service.GetVersion("non-existent");
@@ -61,10 +63,11 @@ namespace Hadouken.Tests.JsonRpc
             {
                 // Given
                 var engine = Substitute.For<IPluginEngine>();
+                var reader = Substitute.For<IPackageReader>();
                 var manager = Substitute.For<IPluginManager>();
                 manager.Manifest.Version.Returns(new SemanticVersion("1.0.0"));
                 engine.Get("Plugin").Returns(manager);
-                var service = new PluginsService(engine);
+                var service = new PluginsService(engine, reader);
 
                 // When
                 var result = service.GetVersion("Plugin");

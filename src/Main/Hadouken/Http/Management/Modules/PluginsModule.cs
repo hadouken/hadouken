@@ -80,43 +80,7 @@ namespace Hadouken.Http.Management.Modules
                 return View["Uninstall", new {CanUninstall = canUninstall, Dependencies = deps, PluginId = _.id}];
             };
 
-            Post["/uninstall"] = _ =>
-            {
-                string id = Request.Form.id;
-                IPluginManager plugin = pluginEngine.Get(id);
-
-                if (plugin == null)
-                {
-                    return 404;
-                }
-
-                pluginEngine.Unload(id);
-                pluginEngine.Uninstall(id);
-
-                return 200;
-            };
-
             Get["/upload"] = _ => View["Upload"];
-
-            Post["/upload"] = _ =>
-            {
-                if (!Request.Files.Any())
-                {
-                    return Response.AsRedirect("/manage/plugins?t=error&msg=no-package");
-                }
-
-                var postedFile = Request.Files.First();
-                var package = packageReader.Read(postedFile.Value);
-
-                if (package == null)
-                {
-                    return Response.AsRedirect("/manage/plugins?t=error&msg=invalid-package");
-                }
-
-                pluginEngine.InstallOrUpgrade(package);
-
-                return Response.AsRedirect("/manage/plugins?t=success&msg=package-uploaded");
-            };
 
             Get["/{id}/{path*}"] = _ =>
             {
@@ -160,7 +124,7 @@ namespace Hadouken.Http.Management.Modules
                 return View["Template", new
                 {
                     PluginId = plugin.Manifest.Name,
-                    Scripts = page.Scripts,
+                    page.Scripts,
                     Template = Encoding.UTF8.GetString(htmlData)
                 }];
             };
