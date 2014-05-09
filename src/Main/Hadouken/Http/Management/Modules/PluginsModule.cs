@@ -26,6 +26,7 @@ namespace Hadouken.Http.Management.Modules
                     select new PluginListItem
                     {
                         Name = plugin.Manifest.Name,
+                        MemoryUsage = plugin.GetMemoryUsage(),
                         StateMessage =
                             (plugin.State == PluginState.Error
                                 ? "Error: " + plugin.ErrorMessage
