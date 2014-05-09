@@ -26,6 +26,7 @@ namespace Hadouken.JsonRpc
             // Get all plugins with event handlers for the current event
             // or for <all> events.
             var handlers = _pluginEngine.GetAll()
+                .Where(p => p.State == PluginState.Loaded)
                 .SelectMany(
                     p => p.Manifest.EventHandlers.Where(e => e.Name == name || e.Name == All));
 

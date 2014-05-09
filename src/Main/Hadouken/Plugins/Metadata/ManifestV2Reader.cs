@@ -98,7 +98,14 @@ namespace Hadouken.Plugins.Metadata
             var name = manifestObject["id"].Value<string>();
             var version = new SemanticVersion(manifestObject["version"].Value<string>());
 
-            return new Manifest(name, version, dependencyList, eventHandlers, userInterface);
+            SemanticVersion minimumHostVersion = "0.0";
+
+            if (manifestObject["minimumHostVersion"] != null)
+            {
+                minimumHostVersion = new SemanticVersion(manifestObject["minimumHostVersion"].Value<string>());
+            }
+
+            return new Manifest(name, version, minimumHostVersion, dependencyList, eventHandlers, userInterface);
         }
     }
 }

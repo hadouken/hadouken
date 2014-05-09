@@ -9,6 +9,8 @@ namespace Hadouken.Plugins.Metadata
 
         SemanticVersion Version { get; }
 
+        SemanticVersion MinimumHostVersion { get; }
+
         IEnumerable<Dependency> Dependencies { get; }
 
         IEnumerable<EventHandler> EventHandlers { get; }

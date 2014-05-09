@@ -15,7 +15,9 @@ namespace Hadouken.Plugins.Sample.JsonRpc
         [JsonRpcMethod("sample.on.customEvent")]
         public void OnCustomEvent(string foo)
         {
-            _logger.Info("Custom event received.");
+            _logger.Info("Custom event received. Taking a long time...");
+            System.Threading.Thread.Sleep(5000);
+            _logger.Info("All done.");
         }
 
         [JsonRpcMethod("sample.on.allEvents")]

@@ -2,11 +2,13 @@
 using System.Linq;
 using Hadouken.Fx.IO;
 using Hadouken.Plugins.Metadata;
+using NLog;
 
 namespace Hadouken.Plugins.Scanners
 {
     public class DirectoryPluginScanner : IPluginScanner
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly string _pluginDirectory;
         private readonly IFileSystem _fileSystem;
         private readonly IPluginManagerFactory _managerFactory;
@@ -42,8 +44,15 @@ namespace Hadouken.Plugins.Scanners
                         continue;
                     }
 
-                    var manager = _managerFactory.Create(directory, manifest);
-                    result.Add(manager);
+                    try
+                    {
+                        var manager = _managerFactory.Create(directory, manifest);
+                        result.Add(manager);
+                    }
+                    catch (PluginException pex)
+                    {
+                        Logger.ErrorException("Could not create plugin manager.", pex);
+                    }
                 }
             }
 

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Hadouken.Fx.IO;
 using Hadouken.Plugins.Metadata;
+using NLog;
 
 namespace Hadouken.Plugins.Scanners
 {
     public class CmdArgPluginScanner : IPluginScanner
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFileSystem _fileSystem;
         private readonly IPluginManagerFactory _managerFactory;
 
@@ -47,7 +49,15 @@ namespace Hadouken.Plugins.Scanners
                     return Enumerable.Empty<IPluginManager>();
                 }
 
-                return new[] {_managerFactory.Create(directory, manifest)};
+                try
+                {
+                    return new[] {_managerFactory.Create(directory, manifest)};
+                }
+                catch (PluginException e)
+                {
+                    Logger.ErrorException("Could not create plugin manager.", e);
+                    return Enumerable.Empty<IPluginManager>();
+                }
             }
         }
     }

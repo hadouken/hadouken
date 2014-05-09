@@ -166,6 +166,7 @@
     <Compile Include="Plugins\Metadata\UserInterface.cs" />
     <Compile Include="Plugins\PackageDownloader.cs" />
     <Compile Include="Plugins\PackageInstaller.cs" />
+    <Compile Include="Plugins\PluginException.cs" />
     <Compile Include="Plugins\PluginManagerFactory.cs" />
     <Compile Include="Plugins\PluginManagerGraph.cs" />
     <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />

@@ -4,6 +4,8 @@
   "id": "sample",
   "version": "1.0",
 
+  "minimumHostVersion": "3.0",
+
   "ui": {
     "background": [
 	  "js/background.js"

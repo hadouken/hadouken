@@ -23,19 +23,21 @@ namespace Hadouken.Plugins.Metadata
 
         private readonly string _name;
         private readonly SemanticVersion _version;
+        private readonly SemanticVersion _minimumHostVersion;
         private readonly IEnumerable<Dependency> _dependencies;
         private readonly IEnumerable<EventHandler> _eventHandlers;
         private readonly IUserInterface _userInterface;
 
         public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies)
-            : this(name, version, dependencies, null, null)
+            : this(name, version, "0.0", dependencies, null, null)
         {
         }
 
-        public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies, IEnumerable<EventHandler> eventHandlers, IUserInterface userInterface)
+        public Manifest(string name, SemanticVersion version, SemanticVersion minimumHostVersion, IEnumerable<Dependency> dependencies, IEnumerable<EventHandler> eventHandlers, IUserInterface userInterface)
         {
             _name = name;
             _version = version;
+            _minimumHostVersion = minimumHostVersion;
             _dependencies = dependencies ?? Enumerable.Empty<Dependency>();
             _eventHandlers = eventHandlers ?? Enumerable.Empty<EventHandler>();
             _userInterface = userInterface;
@@ -49,6 +51,11 @@ namespace Hadouken.Plugins.Metadata
         public SemanticVersion Version
         {
             get { return _version; }
+        }
+
+        public SemanticVersion MinimumHostVersion
+        {
+            get { return _minimumHostVersion; }
         }
 
         public IEnumerable<Dependency> Dependencies
