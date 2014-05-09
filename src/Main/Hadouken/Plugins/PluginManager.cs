@@ -46,6 +46,8 @@ namespace Hadouken.Plugins
             _manifest = manifest;
             _isolatedEnvironment = environment;
             _configuration = BuildConfiguration(configuration);
+
+            _isolatedEnvironment.UnhandledError += OnUnhandledError;
         }
 
         public IDirectory BaseDirectory
@@ -104,6 +106,12 @@ namespace Hadouken.Plugins
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }
+        }
+
+        private void OnUnhandledError(object sender, EventArgs eventArgs)
+        {
+            ErrorMessage = "Plugin crashed unexpectedly.";
+            State = PluginState.Error;
         }
 
         private PluginConfiguration BuildConfiguration(IConfiguration configuration)

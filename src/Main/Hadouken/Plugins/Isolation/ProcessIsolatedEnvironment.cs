@@ -24,6 +24,8 @@ namespace Hadouken.Plugins.Isolation
             _baseDirectory = baseDirectory;
         }
 
+        public event EventHandler UnhandledError;
+
         public void Load(PluginConfiguration configuration)
         {
             var loadEvent = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".load");
@@ -80,7 +82,7 @@ namespace Hadouken.Plugins.Isolation
 
         public long GetMemoryUsage()
         {
-            if (_hostProcess == null)
+            if (_hostProcess == null || _hostProcess.HasExited)
             {
                 return -1;
             }
@@ -90,7 +92,12 @@ namespace Hadouken.Plugins.Isolation
 
         private void HostProcessOnExited(object sender, EventArgs eventArgs)
         {
-            Console.WriteLine("Plugin process probably crashed...");
+            var handler = UnhandledError;
+
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
 
         private MemoryMappedFile WriteConf(string envId, PluginConfiguration configuration)
