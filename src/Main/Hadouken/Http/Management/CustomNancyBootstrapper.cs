@@ -3,11 +3,11 @@ using System.Reflection;
 using Autofac;
 using Hadouken.Plugins;
 using Nancy;
+using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Conventions;
 using Nancy.Responses;
-using Nancy.Security;
 using Nancy.ViewEngines;
 
 namespace Hadouken.Http.Management
@@ -45,57 +45,39 @@ namespace Hadouken.Http.Management
         {
             base.ApplicationStartup(container, pipelines);
 
-            pipelines.BeforeRequest.AddItemToStartOfPipeline(context =>
+            FormsAuthentication.Enable(pipelines, new FormsAuthenticationConfiguration
             {
-                if (context.Request.UserHostAddress == "127.0.0.1"
-                    || context.Request.UserHostAddress == "::1"
-                    || context.Request.Path == "/login")
-                {
-                    return null;
-                }
-
-                var auth = context.GetAuthenticationManager();
-                return (auth == null || auth.User == null || !auth.User.Identity.IsAuthenticated)
-                    ? HttpStatusCode.Unauthorized
-                    : (Response)null;
+                RedirectUrl = "~/login",
+                UserMapper = container.Resolve<IUserMapper>()
             });
 
             pipelines.AfterRequest.AddItemToEndOfPipeline(context =>
             {
-                if (context.Response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    context.Response = new RedirectResponse("/login");
-                }
-                else
-                {
-                    var engine = _container.Resolve<IPluginEngine>();
-                    var pluginsBackgroundScripts =
-                        engine.GetAll()
-                            .Where(
-                                p =>
-                                    p.Manifest.UserInterface != null && p.Manifest.UserInterface.BackgroundScripts.Any());
+                var engine = _container.Resolve<IPluginEngine>();
+                var pluginsBackgroundScripts =
+                    engine.GetAll()
+                        .Where(
+                            p =>
+                                p.Manifest.UserInterface != null && p.Manifest.UserInterface.BackgroundScripts.Any());
 
 
-                    // Get all background scripts
-                    var scripts = (from plugin in pluginsBackgroundScripts
-                        from bgs in plugin.Manifest.UserInterface.BackgroundScripts
-                        select string.Concat(plugin.Manifest.Name, "/", bgs)).ToArray();
+                // Get all background scripts
+                var scripts = (from plugin in pluginsBackgroundScripts
+                               from bgs in plugin.Manifest.UserInterface.BackgroundScripts
+                               select string.Concat(plugin.Manifest.Name, "/", bgs)).ToArray();
 
-                    context.ViewBag.BackgroundScripts = scripts;
+                // Get all plugins which have settings to show
+                var settingsPages = (from plugin in engine.GetAll()
+                                     where plugin.Manifest.UserInterface != null
+                                     let pages = plugin.Manifest.UserInterface.Pages
+                                     from page in pages
+                                     where page.Key == "settings"
+                                     select plugin.Manifest.Name).ToArray();
 
-                    // Get all plugins which have settings to show
-                    var settingsPages = (from plugin in engine.GetAll()
-                        where plugin.Manifest.UserInterface != null
-                        let pages = plugin.Manifest.UserInterface.Pages
-                        from page in pages
-                        where page.Key == "settings"
-                        select plugin.Manifest.Name).ToArray();
-
-                    context.ViewBag.SettingsPages = settingsPages;
-
-                    context.ViewBag.IsLocal = (context.Request.UserHostAddress == "127.0.0.1"
-                                               || context.Request.UserHostAddress == "::1");
-                }
+                context.ViewBag.BackgroundScripts = scripts;
+                context.ViewBag.SettingsPages = settingsPages;
+                context.ViewBag.IsLocal = (context.Request.UserHostAddress == "127.0.0.1"
+                                           || context.Request.UserHostAddress == "::1");
             });
         }
 

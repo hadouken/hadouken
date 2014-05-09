@@ -44,61 +44,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core">
-      <HintPath>..\..\..\packages\Microsoft.AspNet.SignalR.Core.2.0.3\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Owin">
-      <HintPath>..\..\..\packages\Microsoft.AspNet.SignalR.Owin.1.2.1\lib\net45\Microsoft.AspNet.SignalR.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin">
-      <HintPath>..\..\..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Diagnostics">
-      <HintPath>..\..\..\packages\Microsoft.Owin.Diagnostics.2.1.0\lib\net40\Microsoft.Owin.Diagnostics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.FileSystems">
-      <HintPath>..\..\..\packages\Microsoft.Owin.FileSystems.2.1.0\lib\net40\Microsoft.Owin.FileSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.HttpListener">
-      <HintPath>..\..\..\packages\Microsoft.Owin.Host.HttpListener.2.1.0\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Hosting">
-      <HintPath>..\..\..\packages\Microsoft.Owin.Hosting.2.1.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security">
-      <HintPath>..\..\..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Cookies">
-      <HintPath>..\..\..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.StaticFiles">
-      <HintPath>..\..\..\packages\Microsoft.Owin.StaticFiles.2.1.0\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
-    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\..\..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Authentication.Forms">
+      <HintPath>..\..\..\packages\Nancy.Authentication.Forms.0.22.2\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.Bootstrappers.Autofac">
       <HintPath>..\..\..\packages\Nancy.Bootstrappers.Autofac.0.22.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.MSOwinSecurity">
-      <HintPath>..\..\..\packages\Nancy.MSOwinSecurity.1.0.1\lib\net45\Nancy.MSOwinSecurity.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Owin">
-      <HintPath>..\..\..\packages\Nancy.Owin.0.22.2\lib\net40\Nancy.Owin.dll</HintPath>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\..\..\packages\Nancy.Hosting.Self.0.22.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.ViewEngines.Razor">
       <HintPath>..\..\..\packages\Nancy.Viewengines.Razor.0.22.2\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\NLog.2.1.0\lib\net45\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin">
-      <HintPath>..\..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -131,7 +98,7 @@
     <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Http\Management\HttpBackendServer.cs" />
-    <Compile Include="Http\Management\Hubs\EventHub.cs" />
+    <Compile Include="Http\Management\HttpManagementModule.cs" />
     <Compile Include="Http\Management\IHttpBackendServer.cs" />
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
@@ -140,11 +107,13 @@
     <Compile Include="Http\Management\Modules\HomeModule.cs" />
     <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />
     <Compile Include="Http\Management\Modules\LoginModule.cs" />
+    <Compile Include="Http\Management\Modules\ModuleBase.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
     <Compile Include="Http\Management\Modules\RepositoryModule.cs" />
     <Compile Include="Http\Management\Modules\SettingsModule.cs" />
     <Compile Include="Http\Management\Modules\ToolsModule.cs" />
-    <Compile Include="Http\Management\Security\CustomClientAuthorizeAttribute.cs" />
+    <Compile Include="Http\Management\Security\UserIdentity.cs" />
+    <Compile Include="Http\Management\Security\UserMapper.cs" />
     <Compile Include="JsonRpc\AuthService.cs" />
     <Compile Include="JsonRpc\CoreService.cs" />
     <Compile Include="JsonRpc\EventsService.cs" />

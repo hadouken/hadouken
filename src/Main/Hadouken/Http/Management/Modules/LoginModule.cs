@@ -1,12 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System;
 using Hadouken.Configuration;
 using Hadouken.Fx.Security;
 using Hadouken.Http.Management.Models;
-using Microsoft.Owin.Security.Cookies;
 using Nancy;
+using Nancy.Authentication.Forms;
 using Nancy.ModelBinding;
-using Nancy.Responses;
-using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules
 {
@@ -40,22 +38,10 @@ namespace Hadouken.Http.Management.Modules
                     return "Invalid username/password.";
                 }
 
-                var claims = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);
-                claims.AddClaim(new Claim(ClaimTypes.Name, loginParams.UserName));
-
-                var authMan = Context.GetAuthenticationManager();
-                authMan.SignIn(claims);
-
-                return Response.AsRedirect("/");
+                return this.LoginAndRedirect(Guid.NewGuid());
             };
 
-            Get["/logout"] = _ =>
-            {
-                var authMan = Context.GetAuthenticationManager();
-                authMan.SignOut();
-
-                return Response.AsRedirect("/");
-            };
+            Get["/logout"] = _ => this.LogoutAndRedirect("/");
         }
 
         private void SetAuthentication(string userName, string password)

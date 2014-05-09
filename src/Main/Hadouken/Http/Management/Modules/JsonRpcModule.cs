@@ -4,11 +4,10 @@ using System.Text;
 using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Fx.ServiceModel;
-using Nancy;
 
 namespace Hadouken.Http.Management.Modules
 {
-    public class JsonRpcModule : NancyModule
+    public class JsonRpcModule : ModuleBase
     {
         public JsonRpcModule(IConfiguration configuration, IJsonRpcRequestParser requestParser)
         {

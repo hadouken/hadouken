@@ -4,7 +4,7 @@
   "id": "sample",
   "version": "1.0",
 
-  "minimumHostVersion": "3.0",
+  "minimumHostVersion": "2.0",
 
   "ui": {
     "background": [

@@ -1,8 +1,6 @@
-﻿using Nancy;
-
-namespace Hadouken.Http.Management.Modules
+﻿namespace Hadouken.Http.Management.Modules
 {
-    public class HomeModule : NancyModule
+    public class HomeModule : ModuleBase
     {
         public HomeModule()
         {

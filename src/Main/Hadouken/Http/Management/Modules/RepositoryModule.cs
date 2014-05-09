@@ -1,8 +1,6 @@
-﻿using Nancy;
-
-namespace Hadouken.Http.Management.Modules
+﻿namespace Hadouken.Http.Management.Modules
 {
-    public class RepositoryModule : NancyModule
+    public class RepositoryModule : ModuleBase
     {
         public RepositoryModule()
             : base("repository")

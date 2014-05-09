@@ -2,7 +2,6 @@
 using System.Linq;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Plugins;
-using Microsoft.AspNet.SignalR;
 using NLog;
 
 namespace Hadouken.JsonRpc
@@ -49,10 +48,6 @@ namespace Hadouken.JsonRpc
                     Logger.ErrorException("Error when calling event handler: " + handler, e);
                 }
             }
-
-            // To keep legacy plugins from not receiving events.
-            var hub = GlobalHost.ConnectionManager.GetHubContext("events");
-            hub.Clients.All.publishEvent(new {name, data});
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using Hadouken.Configuration;
 using Hadouken.Http.Management.Models;
-using Nancy;
 using Nancy.ModelBinding;
 
 namespace Hadouken.Http.Management.Modules
 {
-    public class SettingsModule : NancyModule
+    public class SettingsModule : ModuleBase
     {
         public SettingsModule(IConfiguration configuration)
             : base("settings")

@@ -27,7 +27,7 @@ namespace Hadouken.Service
 			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
 
             // HTTP management interface
-		    builder.RegisterType<HttpBackendServer>().As<IHttpBackendServer>();
+		    builder.RegisterModule(new HttpManagementModule());
 
 			// Register plugin engine
 		    builder.RegisterType<CmdArgPluginScanner>().As<IPluginScanner>();

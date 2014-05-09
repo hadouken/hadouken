@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Hadouken.Http.Management.Modules
 {
-    public class PluginsModule : NancyModule
+    public class PluginsModule : ModuleBase
     {
         public PluginsModule(IPluginEngine pluginEngine, IPackageReader packageReader, IJsonRpcClient rpcClient)
             : base("plugins")

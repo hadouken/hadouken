@@ -1,16 +1,14 @@
 ﻿using System.Linq;
 using System.Text;
-using Hadouken.Fx.IO;
 using Hadouken.Plugins;
-using Nancy;
 using NLog;
 using NLog.Targets;
 
 namespace Hadouken.Http.Management.Modules
 {
-    public class ToolsModule : NancyModule
+    public class ToolsModule : ModuleBase
     {
-        public ToolsModule(IPluginEngine pluginEngine, IFileSystem fileSystem)
+        public ToolsModule(IPluginEngine pluginEngine)
             : base("tools")
         {
             Get["/events"] = _ => View["Events"];
