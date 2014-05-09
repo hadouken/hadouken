@@ -1,5 +1,4 @@
 using Hadouken.Fx.IO;
-using Hadouken.Plugins.Metadata;
 
 namespace Hadouken.Plugins.Isolation
 {
@@ -7,7 +6,7 @@ namespace Hadouken.Plugins.Isolation
     {
         public IIsolatedEnvironment CreateEnvironment(IDirectory directory)
         {
-            return new AppDomainIsolatedEnvironment(directory.FullPath);
+            return new ProcessIsolatedEnvironment(directory);
         }
     }
 }

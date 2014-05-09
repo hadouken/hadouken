@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Hadouken.Plugins.Isolation")]
+[assembly: AssemblyTitle("Hadouken.PluginHostProcess")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Wasa Kredit")]
-[assembly: AssemblyProduct("Hadouken.Plugins.Isolation")]
-[assembly: AssemblyCopyright("Copyright © Wasa Kredit 2014")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Hadouken.PluginHostProcess")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d51f0272-476e-4082-8a8c-ca5d7aa53316")]
+[assembly: Guid("22263262-6d1e-4ea3-85bb-390dd2232435")]
 
 // Version information for an assembly consists of the following four values:
 //

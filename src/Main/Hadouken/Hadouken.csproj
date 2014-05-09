@@ -127,6 +127,7 @@
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
+    <Compile Include="Plugins\Isolation\ProcessIsolatedEnvironment.cs" />
     <Compile Include="Plugins\Metadata\EventHandler.cs" />
     <Compile Include="Plugins\Metadata\IPage.cs" />
     <Compile Include="Plugins\Metadata\IUserInterface.cs" />
@@ -168,7 +169,6 @@
     <Compile Include="Plugins\IPackageReader.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
-    <Compile Include="Plugins\Isolation\AppDomainIsolatedEnvironment.cs" />
     <Compile Include="Plugins\Isolation\IIsolatedEnvironment.cs" />
     <Compile Include="Plugins\Isolation\IIsolatedEnvironmentFactory.cs" />
     <Compile Include="Plugins\Isolation\IsolatedEnvironmentFactory.cs" />
@@ -215,9 +215,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hadouken.Plugins.Isolation\Hadouken.Plugins.Isolation.csproj">
-      <Project>{A0534175-961D-4702-9E75-B8A67B3E0710}</Project>
-      <Name>Hadouken.Plugins.Isolation</Name>
+    <ProjectReference Include="..\Hadouken.PluginHostProcess\Hadouken.PluginHostProcess.csproj">
+      <Project>{72ae8f9c-f0e7-4542-9476-c13186549a8a}</Project>
+      <Name>Hadouken.PluginHostProcess</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
