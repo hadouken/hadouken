@@ -26,6 +26,11 @@
   "dependencies":[
   ],
 
+  "eventHandlers": {
+    "custom.event": "sample.on.customEvent",
+	"<all>": "sample.on.allEvents"
+  },
+
   "permissions": {
 	"network": {
 	  "protocols": [ "tcp" ],

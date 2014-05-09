@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonRpc\EventHandlersService.cs" />
     <Compile Include="JsonRpc\ResourceService.cs" />
     <Compile Include="JsonRpc\MathService.cs" />
     <Compile Include="SamplePlugin.cs" />
