@@ -24,18 +24,20 @@ namespace Hadouken.Plugins.Metadata
         private readonly string _name;
         private readonly SemanticVersion _version;
         private readonly IEnumerable<Dependency> _dependencies;
+        private readonly IEnumerable<EventHandler> _eventHandlers;
         private readonly IUserInterface _userInterface;
 
         public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies)
-            : this(name, version, dependencies, null)
+            : this(name, version, dependencies, null, null)
         {
         }
 
-        public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies, IUserInterface userInterface)
+        public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies, IEnumerable<EventHandler> eventHandlers, IUserInterface userInterface)
         {
             _name = name;
             _version = version;
             _dependencies = dependencies ?? Enumerable.Empty<Dependency>();
+            _eventHandlers = eventHandlers ?? Enumerable.Empty<EventHandler>();
             _userInterface = userInterface;
         }
 
@@ -53,6 +55,11 @@ namespace Hadouken.Plugins.Metadata
         {
             get { return _dependencies; }
         }
+
+        public IEnumerable<EventHandler> EventHandlers
+        {
+            get { return _eventHandlers; }
+        } 
 
         public IUserInterface UserInterface
         {

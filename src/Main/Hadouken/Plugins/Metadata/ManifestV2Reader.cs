@@ -83,10 +83,22 @@ namespace Hadouken.Plugins.Metadata
                 userInterface = new UserInterface(backgroundScripts, pages);
             }
 
+            // Read "eventHandlers" element
+            var eventHandlersObject = manifestObject["eventHandlers"] as JObject;
+            var eventHandlers = new List<EventHandler>();
+
+            if (eventHandlersObject != null)
+            {
+                foreach (var pair in eventHandlersObject)
+                {
+                    eventHandlers.Add(new EventHandler(pair.Key, pair.Value.Value<string>()));
+                }
+            }
+
             var name = manifestObject["id"].Value<string>();
             var version = new SemanticVersion(manifestObject["version"].Value<string>());
 
-            return new Manifest(name, version, dependencyList, userInterface);
+            return new Manifest(name, version, dependencyList, eventHandlers, userInterface);
         }
     }
 }

@@ -11,6 +11,8 @@ namespace Hadouken.Plugins.Metadata
 
         IEnumerable<Dependency> Dependencies { get; }
 
+        IEnumerable<EventHandler> EventHandlers { get; }
+            
         IUserInterface UserInterface { get; }
     }
 }

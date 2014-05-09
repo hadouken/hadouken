@@ -158,6 +158,7 @@
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
+    <Compile Include="Plugins\Metadata\EventHandler.cs" />
     <Compile Include="Plugins\Metadata\IPage.cs" />
     <Compile Include="Plugins\Metadata\IUserInterface.cs" />
     <Compile Include="Plugins\Metadata\ManifestV2Reader.cs" />
