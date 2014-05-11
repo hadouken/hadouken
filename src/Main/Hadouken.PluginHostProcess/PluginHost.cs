@@ -3,15 +3,21 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Script.Serialization;
 
 namespace Hadouken.PluginHostProcess
 {
-    public class PluginHost
+    public class PluginHost : MarshalByRefObject
     {
         private readonly string _pluginId;
+        private const string FxAssembly = "Hadouken.Fx.dll";
         private const string FxPlugin = "Hadouken.Fx.Plugin";
         private const string FxPluginConfiguration = "Hadouken.Fx.PluginConfiguration";
         private const string FxBootstrapperAttribute = "Hadouken.Fx.Bootstrapping.BootstrapperAttribute";
@@ -24,13 +30,59 @@ namespace Hadouken.PluginHostProcess
             _pluginId = pluginId;
         }
 
-        public void Load()
+        public static PluginHost Create(string pluginId)
         {
+            var currentDirectory = Directory.GetCurrentDirectory();
+
+            var setup = new AppDomainSetup()
+            {
+                ApplicationBase = currentDirectory,
+                ApplicationName = pluginId,
+                ConfigurationFile = "", // DO not set to empty string if we want to use the conf file from this domain
+                DisallowBindingRedirects = true,
+                DisallowCodeDownload = true,
+                DisallowPublisherPolicy = true
+            };
+
+
+            var permissions = new PermissionSet(PermissionState.None);
+            
+            permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.ControlEvidence // To get nice exceptions with permission demands.
+                | SecurityPermissionFlag.ControlPolicy   // See ^
+                | SecurityPermissionFlag.Execution       // To allow the plugin to execute
+                ));
+
+            permissions.AddPermission(new WebPermission(NetworkAccess.Connect | NetworkAccess.Accept,
+                new Regex(@"http://localhost:31337/hadouken\.plugins.*")));
+
+            var fxAsm = Assembly.LoadFile(Path.Combine(currentDirectory, FxAssembly));
+            var domain = AppDomain.CreateDomain(pluginId, null, setup, permissions,
+                typeof (PluginHost).Assembly.Evidence.GetHostEvidence<StrongName>(),
+                fxAsm.Evidence.GetHostEvidence<StrongName>());
+
+            return (PluginHost) Activator.CreateInstanceFrom(
+                domain,
+                typeof (PluginHost).Assembly.ManifestModule.FullyQualifiedName,
+                typeof (PluginHost).FullName,
+                false,
+                BindingFlags.Default,
+                null,
+                new object[] {pluginId},
+                null,
+                null).Unwrap();
+        }
+
+        public void Load(string path)
+        {
+            new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, path).Assert();
+            
             var files = Directory.GetFiles(".", "*.dll");
             foreach (var file in files)
             {
                 Assembly.LoadFrom(file);
             }
+
+            CodeAccessPermission.RevertAssert();
 
             Type type = (from asm in AppDomain.CurrentDomain.GetAssemblies()
                 from t in asm.GetTypes()
@@ -64,7 +116,10 @@ namespace Hadouken.PluginHostProcess
                 bootstrapper = Activator.CreateInstance(customBootstrapperType);
             }
 
+            new SecurityPermission(PermissionState.Unrestricted).Assert();
             var conf = ReadConfig(fxAssembly, _pluginId);
+            CodeAccessPermission.RevertAssert();
+
             bootstrapper.Invoke("Initialize", new [] {conf});
 
             // Use it to get the IPluginHost
@@ -89,9 +144,13 @@ namespace Hadouken.PluginHostProcess
 
         public void SetupMonitoring(int parentProcessId)
         {
+            new SecurityPermission(PermissionState.Unrestricted).Assert();
+
             var parentProcess = Process.GetProcessById(parentProcessId);
             parentProcess.EnableRaisingEvents = true;
             parentProcess.Exited += (sender, eventArgs) => Environment.Exit(9);
+
+            CodeAccessPermission.RevertAssert();
         }
 
         public void WaitForExit()

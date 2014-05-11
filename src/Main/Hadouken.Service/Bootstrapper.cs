@@ -64,9 +64,11 @@ namespace Hadouken.Service
             builder.RegisterType<NullResolver>().As<IParameterResolver>();
 		    builder.RegisterType<JsonSerializer>().As<IJsonSerializer>();
 		    builder.RegisterType<JsonRpcClient>().As<IJsonRpcClient>();
-		    builder.RegisterType<WcfClientTransport>()
-		        .As<IClientTransport>()
-		        .WithParameter("uriTemplate", "net.pipe://localhost/hadouken.plugins.{0}");
+		    builder.Register<IClientTransport>(c =>
+		    {
+		        var cfg = c.Resolve<IConfiguration>();
+		        return new WcfClientTransport(cfg.Rpc.PluginUriTemplate, c.Resolve<IJsonSerializer>());
+		    });
 
             // JSONRPC services
             builder.RegisterType<AuthService>().As<IJsonRpcService>();
@@ -82,18 +84,18 @@ namespace Hadouken.Service
 		    builder.Register<IPluginServiceHost>(c =>
 		    {
 		        var scope = c.Resolve<ILifetimeScope>();
+		        var cfg = c.Resolve<IConfiguration>();
+		        var uri = new Uri(string.Format(cfg.Rpc.PluginUriTemplate, "core"));
 
-                var binding = new NetNamedPipeBinding
+                var binding = new NetHttpBinding
                 {
+                    HostNameComparisonMode = HostNameComparisonMode.Exact,
                     MaxBufferPoolSize = 10485760,
-                    MaxBufferSize = 10485760,
                     MaxReceivedMessageSize = 10485760,
-                    MaxConnections = 100
                 };
 
 		        var host = new ServiceHost(typeof (PluginService));
-		        host.AddServiceEndpoint(typeof (IPluginService), binding,
-		            new Uri("net.pipe://localhost/hadouken.plugins.core"));
+		        host.AddServiceEndpoint(typeof (IPluginService), binding, uri);
                 host.AddDependencyInjectionBehavior(typeof(PluginService), scope);
 
 		        return new PluginServiceHost(host);

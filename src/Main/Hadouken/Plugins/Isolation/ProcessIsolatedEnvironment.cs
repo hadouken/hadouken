@@ -12,7 +12,7 @@ namespace Hadouken.Plugins.Isolation
 {
     public class ProcessIsolatedEnvironment : IIsolatedEnvironment
     {
-        private static readonly int DefaultTimeout = 1000;
+        private static readonly int DefaultTimeout = 5000;
 
         private readonly IDirectory _baseDirectory;
         private readonly string _environmentId = Guid.NewGuid().ToString();
@@ -35,6 +35,7 @@ namespace Hadouken.Plugins.Isolation
             {
                 Arguments = _environmentId + " " + currentPid,
                 FileName = typeof(PluginHostProcess.Program).Assembly.Location,
+                UseShellExecute = false,
                 WorkingDirectory = _baseDirectory.FullPath
             };
 
@@ -56,11 +57,14 @@ namespace Hadouken.Plugins.Isolation
             // Wait until we're up and running
             if (!loadEvent.WaitOne(DefaultTimeout))
             {
-                // Kill process
-                _hostProcess.Kill();
+                if (!_hostProcess.HasExited)
+                {
+                    _hostProcess.Kill();
+                }
+
                 _hostProcess = null;
 
-                throw new Exception("Plugin did not load in time.");
+                throw new PluginException("Could not load plugin.");
             }
 
             mmf.Dispose();
@@ -87,7 +91,7 @@ namespace Hadouken.Plugins.Isolation
                 return -1;
             }
 
-            return _hostProcess.WorkingSet64;
+            return _hostProcess.PrivateMemorySize64;
         }
 
         private void HostProcessOnExited(object sender, EventArgs eventArgs)

@@ -1,4 +1,5 @@
-﻿using Hadouken.Fx;
+﻿using System;
+using Hadouken.Fx;
 using Hadouken.Fx.Logging;
 
 namespace Hadouken.Plugins.Sample
@@ -7,7 +8,7 @@ namespace Hadouken.Plugins.Sample
     {
         private readonly ILogger _logger;
 
-        public SamplePlugin(PluginConfiguration configuration, ILogger logger)
+        public SamplePlugin(ILogger logger)
         {
             _logger = logger;
         }
