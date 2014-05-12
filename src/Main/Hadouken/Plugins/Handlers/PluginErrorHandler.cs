@@ -7,6 +7,7 @@ namespace Hadouken.Plugins.Handlers
 {
     public class PluginErrorHandler : IMessageHandler<PluginErrorMessage>
     {
+        private static readonly int MaxErrorCount = 5;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IPluginEngine _pluginEngine;
 
@@ -28,6 +29,12 @@ namespace Hadouken.Plugins.Handlers
             foreach (var pluginId in unloadOrder)
             {
                 _pluginEngine.Unload(pluginId);
+            }
+
+            if (failedPlugin.ErrorCount >= MaxErrorCount)
+            {
+                Logger.Error("Plugin {0} has failed {1} or more times. Not reviving.", message.PluginId, MaxErrorCount);
+                return;
             }
 
             foreach (var pluginId in unloadOrder.Reverse())

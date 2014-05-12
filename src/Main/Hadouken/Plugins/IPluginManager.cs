@@ -11,6 +11,8 @@ namespace Hadouken.Plugins
 
         PluginState State { get; }
 
+        int ErrorCount { get; }
+
         string ErrorMessage { get; }
 
         long GetMemoryUsage();

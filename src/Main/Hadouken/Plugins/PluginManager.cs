@@ -23,6 +23,7 @@ namespace Hadouken.Plugins
 
         public PluginManager(IConfiguration configuration, IMessageQueue messageQueue, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
         {
+            ErrorCount = 0;
             if (configuration == null)
             {
                 throw new ArgumentNullException("configuration");
@@ -65,6 +66,8 @@ namespace Hadouken.Plugins
         }
 
         public PluginState State { get; private set; }
+
+        public int ErrorCount { get; private set; }
 
         public string ErrorMessage { get; set; }
 
@@ -116,6 +119,8 @@ namespace Hadouken.Plugins
         {
             ErrorMessage = "Plugin crashed unexpectedly.";
             State = PluginState.Error;
+
+            ErrorCount += 1;
 
             _messageQueue.Publish(new PluginErrorMessage(Manifest.Name));
         }

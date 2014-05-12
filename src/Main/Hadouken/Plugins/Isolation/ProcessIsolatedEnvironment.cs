@@ -81,9 +81,13 @@ namespace Hadouken.Plugins.Isolation
                 _hostProcess.Exited -= HostProcessOnExited;
 
                 _runningHandle.Set();
-                unloadEvent.WaitOne(DefaultTimeout);
 
-                _hostProcess.WaitForExit();
+                if (!_hostProcess.HasExited)
+                {
+                    unloadEvent.WaitOne(DefaultTimeout);
+                    _hostProcess.WaitForExit();
+                }
+
                 _hostProcess = null;
             }
         }
