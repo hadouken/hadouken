@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\SampleConfig.cs" />
+    <Compile Include="Configuration\Upgraders\Version1Upgrader.cs" />
     <Compile Include="JsonRpc\EventHandlersService.cs" />
     <Compile Include="JsonRpc\ResourceService.cs" />
     <Compile Include="JsonRpc\MathService.cs" />

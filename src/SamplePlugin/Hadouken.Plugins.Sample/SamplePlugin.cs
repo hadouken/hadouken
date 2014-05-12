@@ -1,30 +1,41 @@
-﻿using System;
-using System.IO;
-using System.IO.IsolatedStorage;
-using Hadouken.Fx;
+﻿using Hadouken.Fx;
+using Hadouken.Fx.Configuration;
 using Hadouken.Fx.Logging;
+using Hadouken.Plugins.Sample.Configuration;
 
 namespace Hadouken.Plugins.Sample
 {
     public class SamplePlugin : Plugin
     {
         private readonly ILogger _logger;
+        private readonly IConfigurationRepository<SampleConfig> _configRepository;
 
-        public SamplePlugin(ILogger logger)
+        public SamplePlugin(ILogger logger, IConfigurationRepository<SampleConfig> configRepository)
         {
             _logger = logger;
+            _configRepository = configRepository;
         }
 
         public override void Load()
         {
-            _logger.Info("SamplePlugin loading.");
+            _logger.Info("Getting config.");
 
-            using (var storage = IsolatedStorageFile.GetUserStoreForDomain())
-            using (var file = storage.OpenFile(Guid.NewGuid().ToString(), FileMode.OpenOrCreate))
-            using (var writer = new StreamWriter(file))
+            var config = _configRepository.Get();
+
+            if (config == null)
             {
-                writer.WriteLine(AppDomain.CurrentDomain.FriendlyName);
+                _logger.Info("Creating new config");
+
+                config = new SampleConfig
+                {
+                    Bar = 1337,
+                    Foo = "Leet"
+                };
+
+                _configRepository.Set(config);
             }
+
+            _logger.Info("Foo: " + config.Foo);
         }
     }
 }
