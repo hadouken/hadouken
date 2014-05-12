@@ -15,6 +15,8 @@ namespace Hadouken.Plugins
         /// <param name="name">The name of the <see cref="IPluginManager"/> to get.</param>
         IPluginManager Get(string name);
 
+        string[] GetUnloadOrder(string name);
+
         /// <summary>
         /// Scans the base directory for new plugins. Will not load anything.
         /// </summary>

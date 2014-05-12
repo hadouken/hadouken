@@ -15,7 +15,7 @@ namespace Hadouken.Plugins.Isolation
         private static readonly int DefaultTimeout = 5000;
 
         private readonly IDirectory _baseDirectory;
-        private readonly string _environmentId = Guid.NewGuid().ToString();
+        private string _environmentId;
         private Process _hostProcess;
         private EventWaitHandle _runningHandle;
 
@@ -28,6 +28,8 @@ namespace Hadouken.Plugins.Isolation
 
         public void Load(PluginConfiguration configuration)
         {
+            _environmentId = Guid.NewGuid().ToString();
+
             var loadEvent = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".load");
             var currentPid = Process.GetCurrentProcess().Id;
 
@@ -68,20 +70,22 @@ namespace Hadouken.Plugins.Isolation
             }
 
             mmf.Dispose();
+            loadEvent.Dispose();
         }
 
         public void Unload()
         {
-            var unloadEvent = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".unload");
+            using (var unloadEvent = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".unload"))
+            {
+                // Remove handler
+                _hostProcess.Exited -= HostProcessOnExited;
 
-            // Remove handler
-            _hostProcess.Exited -= HostProcessOnExited;
+                _runningHandle.Set();
+                unloadEvent.WaitOne(DefaultTimeout);
 
-            _runningHandle.Set();
-            unloadEvent.WaitOne(DefaultTimeout);
-
-            _hostProcess.WaitForExit();
-            _hostProcess = null;
+                _hostProcess.WaitForExit();
+                _hostProcess = null;
+            }
         }
 
         public long GetMemoryUsage()
@@ -102,6 +106,9 @@ namespace Hadouken.Plugins.Isolation
             {
                 handler(this, EventArgs.Empty);
             }
+
+            // Remove the handler since the process is dead.
+            _hostProcess.Exited -= HostProcessOnExited;
         }
 
         private MemoryMappedFile WriteConf(string envId, PluginConfiguration configuration)

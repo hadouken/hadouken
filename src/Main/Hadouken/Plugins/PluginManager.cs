@@ -3,7 +3,9 @@ using System.IO;
 using Hadouken.Configuration;
 using Hadouken.Fx;
 using Hadouken.Fx.IO;
+using Hadouken.Messaging;
 using Hadouken.Plugins.Isolation;
+using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Metadata;
 using NLog;
 
@@ -14,11 +16,12 @@ namespace Hadouken.Plugins
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly PluginConfiguration _configuration;
+        private readonly IMessageQueue _messageQueue;
         private readonly IDirectory _baseDirectory;
         private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
 
-        public PluginManager(IConfiguration configuration, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
+        public PluginManager(IConfiguration configuration, IMessageQueue messageQueue, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
         {
             if (configuration == null)
             {
@@ -42,6 +45,7 @@ namespace Hadouken.Plugins
 
             State = PluginState.Unloaded;
 
+            _messageQueue = messageQueue;
             _baseDirectory = baseDirectory;
             _manifest = manifest;
             _isolatedEnvironment = environment;
@@ -112,6 +116,8 @@ namespace Hadouken.Plugins
         {
             ErrorMessage = "Plugin crashed unexpectedly.";
             State = PluginState.Error;
+
+            _messageQueue.Publish(new PluginErrorMessage(Manifest.Name));
         }
 
         private PluginConfiguration BuildConfiguration(IConfiguration configuration)

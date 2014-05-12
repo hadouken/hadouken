@@ -121,6 +121,10 @@
     <Compile Include="JsonRpc\PluginsService.cs" />
     <Compile Include="JsonRpc\ReleasesService.cs" />
     <Compile Include="JsonRpc\RepositoryService.cs" />
+    <Compile Include="Messaging\IMessageHandler.cs" />
+    <Compile Include="Messaging\Message.cs" />
+    <Compile Include="Messaging\IMessageQueue.cs" />
+    <Compile Include="Plugins\Handlers\PluginErrorHandler.cs" />
     <Compile Include="Plugins\InstallPackageException.cs" />
     <Compile Include="Plugins\IPackageDownloader.cs" />
     <Compile Include="Plugins\IPackageInstaller.cs" />
@@ -128,6 +132,7 @@
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
     <Compile Include="Plugins\Isolation\ProcessIsolatedEnvironment.cs" />
+    <Compile Include="Plugins\Messages\PluginErrorMessage.cs" />
     <Compile Include="Plugins\Metadata\EventHandler.cs" />
     <Compile Include="Plugins\Metadata\IPage.cs" />
     <Compile Include="Plugins\Metadata\IUserInterface.cs" />

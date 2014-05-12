@@ -11,8 +11,11 @@ using Hadouken.Http;
 using Hadouken.Http.Api;
 using Hadouken.Http.Management;
 using Hadouken.JsonRpc;
+using Hadouken.Messaging;
 using Hadouken.Plugins;
+using Hadouken.Plugins.Handlers;
 using Hadouken.Plugins.Isolation;
+using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Scanners;
 
 namespace Hadouken.Service
@@ -50,6 +53,10 @@ namespace Hadouken.Service
 		    builder.RegisterType<PackageReader>().As<IPackageReader>();
 		    builder.RegisterType<IsolatedEnvironmentFactory>().As<IIsolatedEnvironmentFactory>();
 			builder.RegisterType<PluginEngine>().As<IPluginEngine>().SingleInstance();
+
+            // Messaging
+		    builder.RegisterType<MessageQueue>().As<IMessageQueue>();
+		    builder.RegisterType<PluginErrorHandler>().As<IMessageHandler<PluginErrorMessage>>();
 
 			// Register file system
 			builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();

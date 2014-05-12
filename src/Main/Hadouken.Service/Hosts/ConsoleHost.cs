@@ -6,16 +6,17 @@ namespace Hadouken.Service.Hosts
 	public sealed class ConsoleHost
 	{
 		private readonly IHadoukenService _service;
-		private readonly ManualResetEvent _stopEvent;
 
 		public ConsoleHost(IHadoukenService service)
 		{
 			_service = service;
-			_stopEvent = new ManualResetEvent(false);
 		}
 
 		public void Run()
 		{
+            // Treat Ctrl+C as regular input to prevent it from killing child processes.
+		    Console.TreatControlCAsInput = true;
+
 			var args = Environment.GetCommandLineArgs();
 
 			// Start the service.
@@ -31,8 +32,15 @@ namespace Hadouken.Service.Hosts
 			Console.ResetColor();
 
 			// Wait for a key.
-			Console.CancelKeyPress += this.OnCancelKeyPress;
-			_stopEvent.WaitOne();
+		    while (true)
+		    {
+		        var key = Console.ReadKey(true);
+
+		        if ((key.Modifiers & ConsoleModifiers.Control) == ConsoleModifiers.Control && key.Key == ConsoleKey.C)
+		        {
+		            break;
+		        }
+		    }
 
 			// Stop the service.
 			_service.Stop();
@@ -40,15 +48,6 @@ namespace Hadouken.Service.Hosts
 		    Console.WriteLine();
             Console.Write(" Press any key to close window");
 		    Console.Read();
-		}
-
-		private void OnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
-		{
-			// Prevent Windows from shutting the console down.
-			e.Cancel = true;
-
-			// Signal that CTRL+C has been pressed.
-			_stopEvent.Set();
 		}
 	}
 }

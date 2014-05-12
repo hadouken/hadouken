@@ -2,6 +2,7 @@
 using Hadouken.Configuration;
 using Hadouken.Fx;
 using Hadouken.Fx.IO;
+using Hadouken.Messaging;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
@@ -21,6 +22,7 @@ namespace Hadouken.Tests.Plugins
                 Assert.Throws<ArgumentNullException>(
                     () =>
                         new PluginManager(null,
+                            Substitute.For<IMessageQueue>(),
                             Substitute.For<IDirectory>(),
                             Substitute.For<IIsolatedEnvironment>(),
                             Substitute.For<IManifest>()));
@@ -33,6 +35,7 @@ namespace Hadouken.Tests.Plugins
                 Assert.Throws<ArgumentNullException>(
                     () =>
                         new PluginManager(Substitute.For<IConfiguration>(),
+                            Substitute.For<IMessageQueue>(),
                             null,
                             Substitute.For<IIsolatedEnvironment>(),
                             Substitute.For<IManifest>()));
@@ -45,6 +48,7 @@ namespace Hadouken.Tests.Plugins
                 Assert.Throws<ArgumentNullException>(
                     () =>
                         new PluginManager(Substitute.For<IConfiguration>(),
+                            Substitute.For<IMessageQueue>(),
                             Substitute.For<IDirectory>(),
                             null,
                             Substitute.For<IManifest>()));
@@ -57,6 +61,7 @@ namespace Hadouken.Tests.Plugins
                 Assert.Throws<ArgumentNullException>(
                     () =>
                         new PluginManager(Substitute.For<IConfiguration>(),
+                            Substitute.For<IMessageQueue>(),
                             Substitute.For<IDirectory>(),
                             Substitute.For<IIsolatedEnvironment>(),
                             null));
@@ -67,6 +72,7 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given, When
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     Substitute.For<IIsolatedEnvironment>(),
                     Substitute.For<IManifest>());
@@ -84,6 +90,7 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
                     Substitute.For<IManifest>());
@@ -102,6 +109,7 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
                     Substitute.For<IManifest>());
@@ -123,6 +131,7 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
                     Substitute.For<IManifest>());
@@ -142,6 +151,7 @@ namespace Hadouken.Tests.Plugins
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 environment.When(e => e.Load(Arg.Any<PluginConfiguration>())).Do(c => { throw new Exception(); });
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
                     Substitute.For<IManifest>());
@@ -162,6 +172,7 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
                     Substitute.For<IManifest>());
@@ -181,6 +192,7 @@ namespace Hadouken.Tests.Plugins
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 environment.When(e => e.Unload()).Do(c => { throw new Exception(); });
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                    Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
                     Substitute.For<IManifest>());

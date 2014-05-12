@@ -46,6 +46,11 @@ namespace Hadouken.Plugins
             return _plugins.Get(name);
         }
 
+        public string[] GetUnloadOrder(string name)
+        {
+            return _plugins.GetUnloadOrder(name);
+        }
+
         public void Scan()
         {
             // Select all plugins from all scanners.
