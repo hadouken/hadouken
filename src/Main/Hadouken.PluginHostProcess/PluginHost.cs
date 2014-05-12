@@ -52,8 +52,12 @@ namespace Hadouken.PluginHostProcess
                 | SecurityPermissionFlag.Execution       // To allow the plugin to execute
                 ));
 
+            // WCF hosting for JSONRPC
             permissions.AddPermission(new WebPermission(NetworkAccess.Connect | NetworkAccess.Accept,
                 new Regex(@"http://localhost:31337/hadouken\.plugins.*")));
+
+            // Isolated storage
+            permissions.AddPermission(new IsolatedStorageFilePermission(PermissionState.Unrestricted));
 
             var fxAsm = Assembly.LoadFile(Path.Combine(currentDirectory, FxAssembly));
             var domain = AppDomain.CreateDomain(pluginId, null, setup, permissions,
