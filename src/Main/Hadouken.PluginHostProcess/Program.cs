@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.MemoryMappedFiles;
+using System.Web.Script.Serialization;
 
 namespace Hadouken.PluginHostProcess
 {
@@ -29,7 +32,8 @@ namespace Hadouken.PluginHostProcess
             var pluginId = args[0];
             var parentId = Convert.ToInt32(args[1]);
 
-            var host = PluginHost.Create(pluginId);
+            var config = ReadConfig(pluginId);
+            var host = PluginHost.Create(pluginId, config);
 
             // Setup host process monitoring. Kill our process
             // if the parent shuts down.
@@ -43,6 +47,17 @@ namespace Hadouken.PluginHostProcess
 
             // Unload the plugin.
             host.Unload();
+        }
+
+        private IDictionary<string, object> ReadConfig(string fileName)
+        {
+            using (var mmf = MemoryMappedFile.OpenExisting(fileName))
+            using (var stream = mmf.CreateViewStream())
+            using (var reader = new BinaryReader(stream))
+            {
+                var json = reader.ReadString();
+                return new JavaScriptSerializer().Deserialize<IDictionary<string, object>>(json);
+            }
         }
     }
 }

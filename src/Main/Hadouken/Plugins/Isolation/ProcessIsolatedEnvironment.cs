@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -26,7 +27,7 @@ namespace Hadouken.Plugins.Isolation
 
         public event EventHandler UnhandledError;
 
-        public void Load(PluginConfiguration configuration)
+        public void Load(IDictionary<string, object> configuration)
         {
             _environmentId = Guid.NewGuid().ToString();
 
@@ -59,7 +60,7 @@ namespace Hadouken.Plugins.Isolation
             // Wait until we're up and running
             if (!loadEvent.WaitOne(DefaultTimeout))
             {
-                if (!_hostProcess.HasExited)
+                if (_hostProcess != null && !_hostProcess.HasExited)
                 {
                     _hostProcess.Kill();
                 }
@@ -115,7 +116,7 @@ namespace Hadouken.Plugins.Isolation
             _hostProcess.Exited -= HostProcessOnExited;
         }
 
-        private MemoryMappedFile WriteConf(string envId, PluginConfiguration configuration)
+        private MemoryMappedFile WriteConf(string envId, IDictionary<string, object> configuration)
         {
             var json = JsonConvert.SerializeObject(configuration);
             var data = Encoding.UTF8.GetBytes(json);

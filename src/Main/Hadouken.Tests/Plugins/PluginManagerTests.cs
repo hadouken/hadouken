@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Hadouken.Configuration;
 using Hadouken.Fx;
 using Hadouken.Fx.IO;
@@ -140,7 +141,7 @@ namespace Hadouken.Tests.Plugins
                 manager.Load();
 
                 // Then
-                environment.Received().Load(Arg.Any<PluginConfiguration>());
+                environment.Received().Load(Arg.Any<IDictionary<string, object>>());
                 Assert.Equal(PluginState.Loaded, manager.State);
             }
 
@@ -149,7 +150,7 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
-                environment.When(e => e.Load(Arg.Any<PluginConfiguration>())).Do(c => { throw new Exception(); });
+                environment.When(e => e.Load(Arg.Any<IDictionary<string, object>>())).Do(c => { throw new Exception(); });
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),

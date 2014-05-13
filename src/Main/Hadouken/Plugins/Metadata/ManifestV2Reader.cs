@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Security.Permissions;
+using Hadouken.Plugins.Metadata.Permissions;
 using Hadouken.SemVer;
 using Newtonsoft.Json.Linq;
 
@@ -7,6 +11,15 @@ namespace Hadouken.Plugins.Metadata
 {
     public class ManifestV2Reader : IManifestReader
     {
+        private static readonly IDictionary<string, Func<IPermissionParser>> PermissionParsers =
+            new Dictionary<string, Func<IPermissionParser>>();
+
+        static ManifestV2Reader()
+        {
+            PermissionParsers.Add("fileio", () => new FileIOPermissionParser());
+            PermissionParsers.Add("sockets", () => new SocketsPermissionParser());
+        }
+
         public Manifest Read(JObject manifestObject)
         {
             // Ensure manifest_version is 2
@@ -105,7 +118,30 @@ namespace Hadouken.Plugins.Metadata
                 minimumHostVersion = new SemanticVersion(manifestObject["minimumHostVersion"].Value<string>());
             }
 
-            return new Manifest(name, version, minimumHostVersion, dependencyList, eventHandlers, userInterface);
+            var set = new PermissionSet(PermissionState.None);
+            var perms = manifestObject["permissions"] as JObject;
+
+            if (perms != null)
+            {
+                foreach (var pair in perms)
+                {
+                    if (!PermissionParsers.ContainsKey(pair.Key)) continue;
+
+                    var parser = PermissionParsers[pair.Key]();
+
+                    if (pair.Value.Type == JTokenType.String
+                        && pair.Value.Value<string>() == "<unrestricted>")
+                    {
+                        set.AddPermission(parser.GetUnrestricted());
+                    }
+                    else
+                    {
+                        set.AddPermission(parser.Parse(pair.Value));
+                    }
+                }
+            }
+
+            return new Manifest(name, version, minimumHostVersion, dependencyList, eventHandlers, userInterface, set);
         }
     }
 }

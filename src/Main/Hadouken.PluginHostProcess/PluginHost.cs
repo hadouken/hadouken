@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -18,20 +20,21 @@ namespace Hadouken.PluginHostProcess
     public class PluginHost : MarshalByRefObject
     {
         private readonly string _pluginId;
+        private readonly IDictionary<string, object> _configuration;
         private const string FxAssembly = "Hadouken.Fx.dll";
         private const string FxPlugin = "Hadouken.Fx.Plugin";
-        private const string FxPluginConfiguration = "Hadouken.Fx.PluginConfiguration";
         private const string FxBootstrapperAttribute = "Hadouken.Fx.Bootstrapping.BootstrapperAttribute";
         private const string FxTinyIoCBootstrapper = "Hadouken.Fx.Bootstrapping.TinyIoC.TinyIoCBootstrapper";
 
         private object _pluginHost;
 
-        public PluginHost(string pluginId)
+        public PluginHost(string pluginId, IDictionary<string, object> configuration)
         {
             _pluginId = pluginId;
+            _configuration = configuration;
         }
 
-        public static PluginHost Create(string pluginId)
+        public static PluginHost Create(string pluginId, IDictionary<string, object> config)
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
@@ -47,6 +50,16 @@ namespace Hadouken.PluginHostProcess
 
 
             var permissions = new PermissionSet(PermissionState.None);
+
+            if (config.ContainsKey("Permissions"))
+            {
+                var securityElement = SecurityElement.FromString(config["Permissions"].ToString());
+
+                if (securityElement != null)
+                {
+                    permissions.FromXml(securityElement);                    
+                }
+            }
             
             permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.ControlEvidence // To get nice exceptions with permission demands.
                 | SecurityPermissionFlag.ControlPolicy   // See ^
@@ -60,7 +73,7 @@ namespace Hadouken.PluginHostProcess
             // Isolated storage
             permissions.AddPermission(new IsolatedStorageFilePermission(PermissionState.Unrestricted));
 
-            var ev = new Evidence(new EvidenceBase[] {new Url("file:///hadouken.plugins.sample")}, null);
+            var ev = new Evidence(new EvidenceBase[] {new Url(config["Url"].ToString())}, null);
 
             var fxAsm = Assembly.LoadFile(Path.Combine(currentDirectory, FxAssembly));
             var domain = AppDomain.CreateDomain(pluginId, ev, setup, permissions,
@@ -74,7 +87,7 @@ namespace Hadouken.PluginHostProcess
                 false,
                 BindingFlags.Default,
                 null,
-                new object[] {pluginId},
+                new object[] {pluginId, config},
                 null,
                 null).Unwrap();
         }
@@ -123,11 +136,7 @@ namespace Hadouken.PluginHostProcess
                 bootstrapper = Activator.CreateInstance(customBootstrapperType);
             }
 
-            new SecurityPermission(PermissionState.Unrestricted).Assert();
-            var conf = ReadConfig(fxAssembly, _pluginId);
-            CodeAccessPermission.RevertAssert();
-
-            bootstrapper.Invoke("Initialize", new [] {conf});
+            bootstrapper.Invoke("Initialize", new object[] {_configuration});
 
             // Use it to get the IPluginHost
             _pluginHost = bootstrapper.Invoke("GetHost");
@@ -165,17 +174,6 @@ namespace Hadouken.PluginHostProcess
             using (var waitEvent = EventWaitHandle.OpenExisting(_pluginId + ".wait"))
             {
                 waitEvent.WaitOne();
-            }
-        }
-
-        private static object ReadConfig(Assembly fxAssembly, string fileName)
-        {
-            using (var mmf = MemoryMappedFile.OpenExisting(fileName))
-            using (var stream = mmf.CreateViewStream())
-            using (var reader = new BinaryReader(stream))
-            {
-                var json = reader.ReadString();
-                return new JavaScriptSerializer().Deserialize(json, fxAssembly.GetType(FxPluginConfiguration));
             }
         }
     }

@@ -34,12 +34,9 @@
   },
 
   "permissions": {
-	"network": {
-	  "protocols": [ "tcp" ],
-	  "endpoints": [ "<all>" ]
-	},
-	"filesystem": {
-	  "paths": [ "<all>" ]
-	}
+	"sockets": "<unrestricted>",
+	"fileio": [
+	  { "access": [ "read", "discover" ], "paths": [ "C:\\Temp" ] }
+	]
   }
 }

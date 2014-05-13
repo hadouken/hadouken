@@ -1,5 +1,5 @@
 ﻿using System;
-using Hadouken.Fx;
+using System.Collections.Generic;
 
 namespace Hadouken.Plugins.Isolation
 {
@@ -7,7 +7,7 @@ namespace Hadouken.Plugins.Isolation
     {
         event EventHandler UnhandledError;
 
-        void Load(PluginConfiguration configuration);
+        void Load(IDictionary<string, object> configuration);
 
         void Unload();
 

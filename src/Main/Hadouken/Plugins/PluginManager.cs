@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using Hadouken.Configuration;
-using Hadouken.Fx;
 using Hadouken.Fx.IO;
 using Hadouken.Messaging;
 using Hadouken.Plugins.Isolation;
@@ -15,7 +14,7 @@ namespace Hadouken.Plugins
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly PluginConfiguration _configuration;
+        private readonly IDictionary<string, object> _configuration;
         private readonly IMessageQueue _messageQueue;
         private readonly IDirectory _baseDirectory;
         private readonly IManifest _manifest;
@@ -125,14 +124,14 @@ namespace Hadouken.Plugins
             _messageQueue.Publish(new PluginErrorMessage(Manifest.Name));
         }
 
-        private PluginConfiguration BuildConfiguration(IConfiguration configuration)
+        private IDictionary<string, object> BuildConfiguration(IConfiguration configuration)
         {
-            return new PluginConfiguration
+            return new Dictionary<string, object>
             {
-                DataPath = Path.Combine(configuration.ApplicationDataPath, _manifest.Name),
-                HttpHostBinding = configuration.Http.HostBinding,
-                HttpPort = configuration.Http.Port,
-                PluginName = _manifest.Name
+                { "Name", _manifest.Name },
+                { "Url", "hadouken://plugins." + _manifest.Name },
+                { "RpcTemplate", configuration.Rpc.PluginUriTemplate },
+                { "Permissions", _manifest.Permissions.ToXml().ToString() }
             };
         }
     }

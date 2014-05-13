@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security;
 using Hadouken.SemVer;
 
 namespace Hadouken.Plugins.Metadata
@@ -16,5 +17,7 @@ namespace Hadouken.Plugins.Metadata
         IEnumerable<EventHandler> EventHandlers { get; }
             
         IUserInterface UserInterface { get; }
+
+        PermissionSet Permissions { get; }
     }
 }

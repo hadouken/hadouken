@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using Hadouken.SemVer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -27,13 +28,14 @@ namespace Hadouken.Plugins.Metadata
         private readonly IEnumerable<Dependency> _dependencies;
         private readonly IEnumerable<EventHandler> _eventHandlers;
         private readonly IUserInterface _userInterface;
+        private readonly PermissionSet _permissions;
 
         public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies)
-            : this(name, version, "0.0", dependencies, null, null)
+            : this(name, version, "0.0", dependencies, null, null, null)
         {
         }
 
-        public Manifest(string name, SemanticVersion version, SemanticVersion minimumHostVersion, IEnumerable<Dependency> dependencies, IEnumerable<EventHandler> eventHandlers, IUserInterface userInterface)
+        public Manifest(string name, SemanticVersion version, SemanticVersion minimumHostVersion, IEnumerable<Dependency> dependencies, IEnumerable<EventHandler> eventHandlers, IUserInterface userInterface, PermissionSet permissions)
         {
             _name = name;
             _version = version;
@@ -41,6 +43,7 @@ namespace Hadouken.Plugins.Metadata
             _dependencies = dependencies ?? Enumerable.Empty<Dependency>();
             _eventHandlers = eventHandlers ?? Enumerable.Empty<EventHandler>();
             _userInterface = userInterface;
+            _permissions = permissions;
         }
 
         public string Name
@@ -71,6 +74,11 @@ namespace Hadouken.Plugins.Metadata
         public IUserInterface UserInterface
         {
             get { return _userInterface; }
+        }
+
+        public PermissionSet Permissions
+        {
+            get { return _permissions; }
         }
 
         public static bool TryParse(Stream json, out IManifest manifest)
