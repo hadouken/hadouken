@@ -12,7 +12,7 @@
       </Component>
 
       <Component>
-        <File Name="Hadouken.Plugins.Isolation.dll" />
+        <File Name="Hadouken.PluginHostProcess.exe" />
       </Component>
     </ComponentGroup>
   </Fragment>

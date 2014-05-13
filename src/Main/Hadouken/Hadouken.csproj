@@ -130,7 +130,6 @@
     <Compile Include="Plugins\IPackageInstaller.cs" />
     <Compile Include="Plugins\IPluginScanner.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
-    <Compile Include="Plugins\Isolation\BootstrapperNotFoundException.cs" />
     <Compile Include="Plugins\Isolation\ProcessIsolatedEnvironment.cs" />
     <Compile Include="Plugins\Messages\PluginErrorMessage.cs" />
     <Compile Include="Plugins\Metadata\EventHandler.cs" />

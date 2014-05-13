@@ -20,24 +20,17 @@
     <file src="build/binaries/Autofac.Integration.Wcf.dll" target="tools/hdkn" />
     <file src="build/binaries/Hadouken.dll" target="tools/hdkn" />
     <file src="build/binaries/Hadouken.Fx.dll" target="tools/hdkn" />
-    <file src="build/binaries/Hadouken.Plugins.Isolation.dll" target="tools/hdkn" />
+    <file src="build/binaries/Hadouken.PluginHostProcess.exe" target="tools/hdkn" />
     <file src="build/binaries/Hadouken.Service.exe" target="tools/hdkn" />
     <file src="build/binaries/Hadouken.Service.exe.config" target="tools/hdkn" />
     <file src="build/binaries/Ionic.Zip.dll" target="tools/hdkn" />
-    <file src="build/binaries/Microsoft.AspNet.SignalR.Core.dll" target="tools/hdkn" />
-    <file src="build/binaries/Microsoft.Owin.dll" target="tools/hdkn" />
-    <file src="build/binaries/Microsoft.Owin.Host.HttpListener.dll" target="tools/hdkn" />
-    <file src="build/binaries/Microsoft.Owin.Hosting.dll" target="tools/hdkn" />
-    <file src="build/binaries/Microsoft.Owin.Security.Cookies.dll" target="tools/hdkn" />
-    <file src="build/binaries/Microsoft.Owin.Security.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.MSOwinSecurity.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.Owin.dll" target="tools/hdkn" />
+    <file src="build/binaries/Nancy.Hosting.Self.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.ViewEngines.Razor.dll" target="tools/hdkn" />
     <file src="build/binaries/Newtonsoft.Json.dll" target="tools/hdkn" />
     <file src="build/binaries/NLog.dll" target="tools/hdkn" />
-    <file src="build/binaries/Owin.dll" target="tools/hdkn" />
     <file src="build/binaries/System.Web.Razor.Unofficial.dll" target="tools/hdkn" />
 
     <!-- Dummy file to get around NuGet insanity -->

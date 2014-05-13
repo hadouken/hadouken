@@ -16,29 +16,9 @@
       </Component>
 
       <Component>
-        <File Name="Microsoft.AspNet.SignalR.Core.dll" />
+        <File Name="Nancy.Authentication.Forms.dll" />
       </Component>
 
-      <Component>
-        <File Name="Microsoft.Owin.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Host.HttpListener.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Hosting.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Security.Cookies.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Microsoft.Owin.Security.dll" />
-      </Component>
-      
       <Component>
         <File Name="Nancy.Bootstrappers.Autofac.dll" />
       </Component>
@@ -48,11 +28,7 @@
       </Component>
 
       <Component>
-        <File Name="Nancy.MSOwinSecurity.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Nancy.Owin.dll" />
+        <File Name="Nancy.Hosting.Self.dll" />
       </Component>
 
       <Component>
@@ -65,10 +41,6 @@
 
       <Component>
         <File Name="NLog.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Owin.dll" />
       </Component>
 
       <Component>
