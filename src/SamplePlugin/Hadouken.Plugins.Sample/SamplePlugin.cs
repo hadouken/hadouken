@@ -1,4 +1,5 @@
-﻿using Hadouken.Fx;
+﻿using System.Net.Sockets;
+using Hadouken.Fx;
 using Hadouken.Fx.Configuration;
 using Hadouken.Fx.Logging;
 using Hadouken.Plugins.Sample.Configuration;
@@ -36,6 +37,10 @@ namespace Hadouken.Plugins.Sample
             }
 
             _logger.Info("Foo: " + config.Foo);
+
+            _logger.Info("Connecting to google.com:80");
+            new TcpClient().Connect("173.194.40.244", 80);
+            _logger.Info("Connected successfully");
         }
     }
 }

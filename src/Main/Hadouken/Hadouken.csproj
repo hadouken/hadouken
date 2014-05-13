@@ -137,6 +137,7 @@
     <Compile Include="Plugins\Metadata\IUserInterface.cs" />
     <Compile Include="Plugins\Metadata\ManifestV2Reader.cs" />
     <Compile Include="Plugins\Metadata\Page.cs" />
+    <Compile Include="Plugins\Metadata\Permissions\DnsPermissionParser.cs" />
     <Compile Include="Plugins\Metadata\Permissions\FileIOPermissionParser.cs" />
     <Compile Include="Plugins\Metadata\Permissions\IPermissionParser.cs" />
     <Compile Include="Plugins\Metadata\Permissions\SocketsPermissionParser.cs" />

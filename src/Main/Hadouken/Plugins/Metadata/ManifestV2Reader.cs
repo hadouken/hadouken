@@ -16,6 +16,7 @@ namespace Hadouken.Plugins.Metadata
 
         static ManifestV2Reader()
         {
+            PermissionParsers.Add("dns", () => new DnsPermissionParser());
             PermissionParsers.Add("fileio", () => new FileIOPermissionParser());
             PermissionParsers.Add("sockets", () => new SocketsPermissionParser());
         }
