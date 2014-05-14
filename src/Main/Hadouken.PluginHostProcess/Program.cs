@@ -27,12 +27,10 @@ namespace Hadouken.PluginHostProcess
 
         public void Run(string[] args)
         {
-            // Get current process and create handler to close this child process if
-            // parent exists. This is to prevent stray child processes.
             var pluginId = args[0];
             var parentId = Convert.ToInt32(args[1]);
 
-            var config = ReadConfig(pluginId);
+            var config = ReadConfig(pluginId + ".config");
             var host = PluginHost.Create(pluginId, config);
 
             // Setup host process monitoring. Kill our process

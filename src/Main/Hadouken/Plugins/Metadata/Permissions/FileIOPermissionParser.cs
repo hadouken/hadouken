@@ -32,7 +32,7 @@ namespace Hadouken.Plugins.Metadata.Permissions
                 var fileAccess = FileIOPermissionAccess.NoAccess;
                 if (access.Contains("read")) fileAccess |= FileIOPermissionAccess.Read;
                 if (access.Contains("write")) fileAccess |= FileIOPermissionAccess.Write;
-                if (access.Contains("discovery")) fileAccess |= FileIOPermissionAccess.PathDiscovery;
+                if (access.Contains("discover")) fileAccess |= FileIOPermissionAccess.PathDiscovery;
                 if (access.Contains("append")) fileAccess |= FileIOPermissionAccess.Append;
 
                 result.AddPathList(fileAccess, paths);

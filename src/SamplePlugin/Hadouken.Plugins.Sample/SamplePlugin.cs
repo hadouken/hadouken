@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.IO;
+using System.Net.Sockets;
 using Hadouken.Fx;
 using Hadouken.Fx.Configuration;
 using Hadouken.Fx.Logging;
@@ -41,6 +43,15 @@ namespace Hadouken.Plugins.Sample
             _logger.Info("Connecting to google.com:80");
             new TcpClient().Connect("173.194.40.244", 80);
             _logger.Info("Connected successfully");
+
+            _logger.Info("Files in C:\\Temp");
+
+            foreach (var file in Directory.GetFiles("C:\\Temp"))
+            {
+                _logger.Debug(file);
+            }
+
+            throw new Exception("I'm crashing");
         }
     }
 }

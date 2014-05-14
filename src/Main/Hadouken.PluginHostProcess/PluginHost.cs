@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.Hosting;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web.Script.Serialization;
 
 namespace Hadouken.PluginHostProcess
 {
     public class PluginHost : MarshalByRefObject
     {
-        private readonly string _pluginId;
-        private readonly IDictionary<string, object> _configuration;
         private const string FxAssembly = "Hadouken.Fx.dll";
         private const string FxPlugin = "Hadouken.Fx.Plugin";
         private const string FxBootstrapperAttribute = "Hadouken.Fx.Bootstrapping.BootstrapperAttribute";
         private const string FxTinyIoCBootstrapper = "Hadouken.Fx.Bootstrapping.TinyIoC.TinyIoCBootstrapper";
+
+        private readonly string _pluginId;
+        private readonly IDictionary<string, object> _configuration;
+        private readonly EventWaitHandle _handle;
 
         private object _pluginHost;
 
@@ -32,6 +30,7 @@ namespace Hadouken.PluginHostProcess
         {
             _pluginId = pluginId;
             _configuration = configuration;
+            _handle = EventWaitHandle.OpenExisting(pluginId);
         }
 
         public static PluginHost Create(string pluginId, IDictionary<string, object> config)
@@ -47,7 +46,6 @@ namespace Hadouken.PluginHostProcess
                 DisallowCodeDownload = true,
                 DisallowPublisherPolicy = true
             };
-
 
             var permissions = new PermissionSet(PermissionState.None);
 
@@ -142,20 +140,13 @@ namespace Hadouken.PluginHostProcess
             _pluginHost = bootstrapper.Invoke("GetHost");
             _pluginHost.Invoke("Load");
 
-            using (var loadEvent = EventWaitHandle.OpenExisting(_pluginId + ".load"))
-            {
-                loadEvent.Set();
-            }
+            _handle.Set();
         }
 
         public void Unload()
         {
             _pluginHost.Invoke("Unload");
-
-            using (var unloadEvent = EventWaitHandle.OpenExisting(_pluginId + ".unload"))
-            {
-                unloadEvent.Set();
-            }
+            _handle.Set();
         }
 
         public void SetupMonitoring(int parentProcessId)
@@ -171,10 +162,7 @@ namespace Hadouken.PluginHostProcess
 
         public void WaitForExit()
         {
-            using (var waitEvent = EventWaitHandle.OpenExisting(_pluginId + ".wait"))
-            {
-                waitEvent.WaitOne();
-            }
+            _handle.WaitOne();
         }
     }
 }

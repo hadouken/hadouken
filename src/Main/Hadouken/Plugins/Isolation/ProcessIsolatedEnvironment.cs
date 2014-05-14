@@ -16,37 +16,28 @@ namespace Hadouken.Plugins.Isolation
         private static readonly int DefaultTimeout = 5000;
 
         private readonly IDirectory _baseDirectory;
-        private string _environmentId;
+        private readonly string _environmentId;
+        private readonly EventWaitHandle _handle;
+        private readonly int _hostProcessId;
         private Process _hostProcess;
-        private EventWaitHandle _runningHandle;
+        private bool _isRunning;
 
         public ProcessIsolatedEnvironment(IDirectory baseDirectory)
         {
             _baseDirectory = baseDirectory;
+            _environmentId = Guid.NewGuid().ToString();
+            _handle = new EventWaitHandle(false, EventResetMode.AutoReset, _environmentId);
+            _hostProcessId = Process.GetCurrentProcess().Id;
         }
 
         public event EventHandler UnhandledError;
 
         public void Load(IDictionary<string, object> configuration)
         {
-            _environmentId = Guid.NewGuid().ToString();
-
-            var loadEvent = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".load");
-            var currentPid = Process.GetCurrentProcess().Id;
-
-            var startInfo = new ProcessStartInfo
-            {
-                Arguments = _environmentId + " " + currentPid,
-                FileName = typeof(PluginHostProcess.Program).Assembly.Location,
-                UseShellExecute = false,
-                WorkingDirectory = _baseDirectory.FullPath
-            };
+            var startInfo = GetStartInfo();
 
             // Write the configuration to a mem-mapped file
-            var mmf = WriteConf(_environmentId, configuration);
-
-            // The handle
-            _runningHandle = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".wait");            
+            var mmf = WriteConf(_environmentId, configuration);      
 
             _hostProcess = new Process
             {
@@ -58,7 +49,7 @@ namespace Hadouken.Plugins.Isolation
             _hostProcess.Start();
 
             // Wait until we're up and running
-            if (!loadEvent.WaitOne(DefaultTimeout))
+            if (!_handle.WaitOne(DefaultTimeout))
             {
                 if (_hostProcess != null && !_hostProcess.HasExited)
                 {
@@ -70,27 +61,28 @@ namespace Hadouken.Plugins.Isolation
                 throw new PluginException("Could not load plugin.");
             }
 
+            _isRunning = true;
+
             mmf.Dispose();
-            loadEvent.Dispose();
         }
 
         public void Unload()
         {
-            using (var unloadEvent = new EventWaitHandle(false, EventResetMode.ManualReset, _environmentId + ".unload"))
+            // Remove handler
+            if (_hostProcess != null)
             {
-                // Remove handler
                 _hostProcess.Exited -= HostProcessOnExited;
-
-                _runningHandle.Set();
-
-                if (!_hostProcess.HasExited)
-                {
-                    unloadEvent.WaitOne(DefaultTimeout);
-                    _hostProcess.WaitForExit();
-                }
-
-                _hostProcess = null;
             }
+
+            _handle.Set();
+
+            if (_hostProcess != null && !_hostProcess.HasExited)
+            {
+                _handle.WaitOne(DefaultTimeout);
+                _hostProcess.WaitForExit();
+            }
+
+            _hostProcess = null;
         }
 
         public long GetMemoryUsage()
@@ -107,7 +99,7 @@ namespace Hadouken.Plugins.Isolation
         {
             var handler = UnhandledError;
 
-            if (handler != null)
+            if (handler != null && _isRunning)
             {
                 handler(this, EventArgs.Empty);
             }
@@ -116,11 +108,22 @@ namespace Hadouken.Plugins.Isolation
             _hostProcess.Exited -= HostProcessOnExited;
         }
 
+        private ProcessStartInfo GetStartInfo()
+        {
+            return new ProcessStartInfo
+            {
+                Arguments = _environmentId + " " + _hostProcessId,
+                FileName = typeof(PluginHostProcess.Program).Assembly.Location,
+                UseShellExecute = false,
+                WorkingDirectory = _baseDirectory.FullPath
+            };
+        }
+
         private MemoryMappedFile WriteConf(string envId, IDictionary<string, object> configuration)
         {
             var json = JsonConvert.SerializeObject(configuration);
             var data = Encoding.UTF8.GetBytes(json);
-            var mmf = MemoryMappedFile.CreateNew(envId, data.Length*2);
+            var mmf = MemoryMappedFile.CreateNew(envId + ".config", data.Length*2);
             
             using (var stream = mmf.CreateViewStream())
             using (var writer = new BinaryWriter(stream))
