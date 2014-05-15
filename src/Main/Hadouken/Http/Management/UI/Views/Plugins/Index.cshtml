@@ -4,15 +4,9 @@
 
 @section Scripts
 {
+    <script type="text/javascript" src="/Scripts/zip.js"></script>
+    <script type="text/javascript" src="/Scripts/manifest.js"></script>
     <script type="text/javascript" src="/Scripts/Plugins.js"></script>
-}
-
-@if(Model.HasAlert)
-{ 
-    <div class="alert alert-@Model.AlertClass alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        @Model.AlertMessage
-    </div>
 }
 
 <div class="row">
@@ -25,7 +19,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <h2>Your plugins <button type="button" class="btn btn-sm btn-primary btn-upload-package">Upload package</button></h2>
+        <h2>Your plugins <button type="button" class="btn btn-sm btn-primary btn-upload-package">Upload</button></h2>
         
         @if (!Model.HasPlugins)
         {
@@ -64,13 +58,46 @@
     </div>
 </div>
 
-<script type="text/x-html-template" id="upload-template">
+<script type="text/x-html-template" id="upload-template" data-title="Upload plugin">
     <p>Use the form below to manually upload a plugin package. <em>If it has dependencies which can not be met, it will fail to load.</em></p>
 
-    <div class="form-group">
-        <label for="package" class="col-md-3 control-label">Package file</label>
-        <div class="col-md-9">
-            <input type="file" class="form-control" name="package" id="package" />
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="package" class="col-md-3 control-label">Package file</label>
+            <div class="col-md-9">
+                <input type="file" class="form-control" name="package" id="package" />
+            </div>
         </div>
-    </div>
+        
+        <div class="form-group manifest-data">
+            <label class="col-md-3 control-label">Dependencies</label>
+            <div class="col-md-9">
+                <p class="form-control-static">
+                    <ul id="dependenciesList">
+                        <li><span class="label label-success">None</span></li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        
+        <div class="form-group manifest-data">
+            <label class="col-md-3 control-label">Permissions</label>
+            <div class="col-md-9">
+                <p class="form-control-static">
+                    <ul id="permissionsList">
+                        <li><span class="label label-warning">Unrestricted</span></li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        
+        <p class="manifest-data">Enter your password to proceed with the installation.</p>
+
+        <div class="form-group manifest-data">
+            <label for="password" class="col-md-3 control-label">Password</label>
+            <div class="col-md-9">
+                <input type="password" class="form-control" name="password" id="password" />
+            </div>
+        </div>
+    </form>
 </script>

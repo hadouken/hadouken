@@ -264,6 +264,16 @@
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Scripts\bootbox.min.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\zip.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\deflate.js" />
+    <EmbeddedResource Include="Http\Management\UI\Scripts\inflate.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\Scripts\manifest.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

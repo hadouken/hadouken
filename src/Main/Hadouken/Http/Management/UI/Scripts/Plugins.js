@@ -39,10 +39,11 @@
 
     $('.btn-upload-package').on('click', function(e) {
         e.preventDefault();
+        var title = $('#upload-template').attr('data-title');
         var template = $('#upload-template').html();
 
         var dlg = bootbox.dialog({
-            title: 'Upload plugin',
+            title: title,
             message: template,
             buttons: {
                 cancel: {
@@ -81,5 +82,45 @@
                 }
             }
         });
+
+        $(dlg).find('.btn-primary').attr('disabled', true);
+        $(dlg).find('.manifest-data').hide();
+
+        $(dlg).find('#package').on('change', function(evt) {
+            var files = evt.target.files;
+            $(dlg).find('.btn-primary').attr('disabled', (files.length === 0));
+
+            if (files.length == 0) {
+            } else {
+                var file = files[0];
+                var reader = new FileReader();
+
+                reader.onload = (function() {
+                    return function (e) {
+                        manifest.read(e.target.result, function(m) { showManifest(m); });
+                    }
+                })(file);
+
+                reader.readAsDataURL(file);
+            }
+        });
     });
 });
+
+function showManifest(manifest) {
+    $('.manifest-data').show();
+    
+    if (manifest.dependencies && manifest.dependencies.length > 0) {
+        var list = $('#dependenciesList');
+        list.empty();
+
+        for (var i = 0; i < manifest.dependencies.length; i++) {
+            var dependency = manifest.dependencies[i];
+            var item = $('<li>', {
+                text: dependency.id + ' (' + dependency.version + ')'
+            });
+
+            list.append(item);
+        }
+    }
+}
