@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Text;
 using System.Threading;
-using Hadouken.Fx;
 using Hadouken.Fx.IO;
 using Newtonsoft.Json;
 
