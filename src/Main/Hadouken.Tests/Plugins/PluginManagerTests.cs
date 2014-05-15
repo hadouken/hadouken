@@ -72,11 +72,12 @@ namespace Hadouken.Tests.Plugins
             public void Should_Set_State_To_Unloaded()
             {
                 // Given, When
+                var manifest = new Manifest("test", "1.0");
                 var manager = new PluginManager(Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     Substitute.For<IIsolatedEnvironment>(),
-                    Substitute.For<IManifest>());
+                    manifest);
 
                 // Then
                 Assert.Equal(PluginState.Unloaded, manager.State);
@@ -94,7 +95,7 @@ namespace Hadouken.Tests.Plugins
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
-                    Substitute.For<IManifest>());
+                    new Manifest("test", "1.0"));
 
                 // When
                 var usage = manager.GetMemoryUsage();
@@ -113,7 +114,7 @@ namespace Hadouken.Tests.Plugins
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
-                    Substitute.For<IManifest>());
+                    new Manifest("test", "1.0"));
 
                 // When
                 manager.Load();
@@ -135,7 +136,7 @@ namespace Hadouken.Tests.Plugins
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
-                    Substitute.For<IManifest>());
+                    new Manifest("test", "1.0"));
 
                 // When
                 manager.Load();
@@ -155,7 +156,7 @@ namespace Hadouken.Tests.Plugins
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
-                    Substitute.For<IManifest>());
+                    new Manifest("test", "1.0"));
 
                 // When
                 manager.Load();
@@ -176,7 +177,7 @@ namespace Hadouken.Tests.Plugins
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
-                    Substitute.For<IManifest>());
+                    new Manifest("test", "1.0"));
 
                 // When
                 manager.Unload();
@@ -196,7 +197,7 @@ namespace Hadouken.Tests.Plugins
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
-                    Substitute.For<IManifest>());
+                    new Manifest("test", "1.0"));
 
                 // When
                 manager.Unload();

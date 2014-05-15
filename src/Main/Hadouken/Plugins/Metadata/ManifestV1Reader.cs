@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Hadouken.SemVer;
 using Newtonsoft.Json.Linq;
 
@@ -10,16 +8,16 @@ namespace Hadouken.Plugins.Metadata
     {
         public Manifest Read(JObject manifestObject)
         {
-            // Ensure manifest_version is 1
-            var manifestVersionToken = manifestObject["manifest_version"];
+            // Required fields
+            if (manifestObject["id"] == null)
+            {
+                throw new MissingPropertyException("id");
+            }
 
-            if (manifestVersionToken == null)
-                return null;
-
-            var manifestVersion = manifestVersionToken.Value<int>();
-
-            if (manifestVersion != 1)
-                return null;
+            if (manifestObject["version"] == null)
+            {
+                throw new MissingPropertyException("version");
+            }
 
             // Read all dependencies
             var dependencies = manifestObject["dependencies"] as JArray;
@@ -47,7 +45,10 @@ namespace Hadouken.Plugins.Metadata
             var name = manifestObject["id"].Value<string>();
             var version = new SemanticVersion(manifestObject["version"].Value<string>());
 
-            return new Manifest(name, version, dependencyList);
+            return new Manifest(name, version)
+            {
+                Dependencies = dependencyList
+            };
         }
     }
 }

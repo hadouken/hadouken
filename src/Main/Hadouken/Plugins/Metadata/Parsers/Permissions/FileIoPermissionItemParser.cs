@@ -3,9 +3,9 @@ using System.Security;
 using System.Security.Permissions;
 using Newtonsoft.Json.Linq;
 
-namespace Hadouken.Plugins.Metadata.Permissions
+namespace Hadouken.Plugins.Metadata.Parsers.Permissions
 {
-    public class FileIOPermissionParser : IPermissionParser
+    public class FileIoPermissionItemParser : IPermissionItemParser
     {
         public IPermission Parse(JToken token)
         {

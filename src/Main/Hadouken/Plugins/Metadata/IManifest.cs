@@ -16,7 +16,7 @@ namespace Hadouken.Plugins.Metadata
 
         IEnumerable<EventHandler> EventHandlers { get; }
             
-        IUserInterface UserInterface { get; }
+        UserInterface UserInterface { get; }
 
         PermissionSet Permissions { get; }
     }

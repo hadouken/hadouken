@@ -1,0 +1,62 @@
+﻿{
+    "title": "Manifest v2",
+    "type": "object",
+
+    "properties": {
+        "manifest_version": {
+            "type": "integer",
+            "required": true
+        },
+
+        "id": {
+            "type": "string",
+            "required": true
+        },
+
+        "version": {
+            "type": "string",
+            "required": true
+        },
+
+        "minimumHostVersion": {
+            "type": "string",
+            "required": false
+        },
+
+        "dependencies": {
+            "type": "array",
+            "required": false,
+            "items": {
+                "type": "object",
+                "required": true,
+	            "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "version": {
+                        "type": "string",
+                        "required": true
+                    }
+                }
+            }
+        },
+
+        "eventHandlers": {
+            "type": "object",
+            "required": false,
+            "additionalProperties": { "type": "string" }
+        },
+
+        "permissions": {
+            "type": "object",
+            "required": false
+        },
+
+        "ui": {
+            "type": "object",
+            "required": false
+        }
+    }
+}

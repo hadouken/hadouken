@@ -1,9 +1,9 @@
 ﻿using System.Security;
 using Newtonsoft.Json.Linq;
 
-namespace Hadouken.Plugins.Metadata.Permissions
+namespace Hadouken.Plugins.Metadata.Parsers.Permissions
 {
-    public interface IPermissionParser
+    public interface IPermissionItemParser
     {
         IPermission Parse(JToken token);
 

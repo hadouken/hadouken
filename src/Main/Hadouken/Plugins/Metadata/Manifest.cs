@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Security.Permissions;
 using Hadouken.SemVer;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -22,64 +23,32 @@ namespace Hadouken.Plugins.Metadata
             ManifestReaders.Add(2, () => new ManifestV2Reader());
         }
 
-        private readonly string _name;
-        private readonly SemanticVersion _version;
-        private readonly SemanticVersion _minimumHostVersion;
-        private readonly IEnumerable<Dependency> _dependencies;
-        private readonly IEnumerable<EventHandler> _eventHandlers;
-        private readonly IUserInterface _userInterface;
-        private readonly PermissionSet _permissions;
-
-        public Manifest(string name, SemanticVersion version, IEnumerable<Dependency> dependencies)
-            : this(name, version, "0.0", dependencies, null, null, null)
+        public Manifest(string name, SemanticVersion version)
         {
+            Name = name;
+            Version = version;
+
+            // Default values
+            MinimumHostVersion = new SemanticVersion("0.0");
+            Dependencies = Enumerable.Empty<Dependency>();
+            EventHandlers = Enumerable.Empty<EventHandler>();
+            Permissions = new PermissionSet(PermissionState.None);
+            UserInterface = new UserInterface();
         }
+        
+        public string Name { get; private set; }
 
-        public Manifest(string name, SemanticVersion version, SemanticVersion minimumHostVersion, IEnumerable<Dependency> dependencies, IEnumerable<EventHandler> eventHandlers, IUserInterface userInterface, PermissionSet permissions)
-        {
-            _name = name;
-            _version = version;
-            _minimumHostVersion = minimumHostVersion;
-            _dependencies = dependencies ?? Enumerable.Empty<Dependency>();
-            _eventHandlers = eventHandlers ?? Enumerable.Empty<EventHandler>();
-            _userInterface = userInterface;
-            _permissions = permissions;
-        }
+        public SemanticVersion Version { get; private set; }
 
-        public string Name
-        {
-            get { return _name; }
-        }
+        public SemanticVersion MinimumHostVersion { get; set; }
 
-        public SemanticVersion Version
-        {
-            get { return _version; }
-        }
+        public IEnumerable<Dependency> Dependencies { get; set; }
 
-        public SemanticVersion MinimumHostVersion
-        {
-            get { return _minimumHostVersion; }
-        }
+        public IEnumerable<EventHandler> EventHandlers { get; set; } 
 
-        public IEnumerable<Dependency> Dependencies
-        {
-            get { return _dependencies; }
-        }
+        public UserInterface UserInterface { get; set; }
 
-        public IEnumerable<EventHandler> EventHandlers
-        {
-            get { return _eventHandlers; }
-        } 
-
-        public IUserInterface UserInterface
-        {
-            get { return _userInterface; }
-        }
-
-        public PermissionSet Permissions
-        {
-            get { return _permissions; }
-        }
+        public PermissionSet Permissions { get; set; }
 
         public static bool TryParse(Stream json, out IManifest manifest)
         {

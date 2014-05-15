@@ -3,18 +3,18 @@ using System.Security;
 using System.Security.Permissions;
 using Newtonsoft.Json.Linq;
 
-namespace Hadouken.Plugins.Metadata.Permissions
+namespace Hadouken.Plugins.Metadata.Parsers.Permissions
 {
-    public class SocketsPermissionParser : IPermissionParser
+    public class DnsPermissionItemParser : IPermissionItemParser
     {
         public IPermission Parse(JToken token)
         {
-            return null;
+            return new DnsPermission(PermissionState.Unrestricted);
         }
 
         public IPermission GetUnrestricted()
         {
-            return new SocketPermission(PermissionState.Unrestricted);            
+            return new DnsPermission(PermissionState.Unrestricted);
         }
     }
 }

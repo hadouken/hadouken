@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Hadouken.Plugins.Metadata
 {
-    public sealed class Page : IPage
+    public sealed class Page
     {
         private readonly string _htmlFile;
         private readonly IEnumerable<string> _scripts;

@@ -133,14 +133,18 @@
     <Compile Include="Plugins\Isolation\ProcessIsolatedEnvironment.cs" />
     <Compile Include="Plugins\Messages\PluginErrorMessage.cs" />
     <Compile Include="Plugins\Metadata\EventHandler.cs" />
-    <Compile Include="Plugins\Metadata\IPage.cs" />
-    <Compile Include="Plugins\Metadata\IUserInterface.cs" />
     <Compile Include="Plugins\Metadata\ManifestV2Reader.cs" />
+    <Compile Include="Plugins\Metadata\MissingPropertyException.cs" />
     <Compile Include="Plugins\Metadata\Page.cs" />
-    <Compile Include="Plugins\Metadata\Permissions\DnsPermissionParser.cs" />
-    <Compile Include="Plugins\Metadata\Permissions\FileIOPermissionParser.cs" />
-    <Compile Include="Plugins\Metadata\Permissions\IPermissionParser.cs" />
-    <Compile Include="Plugins\Metadata\Permissions\SocketsPermissionParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\DependenciesParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\EventHandlersParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\PermissionsParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\Permissions\DnsPermissionItemParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\Permissions\FileIoPermissionItemParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\Permissions\IPermissionItemParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\Permissions\SocketsPermissionItemParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\UserInterfaceParser.cs" />
+    <Compile Include="Plugins\Metadata\UnexpectedPropertyException.cs" />
     <Compile Include="Plugins\Metadata\UserInterface.cs" />
     <Compile Include="Plugins\PackageDownloader.cs" />
     <Compile Include="Plugins\PackageInstaller.cs" />
@@ -221,6 +225,7 @@
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Tools\Events.cshtml" />
     <None Include="packages.config" />
+    <None Include="Plugins\Metadata\Schemas\v2.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hadouken.PluginHostProcess\Hadouken.PluginHostProcess.csproj">
