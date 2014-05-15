@@ -19,6 +19,7 @@ namespace Hadouken.Plugins.Metadata.Parsers
             PermissionParsers.Add("dns", () => new DnsPermissionItemParser());
             PermissionParsers.Add("fileio", () => new FileIoPermissionItemParser());
             PermissionParsers.Add("sockets", () => new SocketsPermissionItemParser());
+            PermissionParsers.Add("web", () => new WebPermissionItemParser());
         }
 
         public PermissionSet Parse(JToken value)

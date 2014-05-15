@@ -36,6 +36,7 @@
   "permissions": {
 	"dns": "<unrestricted>",
 	"sockets": "<unrestricted>",
+    "web": "<unrestricted>",
 	"fileio": [
 	  { "access": [ "read", "discover" ], "paths": [ "C:\\Temp" ] }
 	]

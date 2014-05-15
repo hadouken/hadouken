@@ -143,6 +143,7 @@
     <Compile Include="Plugins\Metadata\Parsers\Permissions\FileIoPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\Permissions\IPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\Permissions\SocketsPermissionItemParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\Permissions\WebPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\UserInterfaceParser.cs" />
     <Compile Include="Plugins\Metadata\UnexpectedPropertyException.cs" />
     <Compile Include="Plugins\Metadata\UserInterface.cs" />

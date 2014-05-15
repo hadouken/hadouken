@@ -18,8 +18,10 @@ namespace Hadouken.Plugins.Isolation
         private readonly IDirectory _baseDirectory;
         private readonly string _environmentId;
         private readonly EventWaitHandle _handle;
-        private readonly int _hostProcessId;
-        private Process _hostProcess;
+        private readonly StringBuilder _errorOutputBuilder = new StringBuilder();
+        private readonly StringBuilder _outputBuilder = new StringBuilder();
+        private readonly Process _hostProcess;
+        private bool _firstLoad = true;
         private bool _isRunning;
 
         public ProcessIsolatedEnvironment(IDirectory baseDirectory)
@@ -27,62 +29,58 @@ namespace Hadouken.Plugins.Isolation
             _baseDirectory = baseDirectory;
             _environmentId = Guid.NewGuid().ToString();
             _handle = new EventWaitHandle(false, EventResetMode.AutoReset, _environmentId);
-            _hostProcessId = Process.GetCurrentProcess().Id;
+            _hostProcess = CreateProcess(_environmentId);
         }
 
         public event EventHandler UnhandledError;
 
         public void Load(IDictionary<string, object> configuration)
         {
-            var startInfo = GetStartInfo();
-
             // Write the configuration to a mem-mapped file
-            var mmf = WriteConf(_environmentId, configuration);      
-
-            _hostProcess = new Process
+            using(WriteConf(_environmentId, configuration))
             {
-                StartInfo = startInfo,
-                EnableRaisingEvents = true
-            };
+                // Clear our output buffers
+                _errorOutputBuilder.Clear();
+                _outputBuilder.Clear();
 
-            _hostProcess.Exited += HostProcessOnExited;
-            _hostProcess.Start();
+                // Start the process
+                _hostProcess.Start();
 
-            // Wait until we're up and running
-            if (!_handle.WaitOne(DefaultTimeout))
-            {
-                if (_hostProcess != null && !_hostProcess.HasExited)
+                if (_firstLoad)
                 {
-                    _hostProcess.Kill();
+                    _hostProcess.BeginErrorReadLine();
+                    _hostProcess.BeginOutputReadLine();
+
+                    _firstLoad = false;
                 }
 
-                _hostProcess = null;
+                // Wait until we're up and running
+                if (!_handle.WaitOne(DefaultTimeout))
+                {
+                    if (!_hostProcess.HasExited)
+                    {
+                        _hostProcess.Kill();
+                    }
 
-                throw new PluginException("Could not load plugin.");
+                    throw new PluginException("Could not load plugin: " + _errorOutputBuilder);
+                }
+
+                _isRunning = true;
             }
-
-            _isRunning = true;
-
-            mmf.Dispose();
         }
 
         public void Unload()
         {
-            // Remove handler
-            if (_hostProcess != null)
-            {
-                _hostProcess.Exited -= HostProcessOnExited;
-            }
+            _isRunning = false;
 
             _handle.Set();
 
-            if (_hostProcess != null && !_hostProcess.HasExited)
-            {
-                _handle.WaitOne(DefaultTimeout);
-                _hostProcess.WaitForExit();
-            }
+            if (_handle.WaitOne(DefaultTimeout)) return;
 
-            _hostProcess = null;
+            if(!_hostProcess.HasExited)
+            {
+                _hostProcess.Kill();
+            }
         }
 
         public long GetMemoryUsage()
@@ -97,26 +95,41 @@ namespace Hadouken.Plugins.Isolation
 
         private void HostProcessOnExited(object sender, EventArgs eventArgs)
         {
+            if (!_isRunning) return;
+
             var handler = UnhandledError;
 
             if (handler != null && _isRunning)
             {
                 handler(this, EventArgs.Empty);
             }
-
-            // Remove the handler since the process is dead.
-            _hostProcess.Exited -= HostProcessOnExited;
         }
 
-        private ProcessStartInfo GetStartInfo()
+        private Process CreateProcess(string environmentId)
         {
-            return new ProcessStartInfo
+            var hostId = Process.GetCurrentProcess().Id;
+
+            var info = new ProcessStartInfo
             {
-                Arguments = _environmentId + " " + _hostProcessId,
+                Arguments = string.Format("{0} {1}", environmentId, hostId),
                 FileName = typeof(PluginHostProcess.Program).Assembly.Location,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
                 UseShellExecute = false,
                 WorkingDirectory = _baseDirectory.FullPath
             };
+
+            var process = new Process
+            {
+                EnableRaisingEvents = true,
+                StartInfo = info,
+            };
+
+            process.Exited += HostProcessOnExited;
+            process.ErrorDataReceived += (sender, args) => _errorOutputBuilder.Append(args.Data);
+            process.OutputDataReceived += (sender, args) => _outputBuilder.Append(args.Data);
+            
+            return process;
         }
 
         private MemoryMappedFile WriteConf(string envId, IDictionary<string, object> configuration)
