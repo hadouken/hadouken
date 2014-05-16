@@ -1,4 +1,5 @@
 ﻿using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules
 {
@@ -12,17 +13,7 @@ namespace Hadouken.Http.Management.Modules
         protected ModuleBase(string modulePath)
             : base(modulePath)
         {
-            Before += (ctx) =>
-            {
-                if (ctx.Request.UserHostAddress == "127.0.0.1"
-                    || ctx.Request.UserHostAddress == "::1"
-                    || ctx.CurrentUser != null)
-                {
-                    return null;
-                }
-
-                return HttpStatusCode.Unauthorized;
-            };
+            this.RequiresAuthentication();
         }
     }
 }
