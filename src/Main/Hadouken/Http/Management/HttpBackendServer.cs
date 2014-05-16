@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using Hadouken.Configuration;
 using Nancy.Hosting.Self;
@@ -20,14 +21,23 @@ namespace Hadouken.Http.Management
 
         public void Start()
         {
-            var uri = new Uri(string.Format("http://localhost:{0}/", _configuration.Http.Port));
+            var binding = _configuration.Http.HostBinding;
+            var port = _configuration.Http.Port;
+            var uriList = new List<Uri>();
+
+            uriList.Add(new Uri(string.Format("http://localhost:{0}/", port)));
+
+            if (!binding.Equals("+") && !binding.Equals("localhost"))
+            {
+                uriList.Add(new Uri(string.Format("http://{0}:{1}/", binding, port)));
+            }
 
             var cfg = new HostConfiguration
             {
-                RewriteLocalhost = _configuration.Http.HostBinding.Equals("+")
+                RewriteLocalhost = binding.Equals("+")
             };
 
-            _httpServer = new NancyHost(new CustomNancyBootstrapper(_lifetimeScope), cfg, uri);
+            _httpServer = new NancyHost(new CustomNancyBootstrapper(_lifetimeScope), cfg, uriList.ToArray());
             _httpServer.Start();
         }
 
