@@ -17,6 +17,7 @@ using Hadouken.Plugins.Handlers;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Scanners;
+using Hadouken.Startup;
 using Serilog;
 
 namespace Hadouken.Service
@@ -30,20 +31,22 @@ namespace Hadouken.Service
 			// Register service
 			builder.RegisterType<HadoukenService>().As<IHadoukenService>();
 
+            // Startup tasks
+            builder.RegisterType<PluginBootstrapperTask>().As<IStartupTask>();
+            builder.RegisterType<PluginDirectoryCleanerTask>().As<IStartupTask>();
+
             // HTTP management interface
 		    builder.RegisterModule(new HttpManagementModule());
 
 			// Register plugin engine
 		    builder.RegisterType<CmdArgPluginScanner>().As<IPluginScanner>();
-		    builder
-		        .RegisterType<DirectoryPluginScanner>()
+		    builder.RegisterType<DirectoryPluginScanner>()
 		        .As<IPluginScanner>()
 		        .WithParameter(
 		            (p, ctx) => p.ParameterType == typeof (string),
 		            (p, ctx) => ctx.Resolve<IConfiguration>().Plugins.BaseDirectory);
 
-            builder
-                .RegisterType<PackageInstaller>()
+            builder.RegisterType<PackageInstaller>()
                 .As<IPackageInstaller>()
                 .WithParameter(
                     (p, ctx) => p.ParameterType == typeof(string),

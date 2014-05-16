@@ -209,6 +209,9 @@
     <Compile Include="SemVer\SemanticVersionRange.cs" />
     <Compile Include="Service\HadoukenService.cs" />
     <Compile Include="Service\IHadoukenService.cs" />
+    <Compile Include="Startup\IStartupTask.cs" />
+    <Compile Include="Startup\PluginBootstrapperTask.cs" />
+    <Compile Include="Startup\PluginDirectoryCleanerTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.eot" />
