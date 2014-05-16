@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using System.Text;
+using Hadouken.Http.Management.Models;
+using Hadouken.Logging;
 using Hadouken.Plugins;
 
 namespace Hadouken.Http.Management.Modules
 {
     public class ToolsModule : ModuleBase
     {
-        public ToolsModule(IPluginEngine pluginEngine)
+        public ToolsModule(IInMemorySink memorySink, IPluginEngine pluginEngine)
             : base("tools")
         {
             Get["/events"] = _ => View["Events"];
@@ -19,9 +21,15 @@ namespace Hadouken.Http.Management.Modules
 
             Get["/log"] = _ =>
             {
-                var sb = new StringBuilder();
+                var events = (from le in memorySink.LogEvents
+                    select new LogEntry
+                    {
+                        Timestamp = le.Timestamp,
+                        Level = le.Level.ToString(),
+                        Message = le.RenderMessage()
+                    });
 
-                return View["Log", new {Log = sb.ToString()}];
+                return View["Log", new {Events = events}];
             };
         }
     }

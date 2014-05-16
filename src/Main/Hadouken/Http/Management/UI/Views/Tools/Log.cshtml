@@ -11,6 +11,24 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <pre>@Model.Log</pre>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.Events)
+                {
+                    <tr>
+                        <td>@e.Timestamp</td>
+                        <td>@e.Level</td>
+                        <td>@e.Message</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

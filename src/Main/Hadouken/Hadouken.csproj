@@ -102,6 +102,7 @@
     <Compile Include="Http\Management\HttpBackendServer.cs" />
     <Compile Include="Http\Management\HttpManagementModule.cs" />
     <Compile Include="Http\Management\IHttpBackendServer.cs" />
+    <Compile Include="Http\Management\Models\LogEntry.cs" />
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
@@ -123,6 +124,8 @@
     <Compile Include="JsonRpc\PluginsService.cs" />
     <Compile Include="JsonRpc\ReleasesService.cs" />
     <Compile Include="JsonRpc\RepositoryService.cs" />
+    <Compile Include="Logging\IInMemorySink.cs" />
+    <Compile Include="Logging\InMemorySink.cs" />
     <Compile Include="Messaging\IMessageHandler.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\IMessageQueue.cs" />

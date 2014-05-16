@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.ServiceModel;
 using Autofac;
 using Autofac.Integration.Wcf;
@@ -11,6 +12,7 @@ using Hadouken.Http;
 using Hadouken.Http.Api;
 using Hadouken.Http.Management;
 using Hadouken.JsonRpc;
+using Hadouken.Logging;
 using Hadouken.Messaging;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Handlers;
@@ -19,6 +21,8 @@ using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Scanners;
 using Hadouken.Startup;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace Hadouken.Service
 {
@@ -121,7 +125,15 @@ namespace Hadouken.Service
 			builder.Register(c => HadoukenConfigurationSection.Load()).SingleInstance();
 
             // Logging
-		    builder.Register(c => new LoggerConfiguration().WriteTo.ColoredConsole().CreateLogger());
+		    builder.RegisterType<InMemorySink>().As<IInMemorySink>().SingleInstance();
+		    builder.Register(c =>
+		    {
+		        var memSink = c.Resolve<IInMemorySink>();
+		        return new LoggerConfiguration()
+                    .WriteTo.Sink(memSink)
+                    .WriteTo.ColoredConsole()
+                    .CreateLogger();
+		    });
 
 			// Resolve the service.
 		    var container = builder.Build();
