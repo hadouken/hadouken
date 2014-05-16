@@ -4,6 +4,7 @@ using System.Linq;
 using Hadouken.Plugins;
 using Hadouken.Plugins.Metadata;
 using NSubstitute;
+using Serilog;
 using Xunit;
 
 namespace Hadouken.Tests.Plugins
@@ -13,12 +14,21 @@ namespace Hadouken.Tests.Plugins
         public class TheConstructor
         {
             [Fact]
+            public void Should_Throw_ArgumentNullException_If_Logger_Is_Null()
+            {
+                // Given, When, Then
+                Assert.Throws<ArgumentNullException>(
+                    () =>
+                        new PluginEngine(null, new[] { Substitute.For<IPluginScanner>() }, Substitute.For<IPackageInstaller>(), Substitute.For<IPackageDownloader>()));
+            }
+
+            [Fact]
             public void Should_Throw_ArgumentNullException_If_PluginScanners_Is_Null()
             {
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
-                        new PluginEngine(null, Substitute.For<IPackageInstaller>(), Substitute.For<IPackageDownloader>()));
+                        new PluginEngine(Substitute.For<ILogger>(), null, Substitute.For<IPackageInstaller>(), Substitute.For<IPackageDownloader>()));
             }
 
             [Fact]
@@ -27,7 +37,7 @@ namespace Hadouken.Tests.Plugins
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
-                        new PluginEngine(new[] { Substitute.For<IPluginScanner>() }, null, Substitute.For<IPackageDownloader>()));
+                        new PluginEngine(Substitute.For<ILogger>(), new[] { Substitute.For<IPluginScanner>() }, null, Substitute.For<IPackageDownloader>()));
             }
 
             [Fact]
@@ -36,7 +46,7 @@ namespace Hadouken.Tests.Plugins
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
-                        new PluginEngine(new[] { Substitute.For<IPluginScanner>() }, Substitute.For<IPackageInstaller>(), null));
+                        new PluginEngine(Substitute.For<ILogger>(), new[] { Substitute.For<IPluginScanner>() }, Substitute.For<IPackageInstaller>(), null));
             }
         }
 
@@ -48,7 +58,7 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var scanner = Substitute.For<IPluginScanner>();
                 scanner.Scan().Returns(new[] {Substitute.For<IPluginManager>()});
-                var engine = new PluginEngine(
+                var engine = new PluginEngine(Substitute.For<ILogger>(),
                     new[] {scanner},
                     Substitute.For<IPackageInstaller>(),
                     Substitute.For<IPackageDownloader>());
@@ -66,7 +76,7 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given
                 var scanner = Substitute.For<IPluginScanner>();
-                var engine = new PluginEngine(
+                var engine = new PluginEngine(Substitute.For<ILogger>(), 
                     new[] { scanner },
                     Substitute.For<IPackageInstaller>(),
                     Substitute.For<IPackageDownloader>());
@@ -98,7 +108,7 @@ namespace Hadouken.Tests.Plugins
                 scanner.Scan().Returns(new[] {manager});
                 var downloader = Substitute.For<IPackageDownloader>();
                 downloader.Download(Arg.Any<string>()).Returns(c => null);
-                var engine = new PluginEngine(
+                var engine = new PluginEngine(Substitute.For<ILogger>(), 
                     new[] { scanner },
                     Substitute.For<IPackageInstaller>(),
                     downloader);
@@ -119,7 +129,7 @@ namespace Hadouken.Tests.Plugins
                 manager.Manifest.Name.Returns("a");
                 var scanner = Substitute.For<IPluginScanner>();
                 scanner.Scan().Returns(new[] { manager });
-                var engine = new PluginEngine(
+                var engine = new PluginEngine(Substitute.For<ILogger>(), 
                     new[] { scanner },
                     Substitute.For<IPackageInstaller>(),
                     Substitute.For<IPackageDownloader>());
@@ -142,7 +152,8 @@ namespace Hadouken.Tests.Plugins
                 var m4 = CreatePluginManager("d", "c");
                 var scanner = Substitute.For<IPluginScanner>();
                 scanner.Scan().Returns(new[] {m1, m2, m3, m4});
-                var engine = new PluginEngine(new[]{scanner},
+                var engine = new PluginEngine(Substitute.For<ILogger>(),
+                    new[] { scanner },
                     Substitute.For<IPackageInstaller>(),
                     Substitute.For<IPackageDownloader>());
 
@@ -169,7 +180,8 @@ namespace Hadouken.Tests.Plugins
                 scanner.Scan().Returns(new[] { m1, m2, m3, m4 });
                 var downloader = Substitute.For<IPackageDownloader>();
                 downloader.Download(Arg.Any<string>()).Returns(_ => null);
-                var engine = new PluginEngine(new[] { scanner },
+                var engine = new PluginEngine(Substitute.For<ILogger>(),
+                    new[] { scanner },
                     Substitute.For<IPackageInstaller>(),
                     downloader);
 
@@ -201,7 +213,10 @@ namespace Hadouken.Tests.Plugins
                 var pkg = Substitute.For<IPackage>();
                 pkg.Manifest.Name.Returns("x");
                 downloader.Download("x").Returns(pkg);
-                var engine = new PluginEngine(new[] { scanner }, installer, downloader);
+                var engine = new PluginEngine(Substitute.For<ILogger>(),
+                    new[] { scanner },
+                    installer,
+                    downloader);
 
                 // When
                 engine.Scan();
@@ -230,7 +245,10 @@ namespace Hadouken.Tests.Plugins
                 pkg.Manifest.Name.Returns("x");
                 downloader.Download("x").Returns(pkg);
                 downloader.Download("y").Returns(_ => null);
-                var engine = new PluginEngine(new[] { scanner }, installer, downloader);
+                var engine = new PluginEngine(Substitute.For<ILogger>(),
+                    new[] { scanner },
+                    installer,
+                    downloader);
 
                 // When
                 engine.Scan();

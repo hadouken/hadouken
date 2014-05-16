@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
 using Hadouken.Plugins;
-using NLog;
-using NLog.Targets;
 
 namespace Hadouken.Http.Management.Modules
 {
@@ -22,19 +20,6 @@ namespace Hadouken.Http.Management.Modules
             Get["/log"] = _ =>
             {
                 var sb = new StringBuilder();
-
-                var target = LogManager.Configuration.AllTargets.FirstOrDefault(t => t.Name == "memory");
-                if (target != null)
-                {
-                    var memoryTarget = target as MemoryTarget;
-                    if (memoryTarget != null)
-                    {
-                        foreach (var row in memoryTarget.Logs)
-                        {
-                            sb.AppendLine(row);
-                        }
-                    }
-                }
 
                 return View["Log", new {Log = sb.ToString()}];
             };

@@ -6,23 +6,25 @@ using Hadouken.Messaging;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Metadata;
-using NLog;
+using Serilog;
 
 namespace Hadouken.Plugins
 {
     public sealed class PluginManager : IPluginManager
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IDictionary<string, object> _configuration;
+        private readonly ILogger _logger;
         private readonly IMessageQueue _messageQueue;
         private readonly IDirectory _baseDirectory;
         private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
 
-        public PluginManager(IConfiguration configuration, IMessageQueue messageQueue, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
+        public PluginManager(ILogger logger, IConfiguration configuration, IMessageQueue messageQueue, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
         {
             ErrorCount = 0;
+            
+            if (logger == null) throw new ArgumentNullException("logger");
+
             if (configuration == null)
             {
                 throw new ArgumentNullException("configuration");
@@ -45,6 +47,7 @@ namespace Hadouken.Plugins
 
             State = PluginState.Unloaded;
 
+            _logger = logger;
             _messageQueue = messageQueue;
             _baseDirectory = baseDirectory;
             _manifest = manifest;
@@ -80,7 +83,7 @@ namespace Hadouken.Plugins
 
         public void Load()
         {
-            Logger.Info("Loading plugin {0}", Manifest.Name);
+            _logger.Information("Loading plugin {Name}", Manifest.Name);
             State = PluginState.Loading;
 
             try
@@ -90,7 +93,7 @@ namespace Hadouken.Plugins
             }
             catch (Exception e)
             {
-                Logger.Error("Error when loading plugin " + Manifest.Name, e);
+                _logger.Error(e, "Error when loading plugin {Name}", Manifest.Name);
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }
@@ -98,7 +101,7 @@ namespace Hadouken.Plugins
 
         public void Unload()
         {
-            Logger.Info("Unloading plugin {0}", Manifest.Name);
+            _logger.Information("Unloading plugin {Name}", Manifest.Name);
             State = PluginState.Unloading;
 
             try
@@ -108,7 +111,7 @@ namespace Hadouken.Plugins
             }
             catch (Exception e)
             {
-                Logger.Error("Error when unloading plugin " + Manifest.Name, e);
+                _logger.Error(e, "Error when unloading plugin {Name}", Manifest.Name);
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }

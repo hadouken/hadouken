@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NLog;
+using Serilog;
 
 namespace Hadouken.Plugins
 {
     public class PluginEngine : IPluginEngine
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly PluginManagerGraph _plugins = new PluginManagerGraph();
 
+        private readonly ILogger _logger;
         private readonly IEnumerable<IPluginScanner> _pluginScanners;
         private readonly IPackageInstaller _packageInstaller;
         private readonly IPackageDownloader _packageDownloader;
 
-        public PluginEngine(IEnumerable<IPluginScanner> pluginScanners, IPackageInstaller packageInstaller, IPackageDownloader packageDownloader)
+        public PluginEngine(ILogger logger, IEnumerable<IPluginScanner> pluginScanners, IPackageInstaller packageInstaller, IPackageDownloader packageDownloader)
         {
+            if (logger == null) throw new ArgumentNullException("logger");
+
             if (pluginScanners == null)
             {
                 throw new ArgumentNullException("pluginScanners");
@@ -31,6 +33,7 @@ namespace Hadouken.Plugins
                 throw new ArgumentNullException("packageDownloader");
             }
 
+            _logger = logger;
             _pluginScanners = pluginScanners;
             _packageInstaller = packageInstaller;
             _packageDownloader = packageDownloader;
@@ -59,7 +62,7 @@ namespace Hadouken.Plugins
                 where Get(plugin.Manifest.Name) == null
                 select plugin).ToList();
 
-            Logger.Debug("Scan found {0} plugins to add", plugins.Count);
+            _logger.Debug("Scan found {Count} plugins to add", plugins.Count);
 
             // Add the new plugins
             _plugins.AddRange(plugins);
@@ -68,7 +71,7 @@ namespace Hadouken.Plugins
 
         public void LoadAll()
         {
-            Logger.Debug("Loading all plugins.");
+            _logger.Debug("Loading all plugins.");
 
             var managerKeys = _plugins.GetKeys();
 
@@ -80,7 +83,7 @@ namespace Hadouken.Plugins
 
         public void UnloadAll()
         {
-            Logger.Debug("Unloading all plugins.");
+            _logger.Debug("Unloading all plugins.");
 
             var managerKeys = _plugins.GetKeys();
 
@@ -95,21 +98,21 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Plugin '{0}' does not exist.", name);
+                _logger.Debug("Plugin {Name} does not exist.", name);
                 return;
             }
 
             // Check state
             if (manager.State == PluginState.Loaded)
             {
-                Logger.Debug("Skipping load of plugin '{0}' since it is already loaded.", name);
+                _logger.Debug("Skipping load of plugin {Name} since it is already loaded.", name);
                 return;
             }
 
             string[] missingDependencies;
             if (!CanLoad(name, out missingDependencies))
             {
-                Logger.Warn("Plugin '{0}' is missing dependencies {1}. Downloading...", name,
+                _logger.Warning("Plugin {Name} is missing dependencies {MissingDependencies}. Downloading...", name,
                     string.Join(",", missingDependencies));
 
                 if (!DownloadAndInstall(missingDependencies)) return;
@@ -161,7 +164,7 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Plugin '{0}' does not exist.", name);
+                _logger.Debug("Plugin {Name} does not exist.", name);
                 return;
             }
 
@@ -172,8 +175,7 @@ namespace Hadouken.Plugins
             }
             else
             {
-                Logger.Debug("Skipping unload of plugin '{0}' since it is already unloaded.", name);
-                
+                _logger.Debug("Skipping unload of plugin {Name} since it is already unloaded.", name);
             }
         }
 
@@ -189,7 +191,7 @@ namespace Hadouken.Plugins
             {
                 if (existing.Manifest.Version >= package.Manifest.Version)
                 {
-                    Logger.Error("Downgrades not supported ({0} v{1}).", package.Manifest.Name, package.Manifest.Version);
+                    _logger.Error("Downgrades not supported ({Name} {Version}).", package.Manifest.Name, package.Manifest.Version);
                     return false;
                 }
 
@@ -203,7 +205,7 @@ namespace Hadouken.Plugins
             }
 
             // Install dat package!
-            Logger.Info("Installing package {0} v{1}", package.Manifest.Name, package.Manifest.Version);
+            _logger.Information("Installing package {Name}, version {Version}", package.Manifest.Name, package.Manifest.Version);
             _packageInstaller.Install(package);
 
             Scan();
@@ -230,7 +232,7 @@ namespace Hadouken.Plugins
             var manager = Get(name);
             if (manager == null)
             {
-                Logger.Debug("Plugin '{0}' does not exist.", name);
+                _logger.Debug("Plugin {Name} does not exist.", name);
                 return false;
             }
 
@@ -239,7 +241,7 @@ namespace Hadouken.Plugins
 
         private bool Uninstall(IPluginManager manager)
         {
-            Logger.Debug("Beginning uninstall of plugin {0}", manager.Manifest.Name);
+            _logger.Debug("Beginning uninstall of plugin {Name}", manager.Manifest.Name);
 
             // Unload the manager
             Unload(manager);
@@ -252,12 +254,12 @@ namespace Hadouken.Plugins
 
             if (dependencies.Any())
             {
-                Logger.Error("Cannot uninstall plugin {0}. The plugins {1} could not be unloaded.", manager.Manifest.Name,
+                _logger.Error("Cannot uninstall plugin {Name}. The plugins {Dependencies} could not be unloaded.", manager.Manifest.Name,
                     string.Join(",", dependencies));
                 return false;
             }
 
-            Logger.Info("Uninstalling plugin '{0}'.", manager.Manifest.Name);
+            _logger.Information("Uninstalling plugin {Name}.", manager.Manifest.Name);
 
             // Delete directory
             manager.BaseDirectory.Delete(true);
@@ -270,12 +272,12 @@ namespace Hadouken.Plugins
         {
             foreach (var packageId in packageIds)
             {
-                Logger.Info("Downloading package '{0}'", packageId);
+                _logger.Information("Downloading package {PackageId}", packageId);
 
                 var package = _packageDownloader.Download(packageId);
                 if (package == null)
                 {
-                    Logger.Error("Package '{0}' was not found. Aborting...", packageId);
+                    _logger.Error("Package {PackageId} was not found. Aborting...", packageId);
                     return false;
                 }
 

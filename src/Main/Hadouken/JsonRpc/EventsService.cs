@@ -2,19 +2,20 @@
 using System.Linq;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Plugins;
-using NLog;
+using Serilog;
 
 namespace Hadouken.JsonRpc
 {
     public class EventsService : IJsonRpcService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private const string All = "<all>";
+        private readonly ILogger _logger;
         private readonly IPluginEngine _pluginEngine;
         private readonly IJsonRpcClient _rpcClient;
 
-        public EventsService(IPluginEngine pluginEngine, IJsonRpcClient rpcClient)
+        public EventsService(ILogger logger, IPluginEngine pluginEngine, IJsonRpcClient rpcClient)
         {
+            _logger = logger;
             _pluginEngine = pluginEngine;
             _rpcClient = rpcClient;
         }
@@ -45,7 +46,7 @@ namespace Hadouken.JsonRpc
                 }
                 catch (Exception e)
                 {
-                    Logger.ErrorException("Error when calling event handler: " + handler, e);
+                    _logger.Error(e, "Error when calling event handler {EventHandler}", handler);
                 }
             }
         }

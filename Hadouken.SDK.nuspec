@@ -30,7 +30,8 @@
     <file src="build/binaries/Nancy.Hosting.Self.dll" target="tools/hdkn" />
     <file src="build/binaries/Nancy.ViewEngines.Razor.dll" target="tools/hdkn" />
     <file src="build/binaries/Newtonsoft.Json.dll" target="tools/hdkn" />
-    <file src="build/binaries/NLog.dll" target="tools/hdkn" />
+    <file src="build/binaries/Serilog.dll" target="tools/hdkn" />
+    <file src="build/binaries/Serilog.FullNetFx.dll" target="tools/hdkn" />
     <file src="build/binaries/System.Web.Razor.Unofficial.dll" target="tools/hdkn" />
 
     <!-- Dummy file to get around NuGet insanity -->

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
-using NLog;
+using Serilog;
 
 namespace Hadouken.Messaging
 {
@@ -13,11 +13,12 @@ namespace Hadouken.Messaging
 
     public class MessageQueue : IMessageQueue
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger _logger;
         private readonly ILifetimeScope _lifetimeScope;
 
-        public MessageQueue(ILifetimeScope lifetimeScope)
+        public MessageQueue(ILogger logger, ILifetimeScope lifetimeScope)
         {
+            _logger = logger;
             _lifetimeScope = lifetimeScope;
         }
 
@@ -35,7 +36,7 @@ namespace Hadouken.Messaging
                     }
                     catch (Exception e)
                     {
-                        Logger.ErrorException(string.Format("Error when handling message {0}.", typeof (T).FullName), e);
+                        _logger.Error(e, "Error when handling message: {Message}", message);
                     }
                 }
             });

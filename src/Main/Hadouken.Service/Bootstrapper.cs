@@ -17,6 +17,7 @@ using Hadouken.Plugins.Handlers;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Scanners;
+using Serilog;
 
 namespace Hadouken.Service
 {
@@ -115,6 +116,9 @@ namespace Hadouken.Service
 
 			// Register configuration
 			builder.Register(c => HadoukenConfigurationSection.Load()).SingleInstance();
+
+            // Logging
+		    builder.Register(c => new LoggerConfiguration().WriteTo.ColoredConsole().CreateLogger());
 
 			// Resolve the service.
 		    var container = builder.Build();

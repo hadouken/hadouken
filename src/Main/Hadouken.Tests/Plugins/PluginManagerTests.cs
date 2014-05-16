@@ -8,6 +8,7 @@ using Hadouken.Plugins;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
 using NSubstitute;
+using Serilog;
 using Xunit;
 
 namespace Hadouken.Tests.Plugins
@@ -17,12 +18,27 @@ namespace Hadouken.Tests.Plugins
         public class TheConstructor
         {
             [Fact]
-            public void Should_Throw_ArgumentNullException_If_Configuration_Is_Null()
+            public void Should_Throw_ArgumentNullException_If_Logger_Is_Null()
             {
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
                         new PluginManager(null,
+                            Substitute.For<IConfiguration>(),
+                            Substitute.For<IMessageQueue>(),
+                            Substitute.For<IDirectory>(),
+                            Substitute.For<IIsolatedEnvironment>(),
+                            Substitute.For<IManifest>()));
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_Configuration_Is_Null()
+            {
+                // Given, When, Then
+                Assert.Throws<ArgumentNullException>(
+                    () =>
+                        new PluginManager(Substitute.For<ILogger>(),
+                            null,
                             Substitute.For<IMessageQueue>(),
                             Substitute.For<IDirectory>(),
                             Substitute.For<IIsolatedEnvironment>(),
@@ -35,7 +51,8 @@ namespace Hadouken.Tests.Plugins
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
-                        new PluginManager(Substitute.For<IConfiguration>(),
+                        new PluginManager(Substitute.For<ILogger>(), 
+                            Substitute.For<IConfiguration>(),
                             Substitute.For<IMessageQueue>(),
                             null,
                             Substitute.For<IIsolatedEnvironment>(),
@@ -48,7 +65,8 @@ namespace Hadouken.Tests.Plugins
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
-                        new PluginManager(Substitute.For<IConfiguration>(),
+                        new PluginManager(Substitute.For<ILogger>(), 
+                            Substitute.For<IConfiguration>(),
                             Substitute.For<IMessageQueue>(),
                             Substitute.For<IDirectory>(),
                             null,
@@ -61,7 +79,8 @@ namespace Hadouken.Tests.Plugins
                 // Given, When, Then
                 Assert.Throws<ArgumentNullException>(
                     () =>
-                        new PluginManager(Substitute.For<IConfiguration>(),
+                        new PluginManager(Substitute.For<ILogger>(), 
+                            Substitute.For<IConfiguration>(),
                             Substitute.For<IMessageQueue>(),
                             Substitute.For<IDirectory>(),
                             Substitute.For<IIsolatedEnvironment>(),
@@ -73,7 +92,8 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given, When
                 var manifest = new Manifest("test", "1.0");
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     Substitute.For<IIsolatedEnvironment>(),
@@ -91,7 +111,8 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
@@ -110,7 +131,8 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
@@ -132,7 +154,8 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
@@ -152,7 +175,8 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 environment.When(e => e.Load(Arg.Any<IDictionary<string, object>>())).Do(c => { throw new Exception(); });
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
@@ -173,7 +197,8 @@ namespace Hadouken.Tests.Plugins
             {
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,
@@ -193,7 +218,8 @@ namespace Hadouken.Tests.Plugins
                 // Given
                 var environment = Substitute.For<IIsolatedEnvironment>();
                 environment.When(e => e.Unload()).Do(c => { throw new Exception(); });
-                var manager = new PluginManager(Substitute.For<IConfiguration>(),
+                var manager = new PluginManager(Substitute.For<ILogger>(), 
+                    Substitute.For<IConfiguration>(),
                     Substitute.For<IMessageQueue>(),
                     Substitute.For<IDirectory>(),
                     environment,

@@ -2,19 +2,20 @@
 using System.Linq;
 using Hadouken.Fx.IO;
 using Hadouken.Plugins.Metadata;
-using NLog;
+using Serilog;
 
 namespace Hadouken.Plugins.Scanners
 {
     public class DirectoryPluginScanner : IPluginScanner
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger _logger;
         private readonly string _pluginDirectory;
         private readonly IFileSystem _fileSystem;
         private readonly IPluginManagerFactory _managerFactory;
 
-        public DirectoryPluginScanner(string pluginDirectory, IFileSystem fileSystem, IPluginManagerFactory managerFactory)
+        public DirectoryPluginScanner(ILogger logger, string pluginDirectory, IFileSystem fileSystem, IPluginManagerFactory managerFactory)
         {
+            _logger = logger;
             _pluginDirectory = pluginDirectory;
             _fileSystem = fileSystem;
             _managerFactory = managerFactory;
@@ -51,7 +52,7 @@ namespace Hadouken.Plugins.Scanners
                     }
                     catch (PluginException pex)
                     {
-                        Logger.ErrorException("Could not create plugin manager.", pex);
+                        _logger.Error(pex, "Could not create plugin manager.");
                     }
                 }
             }

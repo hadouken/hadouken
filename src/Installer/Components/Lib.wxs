@@ -40,7 +40,11 @@
       </Component>
 
       <Component>
-        <File Name="NLog.dll" />
+        <File Name="Serilog.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Serilog.FullNetFx.dll" />
       </Component>
 
       <Component>

@@ -8,14 +8,13 @@ using Hadouken.Fx.ServiceModel;
 using Hadouken.Http;
 using Hadouken.Http.Management;
 using Hadouken.Plugins;
-using NLog;
+using Serilog;
 
 namespace Hadouken.Service
 {
 	public class HadoukenService : IHadoukenService
 	{
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
+	    private readonly ILogger _logger;
 	    private readonly IConfiguration _configuration;
 	    private readonly IPluginServiceHost _rpcServiceHost;
 	    private readonly IHttpBackendServer _backendServer;
@@ -25,7 +24,8 @@ namespace Hadouken.Service
 	    private readonly IPackageInstaller _packageInstaller;
 	    private readonly IPluginEngine _pluginEngine;
 
-        public HadoukenService(IConfiguration configuration,
+        public HadoukenService(ILogger logger,
+            IConfiguration configuration,
             IPluginServiceHost rpcServiceHost,
             IHttpBackendServer backendServer,
             IApiConnection apiConnection,
@@ -34,6 +34,7 @@ namespace Hadouken.Service
             IPackageInstaller packageInstaller,
             IPluginEngine pluginEngine)
 		{
+            _logger = logger;
             _configuration = configuration;
             _rpcServiceHost = rpcServiceHost;
             _backendServer = backendServer;
@@ -46,7 +47,7 @@ namespace Hadouken.Service
 
 		public void Start(string[] args)
 		{
-			Logger.Info("Starting Hadouken");
+            _logger.Information("Starting Hadouken");
 
 		    _backendServer.Start();
 		    _rpcServiceHost.Open();
@@ -57,7 +58,7 @@ namespace Hadouken.Service
 		    }
 		    catch (Exception e)
 		    {
-		        Logger.FatalException("Could not bootstrap the core plugins.", e);
+                _logger.Fatal(e, "Could not bootstrap the core plugins.");
 		    }
 
             _pluginEngine.Scan();
@@ -66,7 +67,7 @@ namespace Hadouken.Service
 
 		public void Stop()
 		{
-			Logger.Info("Stopping Hadouken");
+            _logger.Information("Stopping Hadouken");
 
 		    _pluginEngine.UnloadAll();
 
@@ -78,7 +79,7 @@ namespace Hadouken.Service
 	    {
 	        if (args != null && args.Any(s => s == "--no-http-bootstrap"))
 	        {
-	            Logger.Warn("HTTP bootstrapping disabled. No plugins will be downloaded.");
+                _logger.Warning("HTTP bootstrapping disabled. No plugins will be downloaded.");
 	            return;
 	        }
 
@@ -92,13 +93,13 @@ namespace Hadouken.Service
 
 	        var corePluginsUri = new Uri(_configuration.Plugins.RepositoryUri, "get-core");
 
-	        Logger.Info("Bootstrapping core plugins from {0}.", corePluginsUri);
+            _logger.Information("Bootstrapping core plugins from {Uri}.", corePluginsUri);
 
             IList<Uri> corePlugins = _apiConnection.GetAsync<List<Uri>>(corePluginsUri).Result;
 
 	        if (corePlugins == null || !corePlugins.Any())
 	        {
-	            Logger.Error("Could not find any core plugins. Hadouken may not work correctly.");
+                _logger.Error("Could not find any core plugins. Hadouken may not work correctly.");
 	            return;
 	        }
 
@@ -113,12 +114,12 @@ namespace Hadouken.Service
 
 	                if (package == null)
 	                {
-                        Logger.Error("Could not parse core package from {0}", pluginUri);
+                        _logger.Error("Could not parse core package from {Uri}", pluginUri);
 	                    continue;
 	                }
 
 	                _packageInstaller.Install(package);
-                    Logger.Info("Core package {0} downloaded successfully.", package.Manifest.Name);
+                    _logger.Information("Core package {0} downloaded successfully.", package.Manifest.Name);
 	            }
 	        }
             
