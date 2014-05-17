@@ -71,7 +71,7 @@ namespace Hadouken.Http.Management.Modules
                 bool hasExtension = Path.HasExtension(path);
 
                 var plugin = pluginEngine.Get(id);
-                if (plugin == null)
+                if (plugin == null || plugin.State != PluginState.Loaded)
                 {
                     return 404;
                 }
