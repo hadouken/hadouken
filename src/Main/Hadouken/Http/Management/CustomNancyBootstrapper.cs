@@ -63,6 +63,7 @@ namespace Hadouken.Http.Management
 
                 // Get all background scripts
                 var scripts = (from plugin in pluginsBackgroundScripts
+                               where plugin.State == PluginState.Loaded
                                from bgs in plugin.Manifest.UserInterface.BackgroundScripts
                                select string.Concat(plugin.Manifest.Name, "/", bgs)).ToArray();
 
