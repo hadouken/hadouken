@@ -10,3 +10,7 @@
 #eventsTable td {
     vertical-align: middle;
 }
+
+.table-borderless td, .table-borderless th {
+    border: none !important;
+}

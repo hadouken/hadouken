@@ -100,5 +100,24 @@ namespace Hadouken.JsonRpc
 
             return true;
         }
+
+        [JsonRpcMethod("core.plugins.getDetails")]
+        public object GetDetails(string pluginId)
+        {
+            var plugin = _pluginEngine.Get(pluginId);
+
+            if (plugin == null)
+            {
+                return null;
+            }
+
+            return new
+            {
+                plugin.Manifest.Name,
+                Path = plugin.BaseDirectory.FullPath,
+                State = plugin.State.ToString(),
+                Version = plugin.Manifest.Version.ToString()
+            };
+        }
     }
 }

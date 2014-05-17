@@ -1,39 +1,62 @@
 ﻿$(document).ready(function() {
     $('#plugins-list').on('click', '.btn-plugin-details', function () {
         var id = $(this).parents('tr').attr('data-plugin-id');
-        $.get('/plugins/details/' + id, function (html) {
-            var content = $(html);
-            $('body').append(content);
 
-            content.modal();
-            content.on('hidden.bs.modal', function() { content.remove(); });
+        $.jsonRPC.request('core.plugins.getDetails', {
+            params: [id],
+            success: function(response) {
+                var plugin = response.result;
+                var template = $('#details-template').html();
 
-            content.find('#btn-uninstall-plugin').on('click', function () {
-                $(this).hide();
+                var dlg = bootbox.dialog({
+                    title: 'Details for "' + id + '"',
+                    message: template,
+                    buttons: {
+                        uninstall: {
+                            label: 'Uninstall',
+                            className: 'btn-danger btn-xs'
+                        },
+                        unload: {
+                            label: 'Unload',
+                            className: 'btn-warning btn-unload',
+                            callback: function(e) {
+                                var target = $(e.target);
 
-                $.get('/plugins/uninstall/' + id, function(uninstallHtml) {
-                    content.find('#details-body').html(uninstallHtml);
+                                target.prepend($('<i class="fa fa-spinner fa-spin"></i>'));
+                                target.attr('disabled', true);
 
-                    var btnConfirm = content.find('#btn-confirm-uninstall');
+                                unloadPlugin(id);
 
-                    btnConfirm.attr('disabled', true);
-                    btnConfirm.on('click', function () {
-                        btnConfirm.attr('disabled', true);
-
-                        $.jsonRPC.request('core.plugins.uninstall', {
-                            params: [id],
-                            success: function() {
-                                content.modal('hide');
-                                location.reload();
+                                return false;
                             }
-                        });
-                    });
+                        },
+                        load: {
+                            label: 'Load',
+                            className: 'btn-primary btn-load',
+                            callback: function (e) {
+                                var target = $(e.target);
 
-                    content.find('#confirmed-plugin-id').on('keyup', function() {
-                        btnConfirm.attr('disabled', $(this).val() !== id);
-                    });
+                                target.prepend($('<i class="fa fa-spinner fa-spin"></i>'));
+                                target.attr('disabled', true);
+
+                                loadPlugin(id);
+
+                                return false;
+                            }
+                        }
+                    }
                 });
-            });
+
+                $(dlg).find('.pluginName').text(plugin.Name);
+                $(dlg).find('.pluginVersion').text(plugin.Version);
+                $(dlg).find('.pluginPath').text(plugin.Path);
+
+                if (plugin.State === 'Loaded') {
+                    $(dlg).find('.btn-load').hide();
+                } else {
+                    $(dlg).find('.btn-unload').hide();
+                }
+            }
         });
     });
 
@@ -106,6 +129,24 @@
         });
     });
 });
+
+function unloadPlugin(pluginId) {
+    $.jsonRPC.request('core.plugins.unload', {
+        params: [pluginId],
+        success: function () {
+            location.reload();
+        }
+    });
+}
+
+function loadPlugin(pluginId) {
+    $.jsonRPC.request('core.plugins.load', {
+        params: [pluginId],
+        success: function () {
+            location.reload();
+        }
+    });
+}
 
 function showManifest(manifest) {
     $('.manifest-data').show();
