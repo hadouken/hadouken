@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Plugins;
 
@@ -14,10 +13,8 @@ namespace Hadouken.JsonRpc
 
         public PluginsService(IPluginEngine pluginEngine, IPackageReader packageReader)
         {
-            if (pluginEngine == null)
-            {
-                throw new ArgumentNullException("pluginEngine");
-            }
+            if (pluginEngine == null) throw new ArgumentNullException("pluginEngine");
+            if (packageReader == null) throw new ArgumentNullException("packageReader");
 
             _pluginEngine = pluginEngine;
             _packageReader = packageReader;
@@ -70,6 +67,36 @@ namespace Hadouken.JsonRpc
 
             _pluginEngine.Unload(pluginId);
             _pluginEngine.Uninstall(pluginId);
+
+            return true;
+        }
+
+        [JsonRpcMethod("core.plugins.load")]
+        public bool Load(string pluginId)
+        {
+            var plugin = _pluginEngine.Get(pluginId);
+
+            if (plugin == null)
+            {
+                return false;
+            }
+
+            _pluginEngine.Load(pluginId);
+
+            return true;
+        }
+
+        [JsonRpcMethod("core.plugins.unload")]
+        public bool Unload(string pluginId)
+        {
+            var plugin = _pluginEngine.Get(pluginId);
+
+            if (plugin == null)
+            {
+                return false;
+            }
+
+            _pluginEngine.Unload(pluginId);
 
             return true;
         }

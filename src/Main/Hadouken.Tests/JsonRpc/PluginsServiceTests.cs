@@ -15,7 +15,21 @@ namespace Hadouken.Tests.JsonRpc
             [Fact]
             public void Should_Throw_ArgumentNullException_If_PluginEngine_Is_Null()
             {
-                Assert.Throws<ArgumentNullException>(() => new PluginsService(null, null));
+                // Given, When
+                var exception = Assert.Throws<ArgumentNullException>(() => new PluginsService(null, Substitute.For<IPackageReader>()));
+
+                // Then
+                Assert.Equal("pluginEngine", exception.ParamName);
+            }
+
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_PackageReader_Is_Null()
+            {
+                // Given, When
+                var exception = Assert.Throws<ArgumentNullException>(() => new PluginsService(Substitute.For<IPluginEngine>(), null));
+
+                // Then
+                Assert.Equal("packageReader", exception.ParamName);
             }
         }
 
@@ -74,6 +88,24 @@ namespace Hadouken.Tests.JsonRpc
 
                 // Then
                 Assert.Equal("1.0.0", result);
+            }
+        }
+
+        public class TheInstallMethod
+        {
+            [Fact]
+            public void Should_Throw_ArgumentNullException_If_Package_Data_Is_Null()
+            {
+                // Given
+                var engine = Substitute.For<IPluginEngine>();
+                var reader = Substitute.For<IPackageReader>();
+                var service = new PluginsService(engine, reader);
+
+                // When
+                var exception = Assert.Throws<ArgumentNullException>(() => service.Install(null));
+
+                // Then
+                Assert.Equal("base64EncodedPackage", exception.ParamName);
             }
         }
     }
