@@ -130,6 +130,7 @@ namespace Hadouken.Service
 		    {
 		        var memSink = c.Resolve<IInMemorySink>();
 		        return new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
                     .WriteTo.Sink(memSink)
                     .WriteTo.ColoredConsole()
                     .CreateLogger();

@@ -28,13 +28,18 @@ namespace Hadouken.JsonRpc
             var handlers = _pluginEngine.GetAll()
                 .Where(p => p.State == PluginState.Loaded)
                 .SelectMany(
-                    p => p.Manifest.EventHandlers.Where(e => e.Name == name || e.Name == All));
+                    p => p.Manifest.EventHandlers.Where(e => e.Name == name || e.Name == All))
+                .ToList();
+
+            _logger.Debug("Publishing event {EventName} to {Count} handlers.", name, handlers.Count());
 
             foreach (var handler in handlers)
             {
                 // These are the handlers for our event
                 try
                 {
+                    _logger.Debug("Calling {Target} for event {EventName}.", handler.Target, name);
+
                     if (handler.Name == All)
                     {
                         _rpcClient.Call(handler.Target, new[] {name, data});
