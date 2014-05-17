@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Hadouken.SemVer;
 using Serilog;
 
 namespace Hadouken.Plugins
@@ -13,6 +15,7 @@ namespace Hadouken.Plugins
         private readonly IEnumerable<IPluginScanner> _pluginScanners;
         private readonly IPackageInstaller _packageInstaller;
         private readonly IPackageDownloader _packageDownloader;
+        private readonly SemanticVersion _hostVersion;
 
         public PluginEngine(ILogger logger, IEnumerable<IPluginScanner> pluginScanners, IPackageInstaller packageInstaller, IPackageDownloader packageDownloader)
         {
@@ -37,6 +40,12 @@ namespace Hadouken.Plugins
             _pluginScanners = pluginScanners;
             _packageInstaller = packageInstaller;
             _packageDownloader = packageDownloader;
+
+            var attr = GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+            if (attr != null)
+            {
+                _hostVersion = new SemanticVersion(attr.InformationalVersion);
+            }
         }
 
         public IEnumerable<IPluginManager> GetAll()
@@ -181,6 +190,15 @@ namespace Hadouken.Plugins
 
         public bool InstallOrUpgrade(IPackage package)
         {
+            // Validate minimum host version
+            if (_hostVersion != null
+                && _hostVersion < package.Manifest.MinimumHostVersion)
+            {
+                _logger.Error("Plugin requires a minimum host version of {Version}",
+                    package.Manifest.MinimumHostVersion.ToString());
+                return false;
+            }
+
             // Check it we have a plugin with this name already. If we do,
             // we must have a higher version number 
             // the existing to be able to upgrade. Otherwise - out of luck.
