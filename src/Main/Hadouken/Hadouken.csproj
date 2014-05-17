@@ -223,7 +223,6 @@
     <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
     <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Details.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Template.cshtml" />
     <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Uninstall.cshtml" />
