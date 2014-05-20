@@ -149,6 +149,7 @@
     <Compile Include="Plugins\Metadata\Parsers\Permissions\DnsPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\Permissions\FileIoPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\Permissions\IPermissionItemParser.cs" />
+    <Compile Include="Plugins\Metadata\Parsers\Permissions\ReflectionPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\Permissions\SocketsPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\Permissions\WebPermissionItemParser.cs" />
     <Compile Include="Plugins\Metadata\Parsers\UserInterfaceParser.cs" />
