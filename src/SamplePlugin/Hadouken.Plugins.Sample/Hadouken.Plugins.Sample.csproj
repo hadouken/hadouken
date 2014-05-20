@@ -30,9 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hadouken.Fx, Version=1.3.1.0, Culture=neutral, PublicKeyToken=ca2dd37e695e4ab6, processorArchitecture=MSIL">
+    <Reference Include="Hadouken.Fx, Version=1.3.5.0, Culture=neutral, PublicKeyToken=ca2dd37e695e4ab6, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Hadouken.Fx.1.3.1\lib\net45\Hadouken.Fx.dll</HintPath>
+      <HintPath>..\..\..\packages\Hadouken.Fx.1.3.5\lib\net45\Hadouken.Fx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

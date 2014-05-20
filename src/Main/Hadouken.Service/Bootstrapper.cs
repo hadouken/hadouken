@@ -19,6 +19,7 @@ using Hadouken.Plugins.Handlers;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Scanners;
+using Hadouken.Security;
 using Hadouken.Startup;
 using Serilog;
 using Serilog.Core;
@@ -123,6 +124,9 @@ namespace Hadouken.Service
 
 			// Register configuration
 			builder.Register(c => HadoukenConfigurationSection.Load()).SingleInstance();
+
+            // Security
+		    builder.RegisterType<AuthenticationManager>().As<IAuthenticationManager>();
 
             // Logging
 		    builder.RegisterType<InMemorySink>().As<IInMemorySink>().SingleInstance();

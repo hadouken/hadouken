@@ -152,7 +152,7 @@ namespace Hadouken.Plugins
             return true;
         }
 
-        public bool CanUnload(string name, out string[] dependencies)
+        public bool CanUninstall(string name, out string[] dependencies)
         {
             var deps = _plugins.GetUnloadOrder(name);
 

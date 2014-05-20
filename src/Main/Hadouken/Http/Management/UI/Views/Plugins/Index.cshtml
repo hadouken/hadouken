@@ -63,15 +63,15 @@
 
     <form role="form" class="form-horizontal">
         <div class="form-group">
-            <label for="package" class="col-md-3 control-label">Package file</label>
-            <div class="col-md-9">
+            <label for="package" class="col-sm-3 control-label">Package file</label>
+            <div class="col-sm-9">
                 <input type="file" class="form-control" name="package" id="package" />
             </div>
         </div>
         
         <div class="form-group manifest-data">
-            <label class="col-md-3 control-label">Dependencies</label>
-            <div class="col-md-9">
+            <label class="col-sm-3 control-label">Dependencies</label>
+            <div class="col-sm-9">
                 <p class="form-control-static">
                     <ul id="dependenciesList">
                         <li><span class="label label-success">None</span></li>
@@ -81,8 +81,8 @@
         </div>
         
         <div class="form-group manifest-data">
-            <label class="col-md-3 control-label">Permissions</label>
-            <div class="col-md-9">
+            <label class="col-sm-3 control-label">Permissions</label>
+            <div class="col-sm-9">
                 <p class="form-control-static">
                     <ul id="permissionsList">
                         <li><span class="label label-warning">Unrestricted</span></li>
@@ -91,11 +91,11 @@
             </div>
         </div>
         
-        <p class="manifest-data">Enter your password to proceed with the installation.</p>
+        <p class="manifest-data">Confirm installation by entering your password.</p>
 
         <div class="form-group manifest-data">
-            <label for="password" class="col-md-3 control-label">Password</label>
-            <div class="col-md-9">
+            <label for="password" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
                 <input type="password" class="form-control" name="password" id="password" />
             </div>
         </div>
@@ -119,4 +119,24 @@
             </td>
         </tr>
     </table>
+</script>
+
+<script type="text/x-html-template" id="uninstall-template">
+    <p>Confirm uninstallation by entering your password.</p>
+
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="package" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" name="password" id="password" />
+            </div>
+        </div>
+    </form>
+</script>
+
+<script type="text/x-html-template" id="uninstallUnavailable-template">
+    <p>Can not uninstall plugin. The following plugins depends on it.</p>
+    
+    <ul id="dependencies">
+    </ul>
 </script>

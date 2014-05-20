@@ -47,21 +47,6 @@ namespace Hadouken.Http.Management.Modules
                         }];
             };
 
-            Get["/uninstall/{id}"] = _ =>
-            {
-                IPluginManager plugin = pluginEngine.Get(_.id);
-
-                if (plugin == null)
-                {
-                    return 404;
-                }
-
-                string[] deps;
-                var canUninstall = pluginEngine.CanUnload(_.id, out deps);
-
-                return View["Uninstall", new {CanUninstall = canUninstall, Dependencies = deps, PluginId = _.id}];
-            };
-
             Get["/upload"] = _ => View["Upload"];
 
             Get["/{id}/{path*}"] = _ =>

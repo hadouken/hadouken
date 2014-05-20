@@ -1,21 +1,34 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Security;
+using System.Security.Authentication;
+using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.Plugins;
+using Hadouken.Security;
 
 namespace Hadouken.JsonRpc
 {
     public class PluginsService : IJsonRpcService
     {
+        private readonly IConfiguration _configuration;
+        private readonly IAuthenticationManager _authManager;
         private readonly IPluginEngine _pluginEngine;
         private readonly IPackageReader _packageReader;
 
-        public PluginsService(IPluginEngine pluginEngine, IPackageReader packageReader)
+        public PluginsService(IConfiguration configuration,
+            IAuthenticationManager authManager,
+            IPluginEngine pluginEngine,
+            IPackageReader packageReader)
         {
+            if (configuration == null) throw new ArgumentNullException("configuration");
+            if (authManager == null) throw new ArgumentNullException("authManager");
             if (pluginEngine == null) throw new ArgumentNullException("pluginEngine");
             if (packageReader == null) throw new ArgumentNullException("packageReader");
 
+            _configuration = configuration;
+            _authManager = authManager;
             _pluginEngine = pluginEngine;
             _packageReader = packageReader;
         }
@@ -39,11 +52,16 @@ namespace Hadouken.JsonRpc
         }
 
         [JsonRpcMethod("core.plugins.install")]
-        public bool Install(string base64EncodedPackage)
+        public bool Install(string password, string base64EncodedPackage)
         {
             if (string.IsNullOrEmpty(base64EncodedPackage))
             {
                 throw new ArgumentNullException("base64EncodedPackage");
+            }
+
+            if (!_authManager.IsValid(_configuration.Http.Authentication.UserName, password))
+            {
+                throw new JsonRpcException(1000, "Invalid credentials.");
             }
 
             var data = Convert.FromBase64String(base64EncodedPackage);
@@ -55,9 +73,32 @@ namespace Hadouken.JsonRpc
             }
         }
 
-        [JsonRpcMethod("core.plugins.uninstall")]
-        public bool Uninstall(string pluginId)
+        [JsonRpcMethod("core.plugins.canUninstall")]
+        public object CanUninstall(string pluginId)
         {
+            if (string.IsNullOrEmpty(pluginId))
+            {
+                throw new ArgumentNullException("pluginId");
+            }
+
+            string[] dependencies;
+            bool canUninstall = _pluginEngine.CanUninstall(pluginId, out dependencies);
+
+            return new
+            {
+                CanUninstall = canUninstall,
+                Dependencies = dependencies
+            };
+        }
+
+        [JsonRpcMethod("core.plugins.uninstall")]
+        public bool Uninstall(string password, string pluginId)
+        {
+            if (!_authManager.IsValid(_configuration.Http.Authentication.UserName, password))
+            {
+                return false;
+            }
+
             var plugin = _pluginEngine.Get(pluginId);
 
             if (plugin == null)

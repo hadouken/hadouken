@@ -35,7 +35,7 @@ namespace Hadouken.Startup
                 _logger.Information("Directory {Directory} did not have a manifest.json file. Removing it.",
                     pluginDirectory.FullPath);
 
-                pluginDirectory.Delete();
+                pluginDirectory.Delete(true);
             }
         }
     }

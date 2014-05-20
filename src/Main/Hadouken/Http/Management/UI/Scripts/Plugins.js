@@ -12,9 +12,18 @@
                     title: 'Details for "' + id + '"',
                     message: template,
                     buttons: {
+                        confirmUninstall: {
+                            label: 'Uninstall',
+                            className: 'btn-danger btn-xs',
+                            callback: function () {
+                                showUninstall(dlg, id);
+                                return false;
+                            }
+                        },
                         uninstall: {
                             label: 'Uninstall',
-                            className: 'btn-danger btn-xs'
+                            className: 'btn-danger btn-uninstall',
+                            callback: function () { return false; }
                         },
                         unload: {
                             label: 'Unload',
@@ -51,6 +60,8 @@
                 $(dlg).find('.pluginVersion').text(plugin.Version);
                 $(dlg).find('.pluginPath').text(plugin.Path);
 
+                $(dlg).find('.btn-uninstall').hide();
+
                 if (plugin.State === 'Loaded') {
                     $(dlg).find('.btn-load').hide();
                 } else {
@@ -81,18 +92,33 @@
                         target.prepend($('<i class="fa fa-spinner fa-spin"></i>'));
                         target.attr('disabled', true);
 
+                        var password = $(dlg).find('#password').val();
+
                         // Read file
                         var fileInput = $('#package')[0];
                         var reader = new FileReader();
 
+                        var error = function() {
+                            $(dlg).modal('hide');
+                            $.bootstrapGrowl('Could not install plugin. See log for details.', { type: 'danger' });
+                        };
+
                         reader.onload = function(readerArgs) {
                             $.jsonRPC.request('core.plugins.install', {
-                                params: [readerArgs.target.result.split(',')[1]],
+                                params: [password, readerArgs.target.result.split(',')[1]],
                                 success: function (response) {
                                     if (response.result) {
                                         location.reload();
                                     } else {
-                                        throw new Error('Could not install package. Check log.');
+                                        error();
+                                    }
+                                },
+                                error: function (response) {
+                                    if (response.error.code === 1000) {
+                                        $(dlg).find('#password').closest('.form-group').addClass('has-error');
+                                        target.attr('disabled', false).find('i').remove();
+                                    } else {
+                                        error();
                                     }
                                 }
                             });
@@ -164,4 +190,47 @@ function showManifest(manifest) {
             list.append(item);
         }
     }
+}
+
+function showUninstall(dialog, pluginId) {
+    var template;
+
+    $.jsonRPC.request('core.plugins.canUninstall', {
+        params: [pluginId],
+        success: function (response) {
+            if (response.result.CanUninstall) {
+                template = $('#uninstall-template').html();
+                $(dialog).find('.btn').hide();
+
+                $(dialog)
+                    .find('.btn-uninstall')
+                    .on('click', function () {
+                        var password = $(dialog).find('#password').val();
+                        uninstallPlugin(password, pluginId);
+                    })
+                    .show();
+
+                $(dialog).find('.bootbox-body').empty().append($(template));
+            } else {
+                template = $('#uninstallUnvavailable-template').html();
+                $(dialog).find('.bootbox-body').empty().append($(template));
+
+                for (var i = 0; i < response.result.Dependencies.length; i++) {
+                    var dep = response.result.Dependencies[i];
+                    var li = $('<li>').text(dep);
+
+                    $(template).find('#dependencies').append(li);
+                }
+            }
+        }
+    });
+}
+
+function uninstallPlugin(password, pluginId) {
+    $.jsonRPC.request('core.plugins.uninstall', {
+        params: [password, pluginId],
+        success: function() {
+            location.reload();
+        }
+    });
 }
