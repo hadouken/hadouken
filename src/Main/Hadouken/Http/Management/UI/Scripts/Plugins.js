@@ -176,15 +176,35 @@ function loadPlugin(pluginId) {
 
 function showManifest(manifest) {
     $('.manifest-data').show();
+    var list;
     
     if (manifest.dependencies && manifest.dependencies.length > 0) {
-        var list = $('#dependenciesList');
+        list = $('#dependenciesList');
         list.empty();
 
         for (var i = 0; i < manifest.dependencies.length; i++) {
             var dependency = manifest.dependencies[i];
             var item = $('<li>', {
                 text: dependency.id + ' (' + dependency.version + ')'
+            });
+
+            list.append(item);
+        }
+    }
+
+    if (typeof manifest.permissions === 'string') {
+        return;
+    }
+
+    var permissionKeys = Object.keys(manifest.permissions);
+
+    if (permissionKeys && permissionKeys.length > 0) {
+        list = $('#permissionsList');
+        list.empty();
+
+        for (var i = 0; i < permissionKeys.length; i++) {
+            var item = $('<li>', {
+                text: permissionKeys[i]
             });
 
             list.append(item);
