@@ -16,23 +16,23 @@
   </metadata>
   <files>
     <!-- Portable Hadouken -->
-    <file src="build/binaries/Autofac.dll" target="tools/hdkn" />
-    <file src="build/binaries/Autofac.Integration.Wcf.dll" target="tools/hdkn" />
-    <file src="build/binaries/Hadouken.dll" target="tools/hdkn" />
-    <file src="build/binaries/Hadouken.Fx.dll" target="tools/hdkn" />
-    <file src="build/binaries/Hadouken.PluginHostProcess.exe" target="tools/hdkn" />
-    <file src="build/binaries/Hadouken.Service.exe" target="tools/hdkn" />
-    <file src="build/binaries/Hadouken.Service.exe.config" target="tools/hdkn" />
-    <file src="build/binaries/Ionic.Zip.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.Hosting.Self.dll" target="tools/hdkn" />
-    <file src="build/binaries/Nancy.ViewEngines.Razor.dll" target="tools/hdkn" />
-    <file src="build/binaries/Newtonsoft.Json.dll" target="tools/hdkn" />
-    <file src="build/binaries/Serilog.dll" target="tools/hdkn" />
-    <file src="build/binaries/Serilog.FullNetFx.dll" target="tools/hdkn" />
-    <file src="build/binaries/System.Web.Razor.Unofficial.dll" target="tools/hdkn" />
+    <file src="build/bin/Autofac.dll" target="tools/hdkn" />
+    <file src="build/bin/Autofac.Integration.Wcf.dll" target="tools/hdkn" />
+    <file src="build/bin/Hadouken.dll" target="tools/hdkn" />
+    <file src="build/bin/Hadouken.Fx.dll" target="tools/hdkn" />
+    <file src="build/bin/Hadouken.PluginHostProcess.exe" target="tools/hdkn" />
+    <file src="build/bin/Hadouken.Service.exe" target="tools/hdkn" />
+    <file src="build/bin/Hadouken.Service.exe.config" target="tools/hdkn" />
+    <file src="build/bin/Ionic.Zip.dll" target="tools/hdkn" />
+    <file src="build/bin/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
+    <file src="build/bin/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
+    <file src="build/bin/Nancy.dll" target="tools/hdkn" />
+    <file src="build/bin/Nancy.Hosting.Self.dll" target="tools/hdkn" />
+    <file src="build/bin/Nancy.ViewEngines.Razor.dll" target="tools/hdkn" />
+    <file src="build/bin/Newtonsoft.Json.dll" target="tools/hdkn" />
+    <file src="build/bin/Serilog.dll" target="tools/hdkn" />
+    <file src="build/bin/Serilog.FullNetFx.dll" target="tools/hdkn" />
+    <file src="build/bin/System.Web.Razor.Unofficial.dll" target="tools/hdkn" />
 
     <!-- Dummy file to get around NuGet insanity -->
     <file src="src/Package/DUMMY.txt" target="lib/net45" />
