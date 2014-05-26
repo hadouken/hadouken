@@ -1,22 +1,5 @@
 ﻿Add-Type -AssemblyName System.Net.Http
 
-<#
-.SYNOPSIS
-Performs synchronous HTTP communication with the target specified.
-.DESCRIPTION
-Using the System.Net.WebRequest object, creates an HTTP web request 
-populating it with the $content specified and submitting the request 
-to the $target indicated using the incoming $verb.
-.PARAMETER target
-The target URL to communicate with
-.PARAMETER authHeader
-The content of an AUTHORIZATION header to add to the HTTP request.
-Examples: "Basic someEncodedUserPass" or "token someOAuthToken"
-.PARAMETER verb
-The HTTP verb to assign the request.
-.PARAMETER content
-The string content to encode and add to the request body.
-#>
 function New-GitHubRelease() {
     param(
         [string] $target,
@@ -52,5 +35,35 @@ function New-GitHubRelease() {
     $json = ConvertTo-Json -InputObject $data
     $request = New-Object System.Net.Http.StringContent($json)
     
-    $result = $client.PostAsync($target, $request).Result;	
+    $result = $client.PostAsync($target, $request).Result;
+    $resultData = $result.Content.ReadAsStringAsync().Result;
+
+    return ConvertFrom-Json -InputObject $resultData;
+}
+
+function Upload-GitHubReleaseAsset() {
+    param(
+        [string] $token, 
+        [string] $owner,
+        [string] $repo,
+        [int]    $releaseId,
+        [string] $inputFile,
+        [string] $contentType
+    )
+
+    $fileName = [System.IO.Path]::GetFileName($inputFile)
+    $url = "https://uploads.github.com/repos/$owner/$repo/releases/$releaseId/assets?name=$fileName"
+
+    $client = New-Object System.Net.Http.HttpClient
+    $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("token", $token)
+    $client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Hadouken Deployment Script");
+
+    $fileData = [System.IO.File]::ReadAllBytes($inputFile)
+    $content = New-Object System.Net.Http.ByteArrayContent(,$fileData)
+    $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue($contentType)
+
+    $result = $client.PostAsync($url, $content).Result;
+    $resultData = $result.Content.ReadAsStringAsync().Result;
+
+    return ConvertFrom-Json -InputObject $resultData;
 }

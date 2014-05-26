@@ -2,42 +2,62 @@
 . .\build.github.ps1
 
 $Root = $PSScriptRoot
+$Version = "0.0.0"
 
 Properties {
-    $Dir = @{
-        Artifacts = Join-Path $Root "build"
-        Binaries  = Join-Path $Root "build/bin"
-    }
+    $Configuration      = "Release"
+    $Name               = "Hadouken"
+    $SolutionFile       = "Hadouken.sln"
 
-    $Configuration = "Release"
-    $DeployToken   = ""
-    $SolutionFile  = "Hadouken.sln"
+    # Artifacts
+    $Artifact_Sdk       = "Hadouken.SDK.$Version.nupkg"
+    $Artifact_Choco     = "hadouken.$Version.nupkg"
+    $Artifact_Zip       = "hdkn-$Version.zip"
+    $Artifact_Msi       = "hdkn-$Version.msi"
 
-    $Tools = @{
-        '7za'     = Join-Path $Root "tools\7za-9.20\7za.exe"
-        NuGet     = Join-Path $Root "tools\nuget.exe"
-        WixCandle = Join-Path $Root "packages\WiX.Toolset.3.8.1128.0\tools\wix\candle.exe"
-        WixLight  = Join-Path $Root "packages\WiX.Toolset.3.8.1128.0\tools\wix\light.exe"
-        xUnit     = Join-Path $Root "packages\xunit.runners.1.9.2\tools\xunit.console.clr4.x86.exe"
-    }
+    # Directories
+    $Dir_Artifacts      = Join-Path $Root "build"
+    $Dir_Binaries       = Join-Path $Root "build/bin"
+    $Dir_Output         = Join-Path $Root "src/Main/Hadouken.Service/bin/$Configuration/*"
 
-    $Version = "0.0.0"
+    # GitHub settings
+    $GitHub_Owner       = $null
+    $GitHub_Repository  = $null
+    $GitHub_Token       = $null
+
+    # NuGet
+    $NuGet_API_Key      = $null
+
+    # Chocolatey
+    $Chocolatey_Source  = "http://chocolatey.org/"
+    $Chocolatey_API_Key = $null
+
+    # Tools
+    $Tools_7za          = Join-Path $Root "tools/7za-9.20/7za.exe"
+    $Tools_NuGet        = Join-Path $Root "tools/nuget.exe"
+    $Tools_WixCandle    = Join-Path $Root "packages\WiX.Toolset.3.8.1128.0\tools\wix\candle.exe"
+    $Tools_WixLight     = Join-Path $Root "packages\WiX.Toolset.3.8.1128.0\tools\wix\light.exe"
+    $Tools_xUnit        = Join-Path $Root "packages\xunit.runners.1.9.2\tools\xunit.console.clr4.x86.exe"
 }
 
-FormatTaskName (("-"*25) + "[{0}]" + ("-"*25))
+$h = Get-Host
+$w = $h.UI.RawUI.WindowSize.Width
 
-Task Default -depends Clean, Compile, Test, Output, Zip, MSI, NuGet
+FormatTaskName (("-"*$w) + "`r`n[{0}]`r`n" + ("-"*$w))
+
+Task Default -depends Clean, Compile, Test, Output, Zip, MSI, NuGet, Chocolatey
+Task Publish -depends Publish-GitHub, Publish-NuGet, Publish-Chocolatey
 
 Task Clean {
     Write-Host "Cleaning and creating build artifacts folder."
 
-    if (Test-Path $Dir.Artifacts)
+    if (Test-Path $Dir_Artifacts)
     {
-        Remove-Item $Dir.Artifacts -Recurse -Force | Out-Null
+        Remove-Item $Dir_Artifacts -Recurse -Force | Out-Null
     }
 
-    New-Item $Dir.Artifacts -ItemType directory | Out-Null
-    New-Item $Dir.Binaries  -ItemType directory | Out-Null
+    New-Item $Dir_Artifacts -ItemType directory | Out-Null
+    New-Item $Dir_Binaries  -ItemType directory | Out-Null
 
     Exec { msbuild $SolutionFile /t:Clean "/p:Configuration=$Configuration" /v:quiet } 
 }
@@ -47,64 +67,103 @@ Task Compile -depends Clean {
 }
 
 Task Test -depends Compile {
-    Exec { & $Tools.xUnit ".\src\Main\Hadouken.Tests\bin\$Configuration\Hadouken.Tests.dll" }
+    Exec { & $Tools_xUnit ".\src\Main\Hadouken.Tests\bin\$Configuration\Hadouken.Tests.dll" }
 }
 
 Task Output -depends Compile {
-    $source = Join-Path $Root "src\Main\Hadouken.Service\bin\$Configuration\*"
+    $source = $Dir_Output
     $filter = ("*.dll", "*.exe")
 
-    Write-Host "Copying files from $source to $($Dir.Binaries)"
+    Write-Host "Copying files from $source to $Dir_Binaries"
 
     # Copy files
-    Get-ChildItem $source -Include $filter | %{Copy-Item -Path $_.FullName -Destination $Dir.Binaries}
+    Get-ChildItem $source -Include $filter | %{Copy-Item -Path $_.FullName -Destination $Dir_Binaries}
 
     # Copy the correct config file
-    Copy-Item -Path .\src\Configuration\Console\Hadouken.Service.exe.config -Destination $Dir.Binaries
+    Copy-Item -Path .\src\Configuration\Console\Hadouken.Service.exe.config -Destination $Dir_Binaries
 }
 
 Task Zip -depends Output {
-    $files = "$($Dir.Binaries)/*.*"
-    $output = Join-Path $Dir.Artifacts "hdkn-$Version.zip"
+    $files = "$Dir_Binaries/*.*"
+    $output = Join-Path $Dir_Artifacts $Artifact_Zip
 
     Exec {
-        & $Tools.'7za' a -mx=9 $output $files
+        & $Tools_7za a -mx=9 $output $files
     }
 }
 
 Task MSI -depends Output {
-    Write-Host "Installing WiX 3.8.1128"
-
-    Exec {
-        & $Tools.NuGet install WiX.Toolset -Version 3.8.1128 -OutputDirectory packages
-    }
-
     $wxs = Get-ChildItem "src\Installer\" -Include *.wxs -recurse | Select-Object FullName | foreach {$_.FullName}
 
     Exec {
-        & $Tools.WixCandle "-dBinDir=$($Dir.Binaries)" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -o "$($Dir.Artifacts)\wixobj\" $wxs
+        & $Tools_WixCandle "-dBinDir=$Dir_Binaries" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -o "$Dir_Artifacts\wixobj\" $wxs
     }
 
-    $wixobj = Get-ChildItem "$($Dir.Artifacts)\wixobj\" -Include *.wixobj -Recurse | Select-Object FullName | foreach {$_.FullName}
-    $msi = "$($Dir.Artifacts)\hdkn-$Version.msi"
+    $wixobj = Get-ChildItem "$Dir_Artifacts\wixobj\" -Include *.wixobj -Recurse | Select-Object FullName | foreach {$_.FullName}
+    $msi = Join-Path $Dir_Artifacts $Artifact_Msi
 
     Exec {
-        & $Tools.WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -o $msi $wixobj
+        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -o $msi $wixobj
     }
 }
 
 Task NuGet -depends Output {
     Exec {
-        & $Tools.NuGet pack Hadouken.SDK.nuspec -Version $Version -NoPackageAnalysis -OutputDirectory $Dir.Artifacts
+        & $Tools_NuGet pack Hadouken.SDK.nuspec -Version $Version -NoPackageAnalysis -OutputDirectory $Dir_Artifacts
     }
 }
 
-Task Publish -depends MSI, Zip, NuGet {
+Task Chocolatey -depends Output {
+    $source = Join-Path $Root "src/Chocolatey/"
+    $destination = Join-Path $Dir_Artifacts "choco/"
+
+    Copy-Item -Path $source -Destination $destination -Recurse -Container -Force
+
+    # Set URL in chocolateyInstall.ps1'
+    $chocoInstall = Join-Path $destination "tools/chocolateyInstall.ps1"
+    $content = Get-Content $chocoInstall
+    $content = $content.Replace("%DOWNLOAD_URL%", "http://www.hdkn.net/download/v$($Version)?source=chocolatey")
+
+    Set-Content $chocoInstall $content
+
+    Exec {
+        & $Tools_NuGet pack "$Dir_Artifacts/choco/Hadouken.nuspec" -Version $Version -NoPackageAnalysis -OutputDirectory $Dir_Artifacts
+    }
+}
+
+Task Publish-GitHub -depends MSI, Zip {
     $data = @{
         tag_name         = "v$Version"
         target_commitish = "master"
-        name             = "Hadouken $Version"
+        name             = "$Name $Version"
     }
 
-    New-GitHubRelease "https://api.github.com/repos/hadouken/hadouken/releases" $data $DeployToken
+    Write-Host "Creating release $($data.tag_name)"
+
+    $release = New-GitHubRelease "https://api.github.com/repos/vktr/playground/releases" $data $GitHub_Token
+    $releaseMSI = Join-Path $Dir_Artifacts $Artifact_Zip
+    $releaseZip = Join-Path $Dir_Artifacts $Artifact_Msi
+
+    Write-Host "Uploading release assets"
+
+    Upload-GitHubReleaseAsset $GitHub_Token $GitHub_Owner $GitHub_Repository $release.Id $releaseMSI "application/octet-stream" | Out-Null
+    Upload-GitHubReleaseAsset $GitHub_Token $GitHub_Owner $GitHub_Repository $release.Id $releaseZip "application/zip" | Out-Null
+}
+
+Task Publish-NuGet -depends NuGet {
+    Write-Host "Pushing SDK to NuGet"
+
+    $pkg = Join-Path $Dir_Artifacts $Artifact_Sdk
+    Exec {
+        & $Tools_NuGet push $pkg $NuGet_API_Key
+    }
+}
+
+Task Publish-Chocolatey -depends Chocolatey {
+    Write-Host "Pushing Hadouken to Chocolatey"
+
+    $pkg = Join-Path $Dir_Artifacts $Artifact_Choco
+    Exec {
+        & $Tools_NuGet push $pkg $Chocolatey_API_Key -Source $Chocolatey_Source
+    }
 }
