@@ -6,53 +6,40 @@ using Hadouken.Messaging;
 using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Messages;
 using Hadouken.Plugins.Metadata;
-using Serilog;
+using NuGet;
+using ILogger = Serilog.ILogger;
 
 namespace Hadouken.Plugins
 {
     public sealed class PluginManager : IPluginManager
     {
-        private readonly IDictionary<string, object> _configuration;
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
         private readonly IMessageQueue _messageQueue;
         private readonly IDirectory _baseDirectory;
-        private readonly IManifest _manifest;
         private readonly IIsolatedEnvironment _isolatedEnvironment;
+        private readonly IPackage _package;
+        private readonly Lazy<IManifest> _lazyManifest; 
 
-        public PluginManager(ILogger logger, IConfiguration configuration, IMessageQueue messageQueue, IDirectory baseDirectory, IIsolatedEnvironment environment, IManifest manifest)
+        public PluginManager(ILogger logger, IConfiguration configuration, IMessageQueue messageQueue, IDirectory baseDirectory, IIsolatedEnvironment environment, IPackage package)
         {
             ErrorCount = 0;
             
             if (logger == null) throw new ArgumentNullException("logger");
-
-            if (configuration == null)
-            {
-                throw new ArgumentNullException("configuration");
-            }
-
-            if (baseDirectory == null)
-            {
-                throw new ArgumentNullException("baseDirectory");
-            }
-
-            if (environment == null)
-            {
-                throw new ArgumentNullException("environment");
-            }
-
-            if (manifest == null)
-            {
-                throw new ArgumentNullException("manifest");
-            }
+            if (configuration == null) throw new ArgumentNullException("configuration");
+            if (baseDirectory == null) throw new ArgumentNullException("baseDirectory");
+            if (environment == null) throw new ArgumentNullException("environment");
+            if (package == null) throw new ArgumentNullException("package");
 
             State = PluginState.Unloaded;
 
             _logger = logger;
+            _configuration = configuration;
             _messageQueue = messageQueue;
             _baseDirectory = baseDirectory;
-            _manifest = manifest;
             _isolatedEnvironment = environment;
-            _configuration = BuildConfiguration(configuration);
+            _package = package;
+            _lazyManifest = new Lazy<IManifest>(_package.GetManifest);
 
             _isolatedEnvironment.UnhandledError += OnUnhandledError;
         }
@@ -62,9 +49,14 @@ namespace Hadouken.Plugins
             get { return _baseDirectory; }
         }
 
+        public IPackage Package
+        {
+            get { return _package; }
+        }
+
         public IManifest Manifest
         {
-            get { return _manifest; }
+            get { return _lazyManifest.Value; }
         }
 
         public PluginState State { get; private set; }
@@ -83,17 +75,18 @@ namespace Hadouken.Plugins
 
         public void Load()
         {
-            _logger.Information("Loading plugin {Name}", Manifest.Name);
+            _logger.Information("Loading plugin {Name}", _package.Id);
             State = PluginState.Loading;
 
             try
             {
-                _isolatedEnvironment.Load(_configuration);
+                var configuration = BuildConfiguration(_configuration);
+                _isolatedEnvironment.Load(configuration);
                 State = PluginState.Loaded;
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Error when loading plugin {Name}", Manifest.Name);
+                _logger.Error(e, "Error when loading plugin {Name}", _package.Id);
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }
@@ -101,7 +94,7 @@ namespace Hadouken.Plugins
 
         public void Unload()
         {
-            _logger.Information("Unloading plugin {Name}", Manifest.Name);
+            _logger.Information("Unloading plugin {Name}", _package.Id);
             State = PluginState.Unloading;
 
             try
@@ -111,7 +104,7 @@ namespace Hadouken.Plugins
             }
             catch (Exception e)
             {
-                _logger.Error(e, "Error when unloading plugin {Name}", Manifest.Name);
+                _logger.Error(e, "Error when unloading plugin {Name}", _package.Id);
                 ErrorMessage = e.Message;
                 State = PluginState.Error;
             }
@@ -124,17 +117,17 @@ namespace Hadouken.Plugins
 
             ErrorCount += 1;
 
-            _messageQueue.Publish(new PluginErrorMessage(Manifest.Name));
+            _messageQueue.Publish(new PluginErrorMessage(Package.Id));
         }
 
         private IDictionary<string, object> BuildConfiguration(IConfiguration configuration)
         {
             return new Dictionary<string, object>
             {
-                { "Name", _manifest.Name },
-                { "Url", "hadouken://plugins." + _manifest.Name },
-                { "RpcTemplate", configuration.Rpc.PluginUriTemplate },
-                { "Permissions", _manifest.Permissions.ToXml().ToString() }
+                { "Name", Package.Id },
+                { "Url", "hadouken://plugins." + Package.Id },
+                { "RpcTemplate", configuration.PluginUrlTemplate },
+                { "Permissions", (Manifest != null && Manifest.Permissions != null) ? Manifest.Permissions.ToXml().ToString() : null }
             };
         }
     }

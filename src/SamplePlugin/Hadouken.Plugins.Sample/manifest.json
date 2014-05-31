@@ -8,21 +8,9 @@
 
   "ui": {
     "background": [
-	  "js/background.js"
-	],
-
-	"pages": {
-	  "about": {
-		"html": "about.html"
-	  },
-
-	  "settings": {
-		"scripts": [
-		  "js/settings.js"
-		],
-		"html": "settings.html"
-	  }
-	}
+	  "js/controllers/settingsController.js",
+	  "js/app.js"
+	]
   },
 
   "dependencies":[

@@ -36,19 +36,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.4.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Integration.Wcf">
+      <HintPath>..\..\..\packages\Autofac.Wcf.3.0.1\lib\net40\Autofac.Integration.Wcf.dll</HintPath>
+    </Reference>
     <Reference Include="Hadouken.Fx, Version=1.3.5.0, Culture=neutral, PublicKeyToken=ca2dd37e695e4ab6, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Hadouken.Fx.1.3.5\lib\net45\Hadouken.Fx.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
+    <Reference Include="Microsoft.Web.XmlTransform">
+      <HintPath>..\..\..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
     <Reference Include="Nancy">
       <HintPath>..\..\..\packages\Nancy.0.22.2\lib\net40\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Authentication.Forms">
-      <HintPath>..\..\..\packages\Nancy.Authentication.Forms.0.22.2\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.Bootstrappers.Autofac">
       <HintPath>..\..\..\packages\Nancy.Bootstrappers.Autofac.0.22.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
@@ -56,12 +55,13 @@
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\..\..\packages\Nancy.Hosting.Self.0.22.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.ViewEngines.Razor">
-      <HintPath>..\..\..\packages\Nancy.Viewengines.Razor.0.22.2\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Core, Version=2.8.50506.491, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\NuGet.Core.2.8.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=1.3.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -79,9 +79,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web.Razor.Unofficial">
-      <HintPath>..\..\..\packages\System.Web.Razor.Unofficial.2.0.2\lib\net40\System.Web.Razor.Unofficial.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -92,50 +89,64 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Http\Api\IPluginRepository.cs" />
+    <Compile Include="Configuration\AppConfigConfiguration.cs" />
+    <Compile Include="DI\Bootstrapper.cs" />
+    <Compile Include="DI\Modules\ConfigurationModule.cs" />
+    <Compile Include="DI\Modules\FileSystemModule.cs" />
+    <Compile Include="DI\Modules\JsonRpcModule.cs" />
+    <Compile Include="DI\Modules\JsonRpcServiceModule.cs" />
+    <Compile Include="DI\Modules\LoggingModule.cs" />
+    <Compile Include="DI\Modules\MessagingModule.cs" />
+    <Compile Include="DI\Modules\NuGetModule.cs" />
+    <Compile Include="DI\Modules\PluginModule.cs" />
+    <Compile Include="DI\Modules\PluginServiceModule.cs" />
     <Compile Include="Http\Api\Models\Plugin.cs" />
     <Compile Include="Http\Api\Models\PluginListItem.cs" />
-    <Compile Include="Http\Api\PluginRepository.cs" />
     <Compile Include="Http\Api\Models\ReleaseItem.cs" />
     <Compile Include="Http\Api\IReleasesRepository.cs" />
     <Compile Include="Http\Api\ReleasesRepository.cs" />
     <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Http\Management\HttpBackendServer.cs" />
-    <Compile Include="Http\Management\HttpManagementModule.cs" />
+    <Compile Include="DI\Modules\HttpManagementModule.cs" />
     <Compile Include="Http\Management\IHttpBackendServer.cs" />
     <Compile Include="Http\Management\Models\LogEntry.cs" />
     <Compile Include="Http\Management\Models\LoginParameters.cs" />
     <Compile Include="Http\Management\Models\PluginDetailsItem.cs" />
     <Compile Include="Http\Management\Models\PluginListItem.cs" />
     <Compile Include="Http\Management\Models\SettingsItem.cs" />
-    <Compile Include="Http\Management\Modules\HomeModule.cs" />
+    <Compile Include="Http\Management\Modules\ApiModule.cs" />
+    <Compile Include="Http\Management\Modules\AuthModule.cs" />
+    <Compile Include="Http\Management\Modules\IndexModule.cs" />
     <Compile Include="Http\Management\Modules\JsonRpcModule.cs" />
-    <Compile Include="Http\Management\Modules\LoginModule.cs" />
-    <Compile Include="Http\Management\Modules\ModuleBase.cs" />
     <Compile Include="Http\Management\Modules\PluginsModule.cs" />
-    <Compile Include="Http\Management\Modules\RepositoryModule.cs" />
-    <Compile Include="Http\Management\Modules\SettingsModule.cs" />
-    <Compile Include="Http\Management\Modules\ToolsModule.cs" />
-    <Compile Include="Http\Management\Security\UserIdentity.cs" />
-    <Compile Include="Http\Management\Security\UserMapper.cs" />
+    <Compile Include="Http\Security\ITokenizer.cs" />
+    <Compile Include="Http\Security\Storage\InMemoryKeyStore.cs" />
+    <Compile Include="Http\Security\Storage\ITokenKeyStore.cs" />
+    <Compile Include="Http\Security\TokenAuthentication.cs" />
+    <Compile Include="Http\Security\TokenAuthenticationConfiguration.cs" />
+    <Compile Include="Http\Security\Tokenizer.cs" />
+    <Compile Include="Http\Security\UserIdentity.cs" />
     <Compile Include="JsonRpc\AuthService.cs" />
+    <Compile Include="JsonRpc\ConfigService.cs" />
     <Compile Include="JsonRpc\CoreService.cs" />
+    <Compile Include="JsonRpc\Dto\ConfigurationItem.cs" />
+    <Compile Include="JsonRpc\Dto\PackageDetailsItem.cs" />
+    <Compile Include="JsonRpc\Dto\PackageListItem.cs" />
+    <Compile Include="JsonRpc\Dto\PluginListItem.cs" />
+    <Compile Include="JsonRpc\Dto\RepositorySearchResult.cs" />
     <Compile Include="JsonRpc\EventsService.cs" />
+    <Compile Include="JsonRpc\RepositoryService.cs" />
     <Compile Include="JsonRpc\LogService.cs" />
     <Compile Include="JsonRpc\PluginsService.cs" />
-    <Compile Include="JsonRpc\ReleasesService.cs" />
-    <Compile Include="JsonRpc\RepositoryService.cs" />
     <Compile Include="Logging\IInMemorySink.cs" />
     <Compile Include="Logging\InMemorySink.cs" />
     <Compile Include="Messaging\IMessageHandler.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\IMessageQueue.cs" />
     <Compile Include="Plugins\Handlers\PluginErrorHandler.cs" />
-    <Compile Include="Plugins\InstallPackageException.cs" />
-    <Compile Include="Plugins\IPackageDownloader.cs" />
-    <Compile Include="Plugins\IPackageInstaller.cs" />
-    <Compile Include="Plugins\IPluginScanner.cs" />
+    <Compile Include="Plugins\IDevelopmentPluginInstaller.cs" />
+    <Compile Include="Plugins\PackageExtensions.cs" />
     <Compile Include="Plugins\IPluginManagerFactory.cs" />
     <Compile Include="Plugins\Isolation\ProcessIsolatedEnvironment.cs" />
     <Compile Include="Plugins\Messages\PluginErrorMessage.cs" />
@@ -155,39 +166,16 @@
     <Compile Include="Plugins\Metadata\Parsers\UserInterfaceParser.cs" />
     <Compile Include="Plugins\Metadata\UnexpectedPropertyException.cs" />
     <Compile Include="Plugins\Metadata\UserInterface.cs" />
-    <Compile Include="Plugins\PackageDownloader.cs" />
-    <Compile Include="Plugins\PackageInstaller.cs" />
     <Compile Include="Plugins\PluginException.cs" />
     <Compile Include="Plugins\PluginManagerFactory.cs" />
     <Compile Include="Plugins\PluginManagerGraph.cs" />
-    <Compile Include="Plugins\Scanners\CmdArgPluginScanner.cs" />
-    <Compile Include="Plugins\Scanners\DirectoryPluginScanner.cs" />
+    <Compile Include="Plugins\DevelopmentPluginInstaller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration\AppConfig\HadoukenConfigurationSection.cs" />
-    <Compile Include="Configuration\AppConfig\ConfigurationWrapper.cs" />
-    <Compile Include="Configuration\AppConfig\HttpAuthConfiguration.cs" />
-    <Compile Include="Configuration\AppConfig\HttpAuthConfigurationWrapper.cs" />
-    <Compile Include="Configuration\AppConfig\HttpConfiguration.cs" />
-    <Compile Include="Configuration\AppConfig\HttpConfigurationWrapper.cs" />
-    <Compile Include="Configuration\AppConfig\PluginConfigurationCollectionWrapper.cs" />
-    <Compile Include="Configuration\AppConfig\PluginElementWrapper.cs" />
-    <Compile Include="Configuration\AppConfig\RpcConfiguration.cs" />
-    <Compile Include="Configuration\AppConfig\RpcConfigurationWrapper.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
-    <Compile Include="Configuration\IHttpAuthConfiguration.cs" />
-    <Compile Include="Configuration\IHttpConfiguration.cs" />
-    <Compile Include="Configuration\IPluginConfiguration.cs" />
-    <Compile Include="Configuration\IRpcConfiguration.cs" />
-    <Compile Include="Configuration\AppConfig\PluginElement.cs" />
-    <Compile Include="Configuration\AppConfig\PluginsCollection.cs" />
     <Compile Include="Http\ApiConnection.cs" />
     <Compile Include="Http\IApiConnection.cs" />
-    <Compile Include="Plugins\DependencyNotFoundException.cs" />
     <Compile Include="Collections\DirectedGraph.cs" />
     <Compile Include="Collections\DirectedGraphEdge.cs" />
-    <Compile Include="Plugins\InvalidDependencyVersionException.cs" />
-    <Compile Include="Plugins\IPackage.cs" />
-    <Compile Include="Plugins\IPackageReader.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\Isolation\IIsolatedEnvironment.cs" />
@@ -198,8 +186,6 @@
     <Compile Include="Plugins\Metadata\IManifestReader.cs" />
     <Compile Include="Plugins\Metadata\Manifest.cs" />
     <Compile Include="Plugins\Metadata\ManifestV1Reader.cs" />
-    <Compile Include="Plugins\Package.cs" />
-    <Compile Include="Plugins\PackageReader.cs" />
     <Compile Include="Plugins\PluginEngine.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\Metadata\ManifestNotFoundException.cs" />
@@ -219,23 +205,12 @@
     <Compile Include="Service\IHadoukenService.cs" />
     <Compile Include="Startup\IStartupTask.cs" />
     <Compile Include="Startup\PluginBootstrapperTask.cs" />
-    <Compile Include="Startup\PluginDirectoryCleanerTask.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.eot" />
-    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.ttf" />
-    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.woff" />
-    <EmbeddedResource Include="Http\Management\UI\Content\fonts\FontAwesome.otf" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Login\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Home\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Plugins\Template.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Repository\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Settings\Index.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Shared\Layout.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Tools\JsonRpcDebugger.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Log.cshtml" />
-    <EmbeddedResource Include="Http\Management\UI\Views\Tools\Events.cshtml" />
+    <EmbeddedResource Include="Http\Management\UI\fonts\fontawesome-webfont.eot" />
+    <EmbeddedResource Include="Http\Management\UI\fonts\fontawesome-webfont.ttf" />
+    <EmbeddedResource Include="Http\Management\UI\fonts\fontawesome-webfont.woff" />
+    <EmbeddedResource Include="Http\Management\UI\fonts\FontAwesome.otf" />
     <None Include="packages.config" />
     <None Include="Plugins\Metadata\Schemas\v2.json" />
   </ItemGroup>
@@ -246,52 +221,123 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap-theme.min.css" />
-    <EmbeddedResource Include="Http\Management\UI\Content\bootstrap.min.css" />
-    <EmbeddedResource Include="Http\Management\UI\Content\font-awesome.min.css" />
-    <EmbeddedResource Include="Http\Management\UI\Content\fonts\fontawesome-webfont.svg" />
-    <EmbeddedResource Include="Http\Management\UI\Content\Images\256.png" />
-    <EmbeddedResource Include="Http\Management\UI\Content\Images\loader.gif" />
-    <EmbeddedResource Include="Http\Management\UI\Content\SignIn.css" />
-    <EmbeddedResource Include="Http\Management\UI\Content\Site.css" />
+    <EmbeddedResource Include="Http\Management\UI\index.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\bootstrap.min.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery-1.11.0.min.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.bootstrap-growl.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.jsonrpc.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\JsonRpcDebugger.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\Plugins.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\Repository.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\semver.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\Shared.js" />
+    <EmbeddedResource Include="Http\Management\UI\js\lib\angular.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\jquery.signalr-2.0.2.min.js" />
+    <EmbeddedResource Include="Http\Management\UI\js\app.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\Events.js" />
+    <EmbeddedResource Include="Http\Management\UI\js\lib\script.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\bootbox.min.js" />
+    <EmbeddedResource Include="Http\Management\UI\js\bootstrapper.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\zip.js" />
+    <EmbeddedResource Include="Http\Management\UI\js\modules\settings\controllers\indexController.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\deflate.js" />
-    <EmbeddedResource Include="Http\Management\UI\Scripts\inflate.js" />
+    <EmbeddedResource Include="Http\Management\UI\js\modules\dashboard\controllers\indexController.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Http\Management\UI\Scripts\manifest.js" />
+    <EmbeddedResource Include="Http\Management\UI\views\dashboard\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\views\settings\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\settings\settingsModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\dashboard\dashboardModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\auth\authModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\auth\interceptors\unauthorizedInterceptor.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\jsonrpc\jsonrpcModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\auth\controllers\loginController.js" />
+    <EmbeddedResource Include="Http\Management\UI\views\auth\login.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\lib\angular-ui-router.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\views\shared\layout.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\css\bootstrap-theme.min.css" />
+    <EmbeddedResource Include="Http\Management\UI\css\bootstrap.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\css\site.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\auth\services\authProvider.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\auth\interceptors\tokenHeaderInterceptor.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\img\logo256.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\fonts\fontawesome-webfont.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\css\font-awesome.min.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\lib\ui-bootstrap-tpls-0.11.0.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\plugins\pluginsModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\plugins\controllers\listController.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\views\plugins\list.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\plugins\controllers\detailsController.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\views\plugins\details.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\messaging\messagingModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\ui\uiModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\ui\controllers\layoutController.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\repository\repositoryModule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\repository\controllers\listController.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\views\repository\list.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Http\Management\UI\js\modules\repository\controllers\installController.js" />
+    <EmbeddedResource Include="Http\Management\UI\views\repository\install.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-if $(ConfigurationName) == Debug (
-xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.0.22.2\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
-xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.0.22.2\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
-)</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -34,12 +34,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Hadouken.Fx.1.3.5\lib\net45\Hadouken.Fx.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.XmlTransform">
+      <HintPath>..\..\..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NSubstitute">
       <HintPath>..\..\..\packages\NSubstitute.1.7.2.0\lib\NET45\NSubstitute.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Core, Version=2.8.50506.491, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\NuGet.Core.2.8.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=1.3.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -61,15 +68,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\Api\PluginRepositoryTests.cs" />
-    <Compile Include="Http\Api\ReleasesRepositoryTests.cs" />
-    <Compile Include="JsonRpc\AuthServiceTests.cs" />
-    <Compile Include="JsonRpc\PluginsServiceTests.cs" />
-    <Compile Include="Plugins\Metadata\ManifestV1ReaderTests.cs" />
-    <Compile Include="Plugins\Metadata\Parsers\DependenciesParserTests.cs" />
-    <Compile Include="Plugins\PackageDownloaderTests.cs" />
-    <Compile Include="Plugins\PluginEngineTests.cs" />
-    <Compile Include="Plugins\PluginManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SemVer\SemanticVersionRangeTests.cs" />
     <Compile Include="SemVer\SemanticVersionTests.cs" />

@@ -6,11 +6,19 @@
 
         string InstanceName { get; set; }
 
-        IPluginConfigurationCollection Plugins { get; }
+        string HostBinding { get; set; }
 
-        IHttpConfiguration Http { get; }
+        int Port { get; set; }
 
-        IRpcConfiguration Rpc { get; }
+        string UserName { get; set; }
+
+        string Password { get; set; }
+
+        string PluginDirectory { get; set; }
+
+        string PluginUrlTemplate { get; set; }
+
+        string PluginRepositoryUrl { get; set; }
 
         void Save();
     }

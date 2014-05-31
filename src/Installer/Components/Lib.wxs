@@ -12,10 +12,6 @@
       </Component>
 
       <Component>
-        <File Name="Ionic.Zip.dll" />
-      </Component>
-
-      <Component>
         <File Name="Nancy.Authentication.Forms.dll" />
       </Component>
 

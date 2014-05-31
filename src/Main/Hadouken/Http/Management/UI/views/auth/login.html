@@ -1,0 +1,14 @@
+﻿<div class="container">
+    <form class="form-signin" name="loginForm" role="form" ng-submit="login()">
+        <div class="text-center">
+            <img src="img/logo256.png" alt="Hadouken" title="Hadouken" />
+        </div>
+
+        <h2 class="form-signin-heading">Sign in</h2>
+
+        <input type="text" class="form-control" ng-model="userName" placeholder="Username" name="userName" required autofocus>
+        <input type="password" class="form-control" ng-model="password" placeholder="Password" name="password" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn">Sign in</button>
+    </form>
+</div>

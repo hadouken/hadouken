@@ -1,13 +1,17 @@
 ﻿using System.IO;
 using System.Text;
 using Hadouken.Fx.JsonRpc;
+using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Http.Management.Modules
 {
-    public class JsonRpcModule : ModuleBase
+    public sealed class JsonRpcModule : NancyModule
     {
         public JsonRpcModule(IClientTransport clientTransport)
         {
+            this.RequiresAuthentication();
+
             Post["/jsonrpc"] = _ =>
             {
                 using (var ms = new MemoryStream())

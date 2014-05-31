@@ -1,10 +1,9 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
-using System.Security;
-using System.Security.Authentication;
 using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
+using Hadouken.JsonRpc.Dto;
 using Hadouken.Plugins;
 using Hadouken.Security;
 
@@ -13,30 +12,33 @@ namespace Hadouken.JsonRpc
     public class PluginsService : IJsonRpcService
     {
         private readonly IConfiguration _configuration;
-        private readonly IAuthenticationManager _authManager;
         private readonly IPluginEngine _pluginEngine;
-        private readonly IPackageReader _packageReader;
+        private readonly IAuthenticationManager _authenticationManager;
 
-        public PluginsService(IConfiguration configuration,
-            IAuthenticationManager authManager,
-            IPluginEngine pluginEngine,
-            IPackageReader packageReader)
+        public PluginsService(IConfiguration configuration, IPluginEngine pluginEngine, IAuthenticationManager authenticationManager)
         {
             if (configuration == null) throw new ArgumentNullException("configuration");
-            if (authManager == null) throw new ArgumentNullException("authManager");
             if (pluginEngine == null) throw new ArgumentNullException("pluginEngine");
-            if (packageReader == null) throw new ArgumentNullException("packageReader");
+            if (authenticationManager == null) throw new ArgumentNullException("authenticationManager");
 
             _configuration = configuration;
-            _authManager = authManager;
             _pluginEngine = pluginEngine;
-            _packageReader = packageReader;
+            _authenticationManager = authenticationManager;
         }
 
         [JsonRpcMethod("core.plugins.list")]
-        public string[] ListPlugins()
+        public IEnumerable<PluginListItem> ListPlugins()
         {
-            return _pluginEngine.GetAll().Select(p => p.Manifest.Name).ToArray();
+            var plugins = _pluginEngine.GetAll();
+
+            return (from plugin in plugins
+                select new PluginListItem
+                {
+                    Id = plugin.Package.Id,
+                    Name = plugin.Package.Title ?? plugin.Package.Id,
+                    State = plugin.State.ToString(),
+                    Version = plugin.Package.Version.ToString()
+                });
         }
 
         [JsonRpcMethod("core.plugins.getVersion")]
@@ -48,68 +50,7 @@ namespace Hadouken.JsonRpc
                 return null;
             }
 
-            return plugin.Manifest.Version.ToString();
-        }
-
-        [JsonRpcMethod("core.plugins.install")]
-        public bool Install(string password, string base64EncodedPackage)
-        {
-            if (string.IsNullOrEmpty(base64EncodedPackage))
-            {
-                throw new ArgumentNullException("base64EncodedPackage");
-            }
-
-            if (!_authManager.IsValid(_configuration.Http.Authentication.UserName, password))
-            {
-                throw new JsonRpcException(1000, "Invalid credentials.");
-            }
-
-            var data = Convert.FromBase64String(base64EncodedPackage);
-
-            using (var memoryStream = new MemoryStream(data))
-            {
-                var package = _packageReader.Read(memoryStream);
-                return _pluginEngine.InstallOrUpgrade(package);
-            }
-        }
-
-        [JsonRpcMethod("core.plugins.canUninstall")]
-        public object CanUninstall(string pluginId)
-        {
-            if (string.IsNullOrEmpty(pluginId))
-            {
-                throw new ArgumentNullException("pluginId");
-            }
-
-            string[] dependencies;
-            bool canUninstall = _pluginEngine.CanUninstall(pluginId, out dependencies);
-
-            return new
-            {
-                CanUninstall = canUninstall,
-                Dependencies = dependencies
-            };
-        }
-
-        [JsonRpcMethod("core.plugins.uninstall")]
-        public bool Uninstall(string password, string pluginId)
-        {
-            if (!_authManager.IsValid(_configuration.Http.Authentication.UserName, password))
-            {
-                return false;
-            }
-
-            var plugin = _pluginEngine.Get(pluginId);
-
-            if (plugin == null)
-            {
-                return false;
-            }
-
-            _pluginEngine.Unload(pluginId);
-            _pluginEngine.Uninstall(pluginId);
-
-            return true;
+            return plugin.Package.Version.ToString();
         }
 
         [JsonRpcMethod("core.plugins.load")]
@@ -154,11 +95,44 @@ namespace Hadouken.JsonRpc
 
             return new
             {
-                plugin.Manifest.Name,
+                plugin.Package.Id,
                 Path = plugin.BaseDirectory.FullPath,
                 State = plugin.State.ToString(),
-                Version = plugin.Manifest.Version.ToString()
+                Version = plugin.Package.Version.ToString()
             };
+        }
+
+        [JsonRpcMethod("core.plugins.install")]
+        public void Install(string password, string packageId, string version, bool ignoreDependencies, bool allowPrereleaseVersions)
+        {
+            if (!_authenticationManager.IsValid(_configuration.UserName, password))
+            {
+                throw new JsonRpcException(9999, "Invalid username/password.");
+            }
+
+            _pluginEngine.Install(packageId, version, ignoreDependencies, allowPrereleaseVersions);
+        }
+
+        [JsonRpcMethod("core.plugins.uninstall")]
+        public void Uninstall(string password, string packageId, string version, bool forceRemove, bool removeDependencies)
+        {
+            if (!_authenticationManager.IsValid(_configuration.UserName, password))
+            {
+                throw new JsonRpcException(9999, "Invalid username/password.");
+            }
+
+            _pluginEngine.Uninstall(packageId, version, forceRemove, removeDependencies);
+        }
+
+        [JsonRpcMethod("core.plugins.update")]
+        public void Update(string password, string packageId, string version, bool updateDependencies, bool allowPrereleaseVersions)
+        {
+            if (!_authenticationManager.IsValid(_configuration.UserName, password))
+            {
+                throw new JsonRpcException(9999, "Invalid username/password.");
+            }
+
+            _pluginEngine.Update(packageId, version, updateDependencies, allowPrereleaseVersions);
         }
     }
 }

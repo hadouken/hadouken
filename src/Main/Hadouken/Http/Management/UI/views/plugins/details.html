@@ -1,0 +1,23 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Details for {{ plugin.Id }}</h3>
+</div>
+<div class="modal-body">
+    <div ng-show="step === 'details'">
+        <p><em>add plugin details here</em></p>
+    </div>
+    
+    <div ng-show="step === 'uninstall'">
+        <p>Confirm uninstallation by entering your password.</p>
+        
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group" ng-class="{'has-error': invalidPassword}">
+                    <input type="password" class="form-control" placeholder="Password" ng-model="uninstallPassword" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" ng-click="uninstall()" ng-disabled="(step == 'uninstall' && !uninstallPassword) || uninstalling">Uninstall</button>
+</div>

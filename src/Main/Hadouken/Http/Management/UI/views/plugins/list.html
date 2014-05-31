@@ -1,0 +1,24 @@
+﻿<h1 class="page-header">Installed plugins</h1>
+
+<p>These are your installed plugins.</p>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+            <th>State</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="plugin in plugins">
+            <td>{{plugin.Name}}</td>
+            <td>{{plugin.Version}}</td>
+            <td>{{plugin.State}}</td>
+            <td>
+                <button class="btn btn-primary btn-xs pull-right" ng-click="details(plugin.Id)">Details</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -13,13 +13,18 @@ namespace Hadouken.Plugins
         private readonly DirectedGraph<string> _pluginsGraph = new DirectedGraph<string>();
         private readonly object _pluginsGraphLock = new object();
 
+        public void Add(IPluginManager plugin)
+        {
+            _plugins.Add(plugin.Package.Id, plugin);
+        }
+
         public void AddRange(IEnumerable<IPluginManager> plugins)
         {
             foreach (var plugin in plugins)
             {
                 lock (_pluginsLock)
                 {
-                    _plugins.Add(plugin.Manifest.Name, plugin);
+                    _plugins.Add(plugin.Package.Id, plugin);
                 }
             }
         }
@@ -40,6 +45,25 @@ namespace Hadouken.Plugins
             }
         }
 
+        public void RemoveRange(string[] names)
+        {
+            lock (_pluginsLock)
+            {
+                foreach (var name in names)
+                {
+                    Remove(name);
+                }
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_pluginsLock)
+            {
+                _plugins.Clear();
+            }
+        }
+
         public IEnumerable<IPluginManager> GetAll()
         {
             lock (_pluginsLock)
@@ -54,16 +78,18 @@ namespace Hadouken.Plugins
             {
                 var manager = Get(name);
 
-                if (manager == null)
+                if (manager == null || !manager.Package.DependencySets.Any())
                 {
                     continue;
                 }
 
-                foreach (var dependency in manager.Manifest.Dependencies)
+                var deps = manager.Package.DependencySets.First();
+
+                foreach (var dependency in deps.Dependencies)
                 {
                     lock (_pluginsGraphLock)
                     {
-                        _pluginsGraph.Connect(name, dependency.Name);
+                        _pluginsGraph.Connect(name, dependency.Id);
                     }
                 }
             }

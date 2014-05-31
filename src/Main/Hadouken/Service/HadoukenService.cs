@@ -56,7 +56,7 @@ namespace Hadouken.Service
 		    _backendServer.Start();
 		    _rpcServiceHost.Open();
 
-            _pluginEngine.Scan();
+            _pluginEngine.Refresh();
 		    _pluginEngine.LoadAll();
 		}
 

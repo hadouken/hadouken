@@ -14,6 +14,6 @@ namespace Hadouken.Http.Management.Models
 
         public string PluginsBaseDirectory { get; set; }
 
-        public Uri PluginsRepositoryUri { get; set; }
+        public string PluginsRepositoryUrl { get; set; }
     }
 }

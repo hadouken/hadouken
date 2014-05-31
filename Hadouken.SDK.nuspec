@@ -23,7 +23,6 @@
     <file src="build/bin/Hadouken.PluginHostProcess.exe" target="tools/hdkn" />
     <file src="build/bin/Hadouken.Service.exe" target="tools/hdkn" />
     <file src="build/bin/Hadouken.Service.exe.config" target="tools/hdkn" />
-    <file src="build/bin/Ionic.Zip.dll" target="tools/hdkn" />
     <file src="build/bin/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
     <file src="build/bin/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
     <file src="build/bin/Nancy.dll" target="tools/hdkn" />

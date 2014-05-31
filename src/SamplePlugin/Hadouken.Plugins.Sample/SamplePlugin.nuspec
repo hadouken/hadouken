@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>sample</id>
+    <version>0.0.0</version>
+    <title>Sample plugin</title>
+    <authors>Viktor Elofsson</authors>
+    <owners>Viktor Elofsson</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A sample plugin.</description>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="Hadouken.Fx.dll" target="" />
+    <file src="Hadouken.Plugins.Sample.dll" target="" />
+    <file src="manifest.json" target="" />
+  </files>
+</package>

@@ -1,32 +1,23 @@
 ﻿using System;
-using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
-using Hadouken.Fx.Security;
+using Hadouken.Security;
 
 namespace Hadouken.JsonRpc
 {
     public class AuthService : IJsonRpcService
     {
-        private static readonly IHashProvider HashProvider = Fx.Security.HashProvider.GetDefault();
-        private readonly IConfiguration _configuration;
+        private readonly IAuthenticationManager _authenticationManager;
 
-        public AuthService(IConfiguration configuration)
+        public AuthService(IAuthenticationManager authenticationManager)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException("configuration");
-            }
-
-            _configuration = configuration;
+            if (authenticationManager == null) throw new ArgumentNullException("authenticationManager");
+            _authenticationManager = authenticationManager;
         }
 
         [JsonRpcMethod("core.auth.validate")]
         public bool Validate(string userName, string password)
         {
-            var passwordHash = HashProvider.ComputeHash(password ?? "");
-
-            return string.Equals(userName, _configuration.Http.Authentication.UserName)
-                   && string.Equals(passwordHash, _configuration.Http.Authentication.Password);
+            return _authenticationManager.IsValid(userName, password);
         }
     }
 }

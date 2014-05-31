@@ -24,8 +24,8 @@ namespace Hadouken.Security
 
             var passwordHash = HashProvider.ComputeHash(password);
 
-            return string.Equals(userName, _configuration.Http.Authentication.UserName)
-                   && string.Equals(passwordHash, _configuration.Http.Authentication.Password);
+            return string.Equals(userName, _configuration.UserName)
+                   && string.Equals(passwordHash, _configuration.Password);
         }
     }
 }

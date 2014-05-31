@@ -28,7 +28,7 @@ namespace Hadouken.Http.Api
 
         public IEnumerable<ReleaseItem> GetAll()
         {
-            var uri = new Uri(_configuration.Plugins.RepositoryUri, "releases");
+            var uri = new Uri(new Uri(_configuration.PluginRepositoryUrl), "releases");
             return _apiConnection.GetAsync<IEnumerable<ReleaseItem>>(uri).Result;
         }
     }

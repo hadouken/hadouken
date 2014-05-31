@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ServiceProcess;
+using Hadouken.DI;
 using Hadouken.Service.Hosts;
 
 namespace Hadouken.Service

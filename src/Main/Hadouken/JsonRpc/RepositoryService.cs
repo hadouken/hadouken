@@ -1,60 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hadouken.Fx.JsonRpc;
-using Hadouken.Http.Api;
-using Hadouken.Http.Api.Models;
+using Hadouken.JsonRpc.Dto;
 using Hadouken.Plugins;
+using NuGet;
 
 namespace Hadouken.JsonRpc
 {
-    public sealed class RepositoryService : IJsonRpcService
+    public class RepositoryService : IJsonRpcService
     {
-        private readonly IPluginRepository _pluginRepository;
-        private readonly IPackageDownloader _packageDownloader;
-        private readonly IPluginEngine _pluginEngine;
+        private static readonly int DefaultPageSize = 10;
+        private static readonly int DefaultMaxPageCount = 10;
 
-        public RepositoryService(IPluginRepository pluginRepository, 
-            IPackageDownloader packageDownloader,
-            IPluginEngine pluginEngine)
+        private readonly IPackageRepository _packageRepository;
+
+        public RepositoryService(IPackageRepository packageRepository)
         {
-            _pluginRepository = pluginRepository;
-            _packageDownloader = packageDownloader;
-            _pluginEngine = pluginEngine;
+            if (packageRepository == null) throw new ArgumentNullException("packageRepository");
+            _packageRepository = packageRepository;
         }
 
-        [JsonRpcMethod("core.repository.list")]
-        public IEnumerable<PluginListItem> List()
+        [JsonRpcMethod("core.repository.search")]
+        public RepositorySearchResult Search(int page, string query, bool allowPrerelease)
         {
-            return _pluginRepository.GetAll();
+            var count = _packageRepository.Search(query, allowPrerelease).Count();
+            var pages = (count + DefaultPageSize - 1)/DefaultPageSize;
+
+            var packages = _packageRepository.Search(query, allowPrerelease)
+                .Skip((page - 1)*DefaultPageSize)
+                .Take(DefaultPageSize)
+                .ToList();
+
+            return new RepositorySearchResult
+            {
+                TotalPages = Math.Min(pages, DefaultMaxPageCount),
+                Items = packages.Select(p => new PackageListItem
+                {
+                    Id = p.Id,
+                    Title = p.Title ?? p.Id,
+                    Authors = string.Join(", ", p.Authors),
+                    IconUrl = p.IconUrl,
+                    Summary = p.Summary ?? p.Description,
+                    Version = p.Version.ToString()
+                })
+            };
         }
 
-        [JsonRpcMethod("core.repository.details")]
-        public Plugin Details(string pluginId)
+        [JsonRpcMethod("core.repository.getDetails")]
+        public object GetDetails(string packageId, string version)
         {
-            return _pluginRepository.GetById(pluginId);
-        }
-
-        [JsonRpcMethod("core.repository.install")]
-        public object Install(string pluginId)
-        {
-            var package = _packageDownloader.Download(pluginId);
+            var semver = SemanticVersion.Parse(version);
+            var package = _packageRepository.FindPackage(packageId, semver);
 
             if (package == null)
             {
-                return new { result = false, message = "Error when downloading package." };
+                return null;
             }
 
-            var installResult = _pluginEngine.InstallOrUpgrade(package);
-
-            if (!installResult)
+            return new
             {
-                return new { result = false, message = "Failed to install package." };
-            }
-
-            return new { result = true };
+                package.Id,
+                Dependencies = package.DependencySets.SelectMany(dep => dep.Dependencies).Select(dep => new {dep.Id, Version = VersionUtility.PrettyPrint(dep.VersionSpec)}),
+                Manifest = package.GetManifest(),
+                package.Description,
+                Title = package.Title ?? package.Id,
+                Version = package.Version.ToString(),
+            };
         }
     }
 }

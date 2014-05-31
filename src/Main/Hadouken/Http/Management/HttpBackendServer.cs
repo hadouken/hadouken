@@ -21,11 +21,9 @@ namespace Hadouken.Http.Management
 
         public void Start()
         {
-            var binding = _configuration.Http.HostBinding;
-            var port = _configuration.Http.Port;
-            var uriList = new List<Uri>();
-
-            uriList.Add(new Uri(string.Format("http://localhost:{0}/", port)));
+            var binding = _configuration.HostBinding;
+            var port = _configuration.Port;
+            var uriList = new List<Uri> {new Uri(string.Format("http://localhost:{0}/", port))};
 
             if (!binding.Equals("+") && !binding.Equals("localhost"))
             {

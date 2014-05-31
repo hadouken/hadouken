@@ -27,8 +27,9 @@ namespace Hadouken.JsonRpc
             // or for <all> events.
             var handlers = _pluginEngine.GetAll()
                 .Where(p => p.State == PluginState.Loaded)
+                .Select(p => p.Package.GetManifest())
                 .SelectMany(
-                    p => p.Manifest.EventHandlers.Where(e => e.Name == name || e.Name == All))
+                    m => m.EventHandlers.Where(e => e.Name == name || e.Name == All))
                 .ToList();
 
             _logger.Debug("Publishing event {EventName} to {Count} handlers.", name, handlers.Count());

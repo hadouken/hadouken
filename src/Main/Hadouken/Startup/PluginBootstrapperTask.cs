@@ -16,22 +16,16 @@ namespace Hadouken.Startup
         private readonly IConfiguration _configuration;
         private readonly IFileSystem _fileSystem;
         private readonly IApiConnection _apiConnection;
-        private readonly IPackageReader _packageReader;
-        private readonly IPackageInstaller _packageInstaller;
 
         public PluginBootstrapperTask(ILogger logger,
             IConfiguration configuration,
             IFileSystem fileSystem,
-            IApiConnection apiConnection,
-            IPackageReader packageReader,
-            IPackageInstaller packageInstaller)
+            IApiConnection apiConnection)
         {
             _logger = logger;
             _configuration = configuration;
             _fileSystem = fileSystem;
             _apiConnection = apiConnection;
-            _packageReader = packageReader;
-            _packageInstaller = packageInstaller;
         }
 
         public void Execute(string[] args)
@@ -50,7 +44,8 @@ namespace Hadouken.Startup
                 return;
             }
 
-            var corePluginsUri = new Uri(_configuration.Plugins.RepositoryUri, "get-core");
+
+            var corePluginsUri = new Uri(new Uri(_configuration.PluginRepositoryUrl), "get-core");
 
             _logger.Information("Bootstrapping core plugins from {Uri}.", corePluginsUri);
 
@@ -69,7 +64,7 @@ namespace Hadouken.Startup
                 // Parse it as a package
                 using (var ms = new MemoryStream(data))
                 {
-                    var package = _packageReader.Read(ms);
+                    var package = (object)null; //_packageReader.Read(ms);
 
                     if (package == null)
                     {
@@ -77,8 +72,8 @@ namespace Hadouken.Startup
                         continue;
                     }
 
-                    _packageInstaller.Install(package);
-                    _logger.Information("Core package {0} downloaded successfully.", package.Manifest.Name);
+                    //_packageInstaller.Install(package);
+                    //_logger.Information("Core package {0} downloaded successfully.", package.Manifest.Name);
                 }
             }
 

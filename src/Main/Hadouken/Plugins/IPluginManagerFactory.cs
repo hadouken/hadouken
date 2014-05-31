@@ -1,10 +1,10 @@
 ﻿using Hadouken.Fx.IO;
-using Hadouken.Plugins.Metadata;
+using NuGet;
 
 namespace Hadouken.Plugins
 {
     public interface IPluginManagerFactory
     {
-        IPluginManager Create(IDirectory directory, IManifest manifest);
+        IPluginManager Create(IDirectory directory, IPackage package);
     }
 }

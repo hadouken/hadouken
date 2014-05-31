@@ -56,15 +56,16 @@
     <Content Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="UI\js\controllers\settingsController.js" />
+    <EmbeddedResource Include="UI\js\app.js" />
     <EmbeddedResource Include="UI\about.html" />
-    <EmbeddedResource Include="UI\js\background.js" />
-    <EmbeddedResource Include="UI\js\settings.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\settings.html" />
+    <EmbeddedResource Include="UI\views\settings.html" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="SamplePlugin.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
