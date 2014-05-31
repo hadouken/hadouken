@@ -59,14 +59,21 @@ window.pluginModules = window.pluginModules || [];
         $script(coreScripts, 'core');
 
         $script.ready('core', function () {
-            // Core scripts are ready, now load the plugin scripts.
-            $script(additionalScripts, function () {
+            if (additionalScripts.length) {
+                // Core scripts are ready, now load the plugin scripts.
+                $script(additionalScripts, function() {
 
+                    // When all core and plugin scripts are ready, load the app script.
+                    $script(['js/app.js'], function() {
+                        angular.bootstrap(document, ['hadouken']);
+                    });
+                });
+            } else {
                 // When all core and plugin scripts are ready, load the app script.
-                $script(['js/app.js'], function() {
+                $script(['js/app.js'], function () {
                     angular.bootstrap(document, ['hadouken']);
                 });
-            });
+            }
         });
     }
 })(window.$script);

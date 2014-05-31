@@ -56,7 +56,7 @@ namespace Hadouken.Plugins
                 var directory = _packageManager.PathResolver.GetInstallPath(package);
                 var manager = _pluginManagerFactory.Create(new Directory(new DirectoryInfo(directory)), package);
 
-                if (_plugins.Get(package.Id) != null)
+                if (_plugins.Get(package.Id) == null)
                 {
                     _plugins.Add(manager);
                 }

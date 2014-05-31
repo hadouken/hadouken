@@ -12,12 +12,12 @@
                 }
             });
 
-            $scope.uninstall = function () {
+            $scope.uninstall = function (password) {
                 if ($scope.step === 'uninstall') {
                     $scope.uninstalling = true;
 
                     jsonrpc.request('core.plugins.uninstall', {
-                        params: [$scope.password, pluginId, $scope.plugin.Version, false, false],
+                        params: [password, pluginId, $scope.plugin.Version, false, false],
                         success: function() {
                             $modalInstance.close(true);
                         },
@@ -31,12 +31,6 @@
                 } else {
                     $scope.step = 'uninstall';
                 }
-            };
-
-            $scope.canUninstall = function() {
-                if ($scope.step === 'details') return true;
-                if ($scope.step === 'uninstall' && $scope.uninstallPassword !== '') return true;
-                return false;
             };
         }
     ]);
