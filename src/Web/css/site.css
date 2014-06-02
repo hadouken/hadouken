@@ -9,6 +9,14 @@ body.Auth-LoginController {
   background-color: #eee;
 }
 
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
+.nav-tabs {
+  margin-bottom: 15px;
+}
+
 /* Sign in */
 .form-signin {
   max-width: 330px;

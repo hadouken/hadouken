@@ -7,6 +7,10 @@ namespace Hadouken.Plugins.Isolation
     {
         event EventHandler UnhandledError;
 
+        string Output { get; }
+
+        string ErrorOutput { get; }
+
         void Load(IDictionary<string, object> configuration);
 
         void Unload();

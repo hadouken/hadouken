@@ -3,7 +3,17 @@
 </div>
 <div class="modal-body">
     <div ng-show="step === 'details'">
-        <p><em>add plugin details here</em></p>
+        <tabset>
+            <tab heading="Details">
+                <p><em>Details...</em></p>
+            </tab>
+            <tab heading="Output" disabled="!plugin.Output">
+                <pre>{{ plugin.Output }}</pre>
+            </tab>
+            <tab heading="Error output" disabled="!plugin.ErrorOutput">
+                <pre>{{ plugin.ErrorOutput }}</pre>
+            </tab>
+        </tabset>
     </div>
     
     <div ng-show="step === 'uninstall'">

@@ -59,6 +59,11 @@ namespace Hadouken.Plugins
             get { return _lazyManifest.Value; }
         }
 
+        public IIsolatedEnvironment IsolatedEnvironment
+        {
+            get { return _isolatedEnvironment; }
+        }
+
         public PluginState State { get; private set; }
 
         public int ErrorCount { get; private set; }

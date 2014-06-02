@@ -98,7 +98,9 @@ namespace Hadouken.JsonRpc
                 plugin.Package.Id,
                 Path = plugin.BaseDirectory.FullPath,
                 State = plugin.State.ToString(),
-                Version = plugin.Package.Version.ToString()
+                Version = plugin.Package.Version.ToString(),
+                plugin.IsolatedEnvironment.Output,
+                plugin.IsolatedEnvironment.ErrorOutput
             };
         }
 

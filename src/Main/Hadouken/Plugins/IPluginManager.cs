@@ -1,4 +1,5 @@
 ﻿using Hadouken.Fx.IO;
+using Hadouken.Plugins.Isolation;
 using Hadouken.Plugins.Metadata;
 using NuGet;
 
@@ -13,6 +14,8 @@ namespace Hadouken.Plugins
         IManifest Manifest { get; }
 
         PluginState State { get; }
+
+        IIsolatedEnvironment IsolatedEnvironment { get; }
 
         int ErrorCount { get; }
 

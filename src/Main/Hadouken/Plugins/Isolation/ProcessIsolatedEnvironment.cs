@@ -33,6 +33,16 @@ namespace Hadouken.Plugins.Isolation
 
         public event EventHandler UnhandledError;
 
+        public string Output
+        {
+            get { return _outputBuilder.ToString(); }
+        }
+
+        public string ErrorOutput
+        {
+            get { return _errorOutputBuilder.ToString(); }
+        }
+
         public void Load(IDictionary<string, object> configuration)
         {
             // Write the configuration to a mem-mapped file
