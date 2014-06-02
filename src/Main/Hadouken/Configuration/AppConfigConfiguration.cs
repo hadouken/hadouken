@@ -24,6 +24,12 @@ namespace Hadouken.Configuration
             set { Set("ApplicationDataPath", value); }
         }
 
+        public string WebApplicationPath
+        {
+            get { return Get("WebApplicationPath"); }
+            set { Set("WebApplicationPath", value); }
+        }
+
         public string InstanceName
         {
             get { return Get("InstanceName"); }

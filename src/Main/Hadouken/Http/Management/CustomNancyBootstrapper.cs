@@ -1,24 +1,23 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.IO.Compression;
 using Autofac;
+using Hadouken.Configuration;
+using Hadouken.Fx.IO;
 using Hadouken.Http.Security;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Conventions;
-using Nancy.ViewEngines;
+using Nancy.Responses;
 
 namespace Hadouken.Http.Management
 {
     public class CustomNancyBootstrapper : AutofacNancyBootstrapper
     {
-
         private readonly ILifetimeScope _container;
-        private readonly Assembly _assembly;
-
         public CustomNancyBootstrapper(ILifetimeScope container)
         {
             _container = container;
-            _assembly = GetType().Assembly;
 
             StaticConfiguration.DisableErrorTraces = false;
         }
@@ -26,12 +25,6 @@ namespace Hadouken.Http.Management
         protected override ILifetimeScope GetApplicationContainer()
         {
             return _container;
-        }
-
-        protected override void ConfigureApplicationContainer(ILifetimeScope container)
-        {
-            base.ConfigureApplicationContainer(container);
-            ResourceViewLocationProvider.RootNamespaces.Add(_assembly, "Hadouken.Http.Management.UI");
         }
 
         protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
@@ -44,36 +37,43 @@ namespace Hadouken.Http.Management
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
-            base.ConfigureConventions(nancyConventions);
+            var cfg = _container.Resolve<IConfiguration>();
+            var fileSystem = _container.Resolve<IFileSystem>();
 
-            var namespaceRoot = "Hadouken.Http.Management.UI";
+            nancyConventions.StaticContentsConventions.Add((context, s) =>
+            {
+                var requestedFile = (context.Request.Path == "/" ? "/index.html" : context.Request.Path);
+                if (requestedFile.StartsWith("/")) requestedFile = requestedFile.Substring(1);
 
-            var css = EmbeddedStaticContentConventionBuilder.AddDirectory("/css", _assembly,
-                namespaceRoot: namespaceRoot);
-            var fonts = EmbeddedStaticContentConventionBuilder.AddDirectory("/fonts", _assembly,
-                namespaceRoot: namespaceRoot);
-            var img = EmbeddedStaticContentConventionBuilder.AddDirectory("/img", _assembly,
-                namespaceRoot: namespaceRoot);
-            var js = EmbeddedStaticContentConventionBuilder.AddDirectory("/js", _assembly,
-                 namespaceRoot: namespaceRoot);
-            var views = EmbeddedStaticContentConventionBuilder.AddDirectory("/views", _assembly,
-                namespaceRoot: namespaceRoot);
+                if (cfg.WebApplicationPath.EndsWith(".zip"))
+                {
+                    using (var archive = ZipFile.Open(cfg.WebApplicationPath, ZipArchiveMode.Read))
+                    {
+                        var entry = archive.GetEntry(requestedFile);
+                        
+                        if (entry == null)
+                        {
+                            return null;
+                        }
 
-            nancyConventions.StaticContentsConventions.Add(css);
-            nancyConventions.StaticContentsConventions.Add(fonts);
-            nancyConventions.StaticContentsConventions.Add(img);
-            nancyConventions.StaticContentsConventions.Add(js);
-            nancyConventions.StaticContentsConventions.Add(views);
-        }
+                        var ms = new MemoryStream();
+                        entry.Open().CopyTo(ms);
+                        ms.Seek(0, SeekOrigin.Begin);
 
-        protected override NancyInternalConfiguration InternalConfiguration
-        {
-            get { return NancyInternalConfiguration.WithOverrides(OnConfigurationBuilder); }
-        }
+                        return new StreamResponse(() => ms, MimeTypes.GetMimeType(requestedFile));
+                    }
+                }
+                
+                var filePath = Path.Combine(cfg.WebApplicationPath, requestedFile);
+                var file = fileSystem.GetFile(filePath);
 
-        private void OnConfigurationBuilder(NancyInternalConfiguration obj)
-        {
-            obj.ViewLocationProvider = typeof (ResourceViewLocationProvider);
+                if (!file.Exists)
+                {
+                    return null;
+                }
+
+                return new StreamResponse(file.OpenRead, MimeTypes.GetMimeType(filePath));
+            });
         }
     }
 }

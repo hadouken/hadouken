@@ -4,6 +4,8 @@
     {
         string ApplicationDataPath { get; set; }
 
+        string WebApplicationPath { get; set; }
+
         string InstanceName { get; set; }
 
         string HostBinding { get; set; }
