@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 using Autofac;
 using Hadouken.Configuration;
@@ -47,7 +48,8 @@ namespace Hadouken.Http.Management
 
                 if (cfg.WebApplicationPath.EndsWith(".zip"))
                 {
-                    using (var archive = ZipFile.Open(cfg.WebApplicationPath, ZipArchiveMode.Read))
+                    var expandedPath = Environment.ExpandEnvironmentVariables(cfg.WebApplicationPath);
+                    using (var archive = ZipFile.Open(expandedPath, ZipArchiveMode.Read))
                     {
                         var entry = archive.GetEntry(requestedFile);
                         

@@ -15,5 +15,11 @@
         <File Name="Hadouken.PluginHostProcess.exe" />
       </Component>
     </ComponentGroup>
+
+    <ComponentGroup Id="WebComponents" Directory="WEBDIR" Source="$(var.BinDir)\Web\">
+      <Component>
+        <File Name="web.zip" />
+      </Component>
+    </ComponentGroup>
   </Fragment>
 </Wix>

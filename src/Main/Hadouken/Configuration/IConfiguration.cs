@@ -2,8 +2,6 @@
 {
     public interface IConfiguration
     {
-        string ApplicationDataPath { get; set; }
-
         string WebApplicationPath { get; set; }
 
         string InstanceName { get; set; }
@@ -21,6 +19,10 @@
         string PluginUrlTemplate { get; set; }
 
         string PluginRepositoryUrl { get; set; }
+
+        string[] CorePluginPackages { get; }
+
+        bool HasDownloadedCorePluginPackages { get; set; }
 
         void Save();
     }

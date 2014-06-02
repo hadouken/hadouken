@@ -2,7 +2,6 @@
 . .\build.github.ps1
 
 $Root = $PSScriptRoot
-$Version = "0.0.0"
 
 Properties {
     $Configuration      = "Release"
@@ -12,8 +11,8 @@ Properties {
     # Artifacts
     $Artifact_Sdk       = "Hadouken.SDK.$Version.nupkg"
     $Artifact_Choco     = "hadouken.$Version.nupkg"
-    $Artifact_Zip       = "hdkn-$Version.zip"
-    $Artifact_Msi       = "hdkn-$Version.msi"
+    $Artifact_Zip       = "hadouken-$Version.zip"
+    $Artifact_Msi       = "hadouken-$Version.msi"
 
     # Directories
     $Dir_Artifacts      = Join-Path $Root "build"
@@ -81,10 +80,17 @@ Task Output -depends Compile {
 
     # Copy the correct config file
     Copy-Item -Path .\src\Configuration\Console\Hadouken.Service.exe.config -Destination $Dir_Binaries
+
+    # Zip the web UI
+    Write-Host "Compressing and packaging the web ui"
+    $webuiZip = Join-Path $Dir_Binaries "Web/web.zip"
+    Exec {
+        & $Tools_7za a -mx=9 $webuiZip .\src\Web\*
+    }
 }
 
 Task Zip -depends Output {
-    $files = "$Dir_Binaries/*.*"
+    $files = "$Dir_Binaries/*"
     $output = Join-Path $Dir_Artifacts $Artifact_Zip
 
     Exec {

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Hadouken.Configuration;
-using Hadouken.Fx.IO;
-using Hadouken.Http;
-using Hadouken.Plugins;
-using Serilog;
+using NuGet;
+using ILogger = Serilog.ILogger;
 
 namespace Hadouken.Startup
 {
@@ -14,18 +12,18 @@ namespace Hadouken.Startup
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly IFileSystem _fileSystem;
-        private readonly IApiConnection _apiConnection;
+        private readonly IPackageRepository _packageRepository;
+        private readonly IPackageManager _packageManager;
 
         public PluginBootstrapperTask(ILogger logger,
             IConfiguration configuration,
-            IFileSystem fileSystem,
-            IApiConnection apiConnection)
+            IPackageRepository packageRepository,
+            IPackageManager packageManager)
         {
             _logger = logger;
             _configuration = configuration;
-            _fileSystem = fileSystem;
-            _apiConnection = apiConnection;
+            _packageRepository = packageRepository;
+            _packageManager = packageManager;
         }
 
         public void Execute(string[] args)
@@ -36,53 +34,32 @@ namespace Hadouken.Startup
                 return;
             }
 
-            var configuredFilePath = Path.Combine(_configuration.ApplicationDataPath, "CONFIGURED");
-            var configuredFile = _fileSystem.GetFile(configuredFilePath);
-
-            if (configuredFile.Exists)
+            if (_configuration.HasDownloadedCorePluginPackages
+                || _configuration.CorePluginPackages == null
+                || !_configuration.CorePluginPackages.Any())
             {
+                _logger.Information("Core packages already installed, or no packages specified.");
                 return;
             }
 
+            var packages = _configuration.CorePluginPackages.ToList();
+            _logger.Information("Installing core packages {Packages}.", packages);
 
-            var corePluginsUri = new Uri(new Uri(_configuration.PluginRepositoryUrl), "get-core");
-
-            _logger.Information("Bootstrapping core plugins from {Uri}.", corePluginsUri);
-
-            var corePlugins = _apiConnection.GetAsync<List<Uri>>(corePluginsUri).Result;
-
-            if (corePlugins == null || !corePlugins.Any())
+            foreach (var packageId in packages)
             {
-                _logger.Error("Could not find any core plugins. Hadouken may not work correctly.");
-                return;
-            }
+                // Find latest version of packageId
+                var package = _packageRepository.FindPackage(packageId);
 
-            foreach (var pluginUri in corePlugins)
-            {
-                var data = _apiConnection.DownloadData(pluginUri);
-
-                // Parse it as a package
-                using (var ms = new MemoryStream(data))
+                if (package == null)
                 {
-                    var package = (object)null; //_packageReader.Read(ms);
-
-                    if (package == null)
-                    {
-                        _logger.Error("Could not parse core package from {Uri}", pluginUri);
-                        continue;
-                    }
-
-                    //_packageInstaller.Install(package);
-                    //_logger.Information("Core package {0} downloaded successfully.", package.Manifest.Name);
+                    continue;
                 }
+
+                _packageManager.InstallPackage(package, false, false);
             }
 
-            // Create the file.
-            using (var stream = configuredFile.OpenWrite())
-            using (var streamWriter = new StreamWriter(stream))
-            {
-                streamWriter.Write(DateTime.UtcNow.ToString());
-            }
+            _configuration.HasDownloadedCorePluginPackages = true;
+            _configuration.Save();
         }
     }
 }

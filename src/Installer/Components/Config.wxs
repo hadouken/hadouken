@@ -9,7 +9,7 @@
         <util:XmlFile Id="ModifyWebUIPort"
                       File="[#HdknWinSrvCfg]"              
                       Action="setValue"
-                      ElementPath="//configuration/hdkn/http/@port"
+                      ElementPath="/configuration/appSettings/add[\[]@key='Port'[\]]/@value"
                       Value="[HDKN_WEBUI_PORT]" />
       </Component>
 

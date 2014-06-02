@@ -18,12 +18,6 @@ namespace Hadouken.Configuration
             _configuration = ConfigurationManager.OpenMappedExeConfiguration(configFile, ConfigurationUserLevel.None);
         }
 
-        public string ApplicationDataPath
-        {
-            get { return Get("ApplicationDataPath"); }
-            set { Set("ApplicationDataPath", value); }
-        }
-
         public string WebApplicationPath
         {
             get { return Get("WebApplicationPath"); }
@@ -76,6 +70,21 @@ namespace Hadouken.Configuration
         {
             get { return Get("PluginRepositoryUrl"); }
             set { Set("PluginRepositoryUrl", value); }
+        }
+
+        public string[] CorePluginPackages
+        {
+            get
+            {
+                var tmp = Get("CorePluginPackages");
+                return tmp != null ? tmp.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries) : null;
+            }
+        }
+
+        public bool HasDownloadedCorePluginPackages
+        {
+            get { return Convert.ToBoolean(Get("HasDownloadedCorePluginPackages")); }
+            set { Set("HasDownloadedCorePluginPackages", value.ToString()); }
         }
 
         public void Save()

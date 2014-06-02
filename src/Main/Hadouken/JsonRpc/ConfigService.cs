@@ -22,7 +22,6 @@ namespace Hadouken.JsonRpc
         [JsonRpcMethod("core.config.set")]
         public void SetConfig(ConfigurationItem config)
         {
-            _configuration.ApplicationDataPath = config.ApplicationDataPath;
             _configuration.HostBinding = config.HostBinding;
             _configuration.InstanceName = config.InstanceName;
             _configuration.PluginDirectory = config.PluginDirectory;

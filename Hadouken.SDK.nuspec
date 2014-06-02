@@ -16,21 +16,7 @@
   </metadata>
   <files>
     <!-- Portable Hadouken -->
-    <file src="build/bin/Autofac.dll" target="tools/hdkn" />
-    <file src="build/bin/Autofac.Integration.Wcf.dll" target="tools/hdkn" />
-    <file src="build/bin/Hadouken.dll" target="tools/hdkn" />
-    <file src="build/bin/Hadouken.Fx.dll" target="tools/hdkn" />
-    <file src="build/bin/Hadouken.PluginHostProcess.exe" target="tools/hdkn" />
-    <file src="build/bin/Hadouken.Service.exe" target="tools/hdkn" />
-    <file src="build/bin/Hadouken.Service.exe.config" target="tools/hdkn" />
-    <file src="build/bin/Microsoft.Web.XmlTransform.dll" target="tools/hdkn" />
-    <file src="build/bin/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
-    <file src="build/bin/Nancy.dll" target="tools/hdkn" />
-    <file src="build/bin/Nancy.Hosting.Self.dll" target="tools/hdkn" />
-    <file src="build/bin/Newtonsoft.Json.dll" target="tools/hdkn" />
-    <file src="build/bin/NuGet.Core.dll" target="tools/hdkn" />
-    <file src="build/bin/Serilog.dll" target="tools/hdkn" />
-    <file src="build/bin/Serilog.FullNetFx.dll" target="tools/hdkn" />
+    <file src="build\bin\**" target="tools/hdkn" />
 
     <!-- Dummy file to get around NuGet insanity -->
     <file src="src/Package/DUMMY.txt" target="lib/net45" />

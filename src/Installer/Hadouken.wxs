@@ -39,12 +39,15 @@
       <Directory Id="CommonAppDataFolder" Name="ProgramDataFolder">
         <Directory Id="HdknData" Name="Hadouken">
           <Directory Id="PLUGINDIR" Name="Plugins" />
+          <Directory Id="DATADIR" Name="Data" />
+          <Directory Id="WEBDIR" Name="Web" />
         </Directory>
       </Directory>
     </Directory>
 
     <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="Fully equipped." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
       <ComponentGroupRef Id="CoreComponents" />
+      <ComponentGroupRef Id="WebComponents" />
       <ComponentGroupRef Id="LibComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="ConfigComponents" />
@@ -77,8 +80,8 @@
 
     <!-- Search for HTTP port in config file -->
     <CustomAction Id="Xml_SetFileName" Property="XML_FILENAME" Value="[INSTALLDIR]\Hadouken.Service.exe.config" Execute="immediate" />
-    <CustomAction Id="Xml_SelectNodeValue_XPath" Property="XML_XPATH" Value="/configuration/hdkn/http" Execute="immediate" />
-    <CustomAction Id="Xml_SelectAttribute_Value" Property="XML_ATTRIBUTENAME" Value="port" Execute="immediate" />
+    <CustomAction Id="Xml_SelectNodeValue_XPath" Property="XML_XPATH" Value="/configuration/appSettings/add[\[]@key='Port'[\]]" Execute="immediate" />
+    <CustomAction Id="Xml_SelectAttribute_Value" Property="XML_ATTRIBUTENAME" Value="value" Execute="immediate" />
     <CustomAction Id="Xml_SelectNodeAttribute" BinaryKey="XmlTools" DllEntry="Xml_SelectNodeAttributeValue" Execute="immediate" Return="check" />
     <CustomAction Id="Xml_GetAttributeValue" Property="HDKN_WEBUI_PORT" Value="[XML_ATTRIBUTEVALUE]" Execute="immediate" />
 
