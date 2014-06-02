@@ -11,7 +11,7 @@
     <description>The Hadouken SDK is used when developing plugins for the Hadouken BitTorrent client.</description>
 
     <dependencies>
-      <dependency id="Hadouken.Fx" version="1.0" />
+      <dependency id="Hadouken.Fx" version="1.3.5" />
     </dependencies>
   </metadata>
   <files>
@@ -23,15 +23,14 @@
     <file src="build/bin/Hadouken.PluginHostProcess.exe" target="tools/hdkn" />
     <file src="build/bin/Hadouken.Service.exe" target="tools/hdkn" />
     <file src="build/bin/Hadouken.Service.exe.config" target="tools/hdkn" />
-    <file src="build/bin/Nancy.Authentication.Forms.dll" target="tools/hdkn" />
+    <file src="build/bin/Microsoft.Web.XmlTransform.dll" target="tools/hdkn" />
     <file src="build/bin/Nancy.Bootstrappers.Autofac.dll" target="tools/hdkn" />
     <file src="build/bin/Nancy.dll" target="tools/hdkn" />
     <file src="build/bin/Nancy.Hosting.Self.dll" target="tools/hdkn" />
-    <file src="build/bin/Nancy.ViewEngines.Razor.dll" target="tools/hdkn" />
     <file src="build/bin/Newtonsoft.Json.dll" target="tools/hdkn" />
+    <file src="build/bin/NuGet.Core.dll" target="tools/hdkn" />
     <file src="build/bin/Serilog.dll" target="tools/hdkn" />
     <file src="build/bin/Serilog.FullNetFx.dll" target="tools/hdkn" />
-    <file src="build/bin/System.Web.Razor.Unofficial.dll" target="tools/hdkn" />
 
     <!-- Dummy file to get around NuGet insanity -->
     <file src="src/Package/DUMMY.txt" target="lib/net45" />
