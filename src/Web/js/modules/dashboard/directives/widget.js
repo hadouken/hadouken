@@ -9,6 +9,7 @@ angular.module('hadouken.dashboard.directives.widget', [
 
     return {
         link: function(scope, element, attr, controller, transclude) {
+            scope.display = 'normal';
             scope.saveConfig = function() {
                 $window.localStorage.setItem('widget_' + scope.id, angular.toJson(scope.config));
                 scope.display = 'normal';
@@ -17,7 +18,7 @@ angular.module('hadouken.dashboard.directives.widget', [
             scope.config = angular.fromJson($window.localStorage.getItem('widget_' + scope.id));
 
             transclude(scope, function(clone, scope) {
-                scope.size = scope.defaultSize || 'small';
+                scope.size = scope.size || 'small';
                 scope.sizeClass = 'col-sm-' + classes[scope.size];
                 
                 element.find('.widget-body').append(clone);
@@ -29,7 +30,7 @@ angular.module('hadouken.dashboard.directives.widget', [
         scope: {
             id: '@',
             hasConfiguration: '&',
-            defaultSize: '@',
+            size: '@',
             title: '@'
         },
         controller: '@',
