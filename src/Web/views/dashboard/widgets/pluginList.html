@@ -1,9 +1,15 @@
-<widget title="Plugins"
+<widget id="a896e1cb-eb5d-4aa3-99cf-b406c1debb47"
+        title="Plugins"
         controller="Widgets.PluginListController"
+        hasConfiguration="true"
         defaultSize="small">
-    <ul>
+    <ul ng-show="display == 'normal'">
         <li ng-repeat="plugin in plugins">
-            {{ plugin.Name }}
+            {{ plugin.Name }} (v{{plugin.Version}})
         </li>
     </ul>
+
+    <div ng-show="display == 'config'">
+        <input type="text" class="form-control" ng-model="config.message" />
+    </div>
 </widget>
