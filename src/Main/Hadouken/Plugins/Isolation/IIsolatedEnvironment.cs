@@ -7,6 +7,8 @@ namespace Hadouken.Plugins.Isolation
     {
         event EventHandler UnhandledError;
 
+        int Id { get; }
+
         string Output { get; }
 
         string ErrorOutput { get; }

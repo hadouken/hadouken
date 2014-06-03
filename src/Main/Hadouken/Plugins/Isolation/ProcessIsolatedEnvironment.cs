@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Hadouken.Fx.IO;
@@ -32,6 +33,11 @@ namespace Hadouken.Plugins.Isolation
         }
 
         public event EventHandler UnhandledError;
+
+        public int Id
+        {
+            get { return _hostProcess != null ? _hostProcess.Id : -1; }
+        }
 
         public string Output
         {
@@ -99,7 +105,14 @@ namespace Hadouken.Plugins.Isolation
                 return -1;
             }
 
-            return _hostProcess.PrivateMemorySize64;
+            var perfCounterCategory = new PerformanceCounterCategory("Process");
+            var instanceName = (from name in perfCounterCategory.GetInstanceNames()
+                let counter = new PerformanceCounter("Process", "ID Process", name, true)
+                where (int) counter.RawValue == Id
+                select name).FirstOrDefault();
+
+            var memoryCounter = new PerformanceCounter("Process", "Working Set - Private", instanceName);
+            return memoryCounter.RawValue;
         }
 
         private void HostProcessOnExited(object sender, EventArgs eventArgs)

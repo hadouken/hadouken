@@ -100,7 +100,9 @@ namespace Hadouken.JsonRpc
                 State = plugin.State.ToString(),
                 Version = plugin.Package.Version.ToString(),
                 plugin.IsolatedEnvironment.Output,
-                plugin.IsolatedEnvironment.ErrorOutput
+                plugin.IsolatedEnvironment.ErrorOutput,
+                PID = plugin.IsolatedEnvironment.Id,
+                MemoryUsage = plugin.IsolatedEnvironment.GetMemoryUsage()
             };
         }
 
