@@ -5,7 +5,26 @@
     <div ng-show="step === 'details'">
         <tabset>
             <tab heading="Details">
-                <p><em>Details...</em></p>
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Id</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{{ plugin.Id }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Process ID</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{{ plugin.PID }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Mem. usage</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{{ plugin.MemoryUsage | bytes }}</p>
+                        </div>
+                    </div>
+                </form>
             </tab>
             <tab heading="Output" disabled="!plugin.Output">
                 <pre>{{ plugin.Output }}</pre>

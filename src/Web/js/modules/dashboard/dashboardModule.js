@@ -1,6 +1,9 @@
 ﻿angular.module('hadouken.dashboard', [
     'ui.router',
-    'hadouken.dashboard.controllers.index'
+    'hadouken.dashboard.controllers.index',
+    'hadouken.dashboard.directives.widget',
+    'hadouken.dashboard.directives.widgetContainer',
+    'hadouken.dashboard.widgets.pluginList'
 ])
 .config(['$stateProvider', function ($stateProvider) {
     $stateProvider

@@ -52,7 +52,10 @@ window.pluginModules = window.pluginModules || [];
 
             /* Dashboard module */
             'js/modules/dashboard/dashboardModule.js',
-            'js/modules/dashboard/controllers/indexController.js'
+            'js/modules/dashboard/controllers/indexController.js',
+            'js/modules/dashboard/directives/widget.js',
+            'js/modules/dashboard/directives/widgetContainer.js',
+            'js/modules/dashboard/widgets/pluginList.js'
         ];
 
         // Load all core scripts.

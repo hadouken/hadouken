@@ -17,6 +17,16 @@ body.Auth-LoginController {
   margin-bottom: 15px;
 }
 
+/* WIDGET */
+.widget .panel-heading {
+  cursor: pointer;
+}
+
+.widget-outline {
+  border: 1px dashed #000;
+  position: absolute;
+}
+
 /* Sign in */
 .form-signin {
   max-width: 330px;
