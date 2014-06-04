@@ -8,10 +8,19 @@ angular.module('hadouken.dashboard.widgets.pluginList', [
             $scope.plugins = data.result;
         }
     });
+
+    $scope.$on('$destroy', function() {
+        console.log('scope dstroyed.');
+    });
 })
 .run(['messageService', 'jsonrpc', function(messageService, jsonrpc) {
     messageService.subscribe('hadouken.dashboard.onloaded', function() {
-        var widget = { templateUrl: 'views/dashboard/widgets/pluginList.html' };
-        messageService.publish('hadouken.dashboard.widgets.add', widget);
+        var widget = {
+            id: 'a896e1cb-eb5d-4aa3-99cf-b406c1debb47',
+            title: 'Plugin list',
+            hasConfiguration: true,
+            size: 'small',
+            templateUrl: 'views/dashboard/widgets/pluginList.html'
+        };
     });
 }]);

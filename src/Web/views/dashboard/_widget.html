@@ -9,7 +9,7 @@
                     <ul class="dropdown-menu">
                         <li ng-class="{'disabled': display === 'config'}" ng-show="hasConfiguration"><a href="#" ng-click="display = 'config'"><i class="fa fa-edit"></i> Configure</a></li>
                         <li ng-show="hasConfiguration" class="divider"></li>
-                        <li><a href="#"><i class="fa fa-trash-o"></i> Remove</a></li>
+                        <li><a href="#" ng-click="remove()"><i class="fa fa-trash-o"></i> Remove</a></li>
                     </ul>
                 </span>
             </div>

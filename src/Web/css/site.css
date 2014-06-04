@@ -17,6 +17,10 @@ body.Auth-LoginController {
   margin-bottom: 15px;
 }
 
+.hidden {
+  display: none;
+}
+
 /* WIDGET */
 .widget .panel-heading {
   cursor: pointer;
