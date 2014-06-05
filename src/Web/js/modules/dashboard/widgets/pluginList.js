@@ -22,5 +22,7 @@ angular.module('hadouken.dashboard.widgets.pluginList', [
             size: 'small',
             templateUrl: 'views/dashboard/widgets/pluginList.html'
         };
+
+        messageService.publish('hadouken.dashboard.widgets.add', widget);
     });
 }]);

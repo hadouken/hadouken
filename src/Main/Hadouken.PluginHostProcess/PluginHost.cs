@@ -35,6 +35,12 @@ namespace Hadouken.PluginHostProcess
 
         public static PluginHost Create(string pluginId, IDictionary<string, object> config)
         {
+
+            foreach (var key in config.Keys)
+            {
+                Console.WriteLine("{0}: {1}", key, config[key]);
+            }
+
             var currentDirectory = Directory.GetCurrentDirectory();
 
             var setup = new AppDomainSetup
@@ -49,7 +55,7 @@ namespace Hadouken.PluginHostProcess
 
             var permissions = new PermissionSet(PermissionState.None);
 
-            if (config.ContainsKey("Permissions"))
+            if (config.ContainsKey("Permissions") && config["Permissions"] != null)
             {
                 var securityElement = SecurityElement.FromString(config["Permissions"].ToString());
 
@@ -63,6 +69,7 @@ namespace Hadouken.PluginHostProcess
                 | SecurityPermissionFlag.ControlPolicy   // See ^
                 | SecurityPermissionFlag.Execution       // To allow the plugin to execute
                 ));
+
 
             // WCF hosting for JSONRPC
             permissions.AddPermission(new WebPermission(NetworkAccess.Connect | NetworkAccess.Accept,

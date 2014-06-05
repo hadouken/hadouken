@@ -21,9 +21,7 @@ namespace Hadouken.Plugins.Metadata
 
         public Manifest Read(JObject manifestObject)
         {
-            var name = manifestObject["id"].Value<string>();
-            var version = new SemanticVersion(manifestObject["version"].Value<string>());
-            var manifest = new Manifest(name, version);
+            var manifest = new Manifest();
 
             foreach (var item in manifestObject)
             {

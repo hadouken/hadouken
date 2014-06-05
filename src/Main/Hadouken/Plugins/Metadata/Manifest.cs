@@ -19,15 +19,11 @@ namespace Hadouken.Plugins.Metadata
 
         static Manifest()
         {
-            ManifestReaders.Add(1, () => new ManifestV1Reader());
             ManifestReaders.Add(2, () => new ManifestV2Reader());
         }
 
-        public Manifest(string name, SemanticVersion version)
+        public Manifest()
         {
-            Name = name;
-            Version = version;
-
             // Default values
             MinimumHostVersion = new SemanticVersion("0.0");
             Dependencies = Enumerable.Empty<Dependency>();
@@ -35,10 +31,6 @@ namespace Hadouken.Plugins.Metadata
             Permissions = new PermissionSet(PermissionState.None);
             UserInterface = new UserInterface();
         }
-        
-        public string Name { get; private set; }
-
-        public SemanticVersion Version { get; private set; }
 
         public SemanticVersion MinimumHostVersion { get; set; }
 
