@@ -46,6 +46,11 @@ window.pluginModules = window.pluginModules || [];
             'js/modules/settings/settingsModule.js',
             'js/modules/settings/controllers/indexController.js',
 
+            /* Tools module */
+            'js/modules/tools/toolsModule.js',
+            'js/modules/tools/controllers/jsonrpcController.js',
+            'js/modules/tools/controllers/logViewerController.js',
+
             /* UI module */
             'js/modules/ui/uiModule.js',
             'js/modules/ui/controllers/layoutController.js',

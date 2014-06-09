@@ -10,6 +10,7 @@
         'hadouken.plugins',
         'hadouken.repository',
         'hadouken.settings',
+        'hadouken.tools',
         'hadouken.ui',
         'hadouken.dashboard'
     ];
