@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.Versioning;
 using Hadouken.Configuration;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.JsonRpc.Dto;
 using Hadouken.Plugins;
 using Hadouken.Security;
+using NuGet;
 
 namespace Hadouken.JsonRpc
 {
@@ -13,16 +16,22 @@ namespace Hadouken.JsonRpc
     {
         private readonly IConfiguration _configuration;
         private readonly IPluginEngine _pluginEngine;
+        private readonly IPackageRepository _packageRepository;
         private readonly IAuthenticationManager _authenticationManager;
 
-        public PluginsService(IConfiguration configuration, IPluginEngine pluginEngine, IAuthenticationManager authenticationManager)
+        public PluginsService(IConfiguration configuration,
+            IPluginEngine pluginEngine,
+            IPackageRepository packageRepository,
+            IAuthenticationManager authenticationManager)
         {
             if (configuration == null) throw new ArgumentNullException("configuration");
             if (pluginEngine == null) throw new ArgumentNullException("pluginEngine");
+            if (packageRepository == null) throw new ArgumentNullException("packageRepository");
             if (authenticationManager == null) throw new ArgumentNullException("authenticationManager");
 
             _configuration = configuration;
             _pluginEngine = pluginEngine;
+            _packageRepository = packageRepository;
             _authenticationManager = authenticationManager;
         }
 
@@ -32,12 +41,17 @@ namespace Hadouken.JsonRpc
             var plugins = _pluginEngine.GetAll();
 
             return (from plugin in plugins
+                let packageName = new PackageName(plugin.Package.Id, plugin.Package.Version)
+                let updatedPackage = (from update in _packageRepository.GetUpdates(new[] {packageName}, false, false)
+                    orderby update.Version descending
+                    select update).FirstOrDefault()
                 select new PluginListItem
                 {
                     Id = plugin.Package.Id,
                     Name = plugin.Package.Title ?? plugin.Package.Id,
                     State = plugin.State.ToString(),
-                    Version = plugin.Package.Version.ToString()
+                    Version = plugin.Package.Version.ToString(),
+                    UpdateVersion = updatedPackage == null ? string.Empty : updatedPackage.Version.ToString()
                 });
         }
 

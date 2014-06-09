@@ -36,6 +36,7 @@ window.pluginModules = window.pluginModules || [];
             'js/modules/plugins/pluginsModule.js',
             'js/modules/plugins/controllers/detailsController.js',
             'js/modules/plugins/controllers/listController.js',
+            'js/modules/plugins/controllers/updateController.js',
 
             /* Repository module */
             'js/modules/repository/repositoryModule.js',

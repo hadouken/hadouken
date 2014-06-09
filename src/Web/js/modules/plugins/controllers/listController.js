@@ -1,6 +1,7 @@
 ﻿angular.module('hadouken.plugins.controllers.list', [
     'ui.bootstrap',
-    'hadouken.plugins.controllers.details'
+    'hadouken.plugins.controllers.details',
+    'hadouken.plugins.controllers.update'
 ])
 .controller('Plugins.ListController', [
     '$scope', '$modal', 'jsonrpc',
@@ -34,6 +35,30 @@
                     }
                 }
             });
-        }
+        };
+
+        $scope.update = function(packageId, version) {
+            var updateModal = $modal.open({
+                controller: 'Plugins.UpdateController',
+                templateUrl: 'views/plugins/update.html',
+                resolve: {
+                    packageId: function() { return packageId; },
+                    version: function() { return version; }
+                }
+            });
+
+            updateModal.result.then(function (result) {
+                if(!result) {
+                    return;
+                }
+
+                for(var i = 0; i < $scope.plugins.length; i++) {
+                    if($scope.plugins[i].Id === packageId) {
+                        $scope.plugins[i].Version = version;
+                        break;
+                    }
+                }
+            })
+        };
     }
 ]);

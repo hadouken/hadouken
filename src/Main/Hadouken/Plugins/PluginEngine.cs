@@ -185,8 +185,34 @@ namespace Hadouken.Plugins
 
         public void Update(string packageId, string version, bool updateDependencies, bool allowPrereleaseVersions)
         {
-            var semver = NuGet.SemanticVersion.Parse(version);
-            _packageManager.UpdatePackage(packageId, semver, updateDependencies, allowPrereleaseVersions);
+            // Unload
+            var plugin = Get(packageId);
+
+            if (plugin == null)
+            {
+                throw new ArgumentException("Invalid packageId.");
+            }
+
+            _logger.Information("Updating {PackageId} to {Version}", packageId, version);
+
+            try
+            {
+                Unload(packageId);
+
+                var semver = NuGet.SemanticVersion.Parse(version);
+                _packageManager.UpdatePackage(packageId, semver, updateDependencies, allowPrereleaseVersions);
+
+                // Remove the plugin from our dep graph and refresh
+                _plugins.Remove(packageId);
+
+                Refresh();
+            }
+            catch (InvalidOperationException invalidOperationException)
+            {
+                _logger.Error(invalidOperationException, "Error when updating {PackageId}", packageId);
+            }
+
+            Load(packageId);
         }
 
         private void Load(IPluginManager manager)

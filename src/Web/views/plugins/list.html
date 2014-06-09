@@ -17,7 +17,10 @@
             <td>{{plugin.Version}}</td>
             <td>{{plugin.State}}</td>
             <td>
-                <button class="btn btn-primary btn-xs pull-right" ng-click="details(plugin.Id)">Details</button>
+                <div class="pull-right">
+                    <button class="btn btn-warning btn-xs" ng-show="plugin.UpdateVersion" ng-click="update(plugin.Id, plugin.UpdateVersion)">Update</button>
+                    <button class="btn btn-primary btn-xs" ng-click="details(plugin.Id)">Details</button>
+                </div>
             </td>
         </tr>
     </tbody>
