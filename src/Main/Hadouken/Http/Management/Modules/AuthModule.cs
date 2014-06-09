@@ -1,4 +1,5 @@
-﻿using Hadouken.Configuration;
+﻿using System.Runtime.Remoting.Messaging;
+using Hadouken.Configuration;
 using Hadouken.Fx.Security;
 using Hadouken.Http.Management.Models;
 using Hadouken.Http.Security;
@@ -13,6 +14,8 @@ namespace Hadouken.Http.Management.Modules
         public AuthModule(IConfiguration configuration, IAuthenticationManager authenticationManager, ITokenizer tokenizer)
             : base("auth")
         {
+            Get["/setup"] = _ => string.IsNullOrEmpty(configuration.UserName);
+
             Post["/login"] = _ =>
             {
                 var loginParameters = this.Bind<LoginParameters>();

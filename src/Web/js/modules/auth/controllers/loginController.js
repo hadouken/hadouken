@@ -27,5 +27,10 @@
                     $scope.loggingIn = false;
                 });
         }
+
+        $http.get('/auth/setup')
+            .success(function(data) {
+                $scope.setup = data;
+            });
     }
 ]);
