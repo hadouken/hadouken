@@ -114,7 +114,7 @@ Task MSI -depends Output {
     $msi = Join-Path $Dir_Artifacts $Artifact_Msi
 
     Exec {
-        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -o $msi $wixobj
+        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -sval -o $msi $wixobj
     }
 }
 
