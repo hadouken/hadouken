@@ -15,5 +15,7 @@ namespace Hadouken.JsonRpc.Dto
         public string Summary { get; set; }
 
         public string Version { get; set; }
+
+        public bool IsInstalled { get; set; }
     }
 }

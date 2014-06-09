@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.JsonRpc.Dto;
@@ -14,11 +13,14 @@ namespace Hadouken.JsonRpc
         private static readonly int DefaultMaxPageCount = 10;
 
         private readonly IPackageRepository _packageRepository;
+        private readonly IPackageManager _packageManager;
 
-        public RepositoryService(IPackageRepository packageRepository)
+        public RepositoryService(IPackageRepository packageRepository, IPackageManager packageManager)
         {
             if (packageRepository == null) throw new ArgumentNullException("packageRepository");
+            if (packageManager == null) throw new ArgumentNullException("packageManager");
             _packageRepository = packageRepository;
+            _packageManager = packageManager;
         }
 
         [JsonRpcMethod("core.repository.search")]
@@ -42,7 +44,8 @@ namespace Hadouken.JsonRpc
                     Authors = string.Join(", ", p.Authors),
                     IconUrl = p.IconUrl,
                     Summary = p.Summary ?? p.Description,
-                    Version = p.Version.ToString()
+                    Version = p.Version.ToString(),
+                    IsInstalled = _packageManager.LocalRepository.FindPackage(p.Id, p.Version) != null
                 })
             };
         }

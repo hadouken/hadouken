@@ -30,7 +30,8 @@
             <td>{{package.Summary}}</td>
             <td>{{package.Version}}</td>
             <td>
-                <button class="btn btn-xs btn-primary pull-right" ng-click="prepareInstall(package.Id, package.Version)" ng-disabled="currentInstall === package.Id">Install</button>
+                <button class="btn btn-xs btn-primary pull-right" ng-hide="package.IsInstalled" ng-click="prepareInstall(package.Id, package.Version)" ng-disabled="currentInstall === package.Id">Install</button>
+                <div class="pull-right" ng-show="package.IsInstalled"><em>(Installed)</em></span>
             </td>
         </tr>
     </tbody>
