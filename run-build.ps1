@@ -17,5 +17,9 @@ $params = @{
     "Version" = $Version
 }
 
+$psake.use_exit_on_error = $true
+
 Import-Module .\packages\psake.4.3.2\tools\psake.psm1
 Invoke-psake build.ps1 -framework '4.0' -parameters $params $Task
+
+if ($psake.build_success -eq $false) { exit 1 } else { exit 0 }
