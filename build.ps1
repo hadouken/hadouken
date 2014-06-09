@@ -20,16 +20,11 @@ Properties {
     $Dir_Output         = Join-Path $Root "src/Main/Hadouken.Service/bin/$Configuration/*"
 
     # GitHub settings
-    $GitHub_Owner       = $null
-    $GitHub_Repository  = $null
-    $GitHub_Token       = $null
-
-    # NuGet
-    $NuGet_API_Key      = $null
+    $GitHub_Owner       = "hadouken"
+    $GitHub_Repository  = "hadouken"
 
     # Chocolatey
     $Chocolatey_Source  = "http://chocolatey.org/"
-    $Chocolatey_API_Key = $null
 
     # Tools
     $Tools_7za          = Join-Path $Root "tools/7za-9.20/7za.exe"
@@ -146,7 +141,7 @@ Task Publish-GitHub -depends MSI, Zip {
 
     Write-Host "Creating release $($data.tag_name)"
 
-    $release = New-GitHubRelease "https://api.github.com/repos/vktr/playground/releases" $data $GitHub_Token
+    $release = New-GitHubRelease "https://api.github.com/repos/$GitHub_Owner/$GitHub_Repository/releases" $data $GitHub_Token
     $releaseMSI = Join-Path $Dir_Artifacts $Artifact_Zip
     $releaseZip = Join-Path $Dir_Artifacts $Artifact_Msi
 
