@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Hadouken.Configuration;
 using NuGet;
 
@@ -20,8 +21,9 @@ namespace Hadouken.DI.Modules
             {
                 var cfg = c.Resolve<IConfiguration>();
                 var repo = c.Resolve<IPackageRepository>();
+                var expandedDirectory = Environment.ExpandEnvironmentVariables(cfg.PluginDirectory);
 
-                return new PackageManager(repo, cfg.PluginDirectory);
+                return new PackageManager(repo, expandedDirectory);
             });
         }
     }
