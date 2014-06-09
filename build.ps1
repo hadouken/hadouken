@@ -1,5 +1,6 @@
 # Import scripts
 . .\build.github.ps1
+. .\build.utils.ps1
 
 $Root = $PSScriptRoot
 
@@ -7,6 +8,7 @@ Properties {
     $Configuration      = "Release"
     $Name               = "Hadouken"
     $SolutionFile       = "Hadouken.sln"
+    $AssemblyInfo       = "src/CommonAssemblyInfo.cs"
 
     # Artifacts
     $Artifact_Sdk       = "Hadouken.SDK.$Version.nupkg"
@@ -39,7 +41,7 @@ $w = $h.UI.RawUI.WindowSize.Width
 
 FormatTaskName (("-"*$w) + "`r`n[{0}]`r`n" + ("-"*$w))
 
-Task Default -depends Clean, Compile, Test, Output, Zip, MSI, NuGet, Chocolatey
+Task Default -depends Clean, Prepare, Compile, Test, Output, Zip, MSI, NuGet, Chocolatey
 Task Publish -depends Publish-GitHub, Publish-NuGet, Publish-Chocolatey
 
 Task Clean {
@@ -53,10 +55,18 @@ Task Clean {
     New-Item $Dir_Artifacts -ItemType directory | Out-Null
     New-Item $Dir_Binaries  -ItemType directory | Out-Null
 
+    If (Test-Path $AssemblyInfo) {
+        Remove-Item $AssemblyInfo
+    }
+
     Exec { msbuild $SolutionFile /t:Clean "/p:Configuration=$Configuration" /v:quiet } 
 }
 
-Task Compile -depends Clean {
+Task Prepare -depends Clean {
+    Generate-Assembly-Info -file $AssemblyInfo -title "Hadouken" -description "A headless BitTorrent client for Windows." -version $Version
+}
+
+Task Compile -depends Prepare {
     Exec { msbuild $SolutionFile /t:Build "/p:Configuration=$Configuration" /v:quiet }
 }
 
