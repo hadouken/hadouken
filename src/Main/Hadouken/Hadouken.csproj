@@ -102,11 +102,6 @@
     <Compile Include="DI\Modules\NuGetModule.cs" />
     <Compile Include="DI\Modules\PluginModule.cs" />
     <Compile Include="DI\Modules\PluginServiceModule.cs" />
-    <Compile Include="Http\Api\Models\Plugin.cs" />
-    <Compile Include="Http\Api\Models\PluginListItem.cs" />
-    <Compile Include="Http\Api\Models\ReleaseItem.cs" />
-    <Compile Include="Http\Api\IReleasesRepository.cs" />
-    <Compile Include="Http\Api\ReleasesRepository.cs" />
     <Compile Include="Http\Management\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\Management\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Http\Management\HttpBackendServer.cs" />
@@ -174,8 +169,6 @@
     <Compile Include="Plugins\DevelopmentPluginInstaller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
-    <Compile Include="Http\ApiConnection.cs" />
-    <Compile Include="Http\IApiConnection.cs" />
     <Compile Include="Collections\DirectedGraph.cs" />
     <Compile Include="Collections\DirectedGraphEdge.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />

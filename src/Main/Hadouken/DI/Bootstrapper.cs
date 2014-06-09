@@ -1,6 +1,4 @@
 ﻿using Autofac;
-using Hadouken.Http;
-using Hadouken.Http.Api;
 using Hadouken.Security;
 using Hadouken.Service;
 using Hadouken.Startup;
@@ -19,10 +17,6 @@ namespace Hadouken.DI
 
             // Startup tasks
             builder.RegisterType<PluginBootstrapperTask>().As<IStartupTask>();
-            
-            // API connection
-            builder.RegisterType<ApiConnection>().As<IApiConnection>();
-            builder.RegisterType<ReleasesRepository>().As<IReleasesRepository>();
             
             // Security
             builder.RegisterType<AuthenticationManager>().As<IAuthenticationManager>();
