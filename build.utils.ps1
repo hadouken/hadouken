@@ -8,6 +8,9 @@ param(
 	[string]$product, 
 	[string]$copyright, 
 	[string]$version,
+    [string]$commit,
+    [string]$branchName,
+    [string]$buildDate,
 	[string]$file = $(throw "file is a required parameter.")
 )
   $asmInfo = "using System;
@@ -23,9 +26,20 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProductAttribute(""$product"")]
 [assembly: AssemblyCopyrightAttribute(""$copyright"")]
 [assembly: AssemblyVersionAttribute(""$version"")]
-[assembly: AssemblyInformationalVersionAttribute(""$version"")]
+[assembly: AssemblyInformationalVersionAttribute(""$version / $commit"")]
 [assembly: AssemblyFileVersionAttribute(""$version"")]
 [assembly: AssemblyDelaySignAttribute(false)]
+
+namespace Hadouken
+{
+    public static class AssemblyInformation
+    {
+        public static readonly string Commit = ""$commit"";
+        public static readonly string BranchName = ""$branchName"";
+        public static readonly DateTime BuildDate = DateTime.Parse(""$buildDate"");
+    }
+}
+
 "
 
 	$dir = [System.IO.Path]::GetDirectoryName($file)

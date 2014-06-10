@@ -1,5 +1,7 @@
 param (
     [string]$ChocolateyAPIKey  = $null,
+    [string]$Commit            = $null,
+    [string]$BranchName        = $null,
     [string]$GitHubToken       = $null,
     [string]$NuGetAPIKey       = $null,
     [string]$Task              = "Default",
@@ -12,14 +14,17 @@ Start-Process -NoNewWindow -Wait $nuget "restore Hadouken.sln    -PackagesDirect
 
 $params = @{
     "Chocolatey_API_Key" = $ChocolateyAPIKey
+    "Commit" = $Commit
+    "BranchName" = $BranchName
     "GitHub_Token" = $GitHubToken
     "NuGet_API_Key" = $NuGetAPIKey
     "Version" = $Version
 }
 
+Import-Module .\packages\psake.4.3.2\tools\psake.psm1
+
 $psake.use_exit_on_error = $true
 
-Import-Module .\packages\psake.4.3.2\tools\psake.psm1
 Invoke-psake build.ps1 -framework '4.0' -parameters $params $Task
 
 if ($psake.build_success -eq $false) { exit 1 } else { exit 0 }

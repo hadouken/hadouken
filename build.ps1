@@ -47,7 +47,7 @@ Task Publish -depends Publish-GitHub, Publish-NuGet, Publish-Chocolatey
 Task Clean {
     Write-Host "Cleaning and creating build artifacts folder."
 
-    if (Test-Path $Dir_Artifacts)
+    If (Test-Path $Dir_Artifacts)
     {
         Remove-Item $Dir_Artifacts -Recurse -Force | Out-Null
     }
@@ -63,7 +63,32 @@ Task Clean {
 }
 
 Task Prepare -depends Clean {
-    Generate-Assembly-Info -file $AssemblyInfo -title "Hadouken" -description "A headless BitTorrent client for Windows." -version $Version
+    If (Get-Command git) {
+        # Get branch name
+        If (!$BranchName) {
+            $BranchName = (git symbolic-ref HEAD)
+        }
+
+        # Get commit
+        if (!$Commit) {
+            $Commit = (git rev-parse HEAD)
+
+            (git diff-files --quiet)
+            if($LASTEXITCODE -ne 0) {
+                $Commit = $Commit + "*"
+            }
+        }
+    }
+
+    Generate-Assembly-Info -file $AssemblyInfo `
+                           -branchName $BranchName `
+                           -buildDate ([System.DateTime]::UtcNow).ToString("yyyy-MM-ddTHH\:mm\:ss.fffffffzzz") `
+                           -commit $Commit `
+                           -company "Viktor Elofsson - viktorelofsson.se" `
+                           -product "Hadouken" `
+                           -title "Hadouken" `
+                           -description "A headless BitTorrent client for Windows." `
+                           -version $Version
 }
 
 Task Compile -depends Prepare {
