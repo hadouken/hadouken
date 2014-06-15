@@ -1,4 +1,13 @@
-﻿function Generate-Assembly-Info
+﻿function Test-Command
+{
+param(
+    $Command
+)
+     try {if(Get-Command $command){RETURN $true}}
+     catch {RETURN $false}
+}
+
+function Generate-Assembly-Info
 {
 param(
 	[string]$clsCompliant = "true",

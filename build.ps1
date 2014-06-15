@@ -63,7 +63,7 @@ Task Clean {
 }
 
 Task Prepare -depends Clean {
-    If (Get-Command git) {
+    If (Test-Command git) {
         # Get branch name
         If (!$BranchName) {
             $BranchName = (git symbolic-ref HEAD)
