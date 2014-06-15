@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Hadouken.Fx.JsonRpc;
 using Hadouken.JsonRpc.Dto;
 using Hadouken.Plugins;
@@ -14,13 +16,15 @@ namespace Hadouken.JsonRpc
 
         private readonly IPackageRepository _packageRepository;
         private readonly IPackageManager _packageManager;
+        private readonly IJsonSerializer _jsonSerializer;
 
-        public RepositoryService(IPackageRepository packageRepository, IPackageManager packageManager)
+        public RepositoryService(IPackageRepository packageRepository, IPackageManager packageManager, IJsonSerializer jsonSerializer)
         {
             if (packageRepository == null) throw new ArgumentNullException("packageRepository");
             if (packageManager == null) throw new ArgumentNullException("packageManager");
             _packageRepository = packageRepository;
             _packageManager = packageManager;
+            _jsonSerializer = jsonSerializer;
         }
 
         [JsonRpcMethod("core.repository.search")]

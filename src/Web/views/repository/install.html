@@ -22,17 +22,18 @@
         <div class="col-sm-6">
             <h4><i class="fa fa-shield"></i> Permissions</h4>
             
-            <ul ng-show="isObject(package.Manifest.Permissions)">
-                <li ng-repeat="(key, permission) in package.Manifest.Permissions">
-                    {{key}}
+            <ul ng-show="isPermissionSet(package.Permissions)">
+                <li ng-repeat="permission in permissionsList">
+                    <span ng-show="permission.name !== 'Full'">{{ permission.name }}</span>
+                    <span class="label label-warning" ng-show="permission.unrestricted">Unrestricted</span>
                 </li>
             </ul>
             
-            <ul ng-show="package.Manifest.Permissions === '<unrestricted>'">
+            <ul ng-show="package.Permissions === '<unrestricted>'">
                 <li><span class="label label-warning">Unrestricted</span></li>
             </ul>
             
-            <ul ng-show="!package.Manifest.Permissions">
+            <ul ng-show="!package.Permissions">
                 <li><span class="label label-success">None</span></li>
             </ul>
         </div>
