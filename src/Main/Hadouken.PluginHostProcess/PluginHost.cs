@@ -20,7 +20,6 @@ namespace Hadouken.PluginHostProcess
         private const string FxBootstrapperAttribute = "Hadouken.Fx.Bootstrapping.BootstrapperAttribute";
         private const string FxTinyIoCBootstrapper = "Hadouken.Fx.Bootstrapping.TinyIoC.TinyIoCBootstrapper";
 
-        private readonly string _pluginId;
         private readonly IDictionary<string, object> _configuration;
         private readonly EventWaitHandle _handle;
 
@@ -28,19 +27,12 @@ namespace Hadouken.PluginHostProcess
 
         public PluginHost(string pluginId, IDictionary<string, object> configuration)
         {
-            _pluginId = pluginId;
             _configuration = configuration;
             _handle = EventWaitHandle.OpenExisting(pluginId);
         }
 
         public static PluginHost Create(string pluginId, IDictionary<string, object> config)
         {
-
-            foreach (var key in config.Keys)
-            {
-                Console.WriteLine("{0}: {1}", key, config[key]);
-            }
-
             var currentDirectory = Directory.GetCurrentDirectory();
 
             var setup = new AppDomainSetup
