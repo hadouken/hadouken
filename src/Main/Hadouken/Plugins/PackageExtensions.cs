@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Security.Permissions;
+﻿using System.Linq;
 using Hadouken.Plugins.Metadata;
 using NuGet;
-using EventHandler = Hadouken.Plugins.Metadata.EventHandler;
 using Manifest = Hadouken.Plugins.Metadata.Manifest;
 
 namespace Hadouken.Plugins

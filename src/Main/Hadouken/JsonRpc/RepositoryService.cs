@@ -24,14 +24,16 @@ namespace Hadouken.JsonRpc
         }
 
         [JsonRpcMethod("core.repository.search")]
-        public RepositorySearchResult Search(int page, string query, bool allowPrerelease)
+        public RepositorySearchResult Search(int page, string searchTerm, bool allowPrerelease)
         {
-            var count = _packageRepository.Search(query, allowPrerelease).Count();
+            var count = _packageRepository.Search(searchTerm, allowPrerelease).Count();
             var pages = (count + DefaultPageSize - 1)/DefaultPageSize;
 
-            var packages = _packageRepository.Search(query, allowPrerelease)
-                .Skip((page - 1)*DefaultPageSize)
-                .Take(DefaultPageSize)
+            var query = _packageRepository.Search(searchTerm, allowPrerelease)
+                .Where(p => p.IsAbsoluteLatestVersion)
+                .AsCollapsed();
+
+           var packages = query.OrderByDescending(p => p.DownloadCount)
                 .ToList();
 
             return new RepositorySearchResult
@@ -45,7 +47,7 @@ namespace Hadouken.JsonRpc
                     IconUrl = p.IconUrl,
                     Summary = p.Summary ?? p.Description,
                     Version = p.Version.ToString(),
-                    IsInstalled = _packageManager.LocalRepository.FindPackage(p.Id, p.Version) != null
+                    IsInstalled = _packageManager.LocalRepository.Exists(p.Id, p.Version)
                 })
             };
         }
@@ -64,8 +66,8 @@ namespace Hadouken.JsonRpc
             return new
             {
                 package.Id,
-                Dependencies = package.DependencySets.SelectMany(dep => dep.Dependencies).Select(dep => new {dep.Id, Version = VersionUtility.PrettyPrint(dep.VersionSpec)}),
-                Manifest = package.GetManifest(),
+                Dependencies = package.DependencySets.SelectMany(dep => dep.Dependencies).Select(dep => new {dep.Id, Version = VersionUtility.PrettyPrint(dep.VersionSpec)}).ToArray(),
+                Permissions = package.GetManifest().Permissions.ToString(),
                 package.Description,
                 Title = package.Title ?? package.Id,
                 Version = package.Version.ToString(),
