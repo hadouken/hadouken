@@ -25,4 +25,4 @@ PS> .\run-build.ps1 -Version 1.0
 ```
 
 ## More information
-For more information, [see the wiki](./wiki).
+For more information, [see the wiki](https://github.com/hadouken/hadouken/wiki).
