@@ -1,10 +1,28 @@
-Hadouken BitTorrent client
-==========================
-
+# Hadouken BitTorrent client
 Hadouken is a BitTorrent client written in C# and designed to run as a Windows Service. It has plugin support and is managed completely through a web UI.
 
-All development is done in the `develop` branch using the Git Flow extension (with default settings).
+## Building from source
+Hadouken uses PSake for building. To create a complete build, run,
+```posh
+PS> .\run-build.ps1
+```
 
-Building from source
---------------------
-To compile, test and package Hadouken in its various flavors, just run `build.bat` which executes the build script. This will output everything (zip/msi package) in the `build` folder.
+### Build parameters
+The `run-build.ps1` can take a few different parameters to control the build.
+
+ - `ChocolateyAPIKey`, used when publishing the Chocolatey package.
+ - `Commit`, the commit revision number to embed in the CommonAssemblyInfo file. If Git is in your path, it will get it automatically.
+ - `BranchName`, the current branch name to embed in the CommonAssemblyInfo file. If Git is in your path, it will get it automatically.
+ - `GitHubToken`, a GitHub access token to use when publishing a new release to GitHub.
+ - `NuGetAPIKey`, used when publishing the SDK to NuGet.
+ - `Task`, the build task to run. The default is "Default", which does not require any parameters.
+ - `Version`, the version number to build.
+
+#### Example
+
+```posh
+PS> .\run-build.ps1 -Version 1.0
+```
+
+## More information
+For more information, [see the wiki](./wiki).
