@@ -1,7 +1,7 @@
 ﻿body {
   padding-top: 70px;
   padding-bottom: 30px;
-  background:url("http://subtlepatterns.com/patterns/congruent_outline.png");
+  background:url("../img/cream_pixels.png");
 }
 
 .nav, .pagination, .carousel, .panel-title a {
