@@ -89,6 +89,11 @@ namespace Hadouken.PluginHostProcess
                 null).Unwrap();
         }
 
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
         public void Load(string path)
         {
             new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, path).Assert();
