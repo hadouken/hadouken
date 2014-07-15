@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Hosting;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
@@ -70,7 +71,9 @@ namespace Hadouken.PluginHostProcess
             // Isolated storage
             permissions.AddPermission(new IsolatedStorageFilePermission(PermissionState.Unrestricted));
 
-            var ev = new Evidence(new EvidenceBase[] {new Url(config["Url"].ToString())}, null);
+            var ev = new Evidence(
+                new EvidenceBase[] {new Url("hadouken://host")},
+                new EvidenceBase[] {new Url(config["Url"].ToString())});
 
             var fxAsm = Assembly.LoadFile(Path.Combine(currentDirectory, FxAssembly));
             var domain = AppDomain.CreateDomain(pluginId, ev, setup, permissions,
