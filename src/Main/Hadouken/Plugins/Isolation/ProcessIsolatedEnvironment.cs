@@ -8,13 +8,16 @@ using System.Text;
 using System.Threading;
 using Hadouken.Fx.IO;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Hadouken.Plugins.Isolation
 {
     public class ProcessIsolatedEnvironment : IIsolatedEnvironment
     {
-        private static readonly int DefaultTimeout = 5000;
+        private static readonly int DefaultLoadTimeout = 5000;
+        private static readonly int DefaultUnloadTimeout = 10000;
 
+        private readonly ILogger _logger;
         private readonly IDirectory _baseDirectory;
         private readonly string _environmentId;
         private readonly EventWaitHandle _handle;
@@ -24,8 +27,9 @@ namespace Hadouken.Plugins.Isolation
         private bool _firstLoad = true;
         private bool _isRunning;
 
-        public ProcessIsolatedEnvironment(IDirectory baseDirectory)
+        public ProcessIsolatedEnvironment(ILogger logger, IDirectory baseDirectory)
         {
+            _logger = logger;
             _baseDirectory = baseDirectory;
             _environmentId = Guid.NewGuid().ToString();
             _handle = new EventWaitHandle(false, EventResetMode.AutoReset, _environmentId);
@@ -70,7 +74,7 @@ namespace Hadouken.Plugins.Isolation
                 }
 
                 // Wait until we're up and running
-                if (!_handle.WaitOne(DefaultTimeout))
+                if (!_handle.WaitOne(DefaultLoadTimeout))
                 {
                     if (!_hostProcess.HasExited)
                     {
@@ -90,10 +94,11 @@ namespace Hadouken.Plugins.Isolation
 
             _handle.Set();
 
-            if (_handle.WaitOne(DefaultTimeout)) return;
+            if (_handle.WaitOne(DefaultUnloadTimeout)) return;
 
             if(!_hostProcess.HasExited)
             {
+                _logger.Warning("Plugin process did not exit in time. Killing it.");
                 _hostProcess.Kill();
             }
         }
