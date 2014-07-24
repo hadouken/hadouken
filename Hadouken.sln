@@ -5,6 +5,10 @@ VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common", "src\Hadouken.Common\Hadouken.Common.csproj", "{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushover", "src\Hadouken.Extensions.Pushover\Hadouken.Extensions.Pushover.csproj", "{9C79C44E-8132-471E-9105-757A978421C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +19,15 @@ Global
 		{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C79C44E-8132-471E-9105-757A978421C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C79C44E-8132-471E-9105-757A978421C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C79C44E-8132-471E-9105-757A978421C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C79C44E-8132-471E-9105-757A978421C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9C79C44E-8132-471E-9105-757A978421C6} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 	EndGlobalSection
 EndGlobal
