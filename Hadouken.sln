@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Core", "src\Hadouk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Hadouken\Hadouken.csproj", "{49F6EB45-CC41-4F02-A6C2-998F2608101E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Tests", "src\Hadouken.Common.Tests\Hadouken.Common.Tests.csproj", "{D2F70075-17D3-47B4-BBE8-C630CA0357FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,11 +39,16 @@ Global
 		{49F6EB45-CC41-4F02-A6C2-998F2608101E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49F6EB45-CC41-4F02-A6C2-998F2608101E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49F6EB45-CC41-4F02-A6C2-998F2608101E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2F70075-17D3-47B4-BBE8-C630CA0357FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F70075-17D3-47B4-BBE8-C630CA0357FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2F70075-17D3-47B4-BBE8-C630CA0357FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2F70075-17D3-47B4-BBE8-C630CA0357FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9C79C44E-8132-471E-9105-757A978421C6} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
+		{D2F70075-17D3-47B4-BBE8-C630CA0357FE} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 	EndGlobalSection
 EndGlobal
