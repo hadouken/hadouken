@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hadouken.Common</RootNamespace>
+    <AssemblyName>Hadouken.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IHadoukenEnvironment.cs" />
+    <Compile Include="IO\Directory.cs" />
+    <Compile Include="IO\DirectoryPath.cs" />
+    <Compile Include="IO\DirectoryPathCollection.cs" />
+    <Compile Include="IO\File.cs" />
+    <Compile Include="IO\FileExtensions.cs" />
+    <Compile Include="IO\FilePath.cs" />
+    <Compile Include="IO\FilePathCollection.cs" />
+    <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="IO\FileSystemExtensions.cs" />
+    <Compile Include="IO\Globber.cs" />
+    <Compile Include="IO\GlobberExtensions.cs" />
+    <Compile Include="IO\Globbing\Node.cs" />
+    <Compile Include="IO\Globbing\Nodes\IdentifierNode.cs" />
+    <Compile Include="IO\Globbing\Nodes\RootNode.cs" />
+    <Compile Include="IO\Globbing\Nodes\Roots\RelativeRoot.cs" />
+    <Compile Include="IO\Globbing\Nodes\Roots\UnixRoot.cs" />
+    <Compile Include="IO\Globbing\Nodes\Roots\WindowsRoot.cs" />
+    <Compile Include="IO\Globbing\Nodes\SegmentNode.cs" />
+    <Compile Include="IO\Globbing\Nodes\WildcardNode.cs" />
+    <Compile Include="IO\Globbing\Nodes\WildcardSegmentNode.cs" />
+    <Compile Include="IO\Globbing\Parser.cs" />
+    <Compile Include="IO\Globbing\Scanner.cs" />
+    <Compile Include="IO\Globbing\Token.cs" />
+    <Compile Include="IO\Globbing\TokenKind.cs" />
+    <Compile Include="IO\IDirectory.cs" />
+    <Compile Include="IO\IFile.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="IO\IGlobber.cs" />
+    <Compile Include="IO\Machine.cs" />
+    <Compile Include="IO\Path.cs" />
+    <Compile Include="IO\PathComparer.cs" />
+    <Compile Include="IO\PathException.cs" />
+    <Compile Include="IO\SearchScope.cs" />
+    <Compile Include="IO\SpecialPath.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
