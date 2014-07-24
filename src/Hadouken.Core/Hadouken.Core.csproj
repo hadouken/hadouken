@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Ragnar">
+      <HintPath>..\..\packages\Ragnar.0.4.0\lib\net45\Ragnar.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,8 +46,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitTorrent\ISessionHandler.cs" />
+    <Compile Include="BitTorrent\SessionHandler.cs" />
+    <Compile Include="DI\CoreModule.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

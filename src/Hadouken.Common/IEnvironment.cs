@@ -17,6 +17,12 @@ namespace Hadouken.Common
         bool IsUnix();
 
         /// <summary>
+        /// Gets whether or not the current session (process) is user interactive (eg. has a console attached).
+        /// </summary>
+        /// <returns><c>true</c> if the session is user interactive, otherwise <c>false</c>.</returns>
+        bool IsUserInteractive();
+
+        /// <summary>
         /// Gets a special path.
         /// </summary>
         /// <param name="path">The path.</param>

@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HadoukenEnvironment.cs" />
     <Compile Include="Extensibility\ExtensionAttribute.cs" />
     <Compile Include="Extensibility\IExtension.cs" />
     <Compile Include="Extensibility\IPlugin.cs" />
