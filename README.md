@@ -1,5 +1,5 @@
 # Hadouken BitTorrent client
-Hadouken is a BitTorrent client written in C# and designed to run as a Windows Service. It has plugin support and is managed completely through a web UI.
+Hadouken is a BitTorrent client written in C# and designed to run as a Windows Service. It is *lightweight*, *extensible* and built on top of *libtorrent* to bring you the best in class of BitTorrent services.
 
 ## Building from source
 Hadouken uses PSake for building. To create a complete build, run,
