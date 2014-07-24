@@ -90,7 +90,7 @@ namespace Hadouken.Common.IO
         /// </summary>
         /// <param name="environment">The environment.</param>
         /// <returns>An absolute path.</returns>
-        public FilePath MakeAbsolute(IHadoukenEnvironment environment)
+        public FilePath MakeAbsolute(IEnvironment environment)
         {
             return IsRelative
                 ? environment.GetApplicationRoot().CombineWithFilePath(this)

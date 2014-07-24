@@ -2,7 +2,7 @@
 
 namespace Hadouken.Common
 {
-    public interface IHadoukenEnvironment
+    public interface IEnvironment
     {
         /// <summary>
         /// Gets whether or not the current operative system is 64 bit.

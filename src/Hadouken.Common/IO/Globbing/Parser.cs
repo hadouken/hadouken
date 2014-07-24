@@ -13,10 +13,10 @@ namespace Hadouken.Common.IO.Globbing
     internal sealed class Parser
     {
         private readonly Scanner _scanner;
-        private readonly IHadoukenEnvironment _environment;
+        private readonly IEnvironment _environment;
         private Token _currentToken;
 
-        public Parser(Scanner scanner, IHadoukenEnvironment environment)
+        public Parser(Scanner scanner, IEnvironment environment)
         {
             _scanner = scanner;
             _environment = environment;

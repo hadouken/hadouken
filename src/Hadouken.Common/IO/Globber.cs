@@ -19,7 +19,7 @@ namespace Hadouken.Common.IO
     public sealed class Globber : IGlobber
     {
         private readonly IFileSystem _fileSystem;
-        private readonly IHadoukenEnvironment _environment;
+        private readonly IEnvironment _environment;
         private readonly RegexOptions _options;
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Hadouken.Common.IO
         /// </summary>
         /// <param name="fileSystem">The file system.</param>
         /// <param name="environment">The environment.</param>
-        public Globber(IFileSystem fileSystem, IHadoukenEnvironment environment)
+        public Globber(IFileSystem fileSystem, IEnvironment environment)
         {
             if (fileSystem == null)
             {

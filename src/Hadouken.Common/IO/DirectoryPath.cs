@@ -92,7 +92,7 @@ namespace Hadouken.Common.IO
         /// </summary>
         /// <param name="environment">The environment.</param>
         /// <returns>An absolute path.</returns>
-        public DirectoryPath MakeAbsolute(IHadoukenEnvironment environment)
+        public DirectoryPath MakeAbsolute(IEnvironment environment)
         {
             if (environment == null)
             {
