@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\IKeyValueStore.cs" />
+    <Compile Include="Data\KeyValueStore.cs" />
     <Compile Include="HadoukenEnvironment.cs" />
     <Compile Include="Extensibility\ExtensionAttribute.cs" />
     <Compile Include="Extensibility\IExtension.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AssemblyNameFinder.cs" />
     <Compile Include="Reflection\IAssemblyNameFinder.cs" />
+    <Compile Include="Text\IJsonSerializer.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
