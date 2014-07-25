@@ -18,7 +18,7 @@ namespace Hadouken.Common.Data
             public ValueWrapper(object obj)
             {
                 if (obj == null) throw new ArgumentNullException("obj");
-                TypeName = obj.GetType().FullName;
+                TypeName = obj.GetType().AssemblyQualifiedName;
                 Value = obj;
             }
 
@@ -93,7 +93,10 @@ namespace Hadouken.Common.Data
 
         private void Load()
         {
-            var path = _environment.GetApplicationDataPath().CombineWithFilePath("data.json");
+            var dataPath = _environment.GetApplicationDataPath();
+            if (!_fileSystem.Exist(dataPath)) _fileSystem.GetDirectory(dataPath).Create();
+
+            var path = dataPath.CombineWithFilePath("data.json");
             var file = _fileSystem.GetFile(path);
 
             if (!file.Exists) return;

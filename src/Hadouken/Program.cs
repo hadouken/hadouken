@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Hadouken.Common;
+using Hadouken.Common.Data;
 using Hadouken.Common.IO;
 using Hadouken.Common.Logging;
 using Hadouken.Common.Reflection;
@@ -41,6 +42,7 @@ namespace Hadouken
             builder.RegisterType<JsonSerializer>().As<IJsonSerializer>().SingleInstance();
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
             builder.RegisterType<AssemblyNameFinder>().As<IAssemblyNameFinder>().SingleInstance();
+            builder.RegisterType<KeyValueStore>().As<IKeyValueStore>().SingleInstance();
 
             // Common.Logging
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
