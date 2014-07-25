@@ -33,6 +33,15 @@
     <Reference Include="Autofac">
       <HintPath>..\..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\..\packages\Nancy.0.23.2\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Bootstrappers.Autofac">
+      <HintPath>..\..\packages\Nancy.Bootstrappers.Autofac.0.23.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\..\packages\Nancy.Hosting.Self.0.23.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
     <Reference Include="Ragnar">
       <HintPath>..\..\packages\Ragnar.0.4.0\lib\net45\Ragnar.dll</HintPath>
     </Reference>
@@ -49,6 +58,10 @@
     <Compile Include="BitTorrent\ISessionHandler.cs" />
     <Compile Include="BitTorrent\SessionHandler.cs" />
     <Compile Include="DI\CoreModule.cs" />
+    <Compile Include="Http\CustomNancyBootstrapper.cs" />
+    <Compile Include="Http\HttpServer.cs" />
+    <Compile Include="Http\IHttpServer.cs" />
+    <Compile Include="Http\Modules\ApiModule.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="JsonRpc\ByNameResolver.cs" />
     <Compile Include="JsonRpc\ByPositionResolver.cs" />
