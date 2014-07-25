@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Hadouken.Common;
+using Hadouken.Common.Text;
 using Hadouken.Core;
 using Hadouken.Core.DI;
 using Hadouken.Hosts;
@@ -30,6 +31,7 @@ namespace Hadouken
             builder.RegisterModule(new CoreModule());
 
             // Common
+            builder.RegisterType<JsonSerializer>().As<IJsonSerializer>().SingleInstance();
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
 
             return builder.Build();

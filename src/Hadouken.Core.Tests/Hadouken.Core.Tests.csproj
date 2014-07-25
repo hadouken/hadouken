@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0C9D54CD-EDEC-477C-AA2E-7F98AB61837D}</ProjectGuid>
+    <ProjectGuid>{4A765776-E58B-44EE-A173-9C9840FB89F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hadouken.Core</RootNamespace>
-    <AssemblyName>Hadouken.Core</AssemblyName>
+    <RootNamespace>Hadouken.Core.Tests</RootNamespace>
+    <AssemblyName>Hadouken.Core.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,63 +30,44 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>..\..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Ragnar">
-      <HintPath>..\..\packages\Ragnar.0.4.0\lib\net45\Ragnar.dll</HintPath>
+    <Reference Include="NSubstitute">
+      <HintPath>..\..\packages\NSubstitute.1.7.2.0\lib\NET45\NSubstitute.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="xunit">
+      <HintPath>..\..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitTorrent\ISessionHandler.cs" />
-    <Compile Include="BitTorrent\SessionHandler.cs" />
-    <Compile Include="DI\CoreModule.cs" />
-    <Compile Include="IService.cs" />
-    <Compile Include="JsonRpc\ByNameResolver.cs" />
-    <Compile Include="JsonRpc\ByPositionResolver.cs" />
-    <Compile Include="JsonRpc\ICacheBuilder.cs" />
-    <Compile Include="JsonRpc\IJsonRpcRequestParser.cs" />
-    <Compile Include="JsonRpc\IMethod.cs" />
-    <Compile Include="JsonRpc\IMethodCache.cs" />
-    <Compile Include="JsonRpc\IMethodCacheBuilder.cs" />
-    <Compile Include="JsonRpc\InvalidRequestException.cs" />
-    <Compile Include="JsonRpc\IParameter.cs" />
-    <Compile Include="JsonRpc\IParameterResolver.cs" />
-    <Compile Include="JsonRpc\IRequestHandler.cs" />
-    <Compile Include="JsonRpc\JsonRpcErrorResponse.cs" />
-    <Compile Include="JsonRpc\JsonRpcRequest.cs" />
-    <Compile Include="JsonRpc\JsonRpcRequestParser.cs" />
-    <Compile Include="JsonRpc\JsonRpcResponse.cs" />
-    <Compile Include="JsonRpc\JsonRpcSuccessResponse.cs" />
-    <Compile Include="JsonRpc\Method.cs" />
-    <Compile Include="JsonRpc\MethodCache.cs" />
-    <Compile Include="JsonRpc\MethodCacheBuilder.cs" />
-    <Compile Include="JsonRpc\MethodNameAlreadyRegisteredException.cs" />
-    <Compile Include="JsonRpc\NullResolver.cs" />
-    <Compile Include="JsonRpc\Parameter.cs" />
-    <Compile Include="JsonRpc\ParameterLengthMismatchException.cs" />
-    <Compile Include="JsonRpc\ParameterNameNotFoundException.cs" />
-    <Compile Include="JsonRpc\RequestHandler.cs" />
+    <Compile Include="Fakes\JsonRpcServiceFake.cs" />
+    <Compile Include="Fakes\ParameterFake.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service.cs" />
+    <Compile Include="Unit\JsonRpc\ByNameResolverTests.cs" />
+    <Compile Include="Unit\JsonRpc\ByPositionResolverTests.cs" />
+    <Compile Include="Unit\JsonRpc\JsonRpcRequestParserTests.cs" />
+    <Compile Include="Unit\JsonRpc\MethodCacheBuilderTests.cs" />
+    <Compile Include="Unit\JsonRpc\RequestHandlerTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}</Project>
       <Name>Hadouken.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Core\Hadouken.Core.csproj">
+      <Project>{0C9D54CD-EDEC-477C-AA2E-7F98AB61837D}</Project>
+      <Name>Hadouken.Core</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
