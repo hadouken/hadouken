@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Reflection;
 using Hadouken.Common.IO;
 
@@ -38,6 +39,14 @@ namespace Hadouken.Common
         public DirectoryPath GetApplicationRoot()
         {
             var path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return new DirectoryPath(path);
+        }
+
+        public DirectoryPath GetApplicationDataPath()
+        {
+            var path = ConfigurationManager.AppSettings["AppData"];
+            path = Environment.ExpandEnvironmentVariables(path);
+
             return new DirectoryPath(path);
         }
 

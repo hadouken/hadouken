@@ -36,6 +36,12 @@ namespace Hadouken.Common
         DirectoryPath GetApplicationRoot();
 
         /// <summary>
+        /// Gets the application data path.
+        /// </summary>
+        /// <returns>The application data path.</returns>
+        DirectoryPath GetApplicationDataPath();
+
+        /// <summary>
         /// Gets an environment variable.
         /// </summary>
         /// <param name="variable">The variable.</param>

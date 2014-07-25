@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using Hadouken.Common.IO;
 using Hadouken.Common.Text;
 
@@ -26,17 +27,20 @@ namespace Hadouken.Common.Data
             public object Value { get; set; }
         }
 
+        private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
         private readonly IJsonSerializer _jsonSerializer;
         private readonly ConcurrentDictionary<string, object> _store;
         private readonly object _loadLock = new object();
         private bool _loaded;
 
-        public KeyValueStore(IFileSystem fileSystem, IJsonSerializer jsonSerializer)
+        public KeyValueStore(IEnvironment environment, IFileSystem fileSystem, IJsonSerializer jsonSerializer)
         {
+            if (environment == null) throw new ArgumentNullException("environment");
             if (fileSystem == null) throw new ArgumentNullException("fileSystem");
             if (jsonSerializer == null) throw new ArgumentNullException("jsonSerializer");
 
+            _environment = environment;
             _fileSystem = fileSystem;
             _jsonSerializer = jsonSerializer;
             _store = new ConcurrentDictionary<string, object>();
@@ -77,12 +81,40 @@ namespace Hadouken.Common.Data
             }
 
             // Save data to disk
+            var json = _jsonSerializer.SerializeObject(data);
+            var path = _environment.GetApplicationDataPath().CombineWithFilePath("data.json");
 
+            using (var file = _fileSystem.GetFile(path).Open(FileMode.Create))
+            using (var writer = new StreamWriter(file))
+            {
+                writer.Write(json);
+            }
         }
 
         private void Load()
         {
-            
+            var path = _environment.GetApplicationDataPath().CombineWithFilePath("data.json");
+            var file = _fileSystem.GetFile(path);
+
+            if (!file.Exists) return;
+
+            using (var stream = file.OpenRead())
+            using (var reader = new StreamReader(stream))
+            {
+                var json = reader.ReadToEnd();
+                var data = _jsonSerializer.DeserializeObject<IDictionary<string, ValueWrapper>>(json);
+
+                foreach (var key in data.Keys)
+                {
+                    var wrapper = data[key];
+                    var type = Type.GetType(wrapper.TypeName);
+
+                    var tempJson = _jsonSerializer.SerializeObject(wrapper.Value);
+                    var realValue = _jsonSerializer.DeserializeObject(tempJson, type);
+
+                    _store.TryAdd(key, realValue);
+                }
+            }
         }
     }
 }
