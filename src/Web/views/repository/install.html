@@ -1,0 +1,60 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">{{package.Title}} <small>v{{package.Version}}</small></h3>
+</div>
+<div class="modal-body">
+    <p>{{package.Description}}</p>
+    
+    <div class="row">
+        <div class="col-sm-6">
+            <h4><i class="fa fa-sitemap"></i> Dependencies</h4>
+
+            <ul ng-show="package.Dependencies.length">
+                <li ng-repeat="dependency in package.Dependencies">
+                    {{dependency.Id}} {{dependency.Version}}
+                </li>
+            </ul>
+            
+            <ul ng-show="!package.Dependencies.length">
+                <li><span class="label label-success">None</span></li>
+            </ul>
+        </div>
+        
+        <div class="col-sm-6">
+            <h4><i class="fa fa-shield"></i> Permissions</h4>
+            
+            <ul ng-show="isPermissionSet(package.Permissions)">
+                <li ng-repeat="permission in permissionsList">
+                    <span ng-show="permission.name !== 'Full'">{{ permission.name }}</span>
+                    <span class="label label-warning" ng-show="permission.unrestricted">Unrestricted</span>
+                </li>
+            </ul>
+            
+            <ul ng-show="package.Permissions === '<unrestricted>'">
+                <li><span class="label label-warning">Unrestricted</span></li>
+            </ul>
+            
+            <ul ng-show="!package.Permissions">
+                <li><span class="label label-success">None</span></li>
+            </ul>
+        </div>
+    </div>
+    
+    <hr/>
+    
+    <div class="row">
+        <div class="col-sm-12">
+            <p>Confirm installation by entering your password.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group" ng-class="{'has-error': invalidPassword}">
+                <input type="password" class="form-control" placeholder="Password" ng-model="installPassword" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="install(package.Id, package.Version, installPassword)" ng-disabled="!installPassword || isInstalling">Confirm installation</button>
+</div>
