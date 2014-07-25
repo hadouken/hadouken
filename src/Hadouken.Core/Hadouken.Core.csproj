@@ -47,6 +47,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -62,6 +64,7 @@
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Http\Config\User.cs" />
+    <Compile Include="Http\Modules\ApiModule.cs" />
     <Compile Include="Http\Modules\AuthModule.cs" />
     <Compile Include="Http\Modules\JsonRpcModule.cs" />
     <Compile Include="Http\Modules\Models\UserDto.cs" />

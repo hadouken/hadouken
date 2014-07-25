@@ -7,7 +7,7 @@
         request: function (method, options) {
             options.error = options.error || function () { };
 
-            $http.post('/api/jsonrpc', {
+            $http.post('/jsonrpc', {
                 id: requestId,
                 jsonrpc: '2.0',
                 method: method,

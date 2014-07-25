@@ -50,6 +50,14 @@ namespace Hadouken.Common
             return new DirectoryPath(path);
         }
 
+        public Path GetWebApplicationPath()
+        {
+            var path = ConfigurationManager.AppSettings["WebPath"];
+
+            if (path.EndsWith(".zip")) return new FilePath(path);
+            return new DirectoryPath(path);
+        }
+
         public string GetEnvironmentVariable(string variable)
         {
             return Environment.GetEnvironmentVariable(variable);
