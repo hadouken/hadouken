@@ -1,5 +1,7 @@
 ﻿using System;
 using Autofac;
+using Hadouken.Core.Http.Security;
+using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 
 namespace Hadouken.Core.Http
@@ -17,6 +19,14 @@ namespace Hadouken.Core.Http
         protected override ILifetimeScope GetApplicationContainer()
         {
             return _lifetimeScope;
+        }
+
+        protected override void ApplicationStartup(ILifetimeScope container, IPipelines pipelines)
+        {
+            var tokenizer = container.Resolve<ITokenizer>();
+            var cfg = new TokenAuthenticationConfiguration(tokenizer);
+
+            TokenAuthentication.Enable(pipelines, cfg);
         }
     }
 }

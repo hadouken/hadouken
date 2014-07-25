@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Hadouken.Core.BitTorrent;
 using Hadouken.Core.Http;
+using Hadouken.Core.Http.Security;
 using Hadouken.Core.JsonRpc;
 using Nancy.Bootstrapper;
 using Ragnar;
@@ -26,6 +27,7 @@ namespace Hadouken.Core.DI
             // HTTP
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();
             builder.RegisterType<CustomNancyBootstrapper>().As<INancyBootstrapper>().SingleInstance();
+            builder.RegisterType<Tokenizer>().As<ITokenizer>().SingleInstance();
         }
     }
 }

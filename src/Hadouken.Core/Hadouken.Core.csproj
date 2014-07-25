@@ -62,6 +62,13 @@
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpServer.cs" />
     <Compile Include="Http\Modules\ApiModule.cs" />
+    <Compile Include="Http\Security\ITokenizer.cs" />
+    <Compile Include="Http\Security\Storage\InMemoryTokenKeyStore.cs" />
+    <Compile Include="Http\Security\Storage\ITokenKeyStore.cs" />
+    <Compile Include="Http\Security\TokenAuthentication.cs" />
+    <Compile Include="Http\Security\TokenAuthenticationConfiguration.cs" />
+    <Compile Include="Http\Security\Tokenizer.cs" />
+    <Compile Include="Http\Security\UserIdentity.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="JsonRpc\ByNameResolver.cs" />
     <Compile Include="JsonRpc\ByPositionResolver.cs" />

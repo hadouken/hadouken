@@ -3,6 +3,7 @@ using System.Text;
 using Hadouken.Common.Text;
 using Hadouken.Core.JsonRpc;
 using Nancy;
+using Nancy.Security;
 
 namespace Hadouken.Core.Http.Modules
 {
@@ -14,6 +15,8 @@ namespace Hadouken.Core.Http.Modules
         {
             Post["/api/jsonrpc"] = _ =>
             {
+                this.RequiresAuthentication();
+
                 using (var ms = new MemoryStream())
                 {
                     Request.Body.CopyTo(ms);
