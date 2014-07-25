@@ -1,5 +1,8 @@
 ﻿using Autofac;
 using Hadouken.Common;
+using Hadouken.Common.IO;
+using Hadouken.Common.Logging;
+using Hadouken.Common.Reflection;
 using Hadouken.Common.Text;
 using Hadouken.Core;
 using Hadouken.Core.DI;
@@ -13,8 +16,12 @@ namespace Hadouken
         {
             using (var container = BuildContainer())
             {
-                var service = container.Resolve<IService>();
                 var environment = container.Resolve<IEnvironment>();
+
+                // Load extensions
+                container.LoadExtensions(environment.GetApplicationRoot());
+
+                var service = container.Resolve<IService>();
 
                 if (environment.IsUserInteractive())
                 {
@@ -33,6 +40,15 @@ namespace Hadouken
             // Common
             builder.RegisterType<JsonSerializer>().As<IJsonSerializer>().SingleInstance();
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
+            builder.RegisterType<AssemblyNameFinder>().As<IAssemblyNameFinder>().SingleInstance();
+
+            // Common.Logging
+            builder.RegisterType<ConsoleLogger>().As<ILogger>();
+            builder.RegisterType<HadoukenConsole>().As<IConsole>().SingleInstance();
+
+            // Common.IO
+            builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
+            builder.RegisterType<Globber>().As<IGlobber>().SingleInstance();
 
             return builder.Build();
         }

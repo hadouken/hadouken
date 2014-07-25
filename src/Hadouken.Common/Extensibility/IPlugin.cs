@@ -1,6 +1,6 @@
 ﻿namespace Hadouken.Common.Extensibility
 {
-    public interface IPlugin
+    public interface IPlugin : IExtension
     {
         void Load();
 

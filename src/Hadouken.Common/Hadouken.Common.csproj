@@ -44,8 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitTorrent\ITorrent.cs" />
+    <Compile Include="BitTorrent\ITorrentEngine.cs" />
+    <Compile Include="BitTorrent\ITorrentFile.cs" />
     <Compile Include="Data\IKeyValueStore.cs" />
     <Compile Include="Data\KeyValueStore.cs" />
+    <Compile Include="Extensibility\ComponentAttribute.cs" />
+    <Compile Include="Extensibility\ComponentLifestyle.cs" />
+    <Compile Include="HadoukenConsole.cs" />
     <Compile Include="HadoukenEnvironment.cs" />
     <Compile Include="Extensibility\ExtensionAttribute.cs" />
     <Compile Include="Extensibility\IExtension.cs" />
@@ -99,6 +105,7 @@
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\MessageAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Reflection\AssemblyNameFinder.cs" />
     <Compile Include="Reflection\IAssemblyNameFinder.cs" />
     <Compile Include="Text\IJsonSerializer.cs" />

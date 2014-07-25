@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutofacContainerExtensions.cs" />
     <Compile Include="Hosts\ConsoleHost.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +61,10 @@
     <ProjectReference Include="..\Hadouken.Core\Hadouken.Core.csproj">
       <Project>{0C9D54CD-EDEC-477C-AA2E-7F98AB61837D}</Project>
       <Name>Hadouken.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Extensions.Pushover\Hadouken.Extensions.Pushover.csproj">
+      <Project>{9c79c44e-8132-471e-9105-757a978421c6}</Project>
+      <Name>Hadouken.Extensions.Pushover</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
