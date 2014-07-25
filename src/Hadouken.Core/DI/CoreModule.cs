@@ -28,6 +28,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();
             builder.RegisterType<CustomNancyBootstrapper>().As<INancyBootstrapper>().SingleInstance();
             builder.RegisterType<Tokenizer>().As<ITokenizer>().SingleInstance();
+            builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
         }
     }
 }

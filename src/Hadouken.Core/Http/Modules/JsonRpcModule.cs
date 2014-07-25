@@ -7,13 +7,13 @@ using Nancy.Security;
 
 namespace Hadouken.Core.Http.Modules
 {
-    public sealed class ApiModule : NancyModule
+    public sealed class JsonRpcModule : NancyModule
     {
-        public ApiModule(IJsonSerializer jsonSerializer,
+        public JsonRpcModule(IJsonSerializer jsonSerializer,
             IJsonRpcRequestParser requestParser,
             IRequestHandler requestHandler)
         {
-            Post["/api/jsonrpc"] = _ =>
+            Post["/jsonrpc"] = _ =>
             {
                 this.RequiresAuthentication();
 
