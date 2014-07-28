@@ -5,6 +5,7 @@
         'ui.bootstrap',
         'ui.router',
         'hadouken.auth',
+        'hadouken.bittorrent',
         'hadouken.jsonrpc',
         'hadouken.messaging',
         'hadouken.plugins',

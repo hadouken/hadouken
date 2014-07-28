@@ -1,0 +1,69 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">{{ torrent.Name }}</h3>
+</div>
+<div class="modal-body">
+    <tabset>
+        <tab heading="General">
+            <form role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Info Hash</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">{{ torrent.InfoHash }}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Size</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">{{ torrent.Size | bytes }}</p>
+                    </div>
+                </div>
+            </form>
+        </tab>
+        <tab heading="Files ({{torrentFiles.length}})">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Path</th>
+                        <th>Size</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="file in torrentFiles">
+                        <td>
+                            {{ file.Path }}
+                            <span class="dropdown" on-toggle="toggled(open)">
+                                <a href class="dropdown-toggle"><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-header">Priority</li>
+                                    <li><a href ng-click="setPriority($index, 0)">Do not download <i class="fa fa-check" ng-show="file.Priority == 0"></i></a></li>
+                                    <li><a href ng-click="setPriority($index, 1)">Normal <i class="fa fa-check" ng-show="file.Priority == 1"></i></a></li>
+                                    <li><a href ng-click="setPriority($index, 7)">Highest <i class="fa fa-check" ng-show="file.Priority == 7"></i></a></li>
+                                </ul>
+                            </span>
+                        </td>
+                        <td>{{ file.Size | bytes }}</td>
+                        <td>{{ file.Progress }}%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </tab>
+        <tab heading="Peers ({{torrentPeers.length}})">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="peer in torrentPeers">
+                        <td>{{ peer.Uri }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </tab>
+    </tabset>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+</div>

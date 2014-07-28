@@ -1,4 +1,4 @@
-﻿angular.module('pushover.controllers.settings', [
+﻿angular.module('notifiers.pushover.controllers.settings', [
     'hadouken.jsonrpc'
 ])
 .controller('Pushover.SettingsController', [

@@ -1,15 +1,15 @@
 ﻿'use strict';
 
-angular.module('pushover', [
+angular.module('notifiers.pushover', [
     'ui.router',
     'hadouken.messaging',
-    'pushover.controllers.settings'
+    'notifiers.pushover.controllers.settings'
 ])
 .config(['$stateProvider', function ($stateProvider) {
     $stateProvider
-        .state('ui.pushoverPluginSettings', {
+        .state('ui.pushoverExtensionSettings', {
             controller: 'Pushover.SettingsController',
-            url: '/plugins/pushover/settings',
+            url: '/extensions/notifiers/pushover/settings',
             templateUrl: 'api/extensions/notifier.pushover/views/settings.html'
         });
 }])
@@ -17,9 +17,9 @@ angular.module('pushover', [
     messageService.subscribe('ui.onloaded', function () {
         messageService.publish('ui.settings.menuItem.add', {
             label: 'Pushover',
-            state: 'ui.pushoverPluginSettings'
+            state: 'ui.pushoverExtensionSettings'
         });
     });
 }]);
 
-pluginModules.push('pushover');
+pluginModules.push('notifiers.pushover');

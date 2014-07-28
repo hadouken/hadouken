@@ -1,0 +1,28 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Add torrents</h3>
+</div>
+<div class="modal-body">
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="files" class="col-sm-3 control-label">Files</label>
+            <div class="col-sm-7">
+                <input type="file" accept=".torrent" class="form-control" fileread="fileData" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="savePath" class="col-sm-3 control-label">Save path</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" ng-model="savePath" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="label" class="col-sm-3 control-label">Label</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" ng-model="label" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="add(fileData, savePath, label)" ng-disabled="inProgress">Add torrents</button>
+</div>
