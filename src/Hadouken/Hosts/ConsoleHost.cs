@@ -30,6 +30,9 @@ namespace Hadouken.Hosts
             }
 
             _service.Unload();
+
+            Console.WriteLine("Hadouken has exited. Press any key to close.");
+            Console.ReadKey();
         }
     }
 }

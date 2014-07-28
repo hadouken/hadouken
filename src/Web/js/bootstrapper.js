@@ -78,7 +78,6 @@ window.pluginModules = window.pluginModules || [];
                     });
                 });
             } else {
-                // When all core and plugin scripts are ready, load the app script.
                 $script(['js/app.js'], function () {
                     angular.bootstrap(document, ['hadouken']);
                 });

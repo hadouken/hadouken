@@ -5,7 +5,9 @@ namespace Hadouken.Extensions.Pushover
 {
     [Extension("notifier.pushover",
         Name = "Pushover",
-        Description = "Sends push notifications to your mobile devices via Pushover."
+        Description = "Sends push notifications to your mobile devices via Pushover.",
+        ResourceNamespace = "Hadouken.Extensions.Pushover.Resources",
+        Scripts = new [] { "js/app.js", "js/controllers/settingsController.js" }
     )]
     public class PushoverNotifier : INotifier
     {
