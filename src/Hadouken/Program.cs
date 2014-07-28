@@ -3,6 +3,7 @@ using Hadouken.Common;
 using Hadouken.Common.Data;
 using Hadouken.Common.IO;
 using Hadouken.Common.Logging;
+using Hadouken.Common.Net;
 using Hadouken.Common.Reflection;
 using Hadouken.Common.Text;
 using Hadouken.Core;
@@ -43,6 +44,9 @@ namespace Hadouken
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
             builder.RegisterType<AssemblyNameFinder>().As<IAssemblyNameFinder>().SingleInstance();
             builder.RegisterType<KeyValueStore>().As<IKeyValueStore>().SingleInstance();
+
+            // Common.Http
+            builder.RegisterType<HttpClientWrapper>().As<IHttpClient>();
 
             // Common.Logging
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
