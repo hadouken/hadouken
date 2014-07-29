@@ -1,19 +1,17 @@
-﻿<div class="container">
-    <form class="form-signin" name="loginForm" role="form" ng-submit="login()">
-        <div class="text-center">
-            <img src="img/logo256.png" alt="Hadouken" title="Hadouken" />
-        </div>
+﻿<form id="login-container" class="form-signin" name="loginForm" role="form" ng-submit="login()">
+	<div class="text-center">
+		<img src="img/logo256.png" alt="Hadouken" title="Hadouken" />
+	</div>
 
-        <h2 class="form-signin-heading" ng-hide="setup">Sign in</h2>
-        <h2 class="form-signin-heading" ng-show="setup">Create account</h2>
+	<h2 class="form-signin-heading" ng-hide="setup">Sign in</h2>
+	<h2 class="form-signin-heading" ng-show="setup">Create account</h2>
 
-        <p ng-show="setup">Please create your account below to finish configuration.</p>
+	<p ng-show="setup">Please create your account below to finish configuration.</p>
 
-        <input type="text" class="form-control" ng-model="userName" placeholder="Username" name="userName" required autofocus>
-        <input type="password" class="form-control" ng-model="password" placeholder="Password" name="password" required>
+	<input type="text" class="form-control" ng-model="userName" placeholder="Username" name="userName" required autofocus>
+	<input type="password" class="form-control" ng-model="password" placeholder="Password" name="password" required>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-hide="setup">Sign in</button>
+	<button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-hide="setup">Sign in</button>
 
-        <button class="btn btn-lg btn-success btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-show="setup">Create account</button>
-    </form>
-</div>
+	<button class="btn btn-lg btn-success btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-show="setup">Create account</button>
+</form>
