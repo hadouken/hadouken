@@ -36,7 +36,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
 
             // The main service
-            builder.RegisterType<Service>().As<IService>().SingleInstance();
+            builder.RegisterType<HadoukenService>().As<IHadoukenService>().SingleInstance();
         }
     }
 }

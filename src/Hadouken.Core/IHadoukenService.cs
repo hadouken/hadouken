@@ -1,6 +1,6 @@
 ﻿namespace Hadouken.Core
 {
-    public interface IService
+    public interface IHadoukenService
     {
         void Load(string[] args);
 

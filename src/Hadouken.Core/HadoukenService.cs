@@ -8,14 +8,14 @@ using Hadouken.Core.Http;
 
 namespace Hadouken.Core
 {
-    public class Service : IService
+    public class HadoukenService : IHadoukenService
     {
         private readonly ILogger _logger;
         private readonly ISessionHandler _sessionHandler;
         private readonly IHttpServer _httpServer;
         private readonly IEnumerable<IPlugin> _plugins;
 
-        public Service(ILogger logger,
+        public HadoukenService(ILogger logger,
             ISessionHandler sessionHandler,
             IHttpServer httpServer,
             IEnumerable<IPlugin> plugins)

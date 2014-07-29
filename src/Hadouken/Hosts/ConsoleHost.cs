@@ -5,17 +5,17 @@ namespace Hadouken.Hosts
 {
     public sealed class ConsoleHost
     {
-        private readonly IService _service;
+        private readonly IHadoukenService _hadoukenService;
 
-        public ConsoleHost(IService service)
+        public ConsoleHost(IHadoukenService hadoukenService)
         {
-            if (service == null) throw new ArgumentNullException("service");
-            _service = service;
+            if (hadoukenService == null) throw new ArgumentNullException("hadoukenService");
+            _hadoukenService = hadoukenService;
         }
 
         public void Run(string[] args)
         {
-            _service.Load(args);
+            _hadoukenService.Load(args);
 
             Console.TreatControlCAsInput = true;
 
@@ -29,7 +29,7 @@ namespace Hadouken.Hosts
                 }
             }
 
-            _service.Unload();
+            _hadoukenService.Unload();
 
             Console.WriteLine("Hadouken has exited. Press any key to close.");
             Console.ReadKey();

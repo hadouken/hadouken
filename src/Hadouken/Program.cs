@@ -24,7 +24,7 @@ namespace Hadouken
                 // Load extensions
                 container.LoadExtensions(environment.GetApplicationRoot());
 
-                var service = container.Resolve<IService>();
+                var service = container.Resolve<IHadoukenService>();
 
                 if (environment.IsUserInteractive())
                 {
