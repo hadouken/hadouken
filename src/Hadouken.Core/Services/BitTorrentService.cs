@@ -54,5 +54,11 @@ namespace Hadouken.Core.Services
         {
             _messageBus.Publish(new RemoveTorrentMessage(infoHash) {RemoveData = removeData});
         }
+
+        [JsonRpcMethod("torrents.move")]
+        public void Move(string infoHash, string destination, bool overwriteExisting)
+        {
+            _messageBus.Publish(new MoveTorrentMessage(infoHash, destination) {OverwriteExisting = overwriteExisting});
+        }
     }
 }

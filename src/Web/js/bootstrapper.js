@@ -41,17 +41,6 @@ window.pluginModules = window.pluginModules || [];
             /* Messaging module */
             'js/modules/messaging/messagingModule.js',
 
-            /* Plugins module */
-            'js/modules/plugins/pluginsModule.js',
-            'js/modules/plugins/controllers/detailsController.js',
-            'js/modules/plugins/controllers/listController.js',
-            'js/modules/plugins/controllers/updateController.js',
-
-            /* Repository module */
-            'js/modules/repository/repositoryModule.js',
-            'js/modules/repository/controllers/installController.js',
-            'js/modules/repository/controllers/listController.js',
-
             /* Settings module */
             'js/modules/settings/settingsModule.js',
             'js/modules/settings/controllers/indexController.js',

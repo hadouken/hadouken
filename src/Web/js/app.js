@@ -8,8 +8,6 @@
         'hadouken.bittorrent',
         'hadouken.jsonrpc',
         'hadouken.messaging',
-        'hadouken.plugins',
-        'hadouken.repository',
         'hadouken.settings',
         'hadouken.tools',
         'hadouken.ui',

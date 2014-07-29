@@ -49,6 +49,7 @@ namespace Hadouken.Core.BitTorrent
             _messageBus.Subscribe<PauseTorrentMessage>(PauseTorrent);
             _messageBus.Subscribe<ResumeTorrentMessage>(ResumeTorrent);
             _messageBus.Subscribe<RemoveTorrentMessage>(RemoveTorrent);
+            _messageBus.Subscribe<MoveTorrentMessage>(MoveTorrent);
 
             // Configure session
             _session.SetAlertMask(SessionAlertCategory.Error
@@ -210,7 +211,8 @@ namespace Hadouken.Core.BitTorrent
 
         public ITorrent GetByInfoHash(string infoHash)
         {
-            return null;
+            var handle = _session.FindTorrent(infoHash);
+            return handle == null ? null : Torrent.CreateFromHandle(handle);
         }
 
         private void ReadAlerts()
@@ -286,6 +288,20 @@ namespace Hadouken.Core.BitTorrent
             {
                 if (handle == null) return;
                 _session.RemoveTorrent(handle);
+            }
+        }
+
+        private void MoveTorrent(MoveTorrentMessage message)
+        {
+            using (var handle = _session.FindTorrent(message.InfoHash))
+            {
+                if (handle == null) return;
+
+                var flags = message.OverwriteExisting
+                    ? TorrentHandle.MoveFlags.AlwaysReplaceFiles
+                    : TorrentHandle.MoveFlags.DontReplace;
+
+                handle.MoveStorage(message.Destination, flags);
             }
         }
 
