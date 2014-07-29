@@ -1,7 +1,5 @@
 ﻿using System.Linq;
-using Hadouken.Common.Data;
 using Hadouken.Common.Logging;
-using Hadouken.Core.Http.Config;
 using Hadouken.Core.Http.Modules.Models;
 using Hadouken.Core.Http.Security;
 using Nancy;
@@ -16,7 +14,7 @@ namespace Hadouken.Core.Http.Modules
             ITokenizer tokenizer)
             : base("auth")
         {
-            Get["/setup"] = _ => userManager.GetUsers().Any();
+            Get["/setup"] = _ => !userManager.GetUsers().Any();
 
             Post["/login"] = _ =>
             {

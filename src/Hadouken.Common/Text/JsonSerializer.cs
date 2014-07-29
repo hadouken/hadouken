@@ -14,6 +14,7 @@ namespace Hadouken.Common.Text
         {
             _serializer = new Newtonsoft.Json.JsonSerializer();
             _serializer.Converters.Add(new StringEnumConverter());
+            _serializer.Formatting = Formatting.Indented;
         }
 
         public object DeserializeObject(string json, Type type)
