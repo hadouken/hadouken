@@ -36,5 +36,17 @@ namespace Hadouken.Core.Services
         {
             _messageBus.Publish(new AddTorrentMessage(data) {SavePath = savePath, Label = label});
         }
+
+        [JsonRpcMethod("torrents.pause")]
+        public void Pause(string infoHash)
+        {
+            _messageBus.Publish(new PauseTorrentMessage(infoHash));
+        }
+
+        [JsonRpcMethod("torrents.resume")]
+        public void Resume(string infoHash)
+        {
+            _messageBus.Publish(new ResumeTorrentMessage(infoHash));
+        }
     }
 }

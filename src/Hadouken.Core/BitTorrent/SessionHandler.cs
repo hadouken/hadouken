@@ -46,6 +46,8 @@ namespace Hadouken.Core.BitTorrent
         {
             // Set up message subscriptions
             _messageBus.Subscribe<AddTorrentMessage>(AddTorrent);
+            _messageBus.Subscribe<PauseTorrentMessage>(PauseTorrent);
+            _messageBus.Subscribe<ResumeTorrentMessage>(ResumeTorrent);
 
             // Configure session
             _session.SetAlertMask(SessionAlertCategory.Error
@@ -202,7 +204,7 @@ namespace Hadouken.Core.BitTorrent
 
         public IEnumerable<ITorrent> GetAll()
         {
-            return Enumerable.Empty<ITorrent>();
+            return _session.GetTorrents().Select(Torrent.CreateFromHandle);
         }
 
         public ITorrent GetByInfoHash(string infoHash)
@@ -252,6 +254,28 @@ namespace Hadouken.Core.BitTorrent
                 SaveMetadataFile(addParams.TorrentInfo);
 
                 _session.AsyncAddTorrent(addParams);
+            }
+        }
+
+        private void PauseTorrent(PauseTorrentMessage message)
+        {
+            using (var handle = _session.FindTorrent(message.InfoHash))
+            {
+                if (handle == null) return;
+
+                handle.AutoManaged = false;
+                handle.Pause();
+            }
+        }
+
+        private void ResumeTorrent(ResumeTorrentMessage message)
+        {
+            using (var handle = _session.FindTorrent(message.InfoHash))
+            {
+                if (handle == null) return;
+
+                handle.Resume();
+                handle.AutoManaged = true;
             }
         }
 

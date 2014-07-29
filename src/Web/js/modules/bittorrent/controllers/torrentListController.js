@@ -83,7 +83,7 @@
         };
 
         function update() {
-            jsonrpc.request('torrents.list', {
+            jsonrpc.request('torrents.getAll', {
                 success: function (data) {
                     for (var i = 0; i < data.result.length; i++) {
                         var torrent = data.result[i];

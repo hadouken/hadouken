@@ -13,7 +13,19 @@ namespace Hadouken.Core.BitTorrent
         
         public float Progress { get; private set; }
 
-        public ITorrentFile[] Files { get; private set; }
+        public string SavePath { get; private set; }
+
+        public long DownloadSpeed { get; private set; }
+        
+        public long UploadSpeed { get; private set; }
+        
+        public long TotalDownloadedBytes { get; private set; }
+        
+        public long TotalUploadedBytes { get; private set; }
+
+        public Common.BitTorrent.TorrentState State { get; private set; }
+
+        public bool Paused { get; private set; }
 
         internal static ITorrent CreateFromHandle(TorrentHandle handle)
         {
@@ -25,8 +37,15 @@ namespace Hadouken.Core.BitTorrent
                 {
                     InfoHash = handle.InfoHash.ToHex(),
                     Name = file.Name,
+                    SavePath = status.SavePath,
                     Size = file.TotalSize,
-                    Progress = status.Progress
+                    Progress = status.Progress,
+                    DownloadSpeed = status.DownloadRate,
+                    UploadSpeed = status.UploadRate,
+                    TotalDownloadedBytes = status.TotalDownload,
+                    TotalUploadedBytes = status.TotalUpload,
+                    State = (Common.BitTorrent.TorrentState) (int) status.State,
+                    Paused = status.Paused
                 };
 
                 return t;
