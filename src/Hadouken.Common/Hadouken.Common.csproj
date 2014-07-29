@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitTorrent\AddTorrentMessage.cs" />
     <Compile Include="BitTorrent\ITorrent.cs" />
     <Compile Include="BitTorrent\ITorrentEngine.cs" />
     <Compile Include="BitTorrent\ITorrentFile.cs" />
+    <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
     <Compile Include="Data\IKeyValueStore.cs" />
     <Compile Include="Data\KeyValueStore.cs" />
     <Compile Include="Extensibility\ComponentAttribute.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Messaging\IMessage.cs" />
     <Compile Include="Messaging\MessageAttribute.cs" />
+    <Compile Include="Messaging\MessageBus.cs" />
     <Compile Include="Net\HttpClientWrapper.cs" />
     <Compile Include="Net\IHttpClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

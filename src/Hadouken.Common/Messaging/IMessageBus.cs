@@ -4,7 +4,7 @@ namespace Hadouken.Common.Messaging
 {
     public interface IMessageBus
     {
-        void Publish(IMessage message);
+        void Publish<T>(T message) where T : class, IMessage;
 
         void Subscribe<T>(Action<T> callback) where T : IMessage;
 

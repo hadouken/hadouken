@@ -3,6 +3,7 @@ using Hadouken.Common;
 using Hadouken.Common.Data;
 using Hadouken.Common.IO;
 using Hadouken.Common.Logging;
+using Hadouken.Common.Messaging;
 using Hadouken.Common.Net;
 using Hadouken.Common.Reflection;
 using Hadouken.Common.Text;
@@ -51,6 +52,9 @@ namespace Hadouken
             // Common.Logging
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
             builder.RegisterType<HadoukenConsole>().As<IConsole>().SingleInstance();
+
+            // Common.Messaging
+            builder.RegisterType<MessageBus>().As<IMessageBus>().SingleInstance(); 
 
             // Common.IO
             builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
