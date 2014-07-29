@@ -48,6 +48,7 @@ namespace Hadouken.Core.BitTorrent
             _messageBus.Subscribe<AddTorrentMessage>(AddTorrent);
             _messageBus.Subscribe<PauseTorrentMessage>(PauseTorrent);
             _messageBus.Subscribe<ResumeTorrentMessage>(ResumeTorrent);
+            _messageBus.Subscribe<RemoveTorrentMessage>(RemoveTorrent);
 
             // Configure session
             _session.SetAlertMask(SessionAlertCategory.Error
@@ -276,6 +277,15 @@ namespace Hadouken.Core.BitTorrent
 
                 handle.Resume();
                 handle.AutoManaged = true;
+            }
+        }
+
+        private void RemoveTorrent(RemoveTorrentMessage message)
+        {
+            using (var handle = _session.FindTorrent(message.InfoHash))
+            {
+                if (handle == null) return;
+                _session.RemoveTorrent(handle);
             }
         }
 

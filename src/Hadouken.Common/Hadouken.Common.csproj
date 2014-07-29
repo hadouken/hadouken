@@ -50,6 +50,7 @@
     <Compile Include="BitTorrent\ITorrentEngine.cs" />
     <Compile Include="BitTorrent\ITorrentFile.cs" />
     <Compile Include="BitTorrent\PauseTorrentMessage.cs" />
+    <Compile Include="BitTorrent\RemoveTorrentMessage.cs" />
     <Compile Include="BitTorrent\ResumeTorrentMessage.cs" />
     <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />

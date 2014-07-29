@@ -48,5 +48,11 @@ namespace Hadouken.Core.Services
         {
             _messageBus.Publish(new ResumeTorrentMessage(infoHash));
         }
+
+        [JsonRpcMethod("torrents.remove")]
+        public void Remove(string infoHash, bool removeData)
+        {
+            _messageBus.Publish(new RemoveTorrentMessage(infoHash) {RemoveData = removeData});
+        }
     }
 }
