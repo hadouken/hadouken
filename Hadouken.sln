@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Core.Tests", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushbullet", "src\Hadouken.Extensions.Pushbullet\Hadouken.Extensions.Pushbullet.csproj", "{78970567-455C-4EE8-8A65-E7CF92F4714C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Mailer", "src\Hadouken.Extensions.Mailer\Hadouken.Extensions.Mailer.csproj", "{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{78970567-455C-4EE8-8A65-E7CF92F4714C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78970567-455C-4EE8-8A65-E7CF92F4714C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78970567-455C-4EE8-8A65-E7CF92F4714C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9C79C44E-8132-471E-9105-757A978421C6} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 		{78970567-455C-4EE8-8A65-E7CF92F4714C} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
+		{5B9D97E4-93D9-4502-999F-5E4CC9D031ED} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 		{D2F70075-17D3-47B4-BBE8-C630CA0357FE} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 		{4A765776-E58B-44EE-A173-9C9840FB89F0} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 	EndGlobalSection

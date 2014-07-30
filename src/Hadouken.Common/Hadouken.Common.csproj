@@ -116,6 +116,10 @@
     <Compile Include="Messaging\MessageBus.cs" />
     <Compile Include="Net\HttpClientWrapper.cs" />
     <Compile Include="Net\IHttpClient.cs" />
+    <Compile Include="Net\ISmtpClient.cs" />
+    <Compile Include="Net\ISmtpClientFactory.cs" />
+    <Compile Include="Net\SmtpClientFactory.cs" />
+    <Compile Include="Net\SmtpClientWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Reflection\AssemblyNameFinder.cs" />

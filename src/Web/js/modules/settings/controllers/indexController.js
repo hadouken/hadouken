@@ -31,7 +31,6 @@
 
         var subscription = messageService.subscribe('ui.settings.dialogs.add', function(event, params) {
             dialogs[params.extensionId] = params;
-            console.log(dialogs);
         });
 
         messageService.publish('ui.settings.onloaded', {});

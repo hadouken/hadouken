@@ -46,8 +46,9 @@ namespace Hadouken
             builder.RegisterType<AssemblyNameFinder>().As<IAssemblyNameFinder>().SingleInstance();
             builder.RegisterType<KeyValueStore>().As<IKeyValueStore>().SingleInstance();
 
-            // Common.Http
+            // Common.Net
             builder.RegisterType<HttpClientWrapper>().As<IHttpClient>();
+            builder.RegisterType<SmtpClientFactory>().As<ISmtpClientFactory>().SingleInstance();
 
             // Common.Logging
             builder.RegisterType<ConsoleLogger>().As<ILogger>();
