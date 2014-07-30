@@ -1,23 +1,42 @@
-﻿angular.module('hadouken.settings.controllers.index', [])
-    .controller('Settings.IndexController', [
-        '$scope', '$http', 'jsonrpc',
-        function ($scope, $http, jsonrpc) {
-            jsonrpc.request('core.config.get', {
-                success: function(data) {
-                    $scope.settings = data.result;
-                }
-            });
+﻿angular.module('hadouken.settings.controllers.index', [
+    'hadouken.messaging',
+    'ui.bootstrap'
+])
+.controller('Settings.IndexController', [
+    '$scope', '$http', '$modal', 'messageService', 'jsonrpc',
+    function ($scope, $http, $modal, messageService, jsonrpc) {
+        var dialogs = {};
 
-            $scope.save = function() {
-                jsonrpc.request('core.config.set', {
-                    params: [$scope.settings],
-                    success: function() {
-                        console.log('saved');
-                    },
-                    error: function() {
-                        throw new Error('Could not save settings.');
-                    }
-                });
+        jsonrpc.request('extensions.getAll', {
+            success: function(data) {
+                $scope.extensions = data.result;
             }
-        }
-    ]);
+        });
+
+        $scope.save = function() {
+        };
+
+        $scope.configure = function(extensionId) {
+            var dialog = dialogs[extensionId];
+
+            if(!dialog) {
+                throw new Error('Invalid extensionId: ' + extensionId);
+            }
+
+            $modal.open({
+                controller: dialog.controller,
+                templateUrl: dialog.templateUrl
+            });
+        };
+
+        var subscription = messageService.subscribe('ui.settings.dialogs.add', function(event, params) {
+            dialogs[params.extensionId] = params;
+        });
+
+        messageService.publish('ui.settings.onloaded', {});
+
+        $scope.$on('$destroy', function() {
+            subscription();
+        });
+    }
+]);

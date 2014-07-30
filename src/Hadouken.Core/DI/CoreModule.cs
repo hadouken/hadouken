@@ -18,6 +18,10 @@ namespace Hadouken.Core.DI
             builder.RegisterType<Session>().As<ISession>().SingleInstance().ExternallyOwned();
             builder.RegisterType<SessionHandler>().AsImplementedInterfaces().SingleInstance();
 
+            // Extensions
+            builder.RegisterType<ExtensionFactory>().As<IExtensionFactory>().SingleInstance();
+            builder.RegisterType<NotifierHandler>().As<INotifierHandler>().SingleInstance();
+
             // JSONRPC host
             builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
             builder.RegisterType<JsonRpcRequestParser>().As<IJsonRpcRequestParser>().SingleInstance();
@@ -28,6 +32,7 @@ namespace Hadouken.Core.DI
 
             // JSONRPC services
             builder.RegisterType<BitTorrentService>().As<IJsonRpcService>();
+            builder.RegisterType<ExtensionService>().As<IJsonRpcService>();
 
             // HTTP
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();

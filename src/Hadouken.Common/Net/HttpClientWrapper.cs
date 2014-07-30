@@ -6,12 +6,11 @@ namespace Hadouken.Common.Net
 {
     public class HttpClientWrapper : IHttpClient
     {
+        private readonly HttpClient _client = new HttpClient();
+
         public Task<HttpResponseMessage> PostAsync(Uri uri, HttpContent httpContent)
         {
-            using (var client = new HttpClient())
-            {
-                return client.PostAsync(uri, httpContent);
-            }
+            return _client.PostAsync(uri, httpContent);            
         }
     }
 }

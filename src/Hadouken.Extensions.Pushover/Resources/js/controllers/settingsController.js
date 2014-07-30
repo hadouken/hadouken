@@ -1,19 +1,30 @@
 ﻿angular.module('notifiers.pushover.controllers.settings', [
-    'hadouken.jsonrpc'
+    'hadouken.jsonrpc',
+    'ui.bootstrap'
 ])
 .controller('Pushover.SettingsController', [
-    '$scope', 'jsonrpc', function ($scope, jsonrpc) {
+    '$scope', '$modalInstance', 'jsonrpc',
+    function ($scope, $modalInstance, jsonrpc) {
         jsonrpc.request('pushover.config.get', {
             success: function (data) {
                 $scope.config = data.result;
             }
         });
 
-        $scope.save = function (config) {
-            jsonrpc.request('pushover.config.set', {
+        $scope.test = function (config) {
+            jsonrpc.request('pushover.config.test', {
                 params: [config],
                 success: function () { }
             });
-        }
+        };
+
+        $scope.save = function(config) {
+            jsonrpc.request('pushover.config.set', {
+                params: [config],
+                success: function() {
+                    $modalInstance.dismiss('close');
+                }
+            });
+        };
     }
 ]);

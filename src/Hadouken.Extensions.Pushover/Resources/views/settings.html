@@ -1,31 +1,30 @@
-﻿<h2 class="page-header">Pushover settings</h2>
+﻿<div class="modal-header">
+    <h3 class="modal-title">Pushover settings</h3>
+</div>
+<div class="modal-body">
+    <p>
+        To properly set up <em>Pushover</em> you need both an application key
+        and a user key. An application key can be acquired by heading to
+        <a href="https://pushover.net/apps/build">pushover.net/apps/build</a>.
+    </p>
 
-<p>
-    To properly set up <em>Pushover</em> you need both an application key
-    and a user key. An application key can be acquired by heading to
-    <a href="https://pushover.net/apps/build">pushover.net/apps/build</a>.
-</p>
-
-<form class="form-horizontal" role="form" method="POST">
-    <div class="row">
+    <form role="form" class="form-horizontal">
         <div class="form-group">
             <label for="appKey" class="control-label col-sm-3">Application key</label>
-            <div class="col-sm-4">
+            <div class="col-sm-7">
                 <input type="text" class="form-control" ng-model="config.AppKey" />
             </div>
         </div>
 
         <div class="form-group">
             <label for="userKey" class="control-label col-sm-3">User key</label>
-            <div class="col-sm-4">
+            <div class="col-sm-7">
                 <input type="text" class="form-control" ng-model="config.UserKey" />
             </div>
         </div>
-        
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-                <button type="submit" class="btn btn-primary" ng-click="save(config)">Save settings</button>
-            </div>
-        </div>
-    </div>
-</form>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="test(config)">Test</button>
+    <button type="button" class="btn btn-primary" ng-click="save(config)">Save</button>
+</div>

@@ -11,10 +11,9 @@
 
             var wildCarded = res[1] + ":*";
             $rootScope.$emit(wildCarded, parameters);
-
         },
         subscribe: function (name, listener) {
-            $rootScope.$on(name, listener);
+            return $rootScope.$on(name, listener);
         }
     };
 }]);

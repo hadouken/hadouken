@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Hadouken.Common.Extensibility;
 using Hadouken.Common.Logging;
 using Hadouken.Core.BitTorrent;
@@ -13,21 +12,24 @@ namespace Hadouken.Core
         private readonly ILogger _logger;
         private readonly ISessionHandler _sessionHandler;
         private readonly IHttpServer _httpServer;
-        private readonly IEnumerable<IPlugin> _plugins;
+        private readonly IExtensionFactory _extensionFactory;
+        private readonly IList<IPlugin> _plugins;
 
         public HadoukenService(ILogger logger,
             ISessionHandler sessionHandler,
             IHttpServer httpServer,
-            IEnumerable<IPlugin> plugins)
+            IExtensionFactory extensionFactory)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (sessionHandler == null) throw new ArgumentNullException("sessionHandler");
             if (httpServer == null) throw new ArgumentNullException("httpServer");
+            if (extensionFactory == null) throw new ArgumentNullException("extensionFactory");
 
             _logger = logger;
             _sessionHandler = sessionHandler;
             _httpServer = httpServer;
-            _plugins = plugins ?? Enumerable.Empty<IPlugin>();
+            _extensionFactory = extensionFactory;
+            _plugins = new List<IPlugin>();
         }
 
         public void Load(string[] args)
@@ -38,9 +40,10 @@ namespace Hadouken.Core
 
             _logger.Info("Loading plugins.");
 
-            foreach (var plugin in _plugins)
+            foreach (var plugin in _extensionFactory.GetAll<IPlugin>())
             {
                 plugin.Load();
+                _plugins.Add(plugin);
             }
 
             _logger.Info("Starting HTTP server.");
