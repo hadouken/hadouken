@@ -2,6 +2,7 @@
 using Hadouken.Common.BitTorrent;
 using Hadouken.Common.Extensibility.Notifications;
 using Hadouken.Common.Messaging;
+using Hadouken.Localization;
 
 namespace Hadouken.Core.Handlers
 {
@@ -17,8 +18,9 @@ namespace Hadouken.Core.Handlers
 
         public void Handle(TorrentAddedMessage message)
         {
-            var notif = new Notification("Torrent added",
-                string.Format("Torrent {0} added To Hadouken.", message.Torrent.Name));
+            var notif = new Notification(
+                Notifications.TorrentAddedTitle,
+                string.Format(Notifications.TorrentAddedMessage, message.Torrent.Name));
 
             _notifierHandler.Notify(notif);
         }

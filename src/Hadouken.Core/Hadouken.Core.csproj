@@ -120,6 +120,10 @@
       <Project>{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}</Project>
       <Name>Hadouken.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Localization\Hadouken.Localization.csproj">
+      <Project>{b8e58883-80ee-4c7c-afa7-5829dd107f79}</Project>
+      <Name>Hadouken.Localization</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
