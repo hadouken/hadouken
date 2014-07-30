@@ -8,12 +8,14 @@ namespace Hadouken.Common.Messaging
     public class MessageBus : IMessageBus
     {
         private readonly ILogger _logger;
+        private readonly IEnumerable<IMessageHandler> _handlers;
         private readonly IDictionary<Type, IList<object>> _callbacks;
 
-        public MessageBus(ILogger logger)
+        public MessageBus(ILogger logger, IEnumerable<IMessageHandler> handlers)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             _logger = logger;
+            _handlers = handlers ?? Enumerable.Empty<IMessageHandler>();
             _callbacks = new Dictionary<Type, IList<object>>();
         }
 
@@ -22,22 +24,38 @@ namespace Hadouken.Common.Messaging
             if (message == null) throw new ArgumentNullException("message");
 
             var t = typeof (T);
-            
-            if (!_callbacks.ContainsKey(t)) return;
-            var callbacks = _callbacks[t].OfType<Action<T>>().ToList();
 
-            _logger.Debug(string.Format("Sending {0} to {1} callbacks.", t.Name, callbacks.Count));
-
-            foreach (var callback in callbacks)
+            if (_callbacks.ContainsKey(t))
             {
-                try
+                var callbacks = _callbacks[t].OfType<Action<T>>().ToList();
+
+                _logger.Debug(string.Format("Sending {0} to {1} callbacks.", t.Name, callbacks.Count));
+
+                foreach (var callback in callbacks)
                 {
-                    callback(message);
+                    try
+                    {
+                        callback(message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error("Error when invoking callback", e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    _logger.Error("Error when invoking callback", e);
-                }
+            }
+
+            // Find handlers
+            var handlerType = typeof (IMessageHandler<T>);
+            var handlers = (from handler in _handlers
+                let type = handler.GetType()
+                where handlerType.IsAssignableFrom(type)
+                select (IMessageHandler<T>) handler).ToList();
+
+            _logger.Debug(string.Format("Sending {0} to {1} handlers.", t.Name, handlers.Count));
+
+            foreach (var handler in handlers)
+            {
+                handler.Handle(message);
             }
         }
 

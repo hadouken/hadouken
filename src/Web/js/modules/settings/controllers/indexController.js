@@ -29,6 +29,14 @@
             });
         };
 
+        $scope.toggleExtension = function(extensionId, enabled) {
+            var method = enabled ? 'extensions.enable' : 'extensions.disable';
+            jsonrpc.request(method, {
+                params: [extensionId],
+                success: function() {}
+            });
+        };
+
         var subscription = messageService.subscribe('ui.settings.dialogs.add', function(event, params) {
             dialogs[params.extensionId] = params;
         });

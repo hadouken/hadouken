@@ -19,6 +19,7 @@ namespace Hadouken.Core.BitTorrent
         private readonly IFileSystem _fileSystem;
         private readonly IMessageBus _messageBus;
         private readonly ISession _session;
+        private readonly IList<string> _muted;
         private readonly Thread _alertsThread;
         private bool _alertsThreadRunning;
 
@@ -39,6 +40,7 @@ namespace Hadouken.Core.BitTorrent
             _fileSystem = fileSystem;
             _messageBus = messageBus;
             _session = session;
+            _muted = new List<string>();
             _alertsThread = new Thread(ReadAlerts);
         }
 
@@ -111,6 +113,9 @@ namespace Hadouken.Core.BitTorrent
                             addParams.ResumeData = resumeMemoryStream.ToArray();
                         }
                     }
+
+                    // Add to muted torrents so we don't notify anyone
+                    _muted.Add(addParams.TorrentInfo.InfoHash);
 
                     // Add torrent to session
                     _session.AsyncAddTorrent(addParams);
@@ -241,6 +246,8 @@ namespace Hadouken.Core.BitTorrent
         private void Handle(TorrentAddedAlert alert)
         {
             var torrent = Torrent.CreateFromHandle(alert.Handle);
+            if (_muted.Contains(torrent.InfoHash)) return;
+
             _messageBus.Publish(new TorrentAddedMessage(torrent));
         }
 

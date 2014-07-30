@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Core.BitTorrent;
+using Hadouken.Core.Handlers;
 using Hadouken.Core.Http;
 using Hadouken.Core.Http.Security;
 using Hadouken.Core.JsonRpc;
@@ -33,6 +34,9 @@ namespace Hadouken.Core.DI
             // JSONRPC services
             builder.RegisterType<BitTorrentService>().As<IJsonRpcService>();
             builder.RegisterType<ExtensionService>().As<IJsonRpcService>();
+
+            // Message handlers
+            builder.RegisterType<NotifyTorrentAddedHandler>().AsImplementedInterfaces();
 
             // HTTP
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();

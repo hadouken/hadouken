@@ -112,6 +112,7 @@
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Messaging\IMessage.cs" />
+    <Compile Include="Messaging\IMessageHandler.cs" />
     <Compile Include="Messaging\MessageAttribute.cs" />
     <Compile Include="Messaging\MessageBus.cs" />
     <Compile Include="Net\HttpClientWrapper.cs" />
