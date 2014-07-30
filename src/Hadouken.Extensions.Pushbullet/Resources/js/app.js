@@ -1,20 +1,20 @@
 ﻿'use strict';
 
 (function(angular, pluginModules) {
-    var extensionId = 'notifier.pushover';
+    var extensionId = 'notifier.pushbullet';
 
     angular.module(extensionId, [
             'ui.router',
             'hadouken.messaging',
-            'notifiers.pushover.controllers.settings'
+            'notifiers.pushbullet.controllers.settings'
         ])
         .run([
             'messageService', function(messageService) {
                 messageService.subscribe('ui.settings.onloaded', function() {
                     messageService.publish('ui.settings.dialogs.add', {
                         extensionId: extensionId,
-                        controller: 'Pushover.SettingsController',
-                        templateUrl: 'api/extensions/notifier.pushover/views/settings.html'
+                        controller: 'Pushbullet.SettingsController',
+                        templateUrl: 'api/extensions/notifier.pushbullet/views/settings.html'
                     });
                 });
             }

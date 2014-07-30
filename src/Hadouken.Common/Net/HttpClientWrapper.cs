@@ -12,5 +12,10 @@ namespace Hadouken.Common.Net
         {
             return _client.PostAsync(uri, httpContent);            
         }
+
+        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        {
+            return _client.SendAsync(request);
+        }
     }
 }
