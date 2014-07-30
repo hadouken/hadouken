@@ -63,6 +63,7 @@
     <Compile Include="DI\CoreModule.cs" />
     <Compile Include="ExtensionFactory.cs" />
     <Compile Include="Handlers\NotifyTorrentAddedHandler.cs" />
+    <Compile Include="Handlers\NotifyTorrentCompletedHandler.cs" />
     <Compile Include="Http\CustomNancyBootstrapper.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\IHttpServer.cs" />

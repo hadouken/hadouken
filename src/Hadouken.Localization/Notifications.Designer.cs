@@ -77,5 +77,23 @@ namespace Hadouken.Localization {
                 return ResourceManager.GetString("TorrentAddedTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The torrent &quot;{0}&quot; has been downloaded..
+        /// </summary>
+        public static string TorrentCompletedMessage {
+            get {
+                return ResourceManager.GetString("TorrentCompletedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Torrent completed.
+        /// </summary>
+        public static string TorrentCompletedTitle {
+            get {
+                return ResourceManager.GetString("TorrentCompletedTitle", resourceCulture);
+            }
+        }
     }
 }

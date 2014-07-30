@@ -239,6 +239,10 @@ namespace Hadouken.Core.BitTorrent
                     {
                         Handle((TorrentAddedAlert) alert);
                     }
+                    else if (alert is TorrentFinishedAlert)
+                    {
+                        Handle((TorrentFinishedAlert) alert);
+                    }
                 }
             }
         }
@@ -249,6 +253,14 @@ namespace Hadouken.Core.BitTorrent
             if (_muted.Contains(torrent.InfoHash)) return;
 
             _messageBus.Publish(new TorrentAddedMessage(torrent));
+        }
+
+        private void Handle(TorrentFinishedAlert alert)
+        {
+            var torrent = Torrent.CreateFromHandle(alert.Handle);
+            if (_muted.Contains(torrent.InfoHash)) return;
+
+            _messageBus.Publish(new TorrentCompletedMessage(torrent));
         }
 
         private void AddTorrent(AddTorrentMessage message)

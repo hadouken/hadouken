@@ -37,6 +37,7 @@ namespace Hadouken.Core.DI
 
             // Message handlers
             builder.RegisterType<NotifyTorrentAddedHandler>().AsImplementedInterfaces();
+            builder.RegisterType<NotifyTorrentCompletedHandler>().AsImplementedInterfaces();
 
             // HTTP
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();

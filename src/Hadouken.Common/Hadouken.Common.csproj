@@ -54,6 +54,7 @@
     <Compile Include="BitTorrent\RemoveTorrentMessage.cs" />
     <Compile Include="BitTorrent\ResumeTorrentMessage.cs" />
     <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />
     <Compile Include="Data\IKeyValueStore.cs" />
     <Compile Include="Data\KeyValueStore.cs" />

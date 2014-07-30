@@ -123,4 +123,10 @@
   <data name="TorrentAddedTitle" xml:space="preserve">
     <value>Torrent added</value>
   </data>
+  <data name="TorrentCompletedMessage" xml:space="preserve">
+    <value>The torrent "{0}" has been downloaded.</value>
+  </data>
+  <data name="TorrentCompletedTitle" xml:space="preserve">
+    <value>Torrent completed</value>
+  </data>
 </root>
