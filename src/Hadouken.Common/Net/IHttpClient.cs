@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,5 +10,7 @@ namespace Hadouken.Common.Net
         Task<HttpResponseMessage> PostAsync(Uri uri, HttpContent httpContent);
 
         Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
+
+        Task<Stream> GetStreamAsync(Uri uri);
     }
 }

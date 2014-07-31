@@ -128,6 +128,8 @@
     <Compile Include="Reflection\IAssemblyNameFinder.cs" />
     <Compile Include="Text\IJsonSerializer.cs" />
     <Compile Include="Text\JsonSerializer.cs" />
+    <Compile Include="Timers\ITimer.cs" />
+    <Compile Include="Timers\ITimerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

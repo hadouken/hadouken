@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common", "src\Hadouken.Common\Hadouken.Common.csproj", "{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Mailer", "src\Hadouken.Extensions.Mailer\Hadouken.Extensions.Mailer.csproj", "{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Localization", "src\Hadouken.Localization\Hadouken.Localization.csproj", "{B8E58883-80EE-4C7C-AFA7-5829DD107F79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Rss", "src\Hadouken.Extensions.Rss\Hadouken.Extensions.Rss.csproj", "{2A879968-8DB5-44BD-BB5B-BF40CD683A71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{B8E58883-80EE-4C7C-AFA7-5829DD107F79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8E58883-80EE-4C7C-AFA7-5829DD107F79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8E58883-80EE-4C7C-AFA7-5829DD107F79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A879968-8DB5-44BD-BB5B-BF40CD683A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A879968-8DB5-44BD-BB5B-BF40CD683A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A879968-8DB5-44BD-BB5B-BF40CD683A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A879968-8DB5-44BD-BB5B-BF40CD683A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{9C79C44E-8132-471E-9105-757A978421C6} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 		{78970567-455C-4EE8-8A65-E7CF92F4714C} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 		{5B9D97E4-93D9-4502-999F-5E4CC9D031ED} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
+		{2A879968-8DB5-44BD-BB5B-BF40CD683A71} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 		{D2F70075-17D3-47B4-BBE8-C630CA0357FE} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 		{4A765776-E58B-44EE-A173-9C9840FB89F0} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 	EndGlobalSection

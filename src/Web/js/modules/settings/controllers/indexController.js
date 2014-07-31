@@ -25,7 +25,8 @@
 
             $modal.open({
                 controller: dialog.controller,
-                templateUrl: dialog.templateUrl
+                templateUrl: dialog.templateUrl,
+                size: dialog.size || 'md'
             });
         };
 
