@@ -43,6 +43,8 @@ namespace Hadouken.Common
 
         Path GetWebApplicationPath();
 
+        string GetAppSetting(string key);
+
         /// <summary>
         /// Gets an environment variable.
         /// </summary>

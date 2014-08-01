@@ -62,5 +62,10 @@ namespace Hadouken.Common
         {
             return Environment.GetEnvironmentVariable(variable);
         }
+
+        public string GetAppSetting(string key)
+        {
+            return ConfigurationManager.AppSettings[key];
+        }
     }
 }

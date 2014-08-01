@@ -24,6 +24,10 @@ namespace Hadouken
                 // Load extensions
                 container.LoadExtensions(environment.GetApplicationRoot());
 
+                // Run migrations
+                var migrator = container.Resolve<IMigrator>();
+                migrator.Migrate();
+
                 var service = container.Resolve<IHadoukenService>();
 
                 if (environment.IsUserInteractive())
@@ -45,6 +49,10 @@ namespace Hadouken
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
             builder.RegisterType<AssemblyNameFinder>().As<IAssemblyNameFinder>().SingleInstance();
             builder.RegisterType<KeyValueStore>().As<IKeyValueStore>().SingleInstance();
+
+            // Common.Data
+            builder.RegisterType<SqlMigrator>().As<IMigrator>().SingleInstance();
+            builder.RegisterType<DbConnection>().As<IDbConnection>().SingleInstance();
 
             // Common.Net
             builder.RegisterType<HttpClientWrapper>().As<IHttpClient>();

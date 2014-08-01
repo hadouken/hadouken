@@ -63,8 +63,12 @@
     <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
     <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />
+    <Compile Include="Data\DbConnection.cs" />
+    <Compile Include="Data\IDbConnection.cs" />
     <Compile Include="Data\IKeyValueStore.cs" />
+    <Compile Include="Data\IMigrator.cs" />
     <Compile Include="Data\KeyValueStore.cs" />
+    <Compile Include="Data\SqlMigrator.cs" />
     <Compile Include="Extensibility\ComponentAttribute.cs" />
     <Compile Include="Extensibility\ComponentLifestyle.cs" />
     <Compile Include="Extensibility\ExtensionExtensions.cs" />
