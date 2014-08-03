@@ -17,14 +17,14 @@ namespace Hadouken.Extensions.Rss.Http
             _httpClient = httpClient;
         }
 
-        public SyndicationFeed GetFeed(Uri uri)
+        public SyndicationFeed GetFeed(string url)
         {
             var settings = new XmlReaderSettings
             {
                 DtdProcessing = DtdProcessing.Parse
             };
 
-            using (var stream = _httpClient.GetStreamAsync(uri).Result)
+            using (var stream = _httpClient.GetStreamAsync(new Uri(url)).Result)
             using (var reader = XmlReader.Create(stream, settings))
             {
                 return SyndicationFeed.Load(reader);

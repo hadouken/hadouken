@@ -12,5 +12,7 @@ namespace Hadouken.Common.Net
         Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
 
         Task<Stream> GetStreamAsync(Uri uri);
+
+        Task<Stream> GetStreamAsync(string url);
     }
 }

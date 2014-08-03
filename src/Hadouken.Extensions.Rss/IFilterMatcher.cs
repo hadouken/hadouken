@@ -1,4 +1,4 @@
-﻿using Hadouken.Extensions.Rss.Config;
+﻿using Hadouken.Extensions.Rss.Data.Models;
 
 namespace Hadouken.Extensions.Rss
 {

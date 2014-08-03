@@ -1,0 +1,62 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Add filter to {{ feed.Name }}</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="includePattern" class="control-label col-md-3">Include</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" style="font-family: monospace;" ng-model="filter.IncludePattern" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="excludePattern" class="control-label col-md-3">Exclude</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" style="font-family: monospace;" ng-model="filter.ExcludePattern" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="filter.AutoStart" /> Auto start
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                Modifiers
+                <button class="btn btn-xs btn-primary" ng-click="addModifier(filter)"><i class="fa fa-plus"></i></button>
+            </label>
+            <div class="col-md-9">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Target</th>
+                            <th>Value</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="modifier in filter.Modifiers">
+                            <td>
+                                <select class="form-control input-sm" ng-model="modifier.Target">
+                                    <option value="Label">Label</option>
+                                    <option value="SavePath">Save path</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control input-sm" ng-model="modifier.Value" /></td>
+                            <td>
+                                <button class="btn btn-sm btn-danger pull-right" ng-click="removeModifier(filter, $index)"><i class="fa fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="!validate()">Save filter</button>
+</div>

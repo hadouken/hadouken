@@ -7,6 +7,7 @@ using Hadouken.Common.Messaging;
 using Hadouken.Common.Net;
 using Hadouken.Common.Reflection;
 using Hadouken.Common.Text;
+using Hadouken.Common.Timers;
 using Hadouken.Core;
 using Hadouken.Core.DI;
 using Hadouken.Hosts;
@@ -68,6 +69,9 @@ namespace Hadouken
             // Common.IO
             builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
             builder.RegisterType<Globber>().As<IGlobber>().SingleInstance();
+
+            // Common.Timers
+            builder.RegisterType<TimerFactory>().As<ITimerFactory>().SingleInstance();
 
             return builder.Build();
         }

@@ -1,4 +1,4 @@
-﻿namespace Hadouken.Extensions.Rss.Config
+﻿namespace Hadouken.Extensions.Rss.Data.Models
 {
     public enum ModifierTarget
     {

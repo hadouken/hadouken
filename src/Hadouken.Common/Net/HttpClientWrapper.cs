@@ -19,6 +19,11 @@ namespace Hadouken.Common.Net
             return _client.SendAsync(request);
         }
 
+        public Task<Stream> GetStreamAsync(string url)
+        {
+            return _client.GetStreamAsync(url);
+        }
+
         public Task<Stream> GetStreamAsync(Uri uri)
         {
             return _client.GetStreamAsync(uri);

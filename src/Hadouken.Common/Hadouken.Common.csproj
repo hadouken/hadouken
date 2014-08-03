@@ -141,6 +141,8 @@
     <Compile Include="Text\JsonSerializer.cs" />
     <Compile Include="Timers\ITimer.cs" />
     <Compile Include="Timers\ITimerFactory.cs" />
+    <Compile Include="Timers\ThreadedTimer.cs" />
+    <Compile Include="Timers\TimerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
