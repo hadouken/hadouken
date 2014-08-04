@@ -71,6 +71,24 @@ namespace Hadouken.Extensions.Rss.Services
         public IEnumerable<Modifier> GetModifiersByFilterId(int filterId)
         {
             return _rssRepository.GetModifiersByFilterId(filterId);
-        } 
+        }
+
+        [JsonRpcMethod("rss.feeds.update")]
+        public void UpdateFeed(Feed feed)
+        {
+            _rssRepository.UpdateFeed(feed);
+        }
+
+        [JsonRpcMethod("rss.filters.update")]
+        public void UpdateFilter(Filter filter)
+        {
+            _rssRepository.UpdateFilter(filter);
+        }
+
+        [JsonRpcMethod("rss.modifiers.update")]
+        public void UpdateModifier(Modifier modifier)
+        {
+            _rssRepository.UpdateModifier(modifier);
+        }
     }
 }

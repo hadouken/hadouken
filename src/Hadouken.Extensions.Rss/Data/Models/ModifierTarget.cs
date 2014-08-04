@@ -1,8 +1,8 @@
 ﻿namespace Hadouken.Extensions.Rss.Data.Models
 {
-    public enum ModifierTarget
+    public enum ModifierTarget : long
     {
-        Label,
-        SavePath
+        Label = 0,
+        SavePath = 1
     }
 }

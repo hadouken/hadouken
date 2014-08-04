@@ -22,5 +22,11 @@ namespace Hadouken.Extensions.Rss.Data
         IEnumerable<Filter> GetFiltersByFeedId(int feedId);
 
         IEnumerable<Modifier> GetModifiersByFilterId(int filterId);
+
+        void UpdateFeed(Feed feed);
+
+        void UpdateFilter(Filter filter);
+
+        void UpdateModifier(Modifier modifier);
     }
 }

@@ -39,7 +39,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="modifier in filter.Modifiers">
+                        <tr ng-repeat="modifier in modifiers">
                             <td>
                                 <select class="form-control input-sm" ng-model="modifier.Target">
                                     <option value="Label">Label</option>
@@ -48,7 +48,7 @@
                             </td>
                             <td><input type="text" class="form-control input-sm" ng-model="modifier.Value" /></td>
                             <td>
-                                <button class="btn btn-sm btn-danger pull-right" ng-click="removeModifier(filter, $index)"><i class="fa fa-trash-o"></i></button>
+                                <button class="btn btn-sm btn-danger pull-right" ng-click="removeModifier(modifier, $index)"><i class="fa fa-trash-o"></i></button>
                             </td>
                         </tr>
                     </tbody>

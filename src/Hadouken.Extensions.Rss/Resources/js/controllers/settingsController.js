@@ -16,8 +16,23 @@
             });
 
             addDialog.result.then(function (feed) {
-                console.log(feed);
                 $scope.feeds.push(feed);
+            });
+        };
+
+        $scope.deleteFeed = function(feed, index) {
+            jsonrpc.request('rss.feeds.delete', {
+                params: [feed.Id],
+                success: function() {
+                    $scope.feeds.splice(index, 1);
+                }
+            });
+        };
+
+        $scope.updateFeed = function(feed) {
+            jsonrpc.request('rss.feeds.update', {
+                params: [feed],
+                success: function() {}
             });
         };
 
@@ -45,6 +60,15 @@
             upsertDialog.result.then(function(f) {
                 if (!filter) {
                     $scope.filters.push(f);
+                }
+            });
+        };
+
+        $scope.removeFilter = function(filter, index) {
+            jsonrpc.request('rss.filters.delete', {
+                params: [filter.Id],
+                success: function() {
+                    $scope.filters.splice(index, 1);
                 }
             });
         };

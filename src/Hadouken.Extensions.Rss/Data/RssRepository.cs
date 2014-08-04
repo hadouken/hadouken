@@ -38,19 +38,19 @@ namespace Hadouken.Extensions.Rss.Data
 
         public void DeleteFeed(int feedId)
         {
-            var query = @"delete from Rss_Feed f where f.Id = @Id";
+            var query = @"delete from Rss_Feed where Id = @Id";
             _connection.Execute(query, new {Id = feedId});
         }
 
         public void DeleteFilter(int filterId)
         {
-            var query = @"delete from Rss_Filter f where f.Id = @Id";
+            var query = @"delete from Rss_Filter where Id = @Id";
             _connection.Execute(query, new {Id = filterId});
         }
 
         public void DeleteModifier(int modifierId)
         {
-            var query = @"delete from Rss_Modifier m where m.Id = @Id";
+            var query = @"delete from Rss_Modifier where Id = @Id";
             _connection.Execute(query, new {Id = modifierId});
         }
 
@@ -70,6 +70,24 @@ namespace Hadouken.Extensions.Rss.Data
         {
             var query = @"select m.Id, m.FilterId, m.Target, m.Value from Rss_Modifier m where m.FilterId = @FilterId";
             return _connection.Query<Modifier>(query, new {FilterId = filterId});
+        }
+
+        public void UpdateFeed(Feed feed)
+        {
+            var query = @"update Rss_Feed set Name = @Name, Url = @Url, PollInterval = @PollInterval where Id = @Id";
+            _connection.Execute(query, feed);
+        }
+
+        public void UpdateFilter(Filter filter)
+        {
+            var query = @"update Rss_Filter set IncludePattern = @IncludePattern, ExcludePattern = @ExcludePattern, AutoStart = @AutoStart where Id = @Id";
+            _connection.Execute(query, filter);
+        }
+
+        public void UpdateModifier(Modifier modifier)
+        {
+            var query = @"update Rss_Modifier set [Target] = @Target, Value = @Value where Id = @Id";
+            _connection.Execute(query, modifier);
         }
     }
 }
