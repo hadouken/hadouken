@@ -2,7 +2,7 @@
 
 namespace Hadouken.Extensions.Rss
 {
-    public interface IFeedService
+    public interface IFeedChecker
     {
         void Check(Feed feed);
     }

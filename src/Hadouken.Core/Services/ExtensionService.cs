@@ -23,6 +23,7 @@ namespace Hadouken.Core.Services
         {
             return (from ext in _extensionFactory.GetAll<IExtension>()
                 let attr = ext.GetType().GetCustomAttribute<ExtensionAttribute>()
+                orderby attr.Name ascending 
                 select new ExtensionMetadata
                 {
                     Id = attr.ExtensionId,

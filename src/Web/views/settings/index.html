@@ -25,7 +25,7 @@
                         <td><input type="checkbox" ng-model="extension.Enabled" ng-change="toggleExtension(extension.Id, extension.Enabled)" />
                         <td>{{ extension.Name }}</td>
                         <td>{{ extension.Description }}</td>
-                        <td style="text-align: right;"><button type="button" class="btn btn-default btn-xs" ng-click="configure(extension.Id)">Configure</button>
+                        <td style="text-align: right;"><button type="button" class="btn btn-default btn-xs" ng-show="hasDialog(extension.Id)" ng-click="configure(extension.Id)">Configure</button>
                     </tr>
                 </tbody>
             </table>

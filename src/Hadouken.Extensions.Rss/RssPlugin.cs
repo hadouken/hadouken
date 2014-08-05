@@ -24,19 +24,19 @@ namespace Hadouken.Extensions.Rss
         private readonly ILogger _logger;
         private readonly IRssRepository _rssRepository;
         private readonly ITimer _timer;
-        private readonly IFeedService _feedService;
+        private readonly IFeedChecker _feedChecker;
 
-        public RssPlugin(ILogger logger, ITimerFactory timerFactory, IRssRepository rssRepository, IFeedService feedService)
+        public RssPlugin(ILogger logger, ITimerFactory timerFactory, IRssRepository rssRepository, IFeedChecker feedChecker)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (timerFactory == null) throw new ArgumentNullException("timerFactory");
             if (rssRepository == null) throw new ArgumentNullException("rssRepository");
-            if (feedService == null) throw new ArgumentNullException("feedService");
+            if (feedChecker == null) throw new ArgumentNullException("feedChecker");
 
             _logger = logger;
             _rssRepository = rssRepository;
             _timer = timerFactory.Create(60000, CheckFeeds);
-            _feedService = feedService;
+            _feedChecker = feedChecker;
         }
 
         public void Load()
@@ -60,7 +60,7 @@ namespace Hadouken.Extensions.Rss
             {
                 try
                 {
-                    _feedService.Check(feed);
+                    _feedChecker.Check(feed);
                 }
                 catch (Exception e)
                 {

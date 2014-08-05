@@ -10,7 +10,7 @@ using Hadouken.Extensions.Rss.Http;
 namespace Hadouken.Extensions.Rss
 {
     [Component]
-    public sealed class FeedService : IFeedService
+    public sealed class FeedChecker : IFeedChecker
     {
         private readonly ILogger _logger;
         private readonly IRssRepository _rssRepository;
@@ -18,7 +18,7 @@ namespace Hadouken.Extensions.Rss
         private readonly IFilterMatcher _filterMatcher;
         private readonly IHttpClient _httpClient;
 
-        public FeedService(ILogger logger,
+        public FeedChecker(ILogger logger,
             IRssRepository rssRepository,
             ISyndicationFeedService syndicationFeedService,
             IFilterMatcher filterMatcher,

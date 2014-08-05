@@ -46,11 +46,11 @@
     <Compile Include="Data\Models\Modifier.cs" />
     <Compile Include="Data\Models\ModifierTarget.cs" />
     <Compile Include="Data\RssRepository.cs" />
-    <Compile Include="FeedService.cs" />
+    <Compile Include="FeedChecker.cs" />
     <Compile Include="FilterMatcher.cs" />
     <Compile Include="Http\ISyndicationFeedService.cs" />
     <Compile Include="Http\SyndicationFeedService.cs" />
-    <Compile Include="IFeedService.cs" />
+    <Compile Include="IFeedChecker.cs" />
     <Compile Include="IFilterMatcher.cs" />
     <Compile Include="RssPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

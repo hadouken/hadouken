@@ -9,23 +9,23 @@ namespace Hadouken.Core
     public class ExtensionFactory : IExtensionFactory
     {
         private readonly IKeyValueStore _keyValueStore;
-        private readonly IList<IExtension> _extensions;
+        private readonly Func<IEnumerable<IExtension>> _extensions;
 
-        public ExtensionFactory(IKeyValueStore keyValueStore, IEnumerable<IExtension> extensions)
+        public ExtensionFactory(IKeyValueStore keyValueStore, Func<IEnumerable<IExtension>> extensions)
         {
             if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
             _keyValueStore = keyValueStore;
-            _extensions = new List<IExtension>(extensions ?? Enumerable.Empty<IExtension>());
+            _extensions = extensions;
         }
 
         public IEnumerable<TExtension> GetAll<TExtension>() where TExtension : IExtension
         {
-            return new List<TExtension>(_extensions.OfType<TExtension>());
+            return new List<TExtension>(_extensions().OfType<TExtension>());
         }
 
         public TExtension Get<TExtension>(string extensionId) where TExtension : IExtension
         {
-            return _extensions.OfType<TExtension>().SingleOrDefault(e => e.GetId() == extensionId);
+            return _extensions().OfType<TExtension>().SingleOrDefault(e => e.GetId() == extensionId);
         }
 
         public bool IsEnabled(string extensionId)

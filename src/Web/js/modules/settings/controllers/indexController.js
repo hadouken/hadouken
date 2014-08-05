@@ -38,6 +38,10 @@
             });
         };
 
+        $scope.hasDialog = function(extensionId) {
+            return typeof dialogs[extensionId] !== 'undefined';
+        };
+
         var subscription = messageService.subscribe('ui.settings.dialogs.add', function(event, params) {
             dialogs[params.extensionId] = params;
         });

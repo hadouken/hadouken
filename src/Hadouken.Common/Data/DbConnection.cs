@@ -21,7 +21,7 @@ namespace Hadouken.Common.Data
 
         public int Execute(string commandText, object parameter = null)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = CreateConnection())
             {
                 return connection.Execute(commandText, parameter);
             }
@@ -29,10 +29,18 @@ namespace Hadouken.Common.Data
 
         public IEnumerable<T> Query<T>(string commandText, object parameter = null)
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = CreateConnection())
             {
                 return connection.Query<T>(commandText, parameter);
             }
+        }
+
+        private SQLiteConnection CreateConnection()
+        {
+            var connection = new SQLiteConnection(_connectionString);
+            connection.Execute("PRAGMA foreign_keys = ON;");
+
+            return connection;
         }
     }
 }

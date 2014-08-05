@@ -243,6 +243,10 @@ namespace Hadouken.Core.BitTorrent
                     {
                         Handle((TorrentFinishedAlert) alert);
                     }
+                    else if (alert is MetadataReceivedAlert)
+                    {
+                        Handle((MetadataReceivedAlert) alert);
+                    }
                 }
             }
         }
@@ -261,6 +265,15 @@ namespace Hadouken.Core.BitTorrent
             if (_muted.Contains(torrent.InfoHash)) return;
 
             _messageBus.Publish(new TorrentCompletedMessage(torrent));
+        }
+
+        private void Handle(MetadataReceivedAlert alert)
+        {
+            using (var h = alert.Handle)
+            using (var ti = h.TorrentFile)
+            {
+                SaveMetadataFile(ti);
+            }
         }
 
         private void AddTorrent(AddTorrentMessage message)
