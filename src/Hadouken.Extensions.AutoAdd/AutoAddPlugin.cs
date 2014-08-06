@@ -8,7 +8,14 @@ namespace Hadouken.Extensions.AutoAdd
 {
     [Extension("plugin.autoadd",
         Name = "AutoAdd",
-        Description = "Monitors folders and adds any torrent files it finds."
+        Description = "Monitors folders and adds any torrent files it finds.",
+        ResourceNamespace = "Hadouken.Extensions.AutoAdd.Resources",
+        Scripts = new[]
+        {
+            "js/app.js",
+            "js/controllers/settingsController.js",
+            "js/controllers/upsertFolderController.js"
+        }
     )]
     public class AutoAddPlugin : IPlugin
     {

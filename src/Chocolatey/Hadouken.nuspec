@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>hadouken</id>
+    <title>Hadouken</title>
+    <version>$version$</version>
+    <authors>Viktor Elofsson</authors>
+    <owners>Viktor Elofsson</owners>
+    <summary>A headless BitTorrent client for Windows.</summary>
+    <description>Hadouken is a headless BitTorrent client for Windows. It runs as a Windows service and has awesome plugin support.</description>
+    <projectUrl>http://www.hdkn.net</projectUrl>
+    <tags>Hadouken, BitTorrent, Torrent, Headless</tags>
+    <copyright></copyright>
+    <licenseUrl>https://raw.githubusercontent.com/hadouken/hadouken/develop/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes></releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

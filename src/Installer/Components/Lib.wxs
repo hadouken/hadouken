@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="LibComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Name="Autofac.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Dapper.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Nancy.Bootstrappers.Autofac.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Nancy.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Nancy.Hosting.Self.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Newtonsoft.Json.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Ragnar.dll" />
+      </Component>
+
+      <Component>
+        <File Name="System.Data.SQLite.dll" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="X86Components" Directory="X86DIR" Source="$(var.BinDir)\x86\">
+      <Component>
+        <File Id="SQLiteInteropx86dll" Name="SQLite.Interop.dll" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="X64Components" Directory="X64DIR" Source="$(var.BinDir)\x64\">
+      <Component>
+        <File Id="SQLiteInteropx64dll" Name="SQLite.Interop.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

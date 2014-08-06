@@ -23,10 +23,22 @@ namespace Hadouken.Extensions.AutoAdd.Services
             return folder;
         }
 
+        [JsonRpcMethod("autoadd.folders.delete")]
+        public void DeleteFolder(int folderId)
+        {
+            _repository.DeleteFolder(folderId);
+        }
+
         [JsonRpcMethod("autoadd.folders.getAll")]
         public IEnumerable<Folder> GetFolders()
         {
             return _repository.GetFolders();
+        }
+
+        [JsonRpcMethod("autoadd.folders.update")]
+        public void UpdateFolder(Folder folder)
+        {
+            _repository.UpdateFolder(folder);
         }
     }
 }

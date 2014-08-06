@@ -8,14 +8,14 @@ namespace Hadouken.Common.Messaging
     public class MessageBus : IMessageBus
     {
         private readonly ILogger _logger;
-        private readonly IEnumerable<IMessageHandler> _handlers;
+        private readonly Func<IEnumerable<IMessageHandler>> _handlers;
         private readonly IDictionary<Type, IList<object>> _callbacks;
 
-        public MessageBus(ILogger logger, IEnumerable<IMessageHandler> handlers)
+        public MessageBus(ILogger logger, Func<IEnumerable<IMessageHandler>> handlers)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             _logger = logger;
-            _handlers = handlers ?? Enumerable.Empty<IMessageHandler>();
+            _handlers = handlers;
             _callbacks = new Dictionary<Type, IList<object>>();
         }
 
@@ -46,7 +46,7 @@ namespace Hadouken.Common.Messaging
 
             // Find handlers
             var handlerType = typeof (IMessageHandler<T>);
-            var handlers = (from handler in _handlers
+            var handlers = (from handler in _handlers()
                 let type = handler.GetType()
                 where handlerType.IsAssignableFrom(type)
                 select (IMessageHandler<T>) handler).ToList();

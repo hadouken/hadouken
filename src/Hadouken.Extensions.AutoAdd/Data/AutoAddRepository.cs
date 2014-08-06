@@ -30,6 +30,12 @@ namespace Hadouken.Extensions.AutoAdd.Data
             history.Id = _connection.Query<int>(query, history).First();
         }
 
+        public void DeleteFolder(int folderId)
+        {
+            var query = @"delete from AutoAdd_Folder where Id = @Id";
+            _connection.Execute(query, new {Id = folderId});
+        }
+
         public IEnumerable<Folder> GetFolders()
         {
             var query = @"select f.Id, f.Path, f.Pattern, f.RemoveSourceFile, f.AutoStart from AutoAdd_Folder f";
@@ -39,7 +45,13 @@ namespace Hadouken.Extensions.AutoAdd.Data
         public History GetHistoryByPath(string path)
         {
             var query = @"select h.Id, h.Path, h.AddedTime from AutoAdd_History h where h.Path = @Path limit 1";
-            return _connection.Query<History>(query, new {Path = path}).First();
+            return _connection.Query<History>(query, new {Path = path}).FirstOrDefault();
+        }
+
+        public void UpdateFolder(Folder folder)
+        {
+            var query = @"update AutoAdd_Folder set Path = @Path, Pattern = @Pattern, RemoveSourceFile = @RemoveSourceFile, RecursiveSearch = @RecursiveSearch, AutoStart = @AutoStart where Id = @Id";
+            _connection.Execute(query, folder);
         }
     }
 }

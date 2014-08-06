@@ -42,7 +42,6 @@ namespace Hadouken.Extensions.AutoAdd
             var filter = _keyValueStore.Get<string>("autoadd.filter");
             var files = dir.GetFiles(filter, folder.RecursiveSearch ? SearchScope.Recursive : SearchScope.Current);
 
-
             foreach (var file in files)
             {
                 var fileName = file.Path.GetFilename().FullPath;
@@ -53,6 +52,11 @@ namespace Hadouken.Extensions.AutoAdd
                 if (_repository.GetHistoryByPath(file.Path.FullPath) != null) continue;
                 
                 AddFile(file);
+
+                if (folder.RemoveSourceFile)
+                {
+                    file.Delete();
+                }
             }
         }
 

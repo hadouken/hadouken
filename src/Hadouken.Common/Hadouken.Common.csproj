@@ -67,6 +67,7 @@
     <Compile Include="Data\IDbConnection.cs" />
     <Compile Include="Data\IKeyValueStore.cs" />
     <Compile Include="Data\IMigrator.cs" />
+    <Compile Include="Data\KeyValueChangedMessage.cs" />
     <Compile Include="Data\KeyValueStore.cs" />
     <Compile Include="Data\SqlMigrator.cs" />
     <Compile Include="Extensibility\ComponentAttribute.cs" />

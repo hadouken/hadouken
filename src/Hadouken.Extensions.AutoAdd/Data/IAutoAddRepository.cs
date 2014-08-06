@@ -9,8 +9,12 @@ namespace Hadouken.Extensions.AutoAdd.Data
 
         void CreateHistory(History history);
 
+        void DeleteFolder(int folderId);
+
         IEnumerable<Folder> GetFolders();
 
         History GetHistoryByPath(string path);
+
+        void UpdateFolder(Folder folder);
     }
 }

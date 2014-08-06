@@ -1,9 +1,15 @@
-﻿namespace Hadouken.Common.Data
+﻿using System.Collections.Generic;
+
+namespace Hadouken.Common.Data
 {
     public interface IKeyValueStore
     {
         T Get<T>(string key, T defaultValue = default(T));
 
-        void Set<T>(string key, T value);
+        IDictionary<string, object> GetMany(string section);
+
+        void Set(string key, object value);
+
+        void SetMany(IDictionary<string, object> items);
     }
 }
