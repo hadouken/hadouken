@@ -67,30 +67,24 @@ namespace Hadouken.Common.Data
         {
             if (items == null) return;
 
-            foreach (var item in items)
-            {
-                SetInternal(item.Key, item.Value);
-            }
+            var query = @"insert or replace into Setting(Key, Value) values(@Key, @Value);";
+            var model = (from item in items
+                         select new
+                         {
+                             item.Key,
+                             Value = _jsonSerializer.SerializeObject(item.Value)
+                         }).ToArray();
 
+            _connection.Execute(query, model);
             _messageBus.Publish(new KeyValueChangedMessage(items.Keys.ToArray()));
         }
 
         private void SetInternal(string key, object value)
         {
-            var findQuery = @"select exists(select 1 from Setting s where s.Key = @Key limit 1);";
-            var exists = _connection.Query<bool>(findQuery, new { Key = key }).First();
+            var query = @"insert or replace into Setting(Key, Value) values(@Key, @Value);";
             var model = new { Key = key, Value = _jsonSerializer.SerializeObject(value) };
 
-            if (exists)
-            {
-                var query = @"update Setting set Value = @Value where Key = @Key";
-                _connection.Execute(query, model);
-            }
-            else
-            {
-                var query = @"insert into Setting (Key, Value) values (@Key, @Value)";
-                _connection.Execute(query, model);
-            }
+            _connection.Execute(query, model);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Hadouken.Common.Logging;
 using Hadouken.Core.Http.Modules.Models;
 using Hadouken.Core.Http.Security;
+using Hadouken.Core.Security;
 using Nancy;
 using Nancy.ModelBinding;
 
@@ -14,14 +15,14 @@ namespace Hadouken.Core.Http.Modules
             ITokenizer tokenizer)
             : base("auth")
         {
-            Get["/setup"] = _ => !userManager.GetUsers().Any();
+            Get["/setup"] = _ => !userManager.HasUsers();
 
             Post["/login"] = _ =>
             {
                 var userData = this.Bind<UserDto>();
 
                 // First login creates user
-                if (!userManager.GetUsers().Any())
+                if (!userManager.HasUsers())
                 {
                     logger.Info("Creating user account " + userData.UserName);
                     userManager.CreateUser(userData.UserName, userData.Password);
@@ -35,7 +36,7 @@ namespace Hadouken.Core.Http.Modules
                     return HttpStatusCode.Unauthorized;
                 }
 
-                var identity = new UserIdentity(user.UserName, user.Claims);
+                var identity = new UserIdentity(user.UserName, Enumerable.Empty<string>());
                 var token = tokenizer.Tokenize(identity, Context);
 
                 return new

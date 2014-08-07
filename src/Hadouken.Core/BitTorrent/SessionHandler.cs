@@ -53,6 +53,7 @@ namespace Hadouken.Core.BitTorrent
         {
             // Set up message subscriptions
             _messageBus.Subscribe<AddTorrentMessage>(AddTorrent);
+            _messageBus.Subscribe<AddMagnetLinkMessage>(AddMagnetLink);
             _messageBus.Subscribe<PauseTorrentMessage>(PauseTorrent);
             _messageBus.Subscribe<ResumeTorrentMessage>(ResumeTorrent);
             _messageBus.Subscribe<RemoveTorrentMessage>(RemoveTorrent);
@@ -104,7 +105,7 @@ namespace Hadouken.Core.BitTorrent
                 {
                     torrentStream.CopyTo(torrentMemoryStream);
 
-                    addParams.SavePath = "C:\\Downloads";
+                    addParams.SavePath = _keyValueStore.Get<string>("bt.save_path");
                     addParams.TorrentInfo = new TorrentInfo(torrentMemoryStream.ToArray());
 
                     _logger.Debug("Loading " + addParams.TorrentInfo.Name);
@@ -471,11 +472,24 @@ namespace Hadouken.Core.BitTorrent
 
             using (var addParams = new AddTorrentParams())
             {
-                addParams.SavePath = message.SavePath ?? "C:\\Downloads";
+                addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
                 addParams.TorrentInfo = new TorrentInfo(message.Data);
 
                 // Save metadata file
                 SaveMetadataFile(addParams.TorrentInfo);
+
+                _session.AsyncAddTorrent(addParams);
+            }
+        }
+
+        private void AddMagnetLink(AddMagnetLinkMessage message)
+        {
+            _logger.Debug("Adding magnet link.");
+
+            using (var addParams = new AddTorrentParams())
+            {
+                addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
+                addParams.Url = message.MagnetLink;
 
                 _session.AsyncAddTorrent(addParams);
             }

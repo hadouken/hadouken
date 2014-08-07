@@ -5,6 +5,7 @@ using Hadouken.Core.Handlers;
 using Hadouken.Core.Http;
 using Hadouken.Core.Http.Security;
 using Hadouken.Core.JsonRpc;
+using Hadouken.Core.Security;
 using Hadouken.Core.Services;
 using Nancy.Bootstrapper;
 using Ragnar;
@@ -44,6 +45,8 @@ namespace Hadouken.Core.DI
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();
             builder.RegisterType<CustomNancyBootstrapper>().As<INancyBootstrapper>().SingleInstance();
             builder.RegisterType<Tokenizer>().As<ITokenizer>().SingleInstance();
+
+            // Security
             builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
 
             // The main service
