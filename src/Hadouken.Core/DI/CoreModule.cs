@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Core.BitTorrent;
+using Hadouken.Core.Data;
 using Hadouken.Core.Handlers;
 using Hadouken.Core.Http;
 using Hadouken.Core.Http.Security;
@@ -45,6 +46,9 @@ namespace Hadouken.Core.DI
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();
             builder.RegisterType<CustomNancyBootstrapper>().As<INancyBootstrapper>().SingleInstance();
             builder.RegisterType<Tokenizer>().As<ITokenizer>().SingleInstance();
+
+            // Repositories
+            builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
 
             // Security
             builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();

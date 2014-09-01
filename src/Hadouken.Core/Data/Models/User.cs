@@ -6,10 +6,10 @@ namespace Hadouken.Core.Data.Models
     {
         public User()
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
         }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string UserName { get; set; }
 

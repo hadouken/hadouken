@@ -36,7 +36,7 @@ namespace Hadouken.Core.Http.Modules
                     return HttpStatusCode.Unauthorized;
                 }
 
-                var identity = new UserIdentity(user.UserName, Enumerable.Empty<string>());
+                var identity = new UserIdentity(user.UserName, user.Claims);
                 var token = tokenizer.Tokenize(identity, Context);
 
                 return new

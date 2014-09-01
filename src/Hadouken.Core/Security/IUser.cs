@@ -7,5 +7,7 @@ namespace Hadouken.Core.Security
         Guid Id { get; }
 
         string UserName { get; }
+
+        string[] Claims { get; }
     }
 }

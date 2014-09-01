@@ -113,6 +113,7 @@
     <Compile Include="NotifierHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HadoukenService.cs" />
+    <Compile Include="Security\HadoukenUser.cs" />
     <Compile Include="Security\IUser.cs" />
     <Compile Include="Security\IUserManager.cs" />
     <Compile Include="Security\UserManager.cs" />
@@ -136,6 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\20140804190101_InsertCoreSettings.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Sql\20130831120105_CreateUserTable.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
