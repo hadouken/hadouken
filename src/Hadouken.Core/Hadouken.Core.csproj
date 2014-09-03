@@ -42,8 +42,9 @@
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\..\packages\Nancy.Hosting.Self.0.23.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
-    <Reference Include="Ragnar">
-      <HintPath>..\..\packages\Ragnar.0.4.0\lib\net45\Ragnar.dll</HintPath>
+    <Reference Include="Ragnar, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Ragnar.0.5.0\lib\net45\Ragnar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -140,6 +141,23 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\20130831120105_CreateUserTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="boost_chrono-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="boost_date_time-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="boost_system-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="boost_thread-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="torrent.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,6 +8,22 @@
       </Component>
 
       <Component>
+        <File Name="boost_chrono-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
+        <File Name="boost_date_time-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
+        <File Name="boost_system-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
+        <File Name="boost_thread-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
         <File Name="Dapper.dll" />
       </Component>
 
@@ -33,6 +49,10 @@
 
       <Component>
         <File Name="System.Data.SQLite.dll" />
+      </Component>
+
+      <Component>
+        <File Name="torrent.dll" />
       </Component>
     </ComponentGroup>
 
