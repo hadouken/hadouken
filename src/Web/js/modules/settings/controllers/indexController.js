@@ -51,7 +51,10 @@
             var cfg = {};
 
             for(var key in $scope.advancedSettings) {
-                cfg[key] = $scope.advancedSettings[key].value;
+                if($scope.advancedSettings[key].dirty) {
+                    cfg[key] = $scope.advancedSettings[key].value;
+                    $scope.advancedSettings[key].dirty = false;
+                }
             }
 
             jsonrpc.request('config.setMany', {
@@ -76,7 +79,7 @@
             });
         };
 
-        $scope.getType= function(value) {
+        $scope.getType = function(value) {
             return typeof value;
         }
 

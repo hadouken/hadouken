@@ -65,7 +65,7 @@ namespace Hadouken.Common.Data
 
         public void SetMany(IDictionary<string, object> items)
         {
-            if (items == null) return;
+            if (items == null || !items.Any()) return;
 
             var query = @"insert or replace into Setting(Key, Value) values(@Key, @Value);";
             var model = (from item in items

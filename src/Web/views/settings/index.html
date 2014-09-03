@@ -55,7 +55,7 @@
         </tab>
 
         <tab heading="Advanced">
-            <div class="alert alert-warning"><strong>Warning!</strong> Here be dragons - this is the edge of the map. Changing these
+            <div class="alert alert-warning"><strong>Warning!</strong> Changing these
             settings may or may not break Hadouken for you.</div>
 
             <table class="table table-condensed table-striped">
@@ -70,19 +70,19 @@
                         <td>{{ key }}</td>
                         <td>
                             <div ng-if="item.type === 'boolean'">
-                                <input type="checkbox" ng-model="item.value" />
+                                <input type="checkbox" ng-model="item.value" ng-change="item.dirty = true;" />
                             </div>
 
                             <div ng-if="item.type === 'float'">
-                                <input type="number" class="form-control input-sm" step="0.01" ng-model="item.value" />
+                                <input type="number" class="form-control input-sm" step="0.01" ng-model="item.value" ng-change="item.dirty = true;" />
                             </div>
 
                             <div ng-if="item.type === 'number'">
-                                <input type="number" class="form-control input-sm" ng-model="item.value" />
+                                <input type="number" class="form-control input-sm" ng-model="item.value" ng-change="item.dirty = true;" />
                             </div>
 
                             <div ng-if="item.type === 'string'">
-                                <input type="text" class="form-control input-sm" ng-model="item.value" />
+                                <input type="text" class="form-control input-sm" ng-model="item.value" ng-change="item.dirty = true;" />
                             </div>
                         </td>
                     </tr>
