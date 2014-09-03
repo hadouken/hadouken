@@ -122,7 +122,7 @@ Task Output -depends Compile {
         } -Force
 
     # Copy the correct config file
-    # Copy-Item -Path .\src\Configuration\Console\Hadouken.Service.exe.config -Destination $Dir_Binaries
+    Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.config" -Destination $Dir_Binaries
 
     # Zip the web UI
     Write-Host "Compressing and packaging the web ui"

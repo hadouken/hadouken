@@ -21,14 +21,18 @@ namespace Hadouken
             using (var container = BuildContainer())
             {
                 var environment = container.Resolve<IEnvironment>();
+                var logger = container.Resolve<ILogger>();
 
                 // Load extensions
+                logger.Info("Loading extensions.");
                 container.LoadExtensions(environment.GetApplicationRoot());
 
                 // Run migrations
+                logger.Info("Running migrations.");
                 var migrator = container.Resolve<IMigrator>();
                 migrator.Migrate();
 
+                logger.Info("Resolving service.");
                 var service = container.Resolve<IHadoukenService>();
 
                 if (environment.IsUserInteractive())

@@ -12,10 +12,6 @@
       </Component>
 
       <Component>
-        <File Name="Hadouken.Localization.dll" />
-      </Component>
-
-      <Component>
         <File Name="Hadouken.Extensions.AutoAdd.dll" />
       </Component>
 
@@ -34,9 +30,13 @@
       <Component>
         <File Name="Hadouken.Extensions.Rss.dll" />
       </Component>
+
+      <Component>
+        <File Name="Hadouken.Localization.dll" />
+      </Component>
     </ComponentGroup>
 
-    <ComponentGroup Id="WebComponents" Directory="WEBDIR" Source="$(var.BinDir)\Web\">
+    <ComponentGroup Id="WebComponents" Directory="HDKNDATA" Source="$(var.BinDir)\Web\">
       <Component>
         <File Name="web.zip" />
       </Component>

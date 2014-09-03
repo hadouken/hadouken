@@ -52,6 +52,8 @@ namespace Hadouken.Core.BitTorrent
         public void Load()
         {
             // Set up message subscriptions
+            _logger.Debug("Setting up subscriptions.");
+
             _messageBus.Subscribe<AddTorrentMessage>(AddTorrent);
             _messageBus.Subscribe<AddMagnetLinkMessage>(AddMagnetLink);
             _messageBus.Subscribe<PauseTorrentMessage>(PauseTorrent);
@@ -61,12 +63,15 @@ namespace Hadouken.Core.BitTorrent
             _messageBus.Subscribe<KeyValueChangedMessage>(CheckReloadSettings);
 
             // Configure session
+            _logger.Debug("Setting alert mask.");
             _session.SetAlertMask(SessionAlertCategory.Error
                                   | SessionAlertCategory.Peer
                                   | SessionAlertCategory.Status);
 
             var listenPort = _keyValueStore.Get<int>("bt.net.listen_port");
             _session.ListenOn(listenPort, listenPort);
+
+            _logger.Debug("Session listening on " + listenPort + ".");
 
             // Reload session settings
             ReloadSettings();
@@ -79,6 +84,8 @@ namespace Hadouken.Core.BitTorrent
             var sessionStatePath = _environment.GetApplicationDataPath().CombineWithFilePath("session_state");
             if (_fileSystem.Exist(sessionStatePath))
             {
+                _logger.Debug("Loading session state.");
+
                 var file = _fileSystem.GetFile(sessionStatePath);
 
                 using (var stateStream = file.OpenRead())
@@ -408,10 +415,14 @@ namespace Hadouken.Core.BitTorrent
 
                 _session.SetSettings(settings);
             }
+
+            _logger.Debug("Reloaded session settings.");
         }
 
         private void ReadAlerts()
         {
+            _logger.Debug("Starting alerts thread.");
+
             var timeout = TimeSpan.FromSeconds(1);
 
             while (_alertsThreadRunning)
