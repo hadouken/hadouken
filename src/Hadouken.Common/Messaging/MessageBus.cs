@@ -39,7 +39,7 @@ namespace Hadouken.Common.Messaging
                     }
                     catch (Exception e)
                     {
-                        _logger.Error("Error when invoking callback", e);
+                        _logger.Error(e, "Error when invoking callback");
                     }
                 }
             }

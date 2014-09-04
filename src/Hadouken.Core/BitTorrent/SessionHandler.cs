@@ -71,7 +71,7 @@ namespace Hadouken.Core.BitTorrent
             var listenPort = _keyValueStore.Get<int>("bt.net.listen_port");
             _session.ListenOn(listenPort, listenPort);
 
-            _logger.Debug("Session listening on " + listenPort + ".");
+            _logger.Debug("Session listening on port {Port}.", listenPort);
 
             // Reload session settings
             ReloadSettings();

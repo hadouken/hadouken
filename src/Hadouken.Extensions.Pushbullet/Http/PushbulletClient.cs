@@ -48,7 +48,7 @@ namespace Hadouken.Extensions.Pushbullet.Http
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.Error(string.Format("Error pushing message. Response status code: {0}.", response.StatusCode));
+                _logger.Error("Error pushing message. Response status code: {StatusCode}.", response.StatusCode);
             }
         }
     }

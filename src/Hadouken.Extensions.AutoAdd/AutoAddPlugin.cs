@@ -62,7 +62,7 @@ namespace Hadouken.Extensions.AutoAdd
                 }
                 catch (Exception e)
                 {
-                    _logger.Error("Error when checking folder.", e);
+                    _logger.Error(e, "Error when checking folder {Path}.", folder.Path);
                 }
             }
         }

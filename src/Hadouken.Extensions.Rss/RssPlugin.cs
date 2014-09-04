@@ -64,7 +64,7 @@ namespace Hadouken.Extensions.Rss
                 }
                 catch (Exception e)
                 {
-                    _logger.Error("Error when checking feed " + feed.Name, e);
+                    _logger.Error(e, "Error when checking feed {Name}.", feed.Name);
                 }
             }
         }

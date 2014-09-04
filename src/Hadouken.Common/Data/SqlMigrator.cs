@@ -37,6 +37,7 @@ namespace Hadouken.Common.Data
                 orderby scriptName ascending 
                 select new {Assembly = asm, Name = name, ScriptName = scriptName});
 
+            _logger.Info("Running migrations.");
 
             foreach (var resource in resources)
             {
@@ -54,7 +55,7 @@ namespace Hadouken.Common.Data
                     _connection.Execute(sql);
                     _connection.Execute(InsertScript, new {Script = resource.ScriptName});
 
-                    _logger.Info("Applied script " + resource.ScriptName);
+                    _logger.Info("Applied script {ScriptName}.", resource.ScriptName);
                 }
             }
         }

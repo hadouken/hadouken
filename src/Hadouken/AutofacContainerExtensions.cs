@@ -30,7 +30,7 @@ namespace Hadouken
             foreach (var assemblyName in assemblyNames)
             {
                 var filePath = new FilePath(assemblyName.CodeBase);
-                logger.Info(string.Format("Loading extension {0}", filePath.GetFilename()));
+                logger.Info("Loading extension {FileName}.", filePath.GetFilename());
 
                 var assembly = Assembly.Load(assemblyName);
 

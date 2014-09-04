@@ -24,7 +24,7 @@ namespace Hadouken.Core.Http.Modules
                 // First login creates user
                 if (!userManager.HasUsers())
                 {
-                    logger.Info("Creating user account " + userData.UserName);
+                    logger.Info("Creating user account {UserName}.", userData.UserName);
                     userManager.CreateUser(userData.UserName, userData.Password);
                 }
 
@@ -32,7 +32,7 @@ namespace Hadouken.Core.Http.Modules
 
                 if (user == null)
                 {
-                    logger.Warn("Invalid username/password, account " + userData.UserName);
+                    logger.Warn("Invalid username/password: {UserName}.", userData.UserName);
                     return HttpStatusCode.Unauthorized;
                 }
 
