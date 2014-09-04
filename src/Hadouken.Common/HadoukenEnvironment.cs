@@ -46,8 +46,6 @@ namespace Hadouken.Common
         public DirectoryPath GetApplicationDataPath()
         {
             var path = GetAppSetting("Path:Data");
-            path = Environment.ExpandEnvironmentVariables(path);
-
             return new DirectoryPath(path);
         }
 
@@ -66,7 +64,8 @@ namespace Hadouken.Common
 
         public string GetAppSetting(string key)
         {
-            return ReplaceAppSettingTokens(ConfigurationManager.AppSettings[key]);
+            var replaced = ReplaceAppSettingTokens(ConfigurationManager.AppSettings[key]);
+            return Environment.ExpandEnvironmentVariables(replaced);
         }
 
         public string GetConnectionString(string name)

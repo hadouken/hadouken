@@ -48,6 +48,14 @@
       </Component>
 
       <Component>
+        <File Name="Serilog.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Serilog.FullNetFx.dll" />
+      </Component>
+
+      <Component>
         <File Name="System.Data.SQLite.dll" />
       </Component>
 
