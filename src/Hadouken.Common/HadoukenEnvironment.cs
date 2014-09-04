@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Hadouken.Common.IO;
 
 namespace Hadouken.Common
@@ -44,7 +45,7 @@ namespace Hadouken.Common
 
         public DirectoryPath GetApplicationDataPath()
         {
-            var path = ConfigurationManager.AppSettings["AppData"];
+            var path = GetAppSetting("Path:Data");
             path = Environment.ExpandEnvironmentVariables(path);
 
             return new DirectoryPath(path);
@@ -52,7 +53,7 @@ namespace Hadouken.Common
 
         public Path GetWebApplicationPath()
         {
-            var path = ConfigurationManager.AppSettings["WebPath"];
+            var path = GetAppSetting("Path:Web");
 
             if (path.EndsWith(".zip")) return new FilePath(path);
             return new DirectoryPath(path);
@@ -65,7 +66,28 @@ namespace Hadouken.Common
 
         public string GetAppSetting(string key)
         {
-            return ConfigurationManager.AppSettings[key];
+            return ReplaceAppSettingTokens(ConfigurationManager.AppSettings[key]);
+        }
+
+        public string GetConnectionString(string name)
+        {
+            return ReplaceAppSettingTokens(ConfigurationManager.ConnectionStrings[name].ConnectionString);
+        }
+
+        private string ReplaceAppSettingTokens(string input)
+        {
+            const string pattern = @"(\${([a-zA-Z\.\:]+)})";
+            var matches = Regex.Matches(input, pattern);
+
+            foreach (Match match in matches)
+            {
+                var token = match.Groups[1].Value;
+                var value = match.Groups[2].Value;
+
+                input = input.Replace(token, GetAppSetting(value));
+            }
+
+            return input;
         }
     }
 }

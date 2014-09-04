@@ -45,6 +45,8 @@ namespace Hadouken.Common
 
         string GetAppSetting(string key);
 
+        string GetConnectionString(string name);
+
         /// <summary>
         /// Gets an environment variable.
         /// </summary>

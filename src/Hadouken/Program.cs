@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Hadouken.Common;
 using Hadouken.Common.Data;
 using Hadouken.Common.DI;
@@ -16,6 +17,13 @@ namespace Hadouken
             using (var container = BuildContainer())
             {
                 var environment = container.Resolve<IEnvironment>();
+                var logger = container.Resolve<ILogger<Program>>();
+
+                // Log unhandled exceptions
+                AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs)
+                    => logger.Fatal(
+                        eventArgs.ExceptionObject as Exception,
+                        "Unhandled exception. Hadouken crashing."); 
 
                 // Load extensions
                 container.LoadExtensions(environment.GetApplicationRoot());

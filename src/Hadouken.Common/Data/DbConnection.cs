@@ -9,13 +9,9 @@ namespace Hadouken.Common.Data
     {
         private readonly string _connectionString;
 
-        public DbConnection(IEnvironment environment)
+        public DbConnection(string connectionString)
         {
-            if (environment == null) throw new ArgumentNullException("environment");
-
-            var dataPath = environment.GetApplicationDataPath();
-            var connectionString = environment.GetAppSetting("DbConnection").Replace("${Data}", dataPath.FullPath);
-
+            if (connectionString == null) throw new ArgumentNullException("connectionString");
             _connectionString = connectionString;
         }
 

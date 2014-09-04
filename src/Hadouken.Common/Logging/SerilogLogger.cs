@@ -3,9 +3,13 @@ using Serilog.Events;
 
 namespace Hadouken.Common.Logging
 {
+    internal static class LogLock
+    {
+        public static readonly object Lock = new object();
+    }
+
     public sealed class SerilogLogger<T> : ILogger<T>
     {
-        private static readonly object _lock = new object();
         private readonly Serilog.ILogger _logger;
 
         public SerilogLogger(Serilog.ILogger logger)
@@ -18,7 +22,7 @@ namespace Hadouken.Common.Logging
         {
             var level = TranslateLogLevel(logLevel);
 
-            lock (_lock)
+            lock (LogLock.Lock)
             {
                 _logger.Write(level, message, propertyValues);
             }
@@ -28,7 +32,7 @@ namespace Hadouken.Common.Logging
         {
             var level = TranslateLogLevel(logLevel);
 
-            lock (_lock)
+            lock (LogLock.Lock)
             {
                 _logger.Write(level, exception, message, propertyValues);
             }

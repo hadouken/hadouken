@@ -25,7 +25,11 @@ namespace Hadouken.Common.DI
 
             // Common.Data
             builder.RegisterType<SqlMigrator>().As<IMigrator>().SingleInstance();
-            builder.RegisterType<DbConnection>().As<IDbConnection>().SingleInstance();
+            builder.Register<IDbConnection>(c =>
+            {
+                var env = c.Resolve<IEnvironment>();
+                return new DbConnection(env.GetConnectionString("Hadouken"));
+            });
 
             // Common.Logging
             builder.RegisterType<LoggerRepository>()
@@ -36,13 +40,18 @@ namespace Hadouken.Common.DI
             builder.Register(context =>
             {
                 var repo = context.Resolve<LoggerRepository>();
+                var env = context.Resolve<IEnvironment>();
+                var path = env.GetAppSetting("Path:Logs");
 
                 return new LoggerConfiguration()
                     .MinimumLevel.Verbose()
                     .WriteTo.ColoredConsole()
+                    .WriteTo.File(System.IO.Path.Combine(path, "log.txt"))
                     .WriteTo.Sink(repo)
                     .CreateLogger();
-            });
+
+            }).ExternallyOwned()
+                .SingleInstance();
 
             builder.RegisterGeneric(typeof (SerilogLogger<>)).As(typeof (ILogger<>));
 
