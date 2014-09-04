@@ -10,32 +10,11 @@ using Hadouken.Common.Reflection;
 using Hadouken.Common.Text;
 using Hadouken.Common.Timers;
 using Serilog;
-using ILogger = Hadouken.Common.Logging.ILogger;
 
 namespace Hadouken.Common.DI
 {
     public class CommonModule : Module
     {
-        protected override void AttachToComponentRegistration(IComponentRegistry componentRegistry, IComponentRegistration registration)
-        {
-            // Fix Type injection for ILogger
-            registration.Preparing += (sender, args) =>
-            {
-                var type = args.Component.Activator.LimitType;
-                var logger = new LoggerConfiguration()
-                    .MinimumLevel.Verbose()
-                    .WriteTo.ColoredConsole()
-                    .CreateLogger();
-
-                args.Parameters = args.Parameters.Union(new[]
-                {
-                    new ResolvedParameter(
-                        (p, i) => p.ParameterType == typeof (ILogger),
-                        (p, i) => new SerilogLogger(logger, type))
-                });
-            };
-        }
-
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<JsonSerializer>().As<IJsonSerializer>().SingleInstance();
@@ -48,15 +27,24 @@ namespace Hadouken.Common.DI
             builder.RegisterType<SqlMigrator>().As<IMigrator>().SingleInstance();
             builder.RegisterType<DbConnection>().As<IDbConnection>().SingleInstance();
 
-            // Common.Logging (when doing Resolve manually)
-            var logger = new LoggerConfiguration()
+            // Common.Logging
+            builder.RegisterType<LoggerRepository>()
+                .AsSelf()
+                .As<ILoggerRepository>()
+                .SingleInstance();
+
+            builder.Register(context =>
+            {
+                var repo = context.Resolve<LoggerRepository>();
+
+                return new LoggerConfiguration()
                     .MinimumLevel.Verbose()
                     .WriteTo.ColoredConsole()
+                    .WriteTo.Sink(repo)
                     .CreateLogger();
+            });
 
-            builder.RegisterType<SerilogLogger>().As<ILogger>()
-                .WithParameter("logger", logger)
-                .WithParameter("source", typeof (void));
+            builder.RegisterGeneric(typeof (SerilogLogger<>)).As(typeof (ILogger<>));
 
             // Common.Net
             builder.RegisterType<HttpClientWrapper>().As<IHttpClient>();

@@ -11,11 +11,11 @@ namespace Hadouken.Extensions.Pushbullet.Http
     [Component(ComponentLifestyle.Singleton)]
     public class PushbulletClient : IPushbulletClient
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PushbulletClient> _logger;
         private readonly IHttpClient _httpClient;
         private static readonly Uri ApiUri = new Uri("https://api.pushbullet.com/v2/");
 
-        public PushbulletClient(ILogger logger,
+        public PushbulletClient(ILogger<PushbulletClient> logger,
             IHttpClient httpClient)
         {
             if (logger == null) throw new ArgumentNullException("logger");

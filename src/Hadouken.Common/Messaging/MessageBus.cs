@@ -7,11 +7,11 @@ namespace Hadouken.Common.Messaging
 {
     public class MessageBus : IMessageBus
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<MessageBus> _logger;
         private readonly Func<IEnumerable<IMessageHandler>> _handlers;
         private readonly IDictionary<Type, IList<object>> _callbacks;
 
-        public MessageBus(ILogger logger, Func<IEnumerable<IMessageHandler>> handlers)
+        public MessageBus(ILogger<MessageBus> logger, Func<IEnumerable<IMessageHandler>> handlers)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             _logger = logger;

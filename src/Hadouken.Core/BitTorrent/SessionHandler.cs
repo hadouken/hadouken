@@ -15,7 +15,7 @@ namespace Hadouken.Core.BitTorrent
 {
     public class SessionHandler : ISessionHandler, ITorrentEngine
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<SessionHandler> _logger;
         private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
@@ -25,7 +25,7 @@ namespace Hadouken.Core.BitTorrent
         private readonly Thread _alertsThread;
         private bool _alertsThreadRunning;
 
-        public SessionHandler(ILogger logger,
+        public SessionHandler(ILogger<SessionHandler> logger,
             IEnvironment environment,
             IFileSystem fileSystem,
             IKeyValueStore keyValueStore,

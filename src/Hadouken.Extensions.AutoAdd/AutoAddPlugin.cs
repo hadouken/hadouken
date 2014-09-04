@@ -19,12 +19,12 @@ namespace Hadouken.Extensions.AutoAdd
     )]
     public class AutoAddPlugin : IPlugin
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<AutoAddPlugin> _logger;
         private readonly IAutoAddRepository _repository;
         private readonly IFolderScanner _folderScanner;
         private readonly ITimer _timer;
 
-        public AutoAddPlugin(ILogger logger,
+        public AutoAddPlugin(ILogger<AutoAddPlugin> logger,
             ITimerFactory timerFactory,
             IAutoAddRepository repository,
             IFolderScanner folderScanner)

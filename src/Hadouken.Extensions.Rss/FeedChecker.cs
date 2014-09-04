@@ -12,13 +12,13 @@ namespace Hadouken.Extensions.Rss
     [Component]
     public sealed class FeedChecker : IFeedChecker
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<FeedChecker> _logger;
         private readonly IRssRepository _rssRepository;
         private readonly ISyndicationFeedService _syndicationFeedService;
         private readonly IFilterMatcher _filterMatcher;
         private readonly IHttpClient _httpClient;
 
-        public FeedChecker(ILogger logger,
+        public FeedChecker(ILogger<FeedChecker> logger,
             IRssRepository rssRepository,
             ISyndicationFeedService syndicationFeedService,
             IFilterMatcher filterMatcher,

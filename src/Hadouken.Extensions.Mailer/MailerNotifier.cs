@@ -18,11 +18,11 @@ namespace Hadouken.Extensions.Mailer
     )]
     public class MailerNotifier : INotifier
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<MailerNotifier> _logger;
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMailSender _mailSender;
 
-        public MailerNotifier(ILogger logger,
+        public MailerNotifier(ILogger<MailerNotifier> logger,
             IKeyValueStore keyValueStore,
             IMailSender mailSender)
         {

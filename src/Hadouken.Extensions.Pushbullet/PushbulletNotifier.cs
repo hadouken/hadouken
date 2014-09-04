@@ -16,11 +16,11 @@ namespace Hadouken.Extensions.Pushbullet
     )]
     public class PushbulletNotifier : INotifier
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PushbulletNotifier> _logger;
         private readonly IKeyValueStore _keyValueStore;
         private readonly IPushbulletClient _pushbulletClient;
 
-        public PushbulletNotifier(ILogger logger,
+        public PushbulletNotifier(ILogger<PushbulletNotifier> logger,
             IKeyValueStore keyValueStore,
             IPushbulletClient pushbulletClient)
         {

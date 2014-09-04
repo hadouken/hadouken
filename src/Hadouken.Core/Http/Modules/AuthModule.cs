@@ -10,7 +10,7 @@ namespace Hadouken.Core.Http.Modules
 {
     public sealed class AuthModule : NancyModule
     {
-        public AuthModule(ILogger logger,
+        public AuthModule(ILogger<AuthModule> logger,
             IUserManager userManager,
             ITokenizer tokenizer)
             : base("auth")

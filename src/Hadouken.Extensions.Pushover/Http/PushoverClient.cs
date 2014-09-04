@@ -10,11 +10,11 @@ namespace Hadouken.Extensions.Pushover.Http
     [Component(ComponentLifestyle.Singleton)]
     public class PushoverClient : IPushoverClient
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PushoverClient> _logger;
         private readonly IHttpClient _httpClient;
         private static readonly Uri ApiUri = new Uri("https://api.pushover.net/");
 
-        public PushoverClient(ILogger logger, IHttpClient httpClient)
+        public PushoverClient(ILogger<PushoverClient> logger, IHttpClient httpClient)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (httpClient == null) throw new ArgumentNullException("httpClient");

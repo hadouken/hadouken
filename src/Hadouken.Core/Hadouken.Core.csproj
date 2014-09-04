@@ -122,6 +122,7 @@
     <Compile Include="Services\BitTorrentService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\ExtensionService.cs" />
+    <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\Models\ExtensionMetadata.cs" />
   </ItemGroup>
   <ItemGroup>

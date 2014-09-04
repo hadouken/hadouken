@@ -37,6 +37,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<BitTorrentService>().As<IJsonRpcService>();
             builder.RegisterType<ConfigurationService>().As<IJsonRpcService>();
             builder.RegisterType<ExtensionService>().As<IJsonRpcService>();
+            builder.RegisterType<LoggingService>().As<IJsonRpcService>();
 
             // Message handlers
             builder.RegisterType<NotifyTorrentAddedHandler>().AsImplementedInterfaces();

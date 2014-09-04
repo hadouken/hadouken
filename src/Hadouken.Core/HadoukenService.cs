@@ -9,13 +9,13 @@ namespace Hadouken.Core
 {
     public class HadoukenService : IHadoukenService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<HadoukenService> _logger;
         private readonly ISessionHandler _sessionHandler;
         private readonly IHttpServer _httpServer;
         private readonly IExtensionFactory _extensionFactory;
         private readonly IList<IPlugin> _plugins;
 
-        public HadoukenService(ILogger logger,
+        public HadoukenService(ILogger<HadoukenService> logger,
             ISessionHandler sessionHandler,
             IHttpServer httpServer,
             IExtensionFactory extensionFactory)

@@ -21,12 +21,12 @@ namespace Hadouken.Extensions.Rss
     )]
     public sealed class RssPlugin : IPlugin
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<RssPlugin> _logger;
         private readonly IRssRepository _rssRepository;
         private readonly ITimer _timer;
         private readonly IFeedChecker _feedChecker;
 
-        public RssPlugin(ILogger logger, ITimerFactory timerFactory, IRssRepository rssRepository, IFeedChecker feedChecker)
+        public RssPlugin(ILogger<RssPlugin> logger, ITimerFactory timerFactory, IRssRepository rssRepository, IFeedChecker feedChecker)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (timerFactory == null) throw new ArgumentNullException("timerFactory");

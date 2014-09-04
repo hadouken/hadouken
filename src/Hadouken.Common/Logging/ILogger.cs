@@ -2,7 +2,7 @@
 
 namespace Hadouken.Common.Logging
 {
-    public interface ILogger
+    public interface ILogger<T>
     {
         void Log(LogLevel logLevel, string message, params object[] propertyValues);
 

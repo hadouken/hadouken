@@ -16,11 +16,11 @@ namespace Hadouken.Extensions.Pushover
     )]
     public class PushoverNotifier : INotifier
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PushoverNotifier> _logger;
         private readonly IKeyValueStore _keyValueStore;
         private readonly IPushoverClient _pushoverClient;
 
-        public PushoverNotifier(ILogger logger,
+        public PushoverNotifier(ILogger<PushoverNotifier> logger,
             IKeyValueStore keyValueStore,
             IPushoverClient pushoverClient)
         {

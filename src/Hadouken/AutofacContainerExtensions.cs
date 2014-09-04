@@ -6,6 +6,7 @@ using Hadouken.Common.IO;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Common.Logging;
 using Hadouken.Common.Reflection;
+using Hadouken.Core;
 
 namespace Hadouken
 {
@@ -15,7 +16,7 @@ namespace Hadouken
         {
             var fileSystem = container.Resolve<IFileSystem>();
             var finder = container.Resolve<IAssemblyNameFinder>();
-            var logger = container.Resolve<ILogger>();
+            var logger = container.Resolve<ILogger<HadoukenService>>();
             
             var files = fileSystem.GetDirectory(path)
                 .GetFiles("*.dll", SearchScope.Current)

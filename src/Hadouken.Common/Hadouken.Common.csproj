@@ -132,7 +132,10 @@
     <Compile Include="JsonRpc\JsonRpcException.cs" />
     <Compile Include="JsonRpc\JsonRpcMethodAttribute.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\ILoggerRepository.cs" />
+    <Compile Include="Logging\LogEntry.cs" />
     <Compile Include="Logging\LoggerExtensions.cs" />
+    <Compile Include="Logging\LoggerRepository.cs" />
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Logging\SerilogLogger.cs" />
     <Compile Include="Messaging\IMessageBus.cs" />

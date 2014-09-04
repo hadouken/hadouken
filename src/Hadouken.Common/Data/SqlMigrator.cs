@@ -11,10 +11,10 @@ namespace Hadouken.Common.Data
         private static readonly string ScriptExists = "SELECT EXISTS(SELECT 1 FROM `VersionInfo` WHERE Script = @Script LIMIT 1);";
         private static readonly string InsertScript = "INSERT INTO `VersionInfo` (Script) VALUES (@Script);";
 
-        private readonly ILogger _logger;
+        private readonly ILogger<SqlMigrator> _logger;
         private readonly IDbConnection _connection;
 
-        public SqlMigrator(ILogger logger, IDbConnection connection)
+        public SqlMigrator(ILogger<SqlMigrator> logger, IDbConnection connection)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (connection == null) throw new ArgumentNullException("connection");

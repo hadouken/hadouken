@@ -3,17 +3,15 @@ using Serilog.Events;
 
 namespace Hadouken.Common.Logging
 {
-    public sealed class SerilogLogger : ILogger
+    public sealed class SerilogLogger<T> : ILogger<T>
     {
         private static readonly object _lock = new object();
         private readonly Serilog.ILogger _logger;
 
-        public SerilogLogger(Serilog.ILogger logger, Type source)
+        public SerilogLogger(Serilog.ILogger logger)
         {
             if (logger == null) throw new ArgumentNullException("logger");
-            if (source == null) throw new ArgumentNullException("source");
-
-            _logger = logger.ForContext(source);
+            _logger = logger.ForContext(typeof (T));
         }
 
         public void Log(LogLevel logLevel, string message, params object[] propertyValues)
