@@ -40,12 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Config\PushbulletConfig.cs" />
     <Compile Include="Http\IPushbulletClient.cs" />
     <Compile Include="Http\Note.cs" />
     <Compile Include="Http\PushbulletClient.cs" />
     <Compile Include="PushbulletNotifier.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ConfigService.cs" />
   </ItemGroup>
   <ItemGroup>

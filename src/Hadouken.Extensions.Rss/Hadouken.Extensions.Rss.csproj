@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Data\IRssRepository.cs" />
     <Compile Include="Data\Models\Feed.cs" />
     <Compile Include="Data\Models\Filter.cs" />
@@ -53,7 +56,6 @@
     <Compile Include="IFeedChecker.cs" />
     <Compile Include="IFilterMatcher.cs" />
     <Compile Include="RssPlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RssService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="AutoAddPlugin.cs" />
     <Compile Include="Data\AutoAddRepository.cs" />
     <Compile Include="Data\IAutoAddRepository.cs" />
@@ -46,7 +49,6 @@
     <Compile Include="Data\Models\History.cs" />
     <Compile Include="FolderScanner.cs" />
     <Compile Include="IFolderScanner.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AutoAddService.cs" />
   </ItemGroup>
   <ItemGroup>
