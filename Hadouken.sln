@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Rss", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoAdd", "src\Hadouken.Extensions.AutoAdd\Hadouken.Extensions.AutoAdd.csproj", "{944F2C95-0678-4EDC-AEAD-F9AF47852ADD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3A9987A2-D4AB-4912-806D-871DD4B545E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tools.Posh", "src\Hadouken.Tools.Posh\Hadouken.Tools.Posh.csproj", "{6BC61673-8AD2-4793-A40E-759E113C0131}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,10 @@ Global
 		{944F2C95-0678-4EDC-AEAD-F9AF47852ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{944F2C95-0678-4EDC-AEAD-F9AF47852ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{944F2C95-0678-4EDC-AEAD-F9AF47852ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC61673-8AD2-4793-A40E-759E113C0131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC61673-8AD2-4793-A40E-759E113C0131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC61673-8AD2-4793-A40E-759E113C0131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC61673-8AD2-4793-A40E-759E113C0131}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,5 +99,6 @@ Global
 		{944F2C95-0678-4EDC-AEAD-F9AF47852ADD} = {DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}
 		{D2F70075-17D3-47B4-BBE8-C630CA0357FE} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 		{4A765776-E58B-44EE-A173-9C9840FB89F0} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
+		{6BC61673-8AD2-4793-A40E-759E113C0131} = {3A9987A2-D4AB-4912-806D-871DD4B545E5}
 	EndGlobalSection
 EndGlobal
