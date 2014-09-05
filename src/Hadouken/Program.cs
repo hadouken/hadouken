@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceProcess;
 using Autofac;
 using Hadouken.Common;
 using Hadouken.Common.Data;
@@ -37,6 +38,10 @@ namespace Hadouken
                 if (environment.IsUserInteractive())
                 {
                     new ConsoleHost(service).Run(args);
+                }
+                else
+                {
+                    ServiceBase.Run(new HadoukenServiceHost(service));
                 }
             }
         }

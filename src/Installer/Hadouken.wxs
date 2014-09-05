@@ -47,7 +47,7 @@
       <Merge Id="VCRedist" SourceFile="tools\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
     </DirectoryRef>
 
-    <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="Fully equipped." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
+    <Feature Id="Complete" Title="Hadouken" Description="Fully equipped." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="WebComponents" />
       <ComponentGroupRef Id="LibComponents" />
@@ -55,19 +55,21 @@
       <ComponentGroupRef Id="X86Components" />
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="ConfigComponents" />
+    </Feature>
 
-      <MergeRef Id="VCRedist"/>
+    <Feature Id="VCRedist" Title="VC++ 12.0 runtime" Description="The Visual C++ 12.0 runtime required to run Hadouken." Display="expand" Level="1">
+    	<MergeRef Id="VCRedist" />
     </Feature>
     
-    <WixVariable Id="WixUIBannerBmp" Value="src/Installer/Media/HdknSetupBanner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="src/Installer/Media/HdknSetupDialog.bmp" />
-    <WixVariable Id="WixUILicenseRtf" Value="src/Installer/Media/License.rtf" />
-
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
       <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- The UI parts -->
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
   </Product>
 </Wix>
