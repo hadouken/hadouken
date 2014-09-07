@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="BitTorrent\AddMagnetLinkMessage.cs" />
     <Compile Include="BitTorrent\AddTorrentMessage.cs" />
+    <Compile Include="BitTorrent\IPeer.cs" />
     <Compile Include="BitTorrent\ITorrent.cs" />
     <Compile Include="BitTorrent\ITorrentEngine.cs" />
     <Compile Include="BitTorrent\ITorrentFile.cs" />

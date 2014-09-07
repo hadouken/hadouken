@@ -1,4 +1,5 @@
-﻿using Hadouken.Common.BitTorrent;
+﻿using System.Linq;
+using Hadouken.Common.BitTorrent;
 using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
@@ -27,6 +28,10 @@ namespace Hadouken.Core.BitTorrent
 
         public bool Paused { get; private set; }
 
+        public ITorrentFile[] Files { get; private set; }
+
+        public IPeer[] Peers { get; private set; }
+
         internal static ITorrent CreateFromHandle(TorrentHandle handle)
         {
             using (handle)
@@ -45,8 +50,21 @@ namespace Hadouken.Core.BitTorrent
                     TotalDownloadedBytes = status.TotalDownload,
                     TotalUploadedBytes = status.TotalUpload,
                     State = (Common.BitTorrent.TorrentState) (int) status.State,
-                    Paused = status.Paused
+                    Paused = status.Paused,
+                    Files = new ITorrentFile[file.NumFiles],
+                    Peers = handle.GetPeerInfo().Select(Peer.CreateFromPeerInfo).ToArray()
                 };
+
+                var progresses = handle.GetFileProgresses();
+                var priorities = handle.GetFilePriorities();
+
+                for (var i = 0; i < file.NumFiles; i++)
+                {
+                    var entry = file.FileAt(i);
+                    var torrentFile = TorrentFile.CreateFromEntry(entry, progresses[i], priorities[i]);
+
+                    t.Files[i] = torrentFile;
+                }
 
                 return t;
             }

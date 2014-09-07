@@ -19,7 +19,7 @@
                 </div>
             </form>
         </tab>
-        <tab heading="Files ({{torrentFiles.length}})">
+        <tab heading="Files ({{torrent.Files.length}})">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -29,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="file in torrentFiles">
+                    <tr ng-repeat="file in torrent.Files">
                         <td>
                             {{ file.Path }}
                             <span class="dropdown" on-toggle="toggled(open)">
@@ -48,7 +48,7 @@
                 </tbody>
             </table>
         </tab>
-        <tab heading="Peers ({{torrentPeers.length}})">
+        <tab heading="Peers ({{torrent.Peers.length}})">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -56,8 +56,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="peer in torrentPeers">
-                        <td>{{ peer.Uri }}</td>
+                    <tr ng-repeat="peer in torrent.Peers">
+                        <td>{{ peer.EndPoint }}</td>
                     </tr>
                 </tbody>
             </table>

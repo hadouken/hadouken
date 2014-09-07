@@ -58,5 +58,15 @@
         /// Gets a value indicating whether this torrent is paused or not.
         /// </summary>
         bool Paused { get; }
+
+        /// <summary>
+        /// Gets a list of the files that make up this torrent.
+        /// </summary>
+        ITorrentFile[] Files { get; }
+
+        /// <summary>
+        /// Gets a list of peers for this torrent.
+        /// </summary>
+        IPeer[] Peers { get; }
     }
 }
