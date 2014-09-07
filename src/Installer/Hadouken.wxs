@@ -33,6 +33,11 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="INSTALLDIR" Name="Hadouken">
+          <Directory Id="TOOLSDIR" Name="Tools">
+            <Directory Id="POSHMODULESDIR" Name="PowerShellModules">
+              <Directory Id="HDKNPOSHDIR" Name="Hadouken.Tools.Posh" />
+            </Directory>
+          </Directory>
           <Directory Id="X64DIR" Name="x64" />
           <Directory Id="X86DIR" Name="x86" />
         </Directory>
@@ -47,18 +52,26 @@
       <Merge Id="VCRedist" SourceFile="tools\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
     </DirectoryRef>
 
-    <Feature Id="Complete" Title="Hadouken" Description="Fully equipped." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
-      <ComponentGroupRef Id="CoreComponents" />
-      <ComponentGroupRef Id="WebComponents" />
-      <ComponentGroupRef Id="LibComponents" />
-      <ComponentGroupRef Id="X64Components" />
-      <ComponentGroupRef Id="X86Components" />
-      <ComponentGroupRef Id="ServiceComponents" />
-      <ComponentGroupRef Id="ConfigComponents" />
+    <Feature Id="Complete" Title="Core" Description="The Hadouken core components." Display="expand" Level="1">
+      <Feature Id="BitTorrentService" Title="Hadouken $(var.BuildVersion)" ConfigurableDirectory="INSTALLDIR" Display="expand" Level="1">
+        <ComponentGroupRef Id="CoreComponents" />
+        <ComponentGroupRef Id="WebComponents" />
+        <ComponentGroupRef Id="LibComponents" />
+        <ComponentGroupRef Id="X64Components" />
+        <ComponentGroupRef Id="X86Components" />
+        <ComponentGroupRef Id="ServiceComponents" />
+        <ComponentGroupRef Id="ConfigComponents" />
+      </Feature>
+
+      <Feature Id="VCRedist" Title="VC++ 12.0 runtime" Description="The Visual C++ 12.0 runtime required to run Hadouken." Display="expand" Level="1">
+        <MergeRef Id="VCRedist" />
+      </Feature>
     </Feature>
 
-    <Feature Id="VCRedist" Title="VC++ 12.0 runtime" Description="The Visual C++ 12.0 runtime required to run Hadouken." Display="expand" Level="1">
-    	<MergeRef Id="VCRedist" />
+    <Feature Id="Tools" Title="Tools" Description="Tools and utilities extending Hadouken." Display="expand" Level="1">
+      <Feature Id="PoshTools" Title="PowerShell 4.0 module" Description="A PowerShell 4.0 module which contains a few cmdlets for interacting with a local (or remote) Hadouken instance." Display="expand" Level="1">
+        <ComponentGroupRef Id="PowerShellComponents" />
+      </Feature>
     </Feature>
     
     <!-- Search for installation directory in registry -->

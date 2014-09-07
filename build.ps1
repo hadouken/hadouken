@@ -121,6 +121,14 @@ Task Output -depends Compile {
             }
         } -Force
 
+    # Copy tools
+    $poshTool = ".\src\Hadouken.Tools.Posh\bin\$Configuration\Hadouken.Tools.Posh.dll"
+    $poshToolManifest = ".\src\Hadouken.Tools.Posh\bin\$Configuration\Hadouken.Tools.Posh.psd1"
+    $poshToolOut = Join-Path $Dir_Binaries "Tools/PowerShellModules/Hadouken.Tools.Posh"
+    New-Item $poshToolOut -ItemType directory
+    Copy-Item -Path $poshTool -Destination $poshToolOut
+    Copy-Item -Path $poshToolManifest -Destination $poshToolOut
+
     # Copy the correct config file
     Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.config" -Destination $Dir_Binaries
 
