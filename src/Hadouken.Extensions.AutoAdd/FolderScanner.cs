@@ -16,26 +16,28 @@ namespace Hadouken.Extensions.AutoAdd
     {
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
-        private readonly IAutoAddRepository _repository;
+        private readonly IAutoAddRepository _autoAddRepository;
         private readonly IMessageBus _messageBus;
 
         public FolderScanner(IFileSystem fileSystem,
             IKeyValueStore keyValueStore,
-            IAutoAddRepository repository,
+            IAutoAddRepository autoAddRepository,
             IMessageBus messageBus)
         {
             if (fileSystem == null) throw new ArgumentNullException("fileSystem");
             if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
-            if (repository == null) throw new ArgumentNullException("repository");
+            if (autoAddRepository == null) throw new ArgumentNullException("autoAddRepository");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
             _fileSystem = fileSystem;
             _keyValueStore = keyValueStore;
-            _repository = repository;
+            _autoAddRepository = autoAddRepository;
             _messageBus = messageBus;
         }
 
         public void Scan(Folder folder)
         {
+            if (folder == null) throw new ArgumentNullException("folder");
+
             var dir = _fileSystem.GetDirectory(folder.Path);
             if (!dir.Exists) return;
 
@@ -49,7 +51,7 @@ namespace Hadouken.Extensions.AutoAdd
                 if (!string.IsNullOrEmpty(folder.Pattern)
                     && !Regex.IsMatch(fileName, folder.Pattern)) continue;
 
-                if (_repository.GetHistoryByPath(file.Path.FullPath) != null) continue;
+                if (_autoAddRepository.GetHistoryByPath(file.Path.FullPath) != null) continue;
                 
                 AddFile(file);
 
@@ -71,7 +73,7 @@ namespace Hadouken.Extensions.AutoAdd
 
             // Add file to history
             var hist = new History {Path = file.Path.FullPath};
-            _repository.CreateHistory(hist);
+            _autoAddRepository.CreateHistory(hist);
         }
     }
 }
