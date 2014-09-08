@@ -1,4 +1,4 @@
-﻿$packageName = 'hadouken'
+$packageName = 'hadouken'
 $installerType = 'msi' 
 $url = '%DOWNLOAD_URL%'
 $silentArgs = '/quiet'

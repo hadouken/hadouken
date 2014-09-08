@@ -1,0 +1,66 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Mailer settings</h3>
+</div>
+<div class="modal-body">
+    <p>
+        <em>If you are using Gmail with 2-factor authentication you need to 
+        generate an app-password.</em>
+    </p>
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="smtpHost" class="control-label col-sm-3">SMTP host</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" name="smtpHost" ng-model="config.Host" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="smtpPort" class="control-label col-sm-3">SMTP port</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" ng-model="config.Port" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="config.EnableSsl" /> Enable SSL
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="smtpUserName" class="control-label col-sm-3">User name</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" ng-model="config.UserName" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="smtpPassword" class="control-label col-sm-3">Password</label>
+            <div class="col-sm-7">
+                <input type="password" class="form-control" ng-model="config.Password" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="from" class="control-label col-sm-3">From</label>
+            <div class="col-sm-7">
+                <input type="email" class="form-control" ng-model="config.From" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="to" class="control-label col-sm-3">To</label>
+            <div class="col-sm-7">
+                <input type="email" class="form-control" ng-model="config.To" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="test(config)">Test</button>
+    <button type="button" class="btn btn-primary" ng-click="save(config)">Save</button>
+</div>

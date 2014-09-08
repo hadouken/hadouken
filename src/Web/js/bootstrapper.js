@@ -6,7 +6,7 @@ window.pluginModules = window.pluginModules || [];
     // We need to get all extra background scripts
     // from the API.
     var request = new XMLHttpRequest();
-    request.open('GET', '/api/scripts', true);
+    request.open('GET', '/api/extensions', true);
     request.onreadystatechange = function() {
         if (request.readyState != 4 || request.status != 200) return;
         var additionalScripts = JSON.parse(request.responseText);
@@ -26,22 +26,20 @@ window.pluginModules = window.pluginModules || [];
             'js/modules/auth/interceptors/tokenHeaderInterceptor.js',
             'js/modules/auth/services/authProvider.js',
 
+            /* BitTorrent module */
+            'js/modules/bittorrent/bittorrentModule.js',
+            'js/modules/bittorrent/controllers/settingsController.js',
+            'js/modules/bittorrent/controllers/torrentAddController.js',
+            'js/modules/bittorrent/controllers/torrentDetailsController.js',
+            'js/modules/bittorrent/controllers/torrentListController.js',
+            'js/modules/bittorrent/controllers/torrentMoveController.js',
+            'js/modules/bittorrent/directives/filereadDirective.js',
+
             /* JSONRPC module */
             'js/modules/jsonrpc/jsonrpcModule.js',
 
             /* Messaging module */
             'js/modules/messaging/messagingModule.js',
-
-            /* Plugins module */
-            'js/modules/plugins/pluginsModule.js',
-            'js/modules/plugins/controllers/detailsController.js',
-            'js/modules/plugins/controllers/listController.js',
-            'js/modules/plugins/controllers/updateController.js',
-
-            /* Repository module */
-            'js/modules/repository/repositoryModule.js',
-            'js/modules/repository/controllers/installController.js',
-            'js/modules/repository/controllers/listController.js',
 
             /* Settings module */
             'js/modules/settings/settingsModule.js',
@@ -78,7 +76,6 @@ window.pluginModules = window.pluginModules || [];
                     });
                 });
             } else {
-                // When all core and plugin scripts are ready, load the app script.
                 $script(['js/app.js'], function () {
                     angular.bootstrap(document, ['hadouken']);
                 });

@@ -1,22 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
     <ComponentGroup Id="CoreComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component>
-        <File Name="Hadouken.dll" />
+        <File Name="Hadouken.Common.dll" />
       </Component>
 
       <Component>
-        <File Name="Hadouken.Fx.dll" />
+        <File Name="Hadouken.Core.dll" />
       </Component>
 
       <Component>
-        <File Name="Hadouken.PluginHostProcess.exe" />
+        <File Name="Hadouken.Extensions.AutoAdd.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Extensions.Mailer.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Extensions.Pushbullet.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Extensions.Pushover.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Extensions.Rss.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Hadouken.Localization.dll" />
       </Component>
     </ComponentGroup>
 
-    <ComponentGroup Id="WebComponents" Directory="WEBDIR" Source="$(var.BinDir)\Web\">
+    <ComponentGroup Id="WebComponents" Directory="HDKNDATA" Source="$(var.BinDir)\Web\">
       <Component>
         <File Name="web.zip" />
       </Component>

@@ -1,71 +1,119 @@
 ﻿<h1 class="page-header">Settings</h1>
 
 <form class="form-horizontal" name="settingsForm" role="form" ng-submit="save()">
-    <div class="row">
-        <div class="col-md-12">
-            <h2>General</h2>
+    <tabset>
+        <tab heading="General">
+            <form class="form-horizontal">
+                <h3 class="page-header">Downloads</h3>
 
-            <div class="form-group">
-                <label for="instanceName" class="control-label col-md-3">Instance name</label>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" name="instanceName" ng-model="settings.InstanceName" />
+                <div class="form-group">
+                    <label for="bt_save_path" class="control-label col-sm-3">Save path</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="bt_save_path" ng-model="config['bt.save_path']" />
+                        <span class="help-block">Where to put your downloads.</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="dataPath" class="control-label col-md-3">Application data path</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" name="dataPath" ng-model="settings.ApplicationDataPath" />
+                <h3 class="page-header">Web UI <small>* requires restart</small></h3>
+
+                <div class="form-group">
+                    <label for="http_binding" class="control-label col-sm-3">HTTP binding</label>
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="http_binding" ng-model="config['http.binding']" />
+                            </div>
+                        </div>
+                        <span class="help-block">The address to bind to. <em>localhost</em> is the default.
+                        To accept external connections, this should be <em>+</em>.</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <h2>HTTP</h2>
-
-            <div class="form-group">
-                <label for="httpHostBinding" class="control-label col-md-3">Host binding</label>
-                <div class="col-md-4">
-                    <input type="text" class="form-control" name="httpHostBinding" ng-model="settings.HostBinding" />
+                <div class="form-group">
+                    <label for="http_port" class="control-label col-sm-3">HTTP port</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" name="http_port" ng-model="config['http.port']" />
+                    </div>
                 </div>
-            </div>
+            </form>
+        </tab>
 
-            <div class="form-group">
-                <label for="httpPort" class="control-label col-md-3">Port</label>
-                <div class="col-md-2">
-                    <input type="number" class="form-control" name="httpPort" ng-model="settings.Port" />
+        <tab heading="Network">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="bt_net_listen_port" class="control-label col-sm-3">Listen port</label>
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <input type="number" class="form-control" name="bt_net_listen_port" ng-model="config['bt.net.listen_port']" />
+                            </div>
+                        </div>
+                        <span class="help-block">The listen port to use for incoming BitTorrent connections.</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </form>
+        </tab>
 
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Plugins</h2>
+        <tab heading="Advanced">
+            <div class="alert alert-warning"><strong>Warning!</strong> Changing these
+            settings may or may not break Hadouken for you.</div>
 
-            <div class="form-group">
-                <label for="pluginsBaseDirectory" class="control-label col-md-3">Base directory</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" name="pluginsBaseDirectory" ng-model="settings.PluginDirectory" />
-                </div>
-            </div>
+            <table class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(key, item) in advancedSettings">
+                        <td>{{ key }}</td>
+                        <td>
+                            <div ng-if="item.type === 'boolean'">
+                                <input type="checkbox" ng-model="item.value" ng-change="item.dirty = true;" />
+                            </div>
 
-            <div class="form-group">
-                <label for="pluginsRepositoryUri" class="control-label col-md-3">Repository URL</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" name="pluginsRepositoryUri" ng-model="settings.PluginRepositoryUrl" />
-                </div>
-            </div>
-        </div>
-    </div>
+                            <div ng-if="item.type === 'float'">
+                                <input type="number" class="form-control input-sm" step="0.01" ng-model="item.value" ng-change="item.dirty = true;" />
+                            </div>
 
-    <div class="row">
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                <button type="submit" class="btn btn-primary">Save settings</button>
-            </div>
-        </div>
-    </div>
+                            <div ng-if="item.type === 'number'">
+                                <input type="number" class="form-control input-sm" ng-model="item.value" ng-change="item.dirty = true;" />
+                            </div>
+
+                            <div ng-if="item.type === 'string'">
+                                <input type="text" class="form-control input-sm" ng-model="item.value" ng-change="item.dirty = true;" />
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button class="btn btn-primary pull-right" ng-click="saveAdvanced()" ng-disabled="advancedSettingsBusy">
+                <i class="fa fa-cog fa-spin" ng-show="advancedSettingsBusy"></i>
+                Save
+            </button>
+        </tab>
+
+        <tab heading="Extensions ({{ extensions.length }})">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="extension in extensions">
+                        <td><input type="checkbox" ng-model="extension.Enabled" ng-change="toggleExtension(extension.Id, extension.Enabled)" />
+                        <td>{{ extension.Name }}</td>
+                        <td>{{ extension.Description }}</td>
+                        <td style="text-align: right;"><button type="button" class="btn btn-default btn-xs" ng-show="hasDialog(extension.Id)" ng-click="configure(extension.Id)">Configure</button>
+                    </tr>
+                </tbody>
+            </table>
+        </tab>
+    </tabset>
 </form>

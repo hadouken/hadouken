@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0C9D54CD-EDEC-477C-AA2E-7F98AB61837D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hadouken.Core</RootNamespace>
+    <AssemblyName>Hadouken.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\..\packages\Nancy.0.23.2\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Bootstrappers.Autofac">
+      <HintPath>..\..\packages\Nancy.Bootstrappers.Autofac.0.23.2\lib\net40\Nancy.Bootstrappers.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\..\packages\Nancy.Hosting.Self.0.23.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
+    <Reference Include="Ragnar, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Ragnar.0.5.0\lib\net45\Ragnar.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="BitTorrent\ISessionHandler.cs" />
+    <Compile Include="BitTorrent\Peer.cs" />
+    <Compile Include="BitTorrent\SessionHandler.cs" />
+    <Compile Include="BitTorrent\Torrent.cs" />
+    <Compile Include="BitTorrent\TorrentFile.cs" />
+    <Compile Include="Data\IUserRepository.cs" />
+    <Compile Include="Data\Models\User.cs" />
+    <Compile Include="Data\UserRepository.cs" />
+    <Compile Include="DI\CoreModule.cs" />
+    <Compile Include="ExtensionFactory.cs" />
+    <Compile Include="Handlers\NotifyTorrentAddedHandler.cs" />
+    <Compile Include="Handlers\NotifyTorrentCompletedHandler.cs" />
+    <Compile Include="Http\CustomNancyBootstrapper.cs" />
+    <Compile Include="Http\HttpServer.cs" />
+    <Compile Include="Http\IHttpServer.cs" />
+    <Compile Include="Http\Config\User.cs" />
+    <Compile Include="Http\Modules\ApiModule.cs" />
+    <Compile Include="Http\Modules\AuthModule.cs" />
+    <Compile Include="Http\Modules\JsonRpcModule.cs" />
+    <Compile Include="Http\Modules\Models\UserDto.cs" />
+    <Compile Include="Http\Security\ITokenizer.cs" />
+    <Compile Include="Http\Security\Storage\InMemoryTokenKeyStore.cs" />
+    <Compile Include="Http\Security\Storage\ITokenKeyStore.cs" />
+    <Compile Include="Http\Security\TokenAuthentication.cs" />
+    <Compile Include="Http\Security\TokenAuthenticationConfiguration.cs" />
+    <Compile Include="Http\Security\Tokenizer.cs" />
+    <Compile Include="Http\Security\UserIdentity.cs" />
+    <Compile Include="IExtensionFactory.cs" />
+    <Compile Include="IHadoukenService.cs" />
+    <Compile Include="INotifierHandler.cs" />
+    <Compile Include="JsonRpc\ByNameResolver.cs" />
+    <Compile Include="JsonRpc\ByPositionResolver.cs" />
+    <Compile Include="JsonRpc\ICacheBuilder.cs" />
+    <Compile Include="JsonRpc\IJsonRpcRequestParser.cs" />
+    <Compile Include="JsonRpc\IMethod.cs" />
+    <Compile Include="JsonRpc\IMethodCache.cs" />
+    <Compile Include="JsonRpc\IMethodCacheBuilder.cs" />
+    <Compile Include="JsonRpc\InvalidRequestException.cs" />
+    <Compile Include="JsonRpc\IParameter.cs" />
+    <Compile Include="JsonRpc\IParameterResolver.cs" />
+    <Compile Include="JsonRpc\IRequestHandler.cs" />
+    <Compile Include="JsonRpc\JsonRpcErrorResponse.cs" />
+    <Compile Include="JsonRpc\JsonRpcRequest.cs" />
+    <Compile Include="JsonRpc\JsonRpcRequestParser.cs" />
+    <Compile Include="JsonRpc\JsonRpcResponse.cs" />
+    <Compile Include="JsonRpc\JsonRpcSuccessResponse.cs" />
+    <Compile Include="JsonRpc\Method.cs" />
+    <Compile Include="JsonRpc\MethodCache.cs" />
+    <Compile Include="JsonRpc\MethodCacheBuilder.cs" />
+    <Compile Include="JsonRpc\MethodNameAlreadyRegisteredException.cs" />
+    <Compile Include="JsonRpc\NullResolver.cs" />
+    <Compile Include="JsonRpc\Parameter.cs" />
+    <Compile Include="JsonRpc\ParameterLengthMismatchException.cs" />
+    <Compile Include="JsonRpc\ParameterNameNotFoundException.cs" />
+    <Compile Include="JsonRpc\RequestHandler.cs" />
+    <Compile Include="NotifierHandler.cs" />
+    <Compile Include="HadoukenService.cs" />
+    <Compile Include="Security\HadoukenUser.cs" />
+    <Compile Include="Security\IUser.cs" />
+    <Compile Include="Security\IUserManager.cs" />
+    <Compile Include="Security\UserManager.cs" />
+    <Compile Include="Services\BitTorrentService.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\ExtensionService.cs" />
+    <Compile Include="Services\LoggingService.cs" />
+    <Compile Include="Services\Models\ExtensionMetadata.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
+      <Project>{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}</Project>
+      <Name>Hadouken.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Localization\Hadouken.Localization.csproj">
+      <Project>{b8e58883-80ee-4c7c-afa7-5829dd107f79}</Project>
+      <Name>Hadouken.Localization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Sql\20140804190101_InsertCoreSettings.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Sql\20130831120105_CreateUserTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="boost_chrono-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="boost_date_time-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="boost_system-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="boost_thread-vc120-mt-1_55.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="torrent.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,35 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Add feed</h3>
+</div>
+<div class="modal-body">
+    <p>Add a new RSS feed to monitor. <em>You can add filters to the feed after it has been created.</em></p>
+
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="name" class="control-label col-md-3">Name</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" ng-model="feed.Name" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="url" class="control-label col-md-3">URL</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" ng-model="feed.Url" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pollInterval" class="control-label col-md-3">Poll interval (min)</label>
+            <div class="col-md-2">
+                <select class="form-control" ng-model="feed.PollInterval">
+                    <option value="5">5</option>
+                    <option value="15">15</option>
+                    <option value="30">20</option>
+                    <option value="60">60</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="add(feed)" ng-disabled="!validate(feed)">Add feed</button>
+</div>

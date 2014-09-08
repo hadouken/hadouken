@@ -2,7 +2,6 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-
   <Product
     Id="*"
     Name="Hadouken"
@@ -14,7 +13,7 @@
 
     <Package Id="*"
              Description="Hadouken $(var.BuildVersion) Installer"
-             InstallerVersion="300"
+             InstallerVersion="405"
              Languages="1033"
              Compressed="yes"
              SummaryCodepage="1252"
@@ -33,41 +32,48 @@
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
-        <Directory Id="INSTALLDIR" Name="Hadouken" />
+        <Directory Id="INSTALLDIR" Name="Hadouken">
+          <Directory Id="TOOLSDIR" Name="Tools">
+            <Directory Id="POSHMODULESDIR" Name="PowerShellModules">
+              <Directory Id="HDKNPOSHDIR" Name="Hadouken.Tools.Posh" />
+            </Directory>
+          </Directory>
+          <Directory Id="X64DIR" Name="x64" />
+          <Directory Id="X86DIR" Name="x86" />
+        </Directory>
       </Directory>
 
       <Directory Id="CommonAppDataFolder" Name="ProgramDataFolder">
-        <Directory Id="HdknData" Name="Hadouken">
-          <Directory Id="PLUGINDIR" Name="Plugins" />
-          <Directory Id="DATADIR" Name="Data" />
-          <Directory Id="WEBDIR" Name="Web" />
-        </Directory>
+        <Directory Id="HDKNDATA" Name="Hadouken" />
       </Directory>
     </Directory>
 
-    <Feature Id="Complete" Title="Hadouken $(var.BuildVersion)" Description="Fully equipped." Display="expand" ConfigurableDirectory="INSTALLDIR" Level="1">
-      <ComponentGroupRef Id="CoreComponents" />
-      <ComponentGroupRef Id="WebComponents" />
-      <ComponentGroupRef Id="LibComponents" />
-      <ComponentGroupRef Id="ServiceComponents" />
-      <ComponentGroupRef Id="ConfigComponents" />
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedist" SourceFile="tools\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+
+    <Feature Id="Complete" Title="Core" Description="The Hadouken core components." Display="expand" Level="1">
+      <Feature Id="BitTorrentService" Title="Hadouken $(var.BuildVersion)" ConfigurableDirectory="INSTALLDIR" Display="expand" Level="1">
+        <ComponentGroupRef Id="CoreComponents" />
+        <ComponentGroupRef Id="WebComponents" />
+        <ComponentGroupRef Id="LibComponents" />
+        <ComponentGroupRef Id="X64Components" />
+        <ComponentGroupRef Id="X86Components" />
+        <ComponentGroupRef Id="ServiceComponents" />
+        <ComponentGroupRef Id="ConfigComponents" />
+      </Feature>
+
+      <Feature Id="VCRedist" Title="VC++ 12.0 runtime" Description="The Visual C++ 12.0 runtime required to run Hadouken." Display="expand" Level="1">
+        <MergeRef Id="VCRedist" />
+      </Feature>
+    </Feature>
+
+    <Feature Id="Tools" Title="Tools" Description="Tools and utilities extending Hadouken." Display="expand" Level="1">
+      <Feature Id="PoshTools" Title="PowerShell 4.0 module" Description="A PowerShell 4.0 module which contains a few cmdlets for interacting with a local (or remote) Hadouken instance." Display="expand" Level="1">
+        <ComponentGroupRef Id="PowerShellComponents" />
+      </Feature>
     </Feature>
     
-    <UI Id="HdknUI">
-      <UIRef Id="WixUI_InstallDir" />
-      <UIRef Id="WixUI_ErrorProgressText" />
-
-      <DialogRef Id="ConfigureDlg" />
-      <DialogRef Id="ConfigureInvalidDlg" />
-
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ConfigureDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ConfigureDlg" Order="1">NOT Installed</Publish>
-    </UI>
-    
-    <WixVariable Id="WixUIBannerBmp" Value="src/Media/HdknSetupBanner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="src/Media/HdknSetupDialog.bmp" />
-    <WixVariable Id="WixUILicenseRtf" Value="src/Media/License.rtf" />
-
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
       <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
@@ -75,24 +81,8 @@
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
-    <!-- Set port default value -->
-    <Property Id="HDKN_WEBUI_PORT" Value="7890" />
-
-    <!-- Search for HTTP port in config file -->
-    <CustomAction Id="Xml_SetFileName" Property="XML_FILENAME" Value="[INSTALLDIR]\Hadouken.Service.exe.config" Execute="immediate" />
-    <CustomAction Id="Xml_SelectNodeValue_XPath" Property="XML_XPATH" Value="/configuration/appSettings/add[\[]@key='Port'[\]]" Execute="immediate" />
-    <CustomAction Id="Xml_SelectAttribute_Value" Property="XML_ATTRIBUTENAME" Value="value" Execute="immediate" />
-    <CustomAction Id="Xml_SelectNodeAttribute" BinaryKey="XmlTools" DllEntry="Xml_SelectNodeAttributeValue" Execute="immediate" Return="check" />
-    <CustomAction Id="Xml_GetAttributeValue" Property="HDKN_WEBUI_PORT" Value="[XML_ATTRIBUTEVALUE]" Execute="immediate" />
-
-    <Binary Id="XmlTools" SourceFile="tools/msiext-1.4/XmlTools.dll" />
-
-    <InstallUISequence>
-      <Custom Action="Xml_SetFileName" After="CostInitialize"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
-      <Custom Action="Xml_SelectNodeValue_XPath" After="Xml_SetFileName"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
-      <Custom Action="Xml_SelectAttribute_Value" After="Xml_SelectNodeValue_XPath"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
-      <Custom Action="Xml_SelectNodeAttribute" After="Xml_SelectAttribute_Value"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
-      <Custom Action="Xml_GetAttributeValue" After="Xml_SelectNodeAttribute"><![CDATA[(WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))]]></Custom>
-    </InstallUISequence>
+    <!-- The UI parts -->
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
   </Product>
 </Wix>

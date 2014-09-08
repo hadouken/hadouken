@@ -1,0 +1,61 @@
+﻿<style>
+    #tbody-torrents-list tr td {
+        vertical-align: middle;
+    }
+</style>
+
+<h1 class="page-header">
+    Torrents
+    <button class="btn btn-xs btn-primary" ng-click="showAdd()"><i class="fa fa-plus"></i></button>
+</h1>
+
+<table class="table table-striped table-hover" id="tbl-torrents-list">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th style="width: 15%;">State</th>
+            <th style="width: 10%;">Progress</th>
+            <th style="width: 120px;">Size</th>
+            <th style="width: 120px">DL Speed</th>
+            <th style="width: 120px">UL Speed</th>
+            <th></th>
+        </tr>
+    </thead>
+    
+    <tbody id="tbody-torrents-list">
+        <tr ng-repeat="(infoHash, torrent) in torrents" class="torrent-row">
+            <td>
+                <a href ng-click="showDetails(infoHash)">{{ torrent.Name }}</a>
+                <span class="dropdown" on-toggle="toggled(open)">
+                    <a href class="dropdown-toggle"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href ng-click="move(infoHash)"><i class="fa fa-sign-out"></i> Move</a></li>
+                        <li class="divider"></li>
+                        <li><a href ng-click="remove(infoHash)"><i class="fa fa-trash-o"></i> Remove</a></li>
+                    </ul>
+                </span>
+
+                <br />
+                <small class="savePath">{{ torrent.SavePath }}</small>
+            </td>
+            <td>
+                <span class="state">{{ torrent.State }}</span>
+                <span class="state-progress">{{ torrent | torrentProgress }}</span>
+            </td>
+            <td>
+                <div class="progress" style="margin-bottom: 0;">
+                    <div class="progress-bar" ng-style="{width: (torrent.Progress * 100) + '%'}"></div>
+                </div>
+            </td>
+            <td>{{ torrent.Size | bytes }}</td>
+            <td><span class="dlSpeed">{{ torrent.DownloadSpeed | speed}}</span></td>
+            <td><span class="ulSpeed">{{ torrent.UploadSpeed | speed }}</span></td>
+            <td>
+                <div class="actions pull-right">
+                    <button type="button" class="btn btn-primary" ng-click="resume(infoHash)" ng-show="torrent.Paused"><i class="fa fa-play"></i></button>
+                    <button type="button" class="btn btn-primary" ng-click="pause(infoHash)" ng-show="!torrent.Paused"><i class="fa fa-pause"></i></button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

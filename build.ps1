@@ -11,7 +11,6 @@ Properties {
     $AssemblyInfo       = "src/CommonAssemblyInfo.cs"
 
     # Artifacts
-    $Artifact_Sdk       = "Hadouken.SDK.$Version.nupkg"
     $Artifact_Choco     = "hadouken.$Version.nupkg"
     $Artifact_Zip       = "hadouken-$Version.zip"
     $Artifact_Msi       = "hadouken-$Version.msi"
@@ -19,7 +18,7 @@ Properties {
     # Directories
     $Dir_Artifacts      = Join-Path $Root "build"
     $Dir_Binaries       = Join-Path $Root "build/bin"
-    $Dir_Output         = Join-Path $Root "src/Main/Hadouken.Service/bin/$Configuration/*"
+    $Dir_Output         = Join-Path $Root "src/Hadouken/bin/$Configuration/"
 
     # GitHub settings
     $GitHub_Owner       = "hadouken"
@@ -41,8 +40,8 @@ $w = $h.UI.RawUI.WindowSize.Width
 
 FormatTaskName (("-"*$w) + "`r`n[{0}]`r`n" + ("-"*$w))
 
-Task Default -depends Clean, Prepare, Compile, Test, Output, Zip, MSI, NuGet, Chocolatey
-Task Publish -depends Publish-GitHub, Publish-NuGet, Publish-Chocolatey
+Task Default -depends Clean, Prepare, Compile, Test, Output, Zip, MSI, Chocolatey
+Task Publish -depends Publish-GitHub, Publish-Chocolatey
 
 Task Clean {
     Write-Host "Cleaning and creating build artifacts folder."
@@ -64,11 +63,6 @@ Task Clean {
 
 Task Prepare -depends Clean {
     If (Test-Command git) {
-        # Get branch name
-        If (!$BranchName) {
-            $BranchName = (git symbolic-ref HEAD)
-        }
-
         # Get commit
         if (!$Commit) {
             $Commit = (git rev-parse HEAD)
@@ -81,7 +75,6 @@ Task Prepare -depends Clean {
     }
 
     Generate-Assembly-Info -file $AssemblyInfo `
-                           -branchName $BranchName `
                            -buildDate ([System.DateTime]::UtcNow).ToString("yyyy-MM-ddTHH\:mm\:ss.fffffffzzz") `
                            -commit $Commit `
                            -company "Viktor Elofsson - viktorelofsson.se" `
@@ -96,20 +89,42 @@ Task Compile -depends Prepare {
 }
 
 Task Test -depends Compile {
-    Exec { & $Tools_xUnit ".\src\Main\Hadouken.Tests\bin\$Configuration\Hadouken.Tests.dll" }
+    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" }
+    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" }
 }
 
 Task Output -depends Compile {
-    $source = $Dir_Output
     $filter = ("*.dll", "*.exe")
 
-    Write-Host "Copying files from $source to $Dir_Binaries"
+    Write-Host "Copying files from $Dir_Output to $Dir_Binaries"
 
     # Copy files
-    Get-ChildItem $source -Include $filter | %{Copy-Item -Path $_.FullName -Destination $Dir_Binaries}
+    Get-ChildItem -Path $Dir_Output -Include $filter -Recurse |
+        Copy-Item -Destination {
+            If ($_.PSIsContainer) {
+                Join-Path $Dir_Binaries $_.Parent.FullName.Substring($Dir_Output.Length)
+            } Else {
+                $path = (Split-Path $_.FullName)
+
+                If ($path.Length -ge $Dir_Output.Length) {
+                    $sub = Join-Path $Dir_Binaries $path.Substring($Dir_Output.Length)
+                    New-Item -ItemType Directory -Path $sub | Out-Null
+                }
+
+                Join-Path $Dir_Binaries $_.FullName.Substring($Dir_Output.Length)
+            }
+        } -Force
+
+    # Copy tools
+    $poshTool = ".\src\Hadouken.Tools.Posh\bin\$Configuration\Hadouken.Tools.Posh.dll"
+    $poshToolManifest = ".\src\Hadouken.Tools.Posh\bin\$Configuration\Hadouken.Tools.Posh.psd1"
+    $poshToolOut = Join-Path $Dir_Binaries "Tools/PowerShellModules/Hadouken.Tools.Posh"
+    New-Item $poshToolOut -ItemType directory
+    Copy-Item -Path $poshTool -Destination $poshToolOut
+    Copy-Item -Path $poshToolManifest -Destination $poshToolOut
 
     # Copy the correct config file
-    Copy-Item -Path .\src\Configuration\Console\Hadouken.Service.exe.config -Destination $Dir_Binaries
+    Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.config" -Destination $Dir_Binaries
 
     # Zip the web UI
     Write-Host "Compressing and packaging the web ui"
@@ -143,12 +158,6 @@ Task MSI -depends Output {
     }
 }
 
-Task NuGet -depends Output {
-    Exec {
-        & $Tools_NuGet pack Hadouken.SDK.nuspec -Version $Version -NoPackageAnalysis -OutputDirectory $Dir_Artifacts
-    }
-}
-
 Task Chocolatey -depends Output {
     $source = Join-Path $Root "src/Chocolatey/"
     $destination = Join-Path $Dir_Artifacts "choco/"
@@ -170,7 +179,7 @@ Task Chocolatey -depends Output {
 Task Publish-GitHub -depends MSI, Zip {
     $data = @{
         tag_name         = "v$Version"
-        target_commitish = "master"
+        target_commitish = "$Commit"
         name             = "$Name $Version"
     }
 
@@ -184,15 +193,6 @@ Task Publish-GitHub -depends MSI, Zip {
 
     Upload-GitHubReleaseAsset $GitHub_Token $GitHub_Owner $GitHub_Repository $release.Id $releaseMSI "application/octet-stream" | Out-Null
     Upload-GitHubReleaseAsset $GitHub_Token $GitHub_Owner $GitHub_Repository $release.Id $releaseZip "application/zip" | Out-Null
-}
-
-Task Publish-NuGet -depends NuGet {
-    Write-Host "Pushing SDK to NuGet"
-
-    $pkg = Join-Path $Dir_Artifacts $Artifact_Sdk
-    Exec {
-        & $Tools_NuGet push $pkg $NuGet_API_Key
-    }
 }
 
 Task Publish-Chocolatey -depends Chocolatey {

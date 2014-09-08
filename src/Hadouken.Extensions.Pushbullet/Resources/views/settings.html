@@ -1,0 +1,23 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Pushbullet settings</h3>
+</div>
+<div class="modal-body">
+    <p>
+        To properly set up <em>Pushbullet</em> you need both an access token
+        which can be acquired by heading to
+        <a href="https://www.pushbullet.com/account">pushbullet.com/account</a>.
+    </p>
+
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="accessToken" class="control-label col-sm-3">Access token</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" ng-model="config.AccessToken" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="test(config)">Test</button>
+    <button type="button" class="btn btn-primary" ng-click="save(config)">Save</button>
+</div>

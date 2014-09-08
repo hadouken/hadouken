@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
     <ComponentGroup Id="LibComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component>
@@ -8,11 +8,23 @@
       </Component>
 
       <Component>
-        <File Name="Autofac.Integration.Wcf.dll" />
+        <File Name="boost_chrono-vc120-mt-1_55.dll" />
       </Component>
 
       <Component>
-        <File Name="Microsoft.Web.XmlTransform.dll" />
+        <File Name="boost_date_time-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
+        <File Name="boost_system-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
+        <File Name="boost_thread-vc120-mt-1_55.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Dapper.dll" />
       </Component>
 
       <Component>
@@ -32,7 +44,7 @@
       </Component>
 
       <Component>
-        <File Name="NuGet.Core.dll" />
+        <File Name="Ragnar.dll" />
       </Component>
 
       <Component>
@@ -41,6 +53,26 @@
 
       <Component>
         <File Name="Serilog.FullNetFx.dll" />
+      </Component>
+
+      <Component>
+        <File Name="System.Data.SQLite.dll" />
+      </Component>
+
+      <Component>
+        <File Name="torrent.dll" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="X86Components" Directory="X86DIR" Source="$(var.BinDir)\x86\">
+      <Component>
+        <File Id="SQLiteInteropx86dll" Name="SQLite.Interop.dll" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="X64Components" Directory="X64DIR" Source="$(var.BinDir)\x64\">
+      <Component>
+        <File Id="SQLiteInteropx64dll" Name="SQLite.Interop.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

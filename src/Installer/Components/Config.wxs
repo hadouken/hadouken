@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
-    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.ConfigDir)/">
+    <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.BinDir)/">
       <Component>
-        <File Id="HdknWinSrvCfg" Name="Hadouken.Service.exe.config" />
-        <util:XmlFile Id="ModifyWebUIPort"
-                      File="[#HdknWinSrvCfg]"              
-                      Action="setValue"
-                      ElementPath="/configuration/appSettings/add[\[]@key='Port'[\]]/@value"
-                      Value="[HDKN_WEBUI_PORT]" />
+        <File Name="Hadouken.exe.config" />
       </Component>
 
       <Component>
