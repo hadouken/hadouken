@@ -199,9 +199,9 @@ Task Chocolatey -depends Output {
 Task Publish-AppVeyor -depends MSI, Zip -precondition { return $env:APPVEYOR } {
     Write-BuildMessage "Publishing build artifacts to AppVeyor"
 
-    Push-AppveyorArtifact (Join-Path $Dir_Binaries $Artifact_Choco)
-    Push-AppveyorArtifact (Join-Path $Dir_Binaries $Artifact_Msi)
-    Push-AppveyorArtifact (Join-Path $Dir_Binaries $Artifact_Zip)
+    Push-AppveyorArtifact (Join-Path $Dir_Artifacts $Artifact_Choco)
+    Push-AppveyorArtifact (Join-Path $Dir_Artifacts $Artifact_Msi)
+    Push-AppveyorArtifact (Join-Path $Dir_Artifacts $Artifact_Zip)
 }
 
 Task Publish-GitHub -depends MSI, Zip {

@@ -9,7 +9,6 @@ $Version = Get-Content .\VERSION
 $BuildVersion = $Version
 
 if($BuildNumber) {
-    Write-Host "hehe"
     $BuildVersion = "$Version-build-$BuildNumber"
 }
 
