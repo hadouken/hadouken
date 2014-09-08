@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Hadouken.Extensions.Rss.Data.Models;
 
 namespace Hadouken.Extensions.Rss.Data
@@ -28,5 +29,7 @@ namespace Hadouken.Extensions.Rss.Data
         void UpdateFilter(Filter filter);
 
         void UpdateModifier(Modifier modifier);
+
+        void UpdateFeedLastUpdatedTime(int feedId, DateTime lastUpdatedTime);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Hadouken.Common.Extensibility;
 using Hadouken.Common.Logging;
 using Hadouken.Core.BitTorrent;
@@ -40,7 +41,8 @@ namespace Hadouken.Core
 
             _logger.Info("Loading plugins.");
 
-            foreach (var plugin in _extensionFactory.GetAll<IPlugin>())
+            foreach (var plugin in _extensionFactory.GetAll<IPlugin>()
+                .Where(e => _extensionFactory.IsEnabled(e.GetId())))
             {
                 plugin.Load();
                 _plugins.Add(plugin);

@@ -28,5 +28,10 @@ namespace Hadouken.Common.Net
         {
             return _client.GetStreamAsync(uri);
         }
+
+        public Task<byte[]> GetByteArrayAsync(Uri uri)
+        {
+            return _client.GetByteArrayAsync(uri);
+        }
     }
 }

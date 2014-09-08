@@ -23,7 +23,8 @@ namespace Hadouken.Common.Timers
 
         public void Start()
         {
-            _ticks = 0;
+            // Make the first call have ticks=0
+            _ticks = -1;
 
             _timer = new Timer(_ =>
             {

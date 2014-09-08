@@ -57,6 +57,7 @@
     <Compile Include="IFilterMatcher.cs" />
     <Compile Include="RssPlugin.cs" />
     <Compile Include="Services\RssService.cs" />
+    <Compile Include="TorrentArguments.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">

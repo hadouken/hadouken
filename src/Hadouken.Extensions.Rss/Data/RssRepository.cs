@@ -89,5 +89,11 @@ namespace Hadouken.Extensions.Rss.Data
             var query = @"update Rss_Modifier set [Target] = @Target, Value = @Value where Id = @Id";
             _connection.Execute(query, modifier);
         }
+
+        public void UpdateFeedLastUpdatedTime(int feedId, DateTime lastUpdatedTime)
+        {
+            var query = @"update Rss_Feed set LastUpdatedTime = @LastUpdatedTime where Id = @Id";
+            _connection.Execute(query, new {Id = feedId, LastUpdatedTime = lastUpdatedTime});
+        }
     }
 }

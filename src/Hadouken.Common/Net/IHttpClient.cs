@@ -14,5 +14,7 @@ namespace Hadouken.Common.Net
         Task<Stream> GetStreamAsync(Uri uri);
 
         Task<Stream> GetStreamAsync(string url);
+
+        Task<byte[]> GetByteArrayAsync(Uri uri);
     }
 }
