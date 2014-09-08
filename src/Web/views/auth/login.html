@@ -12,8 +12,14 @@
         <input type="text" class="form-control" ng-model="userName" placeholder="Username" name="userName" required autofocus>
         <input type="password" class="form-control" ng-model="password" placeholder="Password" name="password" required>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-hide="setup">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-hide="setup">
+            <i class="fa fa-spinner fa-spin" ng-show="loggingIn"></i>
+            Sign in
+        </button>
 
-        <button class="btn btn-lg btn-success btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-show="setup">Create account</button>
+        <button class="btn btn-lg btn-success btn-block" type="submit" ng-disabled="loginForm.$invalid || loggingIn" ng-show="setup">
+            <i class="fa fa-spinner fa-spin" ng-show="loggingIn"></i>        
+            Create account
+        </button>
     </form>
 </div>

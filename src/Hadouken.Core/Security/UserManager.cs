@@ -3,13 +3,12 @@ using System.Linq;
 using Hadouken.Core.Data;
 using Hadouken.Core.Data.Models;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Hadouken.Core.Security
 {
     public sealed class UserManager : IUserManager
     {
-        private static readonly int DefaultHashIterations = 100000;
+        private static readonly int DefaultHashIterations = 10000;
         private readonly IUserRepository _userRepository;
 
         public UserManager(IUserRepository userRepository)
