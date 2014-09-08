@@ -11,7 +11,7 @@ Properties {
     $AssemblyInfo       = "src/CommonAssemblyInfo.cs"
 
     # Artifacts
-    $Artifact_Choco     = "hadouken-$BuildVersion.nupkg"
+    $Artifact_Choco     = "hadouken.$BuildVersion.nupkg"
     $Artifact_Zip       = "hadouken-$BuildVersion.zip"
     $Artifact_Msi       = "hadouken-$BuildVersion.msi"
 
