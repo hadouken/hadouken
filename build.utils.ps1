@@ -7,6 +7,16 @@ param(
      catch {RETURN $false}
 }
 
+function Write-BuildMessage() {
+    param($message)
+
+    Write-Host $message
+
+    if($env:APPVEYOR) {
+        Add-AppveyorMessage "$message"
+    }
+}
+
 function Generate-Assembly-Info
 {
 param(
@@ -17,6 +27,7 @@ param(
 	[string]$product, 
 	[string]$copyright, 
 	[string]$version,
+    [string]$buildVersion,
     [string]$commit,
     [string]$buildDate,
 	[string]$file = $(throw "file is a required parameter.")
@@ -34,7 +45,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProductAttribute(""$product"")]
 [assembly: AssemblyCopyrightAttribute(""$copyright"")]
 [assembly: AssemblyVersionAttribute(""$version"")]
-[assembly: AssemblyInformationalVersionAttribute(""$version / $commit"")]
+[assembly: AssemblyInformationalVersionAttribute(""$buildVersion / $commit"")]
 [assembly: AssemblyFileVersionAttribute(""$version"")]
 [assembly: AssemblyDelaySignAttribute(false)]
 
@@ -55,6 +66,6 @@ namespace Hadouken
 		Write-Host "Creating directory $dir"
 		[System.IO.Directory]::CreateDirectory($dir)
 	}
-	Write-Host "Generating assembly info file: $file"
+	Write-BuildMessage "Generating assembly info file: $file"
 	Write-Output $asmInfo > $file
 }

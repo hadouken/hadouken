@@ -2,8 +2,16 @@ param (
     [string]$ChocolateyAPIKey  = $env:CHOCOLATEY_API_KEY,
     [string]$GitHubToken       = $env:GITHUB_TOKEN,
     [string]$Task              = "Default",
-    [string]$Version           = "0.0.0"
- )
+    [string]$BuildNumber       = $null
+)
+
+$Version = Get-Content .\VERSION
+$BuildVersion = $Version
+
+if($BuildNumber) {
+    Write-Host "hehe"
+    $BuildVersion = "$Version-build-$BuildNumber"
+}
 
 $nuget = Join-Path $PSScriptRoot "tools/nuget.exe"
 Start-Process -NoNewWindow -Wait $nuget "restore packages.config -PackagesDirectory packages"
@@ -13,6 +21,7 @@ $params = @{
     "Chocolatey_API_Key" = $ChocolateyAPIKey
     "GitHub_Token" = $GitHubToken
     "Version" = $Version
+    "BuildVersion" = $BuildVersion
 }
 
 Import-Module .\packages\psake.4.3.2\tools\psake.psm1

@@ -11,9 +11,9 @@ Properties {
     $AssemblyInfo       = "src/CommonAssemblyInfo.cs"
 
     # Artifacts
-    $Artifact_Choco     = "hadouken.$Version.nupkg"
-    $Artifact_Zip       = "hadouken-$Version.zip"
-    $Artifact_Msi       = "hadouken-$Version.msi"
+    $Artifact_Choco     = "hadouken-$BuildVersion.nupkg"
+    $Artifact_Zip       = "hadouken-$BuildVersion.zip"
+    $Artifact_Msi       = "hadouken-$BuildVersion.msi"
 
     # Directories
     $Dir_Artifacts      = Join-Path $Root "build"
@@ -35,33 +35,21 @@ Properties {
     $Tools_xUnit        = Join-Path $Root "packages\xunit.runners.1.9.2\tools\xunit.console.clr4.x86.exe"
 }
 
-$h = Get-Host
-$w = $h.UI.RawUI.WindowSize.Width
+FormatTaskName {
+    param($taskName)
 
-FormatTaskName (("-"*$w) + "`r`n[{0}]`r`n" + ("-"*$w))
+    Write-Host "$taskName" -ForegroundColor Cyan
 
-Task Default -depends Clean, Prepare, Compile, Test, Output, Zip, MSI, Chocolatey
-Task Publish -depends Publish-GitHub, Publish-Chocolatey
-
-Task Clean {
-    Write-Host "Cleaning and creating build artifacts folder."
-
-    If (Test-Path $Dir_Artifacts)
-    {
-        Remove-Item $Dir_Artifacts -Recurse -Force | Out-Null
+    if($env:APPVEYOR) {
+        Add-AppveyorMessage "Running task: $taskName"
     }
-
-    New-Item $Dir_Artifacts -ItemType directory | Out-Null
-    New-Item $Dir_Binaries  -ItemType directory | Out-Null
-
-    If (Test-Path $AssemblyInfo) {
-        Remove-Item $AssemblyInfo
-    }
-
-    Exec { msbuild $SolutionFile /t:Clean "/p:Configuration=$Configuration" /v:quiet } 
 }
 
-Task Prepare -depends Clean {
+Task Default -depends Prepare, Clean, Generate-CommonAssemblyInfo, Compile, Test, Output, Zip, MSI, Chocolatey, Publish-AppVeyor
+Task Publish -depends Publish-GitHub, Publish-Chocolatey
+
+Task Prepare {
+    # Get commit hash
     If (Test-Command git) {
         # Get commit
         if (!$Commit) {
@@ -71,9 +59,33 @@ Task Prepare -depends Clean {
             if($LASTEXITCODE -ne 0) {
                 $Commit = $Commit + "*"
             }
+
+            Write-BuildMessage "Updated commit hash to $Commit"
         }
     }
 
+    # Update version
+    if($env:APPVEYOR) {
+        Write-BuildMessage "Updating AppVeyor version to $BuildVersion"
+        Update-AppveyorBuild -Version $BuildVersion
+    }
+}
+
+Task Clean -depends Prepare {
+    Write-BuildMessage "Cleaning and build output folder."
+
+    If (Test-Path $Dir_Artifacts)
+    {
+        Remove-Item $Dir_Artifacts -Recurse -Force | Out-Null
+    }
+
+    New-Item $Dir_Artifacts -ItemType directory | Out-Null
+    New-Item $Dir_Binaries  -ItemType directory | Out-Null
+
+    Exec { msbuild $SolutionFile /t:Clean "/p:Configuration=$Configuration" /v:quiet } 
+}
+
+Task Generate-CommonAssemblyInfo -depends Clean {
     Generate-Assembly-Info -file $AssemblyInfo `
                            -buildDate ([System.DateTime]::UtcNow).ToString("yyyy-MM-ddTHH\:mm\:ss.fffffffzzz") `
                            -commit $Commit `
@@ -81,22 +93,30 @@ Task Prepare -depends Clean {
                            -product "Hadouken" `
                            -title "Hadouken" `
                            -description "A headless BitTorrent client for Windows." `
-                           -version $Version
+                           -version $Version `
+                           -buildVersion $BuildVersion
 }
 
-Task Compile -depends Prepare {
+Task Compile -depends Generate-CommonAssemblyInfo {
     Exec { msbuild $SolutionFile /t:Build "/p:Configuration=$Configuration" /v:quiet }
 }
 
 Task Test -depends Compile {
-    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" }
-    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" }
+    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" /xml "build/xunit-results-common.xml" }
+    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" /xml "build/xunit-results-core.xml" }
+
+    if($env:APPVEYOR) {
+        # upload results to AppVeyor
+        $wc = New-Object "System.Net.WebClient"
+        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\build\xunit-results-common.xml))
+        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\build\xunit-results-core.xml))
+    }
 }
 
 Task Output -depends Compile {
     $filter = ("*.dll", "*.exe")
 
-    Write-Host "Copying files from $Dir_Output to $Dir_Binaries"
+    Write-BuildMessage "Copying files from $Dir_Output to $Dir_Binaries"
 
     # Copy files
     Get-ChildItem -Path $Dir_Output -Include $filter -Recurse |
@@ -127,7 +147,7 @@ Task Output -depends Compile {
     Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.config" -Destination $Dir_Binaries
 
     # Zip the web UI
-    Write-Host "Compressing and packaging the web ui"
+    Write-BuildMessage "Compressing and packaging the web ui"
     $webuiZip = Join-Path $Dir_Binaries "Web/web.zip"
     Exec {
         & $Tools_7za a -mx=9 $webuiZip .\src\Web\*
@@ -172,8 +192,16 @@ Task Chocolatey -depends Output {
     Set-Content $chocoInstall $content
 
     Exec {
-        & $Tools_NuGet pack "$Dir_Artifacts/choco/Hadouken.nuspec" -Version $Version -NoPackageAnalysis -OutputDirectory $Dir_Artifacts
+        & $Tools_NuGet pack "$Dir_Artifacts/choco/Hadouken.nuspec" -Version $BuildVersion -NoPackageAnalysis -OutputDirectory $Dir_Artifacts
     }
+}
+
+Task Publish-AppVeyor -depends MSI, Zip -precondition { return $env:APPVEYOR } {
+    Write-BuildMessage "Publishing build artifacts to AppVeyor"
+
+    Push-AppveyorArtifact (Join-Path $Dir_Binaries $Artifact_Choco)
+    Push-AppveyorArtifact (Join-Path $Dir_Binaries $Artifact_Msi)
+    Push-AppveyorArtifact (Join-Path $Dir_Binaries $Artifact_Zip)
 }
 
 Task Publish-GitHub -depends MSI, Zip {
@@ -183,20 +211,21 @@ Task Publish-GitHub -depends MSI, Zip {
         name             = "$Name $Version"
     }
 
-    Write-Host "Creating release $($data.tag_name)"
+    Write-BuildMessage "Creating release $($data.tag_name)"
 
     $release = New-GitHubRelease "https://api.github.com/repos/$GitHub_Owner/$GitHub_Repository/releases" $data $GitHub_Token
     $releaseMSI = Join-Path $Dir_Artifacts $Artifact_Zip
     $releaseZip = Join-Path $Dir_Artifacts $Artifact_Msi
 
-    Write-Host "Uploading release assets"
-
+    Write-BuildMessage "Uploading $releaseMSI to github.com/$GitHub_Owner/$GitHub_Repository"
     Upload-GitHubReleaseAsset $GitHub_Token $GitHub_Owner $GitHub_Repository $release.Id $releaseMSI "application/octet-stream" | Out-Null
+
+    Write-BuildMessage "Uploading $releaseZip to github.com/$GitHub_Owner/$GitHub_Repository"
     Upload-GitHubReleaseAsset $GitHub_Token $GitHub_Owner $GitHub_Repository $release.Id $releaseZip "application/zip" | Out-Null
 }
 
 Task Publish-Chocolatey -depends Chocolatey {
-    Write-Host "Pushing Hadouken to Chocolatey"
+    Write-BuildMessage "Pushing Hadouken $BuildVersion to Chocolatey"
 
     $pkg = Join-Path $Dir_Artifacts $Artifact_Choco
     Exec {
