@@ -1,9 +1,6 @@
 param (
-    [string]$ChocolateyAPIKey  = $null,
-    [string]$Commit            = $null,
-    [string]$BranchName        = $null,
-    [string]$GitHubToken       = $null,
-    [string]$NuGetAPIKey       = $null,
+    [string]$ChocolateyAPIKey  = $env:CHOCOLATEY_API_KEY,
+    [string]$GitHubToken       = $env:GITHUB_TOKEN,
     [string]$Task              = "Default",
     [string]$Version           = "0.0.0"
  )
@@ -14,10 +11,7 @@ Start-Process -NoNewWindow -Wait $nuget "restore Hadouken.sln    -PackagesDirect
 
 $params = @{
     "Chocolatey_API_Key" = $ChocolateyAPIKey
-    "Commit" = $Commit
-    "BranchName" = $BranchName
     "GitHub_Token" = $GitHubToken
-    "NuGet_API_Key" = $NuGetAPIKey
     "Version" = $Version
 }
 

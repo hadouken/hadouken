@@ -179,7 +179,7 @@ Task Chocolatey -depends Output {
 Task Publish-GitHub -depends MSI, Zip {
     $data = @{
         tag_name         = "v$Version"
-        target_commitish = "master"
+        target_commitish = "$Commit"
         name             = "$Name $Version"
     }
 
