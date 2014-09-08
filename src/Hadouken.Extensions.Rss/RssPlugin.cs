@@ -60,6 +60,7 @@ namespace Hadouken.Extensions.Rss
             {
                 try
                 {
+                    _logger.Info("Checking feed {Name}.", feed.Name);
                     _feedChecker.Check(feed);
                 }
                 catch (Exception e)

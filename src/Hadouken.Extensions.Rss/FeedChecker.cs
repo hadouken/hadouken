@@ -61,6 +61,7 @@ namespace Hadouken.Extensions.Rss
 
                 foreach (var item in items.Where(item => _filterMatcher.IsMatch(item.Title.Text, f)))
                 {
+                    _logger.Debug("Downloading torrent from {Url}.", item.Links.First().Uri);
                     Download(filter, item);
                 }
             }
