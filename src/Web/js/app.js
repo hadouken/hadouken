@@ -16,7 +16,7 @@
 
     angular.module('hadouken', core.concat(window.pluginModules))
     .config(['$urlRouterProvider', function ($urlRouterProvider) {
-        $urlRouterProvider.otherwise('/dashboard');
+        $urlRouterProvider.otherwise('/torrents/list');
     }])
     .filter('bytes', function() {
         return function(bytes, precision) {
