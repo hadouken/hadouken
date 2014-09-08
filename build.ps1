@@ -102,14 +102,14 @@ Task Compile -depends Generate-CommonAssemblyInfo {
 }
 
 Task Test -depends Compile {
-    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" /xml "build/xunit-results-common.xml" }
-    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" /xml "build/xunit-results-core.xml" }
+    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-common.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-core.xml") }
 
     if($env:APPVEYOR) {
         # upload results to AppVeyor
         $wc = New-Object "System.Net.WebClient"
-        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\build\xunit-results-common.xml))
-        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\build\xunit-results-core.xml))
+        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-common.xml"))
+        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-core.xml"))
     }
 }
 
