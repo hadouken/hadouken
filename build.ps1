@@ -63,11 +63,6 @@ Task Clean {
 
 Task Prepare -depends Clean {
     If (Test-Command git) {
-        # Get branch name
-        If (!$BranchName) {
-            $BranchName = (git symbolic-ref HEAD)
-        }
-
         # Get commit
         if (!$Commit) {
             $Commit = (git rev-parse HEAD)
@@ -80,7 +75,6 @@ Task Prepare -depends Clean {
     }
 
     Generate-Assembly-Info -file $AssemblyInfo `
-                           -branchName $BranchName `
                            -buildDate ([System.DateTime]::UtcNow).ToString("yyyy-MM-ddTHH\:mm\:ss.fffffffzzz") `
                            -commit $Commit `
                            -company "Viktor Elofsson - viktorelofsson.se" `

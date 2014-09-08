@@ -18,7 +18,6 @@ param(
 	[string]$copyright, 
 	[string]$version,
     [string]$commit,
-    [string]$branchName,
     [string]$buildDate,
 	[string]$file = $(throw "file is a required parameter.")
 )
@@ -44,7 +43,6 @@ namespace Hadouken
     public static class AssemblyInformation
     {
         public static readonly string Commit = ""$commit"";
-        public static readonly string BranchName = ""$branchName"";
         public static readonly DateTime BuildDate = DateTime.Parse(""$buildDate"");
     }
 }
