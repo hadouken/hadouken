@@ -77,6 +77,10 @@
       <Project>{5b9d97e4-93d9-4502-999f-5e4cc9d031ed}</Project>
       <Name>Hadouken.Extensions.Mailer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Extensions.Pushalot\Hadouken.Extensions.Pushalot.csproj">
+      <Project>{cb00f7ac-73ca-41c3-82d6-afb87ffdbdbd}</Project>
+      <Name>Hadouken.Extensions.Pushalot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken.Extensions.Pushbullet\Hadouken.Extensions.Pushbullet.csproj">
       <Project>{78970567-455c-4ee8-8a65-e7cf92f4714c}</Project>
       <Name>Hadouken.Extensions.Pushbullet</Name>
