@@ -4,11 +4,13 @@ using System.IO.Compression;
 using Autofac;
 using Hadouken.Common;
 using Hadouken.Common.IO;
+using Hadouken.Common.Logging;
 using Hadouken.Core.Http.Security;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Conventions;
+using Nancy.Extensions;
 using Nancy.Responses;
 using Path = Hadouken.Common.IO.Path;
 
@@ -17,18 +19,22 @@ namespace Hadouken.Core.Http
     public class CustomNancyBootstrapper : AutofacNancyBootstrapper
     {
         private readonly ILifetimeScope _lifetimeScope;
+        private readonly ILogger<CustomNancyBootstrapper> _logger;
         private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
 
         public CustomNancyBootstrapper(ILifetimeScope lifetimeScope,
+            ILogger<CustomNancyBootstrapper> logger,
             IEnvironment environment,
             IFileSystem fileSystem)
         {
             if (lifetimeScope == null) throw new ArgumentNullException("lifetimeScope");
+            if (logger == null) throw new ArgumentNullException("logger");
             if (environment == null) throw new ArgumentNullException("environment");
             if (fileSystem == null) throw new ArgumentNullException("fileSystem");
 
             _lifetimeScope = lifetimeScope;
+            _logger = logger;
             _environment = environment;
             _fileSystem = fileSystem;
         }
@@ -44,6 +50,12 @@ namespace Hadouken.Core.Http
             var cfg = new TokenAuthenticationConfiguration(tokenizer);
 
             TokenAuthentication.Enable(pipelines, cfg);
+
+            pipelines.OnError.AddItemToStartOfPipeline((context, exception) => 
+            {
+                _logger.Error(exception, "Error in HTTP pipeline.");
+                return null;
+            });
         }
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
