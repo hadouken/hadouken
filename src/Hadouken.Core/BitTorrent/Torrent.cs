@@ -41,9 +41,9 @@ namespace Hadouken.Core.BitTorrent
                 var t = new Torrent
                 {
                     InfoHash = handle.InfoHash.ToHex(),
-                    Name = file.Name,
+                    Name = status.Name,
                     SavePath = status.SavePath,
-                    Size = file.TotalSize,
+                    Size = file == null ? -1 : file.TotalSize,
                     Progress = status.Progress,
                     DownloadSpeed = status.DownloadRate,
                     UploadSpeed = status.UploadRate,
@@ -51,9 +51,12 @@ namespace Hadouken.Core.BitTorrent
                     TotalUploadedBytes = status.TotalUpload,
                     State = (Common.BitTorrent.TorrentState) (int) status.State,
                     Paused = status.Paused,
-                    Files = new ITorrentFile[file.NumFiles],
+                    Files = new ITorrentFile[file == null ? 0 : file.NumFiles],
                     Peers = handle.GetPeerInfo().Select(Peer.CreateFromPeerInfo).ToArray()
                 };
+
+                // If no torrent file (ie. downloading metadata)
+                if (file == null) return t;
 
                 var progresses = handle.GetFileProgresses();
                 var priorities = handle.GetFilePriorities();

@@ -499,6 +499,7 @@ namespace Hadouken.Core.BitTorrent
 
             using (var addParams = new AddTorrentParams())
             {
+                addParams.Name = message.Name;
                 addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
                 addParams.Url = message.MagnetLink;
 

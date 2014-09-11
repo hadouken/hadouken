@@ -18,6 +18,8 @@ namespace Hadouken.Common.BitTorrent
             get { return _magnetLink; }
         }
 
+        public string Name { get; set; }
+
         public string SavePath { get; set; }
 
         public string Label { get; set; }
