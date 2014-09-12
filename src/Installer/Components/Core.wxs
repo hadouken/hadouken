@@ -20,6 +20,10 @@
       </Component>
 
       <Component>
+        <File Name="Hadouken.Extensions.Pushalot.dll" />
+      </Component>
+
+      <Component>
         <File Name="Hadouken.Extensions.Pushbullet.dll" />
       </Component>
 
