@@ -4,6 +4,7 @@ using System.Linq;
 using Hadouken.Common.BitTorrent;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Common.Messaging;
+using Hadouken.Core.Services.Models;
 
 namespace Hadouken.Core.Services
 {
@@ -39,19 +40,27 @@ namespace Hadouken.Core.Services
         }
 
         [JsonRpcMethod("torrents.addFile")]
-        public void AddFile(byte[] data, string savePath, string label)
+        public void AddFile(byte[] data, TorrentParameters parameters)
         {
-            _messageBus.Publish(new AddTorrentMessage(data) {SavePath = savePath, Label = label});
+            var msg = new AddTorrentMessage(data)
+            {
+                Label = parameters.Label,
+                SavePath = parameters.SavePath
+            };
+
+            _messageBus.Publish(msg);
         }
 
         [JsonRpcMethod("torrents.addMagnetLink")]
-        public void AddMagnetLink(string magnetLink, IDictionary<string, object> torrentParameters)
+        public void AddMagnetLink(string magnetLink, TorrentParameters parameters)
         {
-            var msg = new AddMagnetLinkMessage(magnetLink);
-
-            if (torrentParameters.ContainsKey("label")) msg.Label = torrentParameters["label"].ToString();
-            if (torrentParameters.ContainsKey("name")) msg.Name = torrentParameters["name"].ToString();
-            if (torrentParameters.ContainsKey("save_path")) msg.SavePath = torrentParameters["save_path"].ToString();
+            var msg = new AddMagnetLinkMessage(magnetLink)
+            {
+                Label = parameters.Label,
+                Name = parameters.Name,
+                SavePath = parameters.SavePath,
+                Trackers = parameters.Trackers
+            };
 
             _messageBus.Publish(msg);
         }
@@ -78,6 +87,12 @@ namespace Hadouken.Core.Services
         public void Move(string infoHash, string destination, bool overwriteExisting)
         {
             _messageBus.Publish(new MoveTorrentMessage(infoHash, destination) {OverwriteExisting = overwriteExisting});
+        }
+
+        [JsonRpcMethod("torrents.changeLabel")]
+        public void ChangeLabel(string infoHash, string label)
+        {
+            _messageBus.Publish(new ChangeTorrentLabelMessage(infoHash) {Label = label});
         }
     }
 }

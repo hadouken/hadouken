@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Core.BitTorrent;
+using Hadouken.Core.BitTorrent.Data;
+using Hadouken.Core.BitTorrent.Handlers;
 using Hadouken.Core.Data;
 using Hadouken.Core.Handlers;
 using Hadouken.Core.Http;
@@ -20,6 +22,18 @@ namespace Hadouken.Core.DI
             // BitTorrent stuff
             builder.RegisterType<Session>().As<ISession>().SingleInstance().ExternallyOwned();
             builder.RegisterType<SessionHandler>().AsImplementedInterfaces().SingleInstance();
+            builder.RegisterType<TorrentInfoSaver>().As<ITorrentInfoSaver>().SingleInstance();
+            builder.RegisterType<TorrentMetadataRepository>().As<ITorrentMetadataRepository>().SingleInstance();
+
+            // BitTorrent message handlers
+            builder.RegisterType<AddMagnetLinkHandler>().AsImplementedInterfaces();
+            builder.RegisterType<AddTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<ChangeTorrentLabelHandler>().AsImplementedInterfaces();
+            builder.RegisterType<MoveTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<PauseTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<RemoveTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<ResumeTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<SessionSettingsChangedHandler>().AsImplementedInterfaces();
 
             // Extensions
             builder.RegisterType<ExtensionFactory>().As<IExtensionFactory>().SingleInstance();

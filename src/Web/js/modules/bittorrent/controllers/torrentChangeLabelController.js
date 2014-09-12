@@ -1,7 +1,7 @@
-﻿angular.module('hadouken.bittorrent.controllers.torrentMove', [
+﻿angular.module('hadouken.bittorrent.controllers.torrentChangeLabel', [
     'hadouken.jsonrpc'
 ])
-.controller('BitTorrent.TorrentMoveController', [
+.controller('BitTorrent.TorrentChangeLabelController', [
     '$scope', '$modalInstance', 'jsonrpc', 'infoHash',
     function ($scope, $modalInstance, jsonrpc, infoHash) {
         jsonrpc.request('torrents.getByInfoHash', {
@@ -11,9 +11,9 @@
             }
         });
 
-        $scope.move = function(newPath, overwriteExisting) {
-            jsonrpc.request('torrents.move', {
-                params: [infoHash, newPath, overwriteExisting],
+        $scope.changeLabel = function(newLabel) {
+            jsonrpc.request('torrents.changeLabel', {
+                params: [infoHash, newLabel],
                 success: function() {
                     $modalInstance.close(true);
                 },

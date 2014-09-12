@@ -62,11 +62,24 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BitTorrent\Data\ITorrentMetadataRepository.cs" />
+    <Compile Include="BitTorrent\Data\TorrentMetadataRepository.cs" />
+    <Compile Include="BitTorrent\Handlers\AddMagnetLinkHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\AddTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\ChangeTorrentLabelHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\MoveTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\PauseTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\RemoveTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\ResumeTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\SessionSettingsChangedHandler.cs" />
     <Compile Include="BitTorrent\ISessionHandler.cs" />
+    <Compile Include="BitTorrent\ITorrentInfoSaver.cs" />
     <Compile Include="BitTorrent\Peer.cs" />
+    <Compile Include="BitTorrent\SaveTorrentMetadataFileMessage.cs" />
     <Compile Include="BitTorrent\SessionHandler.cs" />
     <Compile Include="BitTorrent\Torrent.cs" />
     <Compile Include="BitTorrent\TorrentFile.cs" />
+    <Compile Include="BitTorrent\TorrentInfoSaver.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Data\Models\User.cs" />
     <Compile Include="Data\UserRepository.cs" />
@@ -128,6 +141,7 @@
     <Compile Include="Services\ExtensionService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\Models\ExtensionMetadata.cs" />
+    <Compile Include="Services\Models\TorrentParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
@@ -149,6 +163,7 @@
     <EmbeddedResource Include="Data\Sql\20130831120105_CreateUserTable.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BitTorrent\Data\Sql\20140911203456_CreateTorrentMetadataTable.sql" />
     <Content Include="boost_chrono-vc120-mt-1_55.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

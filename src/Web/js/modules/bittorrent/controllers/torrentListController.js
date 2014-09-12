@@ -73,6 +73,18 @@
             });
         };
 
+        $scope.changeLabel = function(infoHash) {
+            $modal.open({
+                controller: 'BitTorrent.TorrentChangeLabelController',
+                resolve: {
+                    infoHash: function() {
+                        return infoHash;
+                    }
+                },
+                templateUrl: 'views/bittorrent/change-label.html'
+            });
+        };
+
         $scope.remove = function(infoHash) {
             jsonrpc.request('torrents.remove', {
                 params: [infoHash, false],

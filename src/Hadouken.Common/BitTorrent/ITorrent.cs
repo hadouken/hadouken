@@ -14,6 +14,11 @@
         string Name { get; }
 
         /// <summary>
+        /// Gets the label assigned to this torrent.
+        /// </summary>
+        string Label { get; }
+
+        /// <summary>
         /// Gets the total size of the torrent in bytes. If no metadata file is
         /// present, this will be -1.
         /// </summary>

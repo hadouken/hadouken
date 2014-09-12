@@ -4,6 +4,7 @@ angular.module('hadouken.bittorrent', [
     'ui.router',
     'hadouken.messaging',
     'hadouken.bittorrent.controllers.torrentAdd',
+    'hadouken.bittorrent.controllers.torrentChangeLabel',
     'hadouken.bittorrent.controllers.torrentDetails',
     'hadouken.bittorrent.controllers.torrentList',
     'hadouken.bittorrent.controllers.torrentMove',

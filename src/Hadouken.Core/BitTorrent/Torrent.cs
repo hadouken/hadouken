@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Hadouken.Common.BitTorrent;
+using Hadouken.Core.BitTorrent.Data;
 using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
@@ -32,7 +33,9 @@ namespace Hadouken.Core.BitTorrent
 
         public IPeer[] Peers { get; private set; }
 
-        internal static ITorrent CreateFromHandle(TorrentHandle handle)
+        public string Label { get; private set; }
+
+        internal static ITorrent CreateFromHandle(TorrentHandle handle, ITorrentMetadataRepository metadataRepository)
         {
             using (handle)
             using (var file = handle.TorrentFile)
@@ -54,6 +57,8 @@ namespace Hadouken.Core.BitTorrent
                     Files = new ITorrentFile[file == null ? 0 : file.NumFiles],
                     Peers = handle.GetPeerInfo().Select(Peer.CreateFromPeerInfo).ToArray()
                 };
+
+                t.Label = metadataRepository.GetLabel(t.InfoHash);
 
                 // If no torrent file (ie. downloading metadata)
                 if (file == null) return t;

@@ -10,8 +10,13 @@
 
             var data = file.split(',')[1];
 
+            var addParams = {
+                label: label,
+                savePath: savePath
+            };
+
             jsonrpc.request('torrents.addFile', {
-                params: [data, savePath, label],
+                params: [data, addParams],
                 success: function() {
                     $modalInstance.close(true);
                 },

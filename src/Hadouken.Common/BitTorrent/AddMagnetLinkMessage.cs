@@ -23,5 +23,7 @@ namespace Hadouken.Common.BitTorrent
         public string SavePath { get; set; }
 
         public string Label { get; set; }
+
+        public string[] Trackers { get; set; }
     }
 }
