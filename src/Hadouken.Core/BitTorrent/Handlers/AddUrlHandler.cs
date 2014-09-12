@@ -9,13 +9,13 @@ using Ragnar;
 
 namespace Hadouken.Core.BitTorrent.Handlers
 {
-    internal sealed class AddMagnetLinkHandler : IMessageHandler<AddMagnetLinkMessage>
+    internal sealed class AddUrlHandler : IMessageHandler<AddUrlMessage>
     {
         private readonly ISession _session;
         private readonly IKeyValueStore _keyValueStore;
         private readonly ITorrentMetadataRepository _metadataRepository;
 
-        public AddMagnetLinkHandler(ISession session,
+        public AddUrlHandler(ISession session,
             IKeyValueStore keyValueStore,
             ITorrentMetadataRepository metadataRepository)
         {
@@ -28,16 +28,24 @@ namespace Hadouken.Core.BitTorrent.Handlers
             _metadataRepository = metadataRepository;
         }
 
-        public void Handle(AddMagnetLinkMessage message)
+        public void Handle(AddUrlMessage message)
         {
             using (var addParams = new AddTorrentParams())
             {
                 addParams.Name = message.Name;
                 addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
-                addParams.Url = message.MagnetLink;
+                addParams.Url = message.Url;
+
+                if (message.Trackers != null)
+                {
+                    foreach (var tracker in message.Trackers)
+                    {
+                        addParams.Trackers.Add(tracker);
+                    }
+                }
 
                 // Parse info hash
-                var infoHash = Regex.Match(message.MagnetLink, "urn:btih:([\\w]{32,40})").Groups[1].Value;
+                var infoHash = Regex.Match(message.Url, "urn:btih:([\\w]{32,40})").Groups[1].Value;
 
                 if (infoHash.Length == 32)
                 {

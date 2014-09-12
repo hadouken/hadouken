@@ -26,7 +26,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<TorrentMetadataRepository>().As<ITorrentMetadataRepository>().SingleInstance();
 
             // BitTorrent message handlers
-            builder.RegisterType<AddMagnetLinkHandler>().AsImplementedInterfaces();
+            builder.RegisterType<AddUrlHandler>().AsImplementedInterfaces();
             builder.RegisterType<AddTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<ChangeTorrentLabelHandler>().AsImplementedInterfaces();
             builder.RegisterType<MoveTorrentHandler>().AsImplementedInterfaces();

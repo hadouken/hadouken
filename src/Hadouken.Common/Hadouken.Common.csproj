@@ -65,7 +65,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BitTorrent\AddMagnetLinkMessage.cs" />
+    <Compile Include="BitTorrent\AddUrlMessage.cs" />
     <Compile Include="BitTorrent\AddTorrentMessage.cs" />
     <Compile Include="BitTorrent\ChangeTorrentLabelMessage.cs" />
     <Compile Include="BitTorrent\IPeer.cs" />

@@ -5,17 +5,28 @@
 .controller('BitTorrent.TorrentAddController', [
     '$scope', '$modalInstance', 'jsonrpc',
     function ($scope, $modalInstance, jsonrpc) {
-        $scope.add = function (file, savePath, label) {
+        $scope.source = 'file';
+
+        $scope.add = function (source, fileData, url, name, label, savePath) {
             $scope.inProgress = true;
 
-            var data = file.split(',')[1];
+            var data = null;
+            var method = 'torrents.addFile';
+
+            if(source === 'url') {
+                data = url;
+                method = 'torrents.addUrl';
+            } else {
+                data = fileData.split(',')[1];
+            }
 
             var addParams = {
                 label: label,
+                name: name,
                 savePath: savePath
             };
 
-            jsonrpc.request('torrents.addFile', {
+            jsonrpc.request(method, {
                 params: [data, addParams],
                 success: function() {
                     $modalInstance.close(true);

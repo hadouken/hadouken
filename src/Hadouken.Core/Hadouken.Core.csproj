@@ -64,7 +64,7 @@
     </Compile>
     <Compile Include="BitTorrent\Data\ITorrentMetadataRepository.cs" />
     <Compile Include="BitTorrent\Data\TorrentMetadataRepository.cs" />
-    <Compile Include="BitTorrent\Handlers\AddMagnetLinkHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\AddUrlHandler.cs" />
     <Compile Include="BitTorrent\Handlers\AddTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ChangeTorrentLabelHandler.cs" />
     <Compile Include="BitTorrent\Handlers\MoveTorrentHandler.cs" />

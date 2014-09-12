@@ -51,10 +51,10 @@ namespace Hadouken.Core.Services
             _messageBus.Publish(msg);
         }
 
-        [JsonRpcMethod("torrents.addMagnetLink")]
-        public void AddMagnetLink(string magnetLink, TorrentParameters parameters)
+        [JsonRpcMethod("torrents.addUrl")]
+        public void AddMagnetLink(string url, TorrentParameters parameters)
         {
-            var msg = new AddMagnetLinkMessage(magnetLink)
+            var msg = new AddUrlMessage(url)
             {
                 Label = parameters.Label,
                 Name = parameters.Name,
