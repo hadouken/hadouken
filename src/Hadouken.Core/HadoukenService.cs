@@ -48,8 +48,6 @@ namespace Hadouken.Core
                 _plugins.Add(plugin);
             }
 
-            _logger.Info("Starting HTTP server.");
-
             _httpServer.Start();
         }
 
