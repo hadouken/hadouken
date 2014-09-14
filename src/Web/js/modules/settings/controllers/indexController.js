@@ -44,6 +44,23 @@
         });
 
         $scope.save = function() {
+            var keys = [
+                'bt.save_path',
+                'bt.net.listen_port',
+                'http.binding',
+                'http.port'
+            ];
+
+            var data = {};
+
+            for(var i = 0; i < keys.length; i++) {
+                data[keys[i]] = $scope.config[keys[i]];
+            }
+
+            jsonrpc.request('config.setMany', {
+                params: [data],
+                success: function() {}
+            });
         };
 
         $scope.saveAdvanced = function() {

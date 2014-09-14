@@ -14,6 +14,20 @@
                     </div>
                 </div>
 
+                <h3 class="page-header">BitTorrent</h3>
+
+                <div class="form-group">
+                    <label for="bt_net_listen_port" class="control-label col-sm-3">Listen port</label>
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <input type="number" class="form-control" name="bt_net_listen_port" ng-model="config['bt.net.listen_port']" />
+                            </div>
+                        </div>
+                        <span class="help-block">The listen port to use for incoming BitTorrent connections.</span>
+                    </div>
+                </div>
+
                 <h3 class="page-header">Web UI <small>* requires restart</small></h3>
 
                 <div class="form-group">
@@ -35,20 +49,12 @@
                         <input type="number" class="form-control" name="http_port" ng-model="config['http.port']" />
                     </div>
                 </div>
-            </form>
-        </tab>
 
-        <tab heading="Network">
-            <form class="form-horizontal">
+                <hr/>
+
                 <div class="form-group">
-                    <label for="bt_net_listen_port" class="control-label col-sm-3">Listen port</label>
-                    <div class="col-sm-9">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <input type="number" class="form-control" name="bt_net_listen_port" ng-model="config['bt.net.listen_port']" />
-                            </div>
-                        </div>
-                        <span class="help-block">The listen port to use for incoming BitTorrent connections.</span>
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
                     </div>
                 </div>
             </form>
