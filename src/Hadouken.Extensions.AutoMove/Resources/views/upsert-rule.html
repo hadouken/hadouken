@@ -1,0 +1,53 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Add/edit rule</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="ruleName" class="control-label col-md-3">Name</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="ruleName" ng-model="rule.Name" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">
+                Parameters
+                <button class="btn btn-xs btn-primary" ng-click="addParameter()"><i class="fa fa-plus"></i></button>
+            </label>
+            <div class="col-md-9">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Source</th>
+                            <th>Pattern</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="parameter in parameters">
+                            <td>
+                                <select class="form-control input-sm" ng-model="parameter.Source">
+                                    <option value="Label">Label</option>
+                                    <option value="Name">Name</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control input-sm" style="font-family: monospace;" ng-model="parameter.Pattern" /></td>
+                            <td>
+                                <button class="btn btn-sm btn-danger pull-right" ng-click="removeParameter(parameter, $index)"><i class="fa fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ruleTargetPath" class="control-label col-md-3">Target path</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" style="font-family: monospace;" name="ruleTargetPath" ng-model="rule.TargetPath" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="!validate()">Save rule</button>
+</div>

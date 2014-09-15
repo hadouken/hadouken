@@ -6,6 +6,17 @@ using Hadouken.Extensions.AutoMove.Data;
 
 namespace Hadouken.Extensions.AutoMove
 {
+    [Extension("plugin.automove",
+        Name = "AutoMove",
+        Description = "Automatically moves torrents according to user-specified rules.",
+        ResourceNamespace = "Hadouken.Extensions.AutoMove.Resources",
+        Scripts = new[]
+        {
+            "js/app.js",
+            "js/controllers/settingsController.js",
+            "js/controllers/upsertRuleController.js"
+        }
+    )]
     public class AutoMovePlugin : IPlugin
     {
         private readonly IMessageBus _messageBus;

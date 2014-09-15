@@ -65,6 +65,21 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\20140914235719_CreateAutoMoveTables.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\js\app.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\js\controllers\settingsController.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\js\controllers\upsertRuleController.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\views\settings.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\views\upsert-rule.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
