@@ -36,6 +36,13 @@
             <label for="label" class="col-sm-3 control-label">Label</label>
             <div class="col-sm-5">
                 <input type="text" class="form-control" ng-model="label" />
+                
+            </div>
+            <div class="col-sm-4">
+                <select class="form-control" ng-show="existingLabels.length" ng-model="label">
+                    <option value="">Existing labels:</option>
+                    <option ng-repeat="label in existingLabels" value="{{ label }}">- {{ label }}</option>
+                </select>
             </div>
         </div>
     </form>

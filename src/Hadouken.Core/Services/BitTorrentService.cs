@@ -39,6 +39,12 @@ namespace Hadouken.Core.Services
             return _torrentEngine.GetByInfoHash(infoHash);
         }
 
+        [JsonRpcMethod("torrents.getLabels")]
+        public IEnumerable<string> GetLabels()
+        {
+            return _torrentEngine.GetAll().Select(t => t.Label).Where(l => !string.IsNullOrEmpty(l)).Distinct();
+        }
+
         [JsonRpcMethod("torrents.addFile")]
         public void AddFile(byte[] data, TorrentParameters parameters)
         {

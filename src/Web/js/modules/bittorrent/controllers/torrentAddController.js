@@ -35,5 +35,11 @@
                     $modalInstance.close(false);
                 }
             });
-        }
+        };
+
+        jsonrpc.request('torrents.getLabels', {
+            success: function(data) {
+                $scope.existingLabels = data.result;
+            }
+        });
     }]);
