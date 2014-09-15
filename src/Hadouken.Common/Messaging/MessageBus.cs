@@ -72,7 +72,11 @@ namespace Hadouken.Common.Messaging
 
         public void Unsubscribe<T>(Action<T> callback) where T : IMessage
         {
-            throw new NotImplementedException();
+            var t = typeof (T);
+
+            if (!_callbacks.ContainsKey(t)) return;
+
+            _callbacks[t].Remove(callback);
         }
     }
 }
