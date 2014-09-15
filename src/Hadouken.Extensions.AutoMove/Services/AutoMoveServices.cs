@@ -59,5 +59,11 @@ namespace Hadouken.Extensions.AutoMove.Services
         {
             return _autoMoveRepository.GetParametersByRuleId(ruleId);
         }
+
+        [JsonRpcMethod("automove.rules.getAll")]
+        public IEnumerable<Rule> GetRules()
+        {
+            return _autoMoveRepository.GetRules();
+        } 
     }
 }
