@@ -2,8 +2,10 @@
 
 namespace Hadouken.Core.BitTorrent
 {
-    public interface ITorrentInfoSaver
+    public interface ITorrentInfoRepository
     {
         void Save(TorrentInfo info);
+
+        void Remove(string infoHash);
     }
 }

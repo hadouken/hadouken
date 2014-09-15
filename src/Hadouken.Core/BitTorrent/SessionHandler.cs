@@ -22,7 +22,7 @@ namespace Hadouken.Core.BitTorrent
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMessageBus _messageBus;
         private readonly ISession _session;
-        private readonly ITorrentInfoSaver _torrentInfoSaver;
+        private readonly ITorrentInfoRepository _torrentInfoRepository;
         private readonly ITorrentMetadataRepository _metadataRepository;
         private readonly IList<string> _muted;
         private readonly Thread _alertsThread;
@@ -34,7 +34,7 @@ namespace Hadouken.Core.BitTorrent
             IKeyValueStore keyValueStore,
             IMessageBus messageBus,
             ISession session,
-            ITorrentInfoSaver torrentInfoSaver,
+            ITorrentInfoRepository torrentInfoRepository,
             ITorrentMetadataRepository metadataRepository)
         {
             if (logger == null) throw new ArgumentNullException("logger");
@@ -43,7 +43,7 @@ namespace Hadouken.Core.BitTorrent
             if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
             if (session == null) throw new ArgumentNullException("session");
-            if (torrentInfoSaver == null) throw new ArgumentNullException("torrentInfoSaver");
+            if (torrentInfoRepository == null) throw new ArgumentNullException("torrentInfoRepository");
             if (metadataRepository == null) throw new ArgumentNullException("metadataRepository");
 
             _logger = logger;
@@ -52,7 +52,7 @@ namespace Hadouken.Core.BitTorrent
             _keyValueStore = keyValueStore;
             _messageBus = messageBus;
             _session = session;
-            _torrentInfoSaver = torrentInfoSaver;
+            _torrentInfoRepository = torrentInfoRepository;
             _metadataRepository = metadataRepository;
             _muted = new List<string>();
             _alertsThread = new Thread(ReadAlerts);
@@ -267,6 +267,10 @@ namespace Hadouken.Core.BitTorrent
                     {
                         Handle((TorrentFinishedAlert) alert);
                     }
+                    else if (alert is TorrentRemovedAlert)
+                    {
+                        Handle((TorrentRemovedAlert) alert);
+                    }
                     else if (alert is MetadataReceivedAlert)
                     {
                         Handle((MetadataReceivedAlert) alert);
@@ -291,12 +295,17 @@ namespace Hadouken.Core.BitTorrent
             _messageBus.Publish(new TorrentCompletedMessage(torrent));
         }
 
+        private void Handle(TorrentRemovedAlert alert)
+        {
+            _torrentInfoRepository.Remove(alert.InfoHash);
+        }
+
         private void Handle(MetadataReceivedAlert alert)
         {
             using (var h = alert.Handle)
             using (var info = h.TorrentFile)
             {
-                _torrentInfoSaver.Save(info);
+                _torrentInfoRepository.Save(info);
             }
         }
     }

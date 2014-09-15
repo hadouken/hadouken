@@ -22,7 +22,7 @@ namespace Hadouken.Core.DI
             // BitTorrent stuff
             builder.RegisterType<Session>().As<ISession>().SingleInstance().ExternallyOwned();
             builder.RegisterType<SessionHandler>().AsImplementedInterfaces().SingleInstance();
-            builder.RegisterType<TorrentInfoSaver>().As<ITorrentInfoSaver>().SingleInstance();
+            builder.RegisterType<TorrentInfoRepository>().As<ITorrentInfoRepository>().SingleInstance();
             builder.RegisterType<TorrentMetadataRepository>().As<ITorrentMetadataRepository>().SingleInstance();
 
             // BitTorrent message handlers

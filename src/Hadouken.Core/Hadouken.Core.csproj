@@ -73,12 +73,12 @@
     <Compile Include="BitTorrent\Handlers\ResumeTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\SessionSettingsChangedHandler.cs" />
     <Compile Include="BitTorrent\ISessionHandler.cs" />
-    <Compile Include="BitTorrent\ITorrentInfoSaver.cs" />
+    <Compile Include="BitTorrent\ITorrentInfoRepository.cs" />
     <Compile Include="BitTorrent\Peer.cs" />
     <Compile Include="BitTorrent\SessionHandler.cs" />
     <Compile Include="BitTorrent\Torrent.cs" />
     <Compile Include="BitTorrent\TorrentFile.cs" />
-    <Compile Include="BitTorrent\TorrentInfoSaver.cs" />
+    <Compile Include="BitTorrent\TorrentInfoRepository.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Data\Models\User.cs" />
     <Compile Include="Data\UserRepository.cs" />
