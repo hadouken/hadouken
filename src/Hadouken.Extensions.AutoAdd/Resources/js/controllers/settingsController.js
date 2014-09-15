@@ -13,7 +13,7 @@
                 controller: 'AutoAdd.UpsertFolderController',
                 templateUrl: 'api/extensions/plugin.autoadd/views/upsert-folder.html',
                 resolve: {
-                    folder: function() { return folder || { Id: -1 }; }
+                    folder: function() { return folder || { Id: -1, Pattern: '.*\\.torrent' }; }
                 }
             });
 
