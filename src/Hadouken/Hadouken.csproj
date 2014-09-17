@@ -51,7 +51,7 @@
     </Compile>
     <Compile Include="AutofacContainerExtensions.cs" />
     <Compile Include="Hosts\ConsoleHost.cs" />
-    <Compile Include="Hosts\HadoukenServiceHost.cs">
+    <Compile Include="Hosts\ServiceHost.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />

@@ -52,8 +52,13 @@ namespace Hadouken.Common.Data
                     stream.CopyTo(ms);
                     var sql = Encoding.UTF8.GetString(ms.ToArray());
 
-                    _connection.Execute(sql);
-                    _connection.Execute(InsertScript, new {Script = resource.ScriptName});
+                    using (var transaction = _connection.BeginTransaction())
+                    {
+                        _connection.Execute(sql);
+                        _connection.Execute(InsertScript, new {Script = resource.ScriptName});
+
+                        transaction.Commit();
+                    }
 
                     _logger.Info("Applied script {ScriptName}.", resource.ScriptName);
                 }

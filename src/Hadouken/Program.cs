@@ -2,7 +2,6 @@
 using System.ServiceProcess;
 using Autofac;
 using Hadouken.Common;
-using Hadouken.Common.Data;
 using Hadouken.Common.DI;
 using Hadouken.Common.Logging;
 using Hadouken.Core;
@@ -29,10 +28,6 @@ namespace Hadouken
                 // Load extensions
                 container.LoadExtensions(environment.GetApplicationRoot());
 
-                // Run migrations
-                var migrator = container.Resolve<IMigrator>();
-                migrator.Migrate();
-
                 var service = container.Resolve<IHadoukenService>();
 
                 if (environment.IsUserInteractive())
@@ -41,7 +36,7 @@ namespace Hadouken
                 }
                 else
                 {
-                    ServiceBase.Run(new HadoukenServiceHost(service));
+                    ServiceBase.Run(new ServiceHost(service));
                 }
             }
         }
