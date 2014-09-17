@@ -11,13 +11,6 @@
             }
         });
 
-        $scope.test = function (config) {
-            jsonrpc.request('pushbullet.config.test', {
-                params: [config],
-                success: function () { }
-            });
-        };
-
         $scope.save = function (config) {
             jsonrpc.request('pushbullet.config.set', {
                 params: [config],

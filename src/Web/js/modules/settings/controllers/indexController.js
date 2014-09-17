@@ -8,6 +8,7 @@
         var dialogs = {};
         $scope.advancedSettings = {};
         $scope.advancedSettingsBusy = false;
+        $scope.busyIndicators = {};
 
         function getType(obj) {
             if(typeof obj === 'number' && !isNaN(obj) && Math.round(obj) != obj) {
@@ -17,31 +18,61 @@
             return typeof obj;
         };
 
-        jsonrpc.request('config.getMany', {
-            params: [''],
-            success: function(data) {
-                $scope.config = data.result;
+        function loadNotifications() {
+            jsonrpc.request('notifiers.getAllTypes', {
+                params: null,
+                success: function(data) {
+                    $scope.notificationTypes = data.result;
 
-                var keys = Object.keys($scope.config);
-
-                for(var i = 0; i < keys.length; i++) {
-                    var key = keys[i];
-
-                    if(key.lastIndexOf('bt.', 0) === 0) {
-                        $scope.advancedSettings[key] = {
-                            type: getType($scope.config[key]),
-                            value: $scope.config[key]
+                    jsonrpc.request('notifiers.getAll', {
+                        params: null,
+                        success: function(data) {
+                            $scope.availableNotifiers = data.result;
+                            
+                            if($scope.selectedNotificationType) {
+                                getNotifiersForType($scope.selectedNotificationType);
+                            }
                         }
-                    }
+                    });
                 }
-            }
-        });
+            });
+        };
 
-        jsonrpc.request('extensions.getAll', {
-            success: function(data) {
-                $scope.extensions = data.result;
+        function getNotifiersForType(type) {
+            $scope.selectedNotificationType = type;
+            $scope.notifiers = [];
+
+            for(var i = 0; i < $scope.availableNotifiers.length; i++) {
+                var notifier = angular.copy($scope.availableNotifiers[i]);
+                notifier.Enabled = notifier.RegisteredTypes.indexOf(type) > -1;
+
+                $scope.notifiers.push(notifier);
             }
-        });
+        };
+
+        $scope.getNotifiersForType = function(type) {
+            getNotifiersForType(type);
+        };
+
+        $scope.enableDisableNotifier = function(notifierId, value, type) {
+            var method = value ? 'notifiers.register' : 'notifiers.unregister';
+
+            jsonrpc.request(method, {
+                params: [notifierId, type],
+                success: function() {}
+            });
+        };
+
+        $scope.testNotifier = function(notifierId) {
+            $scope.busyIndicators[notifierId] = 1;
+
+            jsonrpc.request('notifiers.test', {
+                params: [notifierId],
+                success: function() {
+                    delete $scope.busyIndicators[notifierId];
+                }
+            });
+        };
 
         $scope.save = function() {
             var keys = [
@@ -89,24 +120,19 @@
                 throw new Error('Invalid extensionId: ' + extensionId);
             }
 
-            $modal.open({
+            var m = $modal.open({
                 controller: dialog.controller,
                 templateUrl: dialog.templateUrl,
                 size: dialog.size || 'md'
             });
+
+            // Reload all notifications after we have configured one
+            m.result.then(function() { loadNotifications(); }, function() { loadNotifications(); });
         };
 
         $scope.getType = function(value) {
             return typeof value;
         }
-
-        $scope.toggleExtension = function(extensionId, enabled) {
-            var method = enabled ? 'extensions.enable' : 'extensions.disable';
-            jsonrpc.request(method, {
-                params: [extensionId],
-                success: function() {}
-            });
-        };
 
         $scope.hasDialog = function(extensionId) {
             return typeof dialogs[extensionId] !== 'undefined';
@@ -120,6 +146,28 @@
 
         $scope.$on('$destroy', function() {
             subscription();
+        });
+
+        jsonrpc.request('config.getMany', {
+            params: [''],
+            success: function(data) {
+                $scope.config = data.result;
+
+                var keys = Object.keys($scope.config);
+
+                for(var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+
+                    if(key.lastIndexOf('bt.', 0) === 0) {
+                        $scope.advancedSettings[key] = {
+                            type: getType($scope.config[key]),
+                            value: $scope.config[key]
+                        }
+                    }
+                }
+
+                loadNotifications();
+            }
         });
     }
 ]);

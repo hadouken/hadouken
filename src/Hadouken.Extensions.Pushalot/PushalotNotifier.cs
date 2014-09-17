@@ -30,6 +30,14 @@ namespace Hadouken.Extensions.Pushalot
             _keyValueStore = keyValueStore;
         }
 
+        public bool CanNotify()
+        {
+            var config = _keyValueStore.Get<PushalotConfig>("pushalot.config");
+
+            return (config != null
+                    && !string.IsNullOrEmpty(config.AuthorizationToken));
+        }
+
         public void Notify(Notification notification)
         {
             var config = _keyValueStore.Get<PushalotConfig>("pushalot.config");

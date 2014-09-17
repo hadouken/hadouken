@@ -35,9 +35,8 @@ namespace Hadouken.Core.DI
             builder.RegisterType<ResumeTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<SessionSettingsChangedHandler>().AsImplementedInterfaces();
 
-            // Extensions
-            builder.RegisterType<ExtensionFactory>().As<IExtensionFactory>().SingleInstance();
-            builder.RegisterType<NotifierHandler>().As<INotifierHandler>().SingleInstance();
+            // Notification things
+            builder.RegisterType<NotifierEngine>().As<INotifierEngine>().SingleInstance();
 
             // JSONRPC host
             builder.RegisterType<RequestHandler>().As<IRequestHandler>().SingleInstance();
@@ -50,8 +49,8 @@ namespace Hadouken.Core.DI
             // JSONRPC services
             builder.RegisterType<BitTorrentService>().As<IJsonRpcService>();
             builder.RegisterType<ConfigurationService>().As<IJsonRpcService>();
-            builder.RegisterType<ExtensionService>().As<IJsonRpcService>();
             builder.RegisterType<LoggingService>().As<IJsonRpcService>();
+            builder.RegisterType<NotificationService>().As<IJsonRpcService>();
 
             // Message handlers
             builder.RegisterType<NotifyTorrentAddedHandler>().AsImplementedInterfaces();
@@ -63,6 +62,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<Tokenizer>().As<ITokenizer>().SingleInstance();
 
             // Repositories
+            builder.RegisterType<NotifierRepository>().As<INotifierRepository>().SingleInstance();
             builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
 
             // Security

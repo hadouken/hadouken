@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hadouken.Common.Data;
 using Hadouken.Common.Extensibility;
 using Hadouken.Common.Logging;
 using Hadouken.Core.BitTorrent;
@@ -11,41 +12,40 @@ namespace Hadouken.Core
     public class HadoukenService : IHadoukenService
     {
         private readonly ILogger<HadoukenService> _logger;
+        private readonly IMigrator _migrator;
         private readonly ISessionHandler _sessionHandler;
         private readonly IHttpServer _httpServer;
-        private readonly IExtensionFactory _extensionFactory;
         private readonly IList<IPlugin> _plugins;
 
         public HadoukenService(ILogger<HadoukenService> logger,
+            IMigrator migrator,
             ISessionHandler sessionHandler,
             IHttpServer httpServer,
-            IExtensionFactory extensionFactory)
+            IEnumerable<IPlugin> plugins)
         {
             if (logger == null) throw new ArgumentNullException("logger");
+            if (migrator == null) throw new ArgumentNullException("migrator");
             if (sessionHandler == null) throw new ArgumentNullException("sessionHandler");
             if (httpServer == null) throw new ArgumentNullException("httpServer");
-            if (extensionFactory == null) throw new ArgumentNullException("extensionFactory");
 
             _logger = logger;
+            _migrator = migrator;
             _sessionHandler = sessionHandler;
             _httpServer = httpServer;
-            _extensionFactory = extensionFactory;
-            _plugins = new List<IPlugin>();
+            _plugins = new List<IPlugin>(plugins);
         }
 
         public void Load(string[] args)
         {
-            _logger.Info("Loading BitTorrent session.");
+            _migrator.Migrate();
 
+            _logger.Info("Loading BitTorrent session.");
             _sessionHandler.Load();
 
-            _logger.Info("Loading plugins.");
-
-            foreach (var plugin in _extensionFactory.GetAll<IPlugin>()
-                .Where(e => _extensionFactory.IsEnabled(e.GetId())))
+            foreach (var plugin in _plugins)
             {
+                _logger.Info("Loading plugin {PluginId}", plugin.GetId());
                 plugin.Load();
-                _plugins.Add(plugin);
             }
 
             _httpServer.Start();

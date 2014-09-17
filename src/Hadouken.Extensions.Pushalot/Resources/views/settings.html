@@ -11,12 +11,11 @@
         <div class="form-group">
             <label for="authorizationToken" class="control-label col-sm-3">Authorization token</label>
             <div class="col-sm-7">
-                <input type="text" class="form-control" ng-model="config.AuthorizationToken" />
+                <input type="password" class="form-control" ng-model="config.AuthorizationToken" />
             </div>
         </div>
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="test(config)">Test</button>
     <button type="button" class="btn btn-primary" ng-click="save(config)">Save</button>
 </div>

@@ -91,6 +91,7 @@
     <Compile Include="Extensibility\ComponentAttribute.cs" />
     <Compile Include="Extensibility\ComponentLifestyle.cs" />
     <Compile Include="Extensibility\ExtensionExtensions.cs" />
+    <Compile Include="Extensibility\Notifications\NotificationType.cs" />
     <Compile Include="HadoukenConsole.cs" />
     <Compile Include="HadoukenEnvironment.cs" />
     <Compile Include="Extensibility\ExtensionAttribute.cs" />

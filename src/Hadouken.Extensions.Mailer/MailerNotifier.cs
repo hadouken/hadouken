@@ -35,6 +35,17 @@ namespace Hadouken.Extensions.Mailer
             _mailSender = mailSender;
         }
 
+        public bool CanNotify()
+        {
+            var config = _keyValueStore.Get<MailerConfig>("mailer.config");
+
+            return (config != null
+                    && !string.IsNullOrEmpty(config.From)
+                    && !string.IsNullOrEmpty(config.Host)
+                    && !string.IsNullOrEmpty(config.Password)
+                    && !string.IsNullOrEmpty(config.UserName));
+        }
+
         public void Notify(Notification notification)
         {
             var config = _keyValueStore.Get<MailerConfig>("mailer.config");

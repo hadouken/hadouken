@@ -8,21 +8,21 @@ namespace Hadouken.Core.Handlers
 {
     public sealed class NotifyTorrentCompletedHandler : IMessageHandler<TorrentCompletedMessage>
     {
-        private readonly INotifierHandler _notifierHandler;
+        private readonly INotifierEngine _notifierSender;
 
-        public NotifyTorrentCompletedHandler(INotifierHandler notifierHandler)
+        public NotifyTorrentCompletedHandler(INotifierEngine notifierSender)
         {
-            if (notifierHandler == null) throw new ArgumentNullException("notifierHandler");
-            _notifierHandler = notifierHandler;
+            if (notifierSender == null) throw new ArgumentNullException("notifierSender");
+            _notifierSender = notifierSender;
         }
 
         public void Handle(TorrentCompletedMessage message)
         {
-            var notif = new Notification(
+            var notif = new Notification(NotificationType.TorrentCompleted,
                 Notifications.TorrentCompletedTitle,
                 string.Format(Notifications.TorrentCompletedMessage, message.Torrent.Name));
 
-            _notifierHandler.Notify(notif);
+            _notifierSender.NotifyAll(notif);
         }
     }
 }
