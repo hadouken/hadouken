@@ -31,7 +31,8 @@ namespace Hadouken.Common.Logging
                 Level = level,
                 Message = logEvent.RenderMessage(),
                 Source = source,
-                Timestamp = logEvent.Timestamp
+                Timestamp = logEvent.Timestamp,
+                ExceptionString = logEvent.Exception != null ? logEvent.Exception.ToString() : string.Empty
             });
         }
 

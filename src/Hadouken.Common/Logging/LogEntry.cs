@@ -11,5 +11,7 @@ namespace Hadouken.Common.Logging
         public string Message { get; set; }
 
         public string Source { get; set; }
+
+        public string ExceptionString { get; set; }
     }
 }

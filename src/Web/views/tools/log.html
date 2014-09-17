@@ -6,15 +6,21 @@
             <thead>
                 <tr>
                     <th>Timestamp</th>
+                    <th>Source</th>
                     <th>Level</th>
                     <th>Message</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="entry in entries">
                     <td>{{ entry.Timestamp }}</td>
-                    <td>{{ entry.Level }}</td>
+                    <td>{{ entry.Source | truncate }}</td>
+                    <td><span class="label" ng-class="getLabel(entry.Level)">{{ entry.Level }}</span></td>
                     <td>{{ entry.Message }}</td>
+                    <td style="text-align: right;">
+                        <button type="button" class="btn btn-default btn-xs" ng-show="entry.ExceptionString" ng-click="showException(entry.ExceptionString)"><i class="fa fa-warning"></i></button>
+                    </td>
                 </tr>
             </tbody>
         </table>
