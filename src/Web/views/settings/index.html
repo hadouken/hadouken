@@ -101,27 +101,61 @@
             </button>
         </tab>
 
-        <tab heading="Extensions ({{ extensions.length }})">
-            <div class="alert alert-info">You need to restart Hadouken to make it load/unload any extensions you enable/disable.</div>
-
+        <tab heading="Notifications">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Name</th>
                         <th>Description</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="extension in extensions">
-                        <td><input type="checkbox" ng-model="extension.Enabled" ng-change="toggleExtension(extension.Id, extension.Enabled)" />
-                        <td>{{ extension.Name }}</td>
-                        <td>{{ extension.Description }}</td>
-                        <td style="text-align: right;"><button type="button" class="btn btn-default btn-xs" ng-show="hasDialog(extension.Id)" ng-click="configure(extension.Id)">Configure</button>
+                    <tr ng-repeat="notifier in availableNotifiers">
+                        <td>{{ notifier.Name }}</td>
+                        <td>{{ notifier.Description }}</td>
+                        <td style="text-align: right;">
+                            <button type="button" class="btn btn-xs btn-default" ng-show="notifier.CanNotify" ng-disabled="busyIndicators[notifier.Id]" ng-click="testNotifier(notifier.Id)">
+                                <i class="fa fa-spinner fa-spin" ng-show="busyIndicators[notifier.Id]" />
+                                Test
+                            </button>
+                            <button type="button" class="btn btn-xs" ng-class="{'btn-warning': !notifier.CanNotify, 'btn-default': notifier.CanNotify}" ng-show="hasDialog(notifier.Id)" ng-click="configure(notifier.Id)">Configure</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+
+            <hr />
+
+            <h3>Notification types</h3>
+
+            <p>
+                To enable a notifier for a specific type,
+
+                <ol>
+                    <li>Select the notification type in the dropdown</li>
+                    <li>Tick the checkbox next to the notifier you want to enable</li>
+                </ol>
+            </p>
+
+
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-3">
+                        <select class="form-control" ng-model="selectedNotificationType" ng-change="getNotifiersForType(selectedNotificationType)" ng-options="type for type in notificationTypes">
+                        </select>
+                    </label>
+                    <div class="col-sm-9">
+                        <div ng-repeat="notifier in notifiers">
+                            <label>
+                                <input type="checkbox" ng-disabled="!notifier.CanNotify" ng-model="notifier.Enabled" ng-change="enableDisableNotifier(notifier.Id, notifier.Enabled, selectedNotificationType)"> {{ notifier.Name }}
+                            </label>
+
+                            <em ng-hide="notifier.CanNotify">(Not configured)</em>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </tab>
     </tabset>
 </form>

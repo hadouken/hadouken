@@ -11,13 +11,6 @@
             }
         });
 
-        $scope.test = function (config) {
-            jsonrpc.request('pushalot.config.test', {
-                params: [config],
-                success: function () { }
-            });
-        };
-
         $scope.save = function (config) {
             jsonrpc.request('pushalot.config.set', {
                 params: [config],

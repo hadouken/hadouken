@@ -61,6 +61,24 @@ namespace Hadouken.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is a test notification from Hadouken..
+        /// </summary>
+        public static string TestMessage {
+            get {
+                return ResourceManager.GetString("TestMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test notification.
+        /// </summary>
+        public static string TestTitle {
+            get {
+                return ResourceManager.GetString("TestTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The torrent &quot;{0}&quot; was added..
         /// </summary>
         public static string TorrentAddedMessage {

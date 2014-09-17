@@ -11,13 +11,6 @@
             }
         });
 
-        $scope.test = function (config) {
-            jsonrpc.request('mailer.config.test', {
-                params: [config],
-                success: function () { }
-            });
-        };
-
         $scope.save = function(config) {
             jsonrpc.request('mailer.config.set', {
                 params: [config],

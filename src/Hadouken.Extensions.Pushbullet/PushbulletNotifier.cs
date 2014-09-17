@@ -33,6 +33,14 @@ namespace Hadouken.Extensions.Pushbullet
             _pushbulletClient = pushbulletClient;
         }
 
+        public bool CanNotify()
+        {
+            var config = _keyValueStore.Get<PushbulletConfig>("pushbullet.config");
+
+            return (config != null
+                    && !string.IsNullOrEmpty(config.AccessToken));
+        }
+
         public void Notify(Notification notification)
         {
             var config = _keyValueStore.Get<PushbulletConfig>("pushbullet.config");

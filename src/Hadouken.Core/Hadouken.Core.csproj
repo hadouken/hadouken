@@ -79,11 +79,12 @@
     <Compile Include="BitTorrent\Torrent.cs" />
     <Compile Include="BitTorrent\TorrentFile.cs" />
     <Compile Include="BitTorrent\TorrentInfoRepository.cs" />
+    <Compile Include="Data\INotifierRepository.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Data\Models\User.cs" />
+    <Compile Include="Data\NotifierRepository.cs" />
     <Compile Include="Data\UserRepository.cs" />
     <Compile Include="DI\CoreModule.cs" />
-    <Compile Include="ExtensionFactory.cs" />
     <Compile Include="Handlers\NotifyTorrentAddedHandler.cs" />
     <Compile Include="Handlers\NotifyTorrentCompletedHandler.cs" />
     <Compile Include="Http\CustomNancyBootstrapper.cs" />
@@ -101,9 +102,7 @@
     <Compile Include="Http\Security\TokenAuthenticationConfiguration.cs" />
     <Compile Include="Http\Security\Tokenizer.cs" />
     <Compile Include="Http\Security\UserIdentity.cs" />
-    <Compile Include="IExtensionFactory.cs" />
     <Compile Include="IHadoukenService.cs" />
-    <Compile Include="INotifierHandler.cs" />
     <Compile Include="JsonRpc\ByNameResolver.cs" />
     <Compile Include="JsonRpc\ByPositionResolver.cs" />
     <Compile Include="JsonRpc\ICacheBuilder.cs" />
@@ -129,7 +128,8 @@
     <Compile Include="JsonRpc\ParameterLengthMismatchException.cs" />
     <Compile Include="JsonRpc\ParameterNameNotFoundException.cs" />
     <Compile Include="JsonRpc\RequestHandler.cs" />
-    <Compile Include="NotifierHandler.cs" />
+    <Compile Include="INotifierEngine.cs" />
+    <Compile Include="NotifierEngine.cs" />
     <Compile Include="HadoukenService.cs" />
     <Compile Include="Security\HadoukenUser.cs" />
     <Compile Include="Security\IUser.cs" />
@@ -137,10 +137,10 @@
     <Compile Include="Security\UserManager.cs" />
     <Compile Include="Services\BitTorrentService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
-    <Compile Include="Services\ExtensionService.cs" />
     <Compile Include="Services\LoggingService.cs" />
-    <Compile Include="Services\Models\ExtensionMetadata.cs" />
+    <Compile Include="Services\Models\Notifier.cs" />
     <Compile Include="Services\Models\TorrentParameters.cs" />
+    <Compile Include="Services\NotificationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
@@ -175,6 +175,7 @@
     <Content Include="boost_thread-vc120-mt-1_55.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Data\Sql\20140915234315_CreateNotifierTable.sql" />
     <Content Include="torrent.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

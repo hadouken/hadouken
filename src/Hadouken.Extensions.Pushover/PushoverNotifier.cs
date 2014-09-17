@@ -33,6 +33,14 @@ namespace Hadouken.Extensions.Pushover
             _pushoverClient = pushoverClient;
         }
 
+        public bool CanNotify()
+        {
+            var config = _keyValueStore.Get<PushoverConfig>("pushover.config");
+            return (config != null
+                    && !string.IsNullOrEmpty(config.AppKey)
+                    && !string.IsNullOrEmpty(config.UserKey));
+        }
+
         public void Notify(Notification notification)
         {
             var config = _keyValueStore.Get<PushoverConfig>("pushover.config");
