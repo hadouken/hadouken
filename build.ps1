@@ -145,9 +145,6 @@ Task Output -depends Compile {
     Copy-Item -Path $poshTool -Destination $poshToolOut
     Copy-Item -Path $poshToolManifest -Destination $poshToolOut
 
-    # Copy the correct config file
-    Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.config" -Destination $Dir_Binaries
-
     # Zip the web UI
     Write-BuildMessage "Compressing and packaging the web ui"
     $webuiZip = Join-Path $Dir_Binaries "Web/web.zip"
@@ -160,6 +157,10 @@ Task Zip -depends Output {
     $files = "$Dir_Binaries/*"
     $output = Join-Path $Dir_Artifacts $Artifact_Zip
 
+    # Copy the correct config file
+    $configTarget = Join-Path $Dir_Binaries "Hadouken.exe.config"
+    Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.zip.config" -Destination $configTarget
+
     Exec {
         & $Tools_7za a -mx=9 $output $files
     }
@@ -167,6 +168,10 @@ Task Zip -depends Output {
 
 Task MSI -depends Output {
     $wxs = Get-ChildItem "src\Installer\" -Include *.wxs -recurse | Select-Object FullName | foreach {$_.FullName}
+
+    # Copy the correct config file
+    $configTarget = Join-Path $Dir_Binaries "Hadouken.exe.config"
+    Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.msi.config" -Destination $configTarget
 
     Exec {
         & $Tools_WixCandle "-dBinDir=$Dir_Binaries" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -o "$Dir_Artifacts\wixobj\" $wxs
