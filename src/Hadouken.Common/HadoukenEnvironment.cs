@@ -62,6 +62,16 @@ namespace Hadouken.Common
             return Environment.GetEnvironmentVariable(variable);
         }
 
+        public void Create()
+        {
+            var path = GetApplicationDataPath();
+
+            if (!System.IO.Directory.Exists(path.FullPath))
+            {
+                System.IO.Directory.CreateDirectory(path.FullPath);
+            }
+        }
+
         public string GetAppSetting(string key)
         {
             var replaced = ReplaceAppSettingTokens(ConfigurationManager.AppSettings[key]);

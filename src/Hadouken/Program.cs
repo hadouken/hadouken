@@ -25,6 +25,9 @@ namespace Hadouken
                         eventArgs.ExceptionObject as Exception,
                         "Unhandled exception. Hadouken crashing."); 
 
+                // Create environment
+                environment.Create();
+
                 // Load extensions
                 container.LoadExtensions(environment.GetApplicationRoot());
 

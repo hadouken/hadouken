@@ -53,5 +53,10 @@ namespace Hadouken.Common
         /// <param name="variable">The variable.</param>
         /// <returns>The value of the environment variable.</returns>
         string GetEnvironmentVariable(string variable);
+
+        /// <summary>
+        /// Creates the paths needed for Hadouken to run (ie. the data path mostly)
+        /// </summary>
+        void Create();
     }
 }
