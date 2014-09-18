@@ -6,11 +6,11 @@ using Hadouken.Extensions.AutoMove.Data.Models;
 
 namespace Hadouken.Extensions.AutoMove.Services
 {
-    public sealed class AutoMoveServices : IJsonRpcService
+    public sealed class AutoMoveService : IJsonRpcService
     {
         private readonly IAutoMoveRepository _autoMoveRepository;
 
-        public AutoMoveServices(IAutoMoveRepository autoMoveRepository)
+        public AutoMoveService(IAutoMoveRepository autoMoveRepository)
         {
             if (autoMoveRepository == null) throw new ArgumentNullException("autoMoveRepository");
             _autoMoveRepository = autoMoveRepository;
@@ -19,6 +19,8 @@ namespace Hadouken.Extensions.AutoMove.Services
         [JsonRpcMethod("automove.rules.create")]
         public Rule CreateRule(Rule rule)
         {
+            if (rule == null) throw new ArgumentNullException("rule");
+
             _autoMoveRepository.CreateRule(rule);
             return rule;
         }
@@ -26,6 +28,8 @@ namespace Hadouken.Extensions.AutoMove.Services
         [JsonRpcMethod("automove.parameters.create")]
         public Parameter CreateParameter(Parameter parameter)
         {
+            if (parameter == null) throw new ArgumentNullException("parameter");
+
             _autoMoveRepository.CreateParameter(parameter);
             return parameter;
         }

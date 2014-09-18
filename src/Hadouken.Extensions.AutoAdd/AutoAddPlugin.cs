@@ -50,7 +50,7 @@ namespace Hadouken.Extensions.AutoAdd
             _timer.Stop();
         }
 
-        private void CheckFolders()
+        internal void CheckFolders()
         {
             var folders = _repository.GetFolders();
 

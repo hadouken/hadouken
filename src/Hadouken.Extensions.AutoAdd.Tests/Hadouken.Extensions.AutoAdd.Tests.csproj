@@ -45,9 +45,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fixtures\AutoAddPluginFixture.cs" />
     <Compile Include="Fixtures\AutoAddServiceFixture.cs" />
     <Compile Include="Fixtures\FolderScannerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit\AutoAddPluginTests.cs" />
     <Compile Include="Unit\FolderScannerTests.cs" />
     <Compile Include="Unit\Services\AutoAddServiceTests.cs" />
   </ItemGroup>

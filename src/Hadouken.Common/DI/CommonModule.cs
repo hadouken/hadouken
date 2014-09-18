@@ -21,6 +21,7 @@ namespace Hadouken.Common.DI
             builder.RegisterType<HadoukenConsole>().As<IConsole>().SingleInstance();
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
             builder.RegisterType<AssemblyNameFinder>().As<IAssemblyNameFinder>().SingleInstance();
+            builder.RegisterType<EmbeddedResourceFinder>().As<IEmbeddedResourceFinder>().SingleInstance();
             builder.RegisterType<KeyValueStore>().As<IKeyValueStore>().SingleInstance();
 
             // Common.Data

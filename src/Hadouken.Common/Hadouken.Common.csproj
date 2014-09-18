@@ -158,7 +158,11 @@
     <Compile Include="Net\SmtpClientWrapper.cs" />
     <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Reflection\AssemblyNameFinder.cs" />
+    <Compile Include="Reflection\EmbeddedResource.cs" />
+    <Compile Include="Reflection\EmbeddedResourceFinder.cs" />
     <Compile Include="Reflection\IAssemblyNameFinder.cs" />
+    <Compile Include="Reflection\IEmbeddedResource.cs" />
+    <Compile Include="Reflection\IEmbeddedResourceFinder.cs" />
     <Compile Include="Text\Base32Encoder.cs" />
     <Compile Include="Text\IJsonSerializer.cs" />
     <Compile Include="Text\JsonSerializer.cs" />

@@ -69,6 +69,20 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
                 Assert.IsType<ArgumentNullException>(exception);
                 Assert.Equal("folder", ((ArgumentNullException)exception).ParamName);
             }
+
+            [Fact]
+            public void Should_Call_Update_Folder_On_Repository()
+            {
+                // Given
+                var fixture = new AutoAddServiceFixture();
+                var service = fixture.CreateAutoAddService();
+
+                // When
+                service.UpdateFolder(new Folder());
+
+                // Then
+                fixture.AutoAddRepository.Received(1).UpdateFolder(Arg.Any<Folder>());
+            }
         }
 
         public sealed class TheGetAllMethod
@@ -101,6 +115,23 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
 
                 // Then
                 Assert.Equal(1, result.Count());
+            }
+        }
+
+        public sealed class TheDeleteFolderMethod
+        {
+            [Fact]
+            public void Should_Call_Delete_Folder_On_Repository()
+            {
+                // Given
+                var fixture = new AutoAddServiceFixture();
+                var service = fixture.CreateAutoAddService();
+
+                // When
+                service.DeleteFolder(10);
+
+                // Then
+                fixture.AutoAddRepository.Received(1).DeleteFolder(10);
             }
         }
     }

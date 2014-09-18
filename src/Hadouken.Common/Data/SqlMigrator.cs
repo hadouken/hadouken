@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Hadouken.Common.Logging;
+using Hadouken.Common.Reflection;
 
 namespace Hadouken.Common.Data
 {
@@ -13,38 +14,36 @@ namespace Hadouken.Common.Data
 
         private readonly ILogger<SqlMigrator> _logger;
         private readonly IDbConnection _connection;
+        private readonly IEmbeddedResourceFinder _embeddedResourceFinder;
 
-        public SqlMigrator(ILogger<SqlMigrator> logger, IDbConnection connection)
+        public SqlMigrator(ILogger<SqlMigrator> logger,
+            IDbConnection connection,
+            IEmbeddedResourceFinder embeddedResourceFinder)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (connection == null) throw new ArgumentNullException("connection");
+            if (embeddedResourceFinder == null) throw new ArgumentNullException("embeddedResourceFinder");
+
             _logger = logger;
             _connection = connection;
+            _embeddedResourceFinder = embeddedResourceFinder;
         }
 
         public void Migrate()
         {
             CreateVersionInfoTable();
 
-            // Find all embedded resources ending with .sql
-            var resources = (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                where !asm.IsDynamic
-                from name in asm.GetManifestResourceNames()
-                where name.EndsWith(".sql")
-                let lastDotIndex = name.LastIndexOf(".")
-                let dotIndex = name.Substring(0, lastDotIndex).LastIndexOf(".")
-                let scriptName = name.Substring(dotIndex + 1)
-                orderby scriptName ascending 
-                select new {Assembly = asm, Name = name, ScriptName = scriptName});
-
             _logger.Info("Running migrations.");
+
+            var resources = _embeddedResourceFinder.GetAll()
+                .Where(r => r.Name.EndsWith(".sql"));
 
             foreach (var resource in resources)
             {
-                var applied = _connection.Query<bool>(ScriptExists, new {Script = resource.ScriptName}).First();
+                var applied = _connection.Query<bool>(ScriptExists, new {Script = resource.Name}).First();
                 if(applied) continue;
 
-                using (var stream = resource.Assembly.GetManifestResourceStream(resource.Name))
+                using (var stream = resource.OpenRead())
                 using (var ms = new MemoryStream())
                 {
                     if (stream == null) continue;
@@ -55,12 +54,12 @@ namespace Hadouken.Common.Data
                     using (var transaction = _connection.BeginTransaction())
                     {
                         _connection.Execute(sql);
-                        _connection.Execute(InsertScript, new {Script = resource.ScriptName});
+                        _connection.Execute(InsertScript, new {Script = resource.Name});
 
                         transaction.Commit();
                     }
 
-                    _logger.Info("Applied script {ScriptName}.", resource.ScriptName);
+                    _logger.Info("Applied script {ScriptName}.", resource.Name);
                 }
             }
         }
