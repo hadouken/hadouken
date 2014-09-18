@@ -46,7 +46,7 @@ FormatTaskName {
 }
 
 Task Default -depends Prepare, Clean, Generate-CommonAssemblyInfo, Compile, Test, Output, Zip, MSI, Chocolatey, Publish-AppVeyor
-Task Publish -depends Publish-GitHub, Publish-Chocolatey
+Task Publish -depends Default, Publish-GitHub, Publish-Chocolatey
 
 Task Prepare {
     # Get commit hash
@@ -105,6 +105,7 @@ Task Test -depends Compile {
     Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-common.xml") }
     Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-core.xml") }
     Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoAdd.Tests/bin/$Configuration/Hadouken.Extensions.AutoAdd.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-autoadd.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoMove.Tests/bin/$Configuration/Hadouken.Extensions.AutoMove.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-automove.xml") }
 
     if($env:APPVEYOR) {
         # upload results to AppVeyor
@@ -112,6 +113,7 @@ Task Test -depends Compile {
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-common.xml"))
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-core.xml"))
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-ext-autoadd.xml"))
+        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-ext-automove.xml"))
     }
 }
 
