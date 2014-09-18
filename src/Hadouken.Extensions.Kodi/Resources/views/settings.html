@@ -1,0 +1,41 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Kodi/XBMC settings</h3>
+</div>
+<div class="modal-body">
+    <p>
+        To use the Kodi/XBMC notifier you need to enable the HTTP server. In System/Settings/Network/Services activate <em>Allow control of XBMC via HTTP</em>.
+    </p>
+
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="url" class="control-label col-sm-3">URL</label>
+            <div class="col-sm-7">
+                <input type="url" class="form-control" ng-model="config.Url" placeholder="http://xbmc-server:8080" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="config.EnableAuthentication"> Enable authentication
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="url" class="control-label col-sm-3">Username</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" ng-model="config.UserName" ng-disabled="!config.EnableAuthentication" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="url" class="control-label col-sm-3">Password</label>
+            <div class="col-sm-7">
+                <input type="password" class="form-control" ng-model="config.Password" ng-disabled="!config.EnableAuthentication" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="save(config)">Save</button>
+</div>

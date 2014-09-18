@@ -77,6 +77,10 @@
       <Project>{835b335b-949a-440d-be43-3d686d3355df}</Project>
       <Name>Hadouken.Extensions.AutoMove</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Extensions.Kodi\Hadouken.Extensions.Kodi.csproj">
+      <Project>{7799782c-d430-4d72-a74c-60c0fa0bb42c}</Project>
+      <Name>Hadouken.Extensions.Kodi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken.Extensions.Mailer\Hadouken.Extensions.Mailer.csproj">
       <Project>{5b9d97e4-93d9-4502-999f-5e4cc9d031ed}</Project>
       <Name>Hadouken.Extensions.Mailer</Name>
