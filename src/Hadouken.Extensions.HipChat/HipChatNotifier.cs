@@ -9,7 +9,9 @@ namespace Hadouken.Extensions.HipChat
 {
     [Extension("notifier.hipchat",
         Name = "HipChat",
-        Description = "Sends notifications to a HipChat room."
+        Description = "Sends notifications to a HipChat room.",
+        ResourceNamespace = "Hadouken.Extensions.HipChat.Resources",
+        Scripts = new[] { "js/app.js", "js/controllers/settingsController.js" }
     )]
     public class HipChatNotifier : INotifier
     {
