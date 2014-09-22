@@ -20,6 +20,10 @@
       </Component>
 
       <Component>
+        <File Name="Hadouken.Extensions.HipChat.dll" />
+      </Component>
+
+      <Component>
         <File Name="Hadouken.Extensions.Kodi.dll" />
       </Component>
 

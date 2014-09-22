@@ -77,6 +77,10 @@
       <Project>{835b335b-949a-440d-be43-3d686d3355df}</Project>
       <Name>Hadouken.Extensions.AutoMove</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Extensions.HipChat\Hadouken.Extensions.HipChat.csproj">
+      <Project>{980c4c49-1b37-4d0d-a311-55c081b1ebb0}</Project>
+      <Name>Hadouken.Extensions.HipChat</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken.Extensions.Kodi\Hadouken.Extensions.Kodi.csproj">
       <Project>{7799782c-d430-4d72-a74c-60c0fa0bb42c}</Project>
       <Name>Hadouken.Extensions.Kodi</Name>

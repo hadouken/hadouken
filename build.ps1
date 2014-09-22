@@ -106,6 +106,7 @@ Task Test -depends Compile {
     Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-core.xml") }
     Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoAdd.Tests/bin/$Configuration/Hadouken.Extensions.AutoAdd.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-autoadd.xml") }
     Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoMove.Tests/bin/$Configuration/Hadouken.Extensions.AutoMove.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-automove.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.HipChat.Tests/bin/$Configuration/Hadouken.Extensions.HipChat.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-hipchat.xml") }
     Exec { & $Tools_xUnit "./src/Hadouken.Extensions.Kodi.Tests/bin/$Configuration/Hadouken.Extensions.Kodi.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-kodi.xml") }
 
     if($env:APPVEYOR) {
@@ -115,6 +116,7 @@ Task Test -depends Compile {
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-core.xml"))
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-ext-autoadd.xml"))
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-ext-automove.xml"))
+        $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-ext-hipchat.xml"))
         $wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Join-Path $Dir_Artifacts "xunit-results-ext-kodi.xml"))
     }
 }
