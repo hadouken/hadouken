@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common", "src\Hadouken.Common\Hadouken.Common.csproj", "{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}"
 EndProject
@@ -42,6 +42,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoMove.Tests", "src\Hadouken.Extensions.AutoMove.Tests\Hadouken.Extensions.AutoMove.Tests.csproj", "{ED3C5ECB-76F6-4DE6-BC6A-3A67AF74293B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Kodi", "src\Hadouken.Extensions.Kodi\Hadouken.Extensions.Kodi.csproj", "{7799782C-D430-4D72-A74C-60C0FA0BB42C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Kodi.Tests", "src\Hadouken.Extensions.Kodi.Tests\Hadouken.Extensions.Kodi.Tests.csproj", "{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +119,10 @@ Global
 		{7799782C-D430-4D72-A74C-60C0FA0BB42C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7799782C-D430-4D72-A74C-60C0FA0BB42C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7799782C-D430-4D72-A74C-60C0FA0BB42C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -134,6 +140,7 @@ Global
 		{4A765776-E58B-44EE-A173-9C9840FB89F0} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 		{4CFCF578-78CB-4D92-AC1A-023A5A03320C} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 		{ED3C5ECB-76F6-4DE6-BC6A-3A67AF74293B} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
+		{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C} = {8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}
 		{6BC61673-8AD2-4793-A40E-759E113C0131} = {3A9987A2-D4AB-4912-806D-871DD4B545E5}
 	EndGlobalSection
 EndGlobal
