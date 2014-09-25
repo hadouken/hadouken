@@ -6,12 +6,20 @@
             $window.sessionStorage.token = token;
         },
 
+        setUserName: function(userName) {
+            $window.sessionStorage.userName = userName;
+        },
+
         clearToken: function() {
             $window.sessionStorage.removeItem('token');
         },
 
         getToken: function() {
             return $window.sessionStorage.token;
+        },
+
+        getUserName: function() {
+            return $window.sessionStorage.userName;
         },
 
         isAuthenticated: function () {

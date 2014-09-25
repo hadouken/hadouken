@@ -33,5 +33,11 @@ namespace Hadouken.Core.Data
             var query = @"insert into User (Id, UserName, HashedPassword) values (@Id, @UserName, @HashedPassword);";
             _connection.Execute(query, user);
         }
+
+        public void UpdatePassword(string userName, string hashedPassword)
+        {
+            var query = @"update User set HashedPassword = @HashedPassword where UserName = @UserName";
+            _connection.Execute(query, new {UserName = userName, HashedPassword = hashedPassword});
+        }
     }
 }

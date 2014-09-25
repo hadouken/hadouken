@@ -10,5 +10,7 @@ namespace Hadouken.Core.Data
         User GetByUserName(string userName);
 
         void CreateUser(User user);
+
+        void UpdatePassword(string userName, string hashedPassword);
     }
 }

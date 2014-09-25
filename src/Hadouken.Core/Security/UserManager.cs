@@ -59,6 +59,22 @@ namespace Hadouken.Core.Security
             return new HadoukenUser(Guid.Parse(user.Id), user.UserName);
         }
 
+        public void ChangePassword(string userName, string newPassword)
+        {
+            var salt = new byte[32];
+            var rnd = new Random(DateTime.Now.Millisecond);
+            rnd.NextBytes(salt);
+
+            var hash = HashPassword(newPassword, salt, DefaultHashIterations);
+
+            var hashedPassword = string.Format("{0}|{1}|{2}",
+                DefaultHashIterations,
+                Convert.ToBase64String(salt),
+                Convert.ToBase64String(hash));
+
+            _userRepository.UpdatePassword(userName, hashedPassword);
+        }
+
         private byte[] HashPassword(string password, byte[] salt, int iterationCount)
         {
             var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterationCount);

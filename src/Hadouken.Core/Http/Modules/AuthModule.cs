@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Hadouken.Common.Logging;
+﻿using Hadouken.Common.Logging;
 using Hadouken.Core.Http.Modules.Models;
 using Hadouken.Core.Http.Security;
 using Hadouken.Core.Security;
@@ -41,7 +40,8 @@ namespace Hadouken.Core.Http.Modules
 
                 return new
                 {
-                    Token = token
+                    Token = token,
+                    identity.UserName
                 };
             };
         }
