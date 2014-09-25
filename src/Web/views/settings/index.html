@@ -111,7 +111,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="notifier in availableNotifiers">
+                    <tr ng-repeat="notifier in availableNotifiers | orderBy:'Name'">
                         <td>{{ notifier.Name }}</td>
                         <td>{{ notifier.Description }}</td>
                         <td style="text-align: right;">
