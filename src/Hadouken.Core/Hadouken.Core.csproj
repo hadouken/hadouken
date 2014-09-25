@@ -48,6 +48,7 @@
       <HintPath>..\..\packages\Ragnar.0.5.0\lib\net45\Ragnar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -138,7 +139,9 @@
     <Compile Include="Services\BitTorrentService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\LoggingService.cs" />
+    <Compile Include="Services\Models\ConfigurationItem.cs" />
     <Compile Include="Services\Models\Notifier.cs" />
+    <Compile Include="Services\Models\NotifierConfiguration.cs" />
     <Compile Include="Services\Models\TorrentParameters.cs" />
     <Compile Include="Services\NotificationService.cs" />
   </ItemGroup>

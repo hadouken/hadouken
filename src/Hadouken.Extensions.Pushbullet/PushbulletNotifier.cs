@@ -10,10 +10,9 @@ namespace Hadouken.Extensions.Pushbullet
 {
     [Extension("notifier.pushbullet",
         Name = "Pushbullet",
-        Description = "Sends push notifications to your devices via Pushbullet.",
-        ResourceNamespace = "Hadouken.Extensions.Pushbullet.Resources",
-        Scripts = new[] { "js/app.js", "js/controllers/settingsController.js" }
+        Description = "Sends push notifications to your devices via Pushbullet."
     )]
+    [Configuration(typeof(PushbulletConfig), Key = "pushbullet.config")]
     public class PushbulletNotifier : INotifier
     {
         private readonly ILogger<PushbulletNotifier> _logger;

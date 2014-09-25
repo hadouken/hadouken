@@ -45,6 +45,7 @@ window.pluginModules = window.pluginModules || [];
             /* Settings module */
             'js/modules/settings/settingsModule.js',
             'js/modules/settings/controllers/indexController.js',
+            'js/modules/settings/controllers/notifierConfigurationController.js',
 
             /* Tools module */
             'js/modules/tools/toolsModule.js',

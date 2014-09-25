@@ -1,6 +1,7 @@
 ﻿angular.module('hadouken.settings.controllers.index', [
     'hadouken.messaging',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'hadouken.settings.controllers.notifierConfiguration'
 ])
 .controller('Settings.IndexController', [
     '$scope', '$http', '$modal', 'messageService', 'jsonrpc',
@@ -113,21 +114,44 @@
             });
         };
 
-        $scope.configure = function(extensionId) {
-            var dialog = dialogs[extensionId];
+        $scope.configure = function(notifier) {
+            jsonrpc.request('notifiers.getConfiguration', {
+                params: [notifier.Id],
+                success: function(data) {
+                    if(data.result) {
+                        var m = $modal.open({
+                            controller: 'Settings.NotifierConfigurationController',
+                            templateUrl: 'views/settings/notifier-configuration.html',
+                            resolve: {
+                                config: function() {
+                                    return data.result;
+                                },
+                                notifier: function() {
+                                    return notifier;
+                                }
+                            }
+                        });
 
-            if(!dialog) {
-                throw new Error('Invalid extensionId: ' + extensionId);
-            }
+                        // Reload all notifications after we have configured one
+                        m.result.then(function() { loadNotifications(); }, function() { loadNotifications(); });
+                    } else {
+                        var dialog = dialogs[notifier.Id];
 
-            var m = $modal.open({
-                controller: dialog.controller,
-                templateUrl: dialog.templateUrl,
-                size: dialog.size || 'md'
+                        if(!dialog) {
+                            throw new Error('Invalid extensionId: ' + extensionId);
+                        }
+
+                        var m = $modal.open({
+                            controller: dialog.controller,
+                            templateUrl: dialog.templateUrl,
+                            size: dialog.size || 'md'
+                        });
+
+                        // Reload all notifications after we have configured one
+                        m.result.then(function() { loadNotifications(); }, function() { loadNotifications(); });
+                    }
+                }
             });
-
-            // Reload all notifications after we have configured one
-            m.result.then(function() { loadNotifications(); }, function() { loadNotifications(); });
         };
 
         $scope.getType = function(value) {
