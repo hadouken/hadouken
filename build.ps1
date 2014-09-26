@@ -172,7 +172,7 @@ Task Zip -depends Output {
     }
 }
 
-Task MSI -depends Output {
+Task MSI {
     $wxs = Get-ChildItem "src\Installer\" -Include *.wxs -recurse | Select-Object FullName | foreach {$_.FullName}
 
     # Copy the correct config file
@@ -187,7 +187,7 @@ Task MSI -depends Output {
     $msi = Join-Path $Dir_Artifacts $Artifact_Msi
 
     Exec {
-        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -sval -o $msi $wixobj
+        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -sval -o $msi -cultures:en-us -loc "src\Installer\Hadouken.en-us.wxl"  $wixobj
     }
 }
 

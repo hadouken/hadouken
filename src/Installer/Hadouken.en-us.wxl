@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<WixLocalization Culture="en-us" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="MissingNET45" Overridable="yes">Hadouken requires the full .NET Framework 4.5. Please install it and then run the installer again.</String>
+  <String Id="DowngradeErrorMessage" Overridable="yes">Installer does not support downgrading.</String>
+
+  <!-- Extensions -->
+  <String Id="Ext_Title" Overridable="yes">Extensions</String>
+  <String Id="Ext_Description" Overridable="yes">Notifiers and plugins for Hadouken.</String>
+  <String Id="AutoAdd_Ext_Title" Overridable="yes">AutoAdd</String>
+  <String Id="AutoAdd_Ext_Description" Overridable="yes">Monitors local folders and automatically adds any torrents files.</String>
+  <String Id="AutoMove_Ext_Title" Overridable="yes">AutoMove</String>
+  <String Id="AutoMove_Ext_Description" Overridable="yes">Automatically moves completed torrents according to user-specified rules.</String>
+  <String Id="HipChat_Ext_Title" Overridable="yes">HipChat</String>
+  <String Id="HipChat_Ext_Description" Overridable="yes">Sends notifications to a HipChat room.</String>
+  <String Id="Kodi_Ext_Title" Overridable="yes">Kodi/XBMC</String>
+  <String Id="Kodi_Ext_Description" Overridable="yes">Sends notifications to a Kodi/XBMC instance.</String>
+  <String Id="Mailer_Ext_Title" Overridable="yes">Mailer</String>
+  <String Id="Mailer_Ext_Description" Overridable="yes">Sends e-mail notifications to a user-configured recipient.</String>
+  <String Id="Pushalot_Ext_Title" Overridable="yes">Pushalot</String>
+  <String Id="Pushalot_Ext_Description" Overridable="yes">Sends push notifications via Pushalot to your Windows 8/Windows Phone device.</String>
+  <String Id="Pushbullet_Ext_Title" Overridable="yes">Pushbullet</String>
+  <String Id="Pushbullet_Ext_Description" Overridable="yes">Sends push notifications via Pushbullet to your devices.</String>
+  <String Id="Pushover_Ext_Title" Overridable="yes">Pushover</String>
+  <String Id="Pushover_Ext_Description" Overridable="yes">Sends push notifications via Pushover to your devices.</String>
+  <String Id="Rss_Ext_Title" Overridable="yes">RSS</String>
+  <String Id="Rss_Ext_Description" Overridable="yes">Monitors feeds and adds torrents according to user-specified rules.</String>
+
+  <!-- VC redist -->
+  <String Id="VCRedist_Title" Overridable="yes">VC++ 12.0 runtime</String>
+  <String Id="VCRedist_Description" Overridable="yes">The Visual C++ 12.0 runtime required to run Hadouken.</String>
+  
+</WixLocalization>
