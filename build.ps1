@@ -18,7 +18,7 @@ Properties {
     # Directories
     $Dir_Artifacts      = Join-Path $Root "build"
     $Dir_Binaries       = Join-Path $Root "build/bin"
-    $Dir_Output         = Join-Path $Root "src/Hadouken/bin/$Configuration/"
+    $Dir_Output         = Join-Path $Root "src/Hadouken/bin/x86/$Configuration/"
 
     # GitHub settings
     $GitHub_Owner       = "hadouken"
