@@ -1,4 +1,5 @@
 ﻿angular.module('hadouken.ui.controllers.layout', [
+    'hadouken.auth.controllers.apiKeys',
     'hadouken.auth.controllers.changePassword',
     'hadouken.auth.services.authProvider',
     'hadouken.messaging',
@@ -27,6 +28,13 @@
             $modal.open({
                 controller: 'Auth.ChangePasswordController',
                 templateUrl: 'views/auth/change-password.html'
+            });
+        };
+
+        $scope.showApiKeys = function() {
+            $modal.open({
+                controller: 'Auth.ApiKeysController',
+                templateUrl: 'views/auth/api-keys.html'
             });
         };
 
