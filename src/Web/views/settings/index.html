@@ -111,7 +111,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="notifier in availableNotifiers">
+                    <tr ng-repeat="notifier in availableNotifiers | orderBy:'Name'">
                         <td>{{ notifier.Name }}</td>
                         <td>{{ notifier.Description }}</td>
                         <td style="text-align: right;">
@@ -119,7 +119,7 @@
                                 <i class="fa fa-spinner fa-spin" ng-show="busyIndicators[notifier.Id]" />
                                 Test
                             </button>
-                            <button type="button" class="btn btn-xs" ng-class="{'btn-warning': !notifier.CanNotify, 'btn-default': notifier.CanNotify}" ng-show="hasDialog(notifier.Id)" ng-click="configure(notifier.Id)">Configure</button>
+                            <button type="button" class="btn btn-xs" ng-class="{'btn-warning': !notifier.CanNotify, 'btn-default': notifier.CanNotify}" ng-click="configure(notifier)">Configure</button>
                         </td>
                     </tr>
                 </tbody>

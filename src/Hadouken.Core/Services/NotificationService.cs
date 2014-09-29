@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Hadouken.Common.Extensibility;
@@ -45,6 +46,53 @@ namespace Hadouken.Core.Services
                     CanNotify = n.CanNotify(),
                     RegisteredTypes = _notifierRepository.GetTypesForNotifier(attr.ExtensionId)
                 });
+        }
+
+        [JsonRpcMethod("notifiers.getConfiguration")]
+        public NotifierConfiguration GetNotifierConfiguration(string notifierId)
+        {
+            var notifier = _notifierEngine.GetAll().FirstOrDefault(n => n.GetId() == notifierId);
+            if (notifier == null) return null;
+
+            var config = notifier.GetType().GetCustomAttribute<ConfigurationAttribute>();
+            if (config == null) return null;
+
+            var properties = config.Type.GetProperties();
+            if (!properties.Any()) return null;
+
+            properties = (from p in properties
+                let displ = p.GetCustomAttribute<DisplayAttribute>()
+                orderby (displ.GetOrder() ?? -1) ascending
+                select p).ToArray();
+
+            var result = new NotifierConfiguration {Key = config.Key};
+
+            foreach (var property in properties)
+            {
+                var item = new ConfigurationItem();
+
+                var annotations = property.GetCustomAttributes<ValidationAttribute>().ToList();
+                var display = property.GetCustomAttribute<DisplayAttribute>();
+                var dataType = annotations.OfType<DataTypeAttribute>().FirstOrDefault();
+
+                item.Key = property.Name;
+                item.Name = display.Name ?? property.Name;
+                item.Required = annotations.OfType<RequiredAttribute>().Any();
+                item.Type = dataType != null ? dataType.DataType.ToString() : DataType.Text.ToString();
+
+                if (property.PropertyType == typeof (bool))
+                {
+                    item.Type = "Checkbox";
+                }
+                else if (property.PropertyType == typeof (int))
+                {
+                    item.Type = "Number";
+                }
+
+                result.Properties.Add(item);
+            }
+
+            return result;
         }
 
         [JsonRpcMethod("notifiers.getAllTypes")]

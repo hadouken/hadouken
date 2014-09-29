@@ -16,6 +16,7 @@
             $http.post('/auth/login', user, { _silent: true })
                 .success(function(data) {
                     authProvider.setToken(data.token);
+                    authProvider.setUserName(data.userName);
 
                     if ($stateParams.returnState && $stateParams.returnState !== null) {
                         $state.go($stateParams.returnState);

@@ -10,17 +10,18 @@ namespace Hadouken.Extensions.Pushalot
 {
     [Extension("notifier.pushalot",
         Name = "Pushalot",
-        Description = "Sends push notifications to Windows 8 and Windows Phone via Pushalot.",
-        ResourceNamespace = "Hadouken.Extensions.Pushalot.Resources",
-        Scripts = new[] { "js/app.js", "js/controllers/settingsController.js" }
+        Description = "Sends push notifications to Windows 8 and Windows Phone via Pushalot."
     )]
+    [Configuration(typeof(PushalotConfig), Key = "pushalot.config")]
     public sealed class PushalotNotifier : INotifier
     {
         private readonly ILogger<PushalotNotifier> _logger;
         private readonly IPushalotClient _pushalotClient;
         private readonly IKeyValueStore _keyValueStore;
 
-        public PushalotNotifier(ILogger<PushalotNotifier> logger, IPushalotClient pushalotClient, IKeyValueStore keyValueStore)
+        public PushalotNotifier(ILogger<PushalotNotifier> logger,
+            IPushalotClient pushalotClient,
+            IKeyValueStore keyValueStore)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (pushalotClient == null) throw new ArgumentNullException("pushalotClient");

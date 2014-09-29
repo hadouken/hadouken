@@ -12,42 +12,6 @@
       </Component>
 
       <Component>
-        <File Name="Hadouken.Extensions.AutoAdd.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.AutoMove.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.HipChat.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.Kodi.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.Mailer.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.Pushalot.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.Pushbullet.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.Pushover.dll" />
-      </Component>
-
-      <Component>
-        <File Name="Hadouken.Extensions.Rss.dll" />
-      </Component>
-
-      <Component>
         <File Name="Hadouken.Localization.dll" />
       </Component>
     </ComponentGroup>

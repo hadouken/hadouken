@@ -1,11 +1,15 @@
 ﻿angular.module('hadouken.ui.controllers.layout', [
-    'hadouken.messaging'
+    'hadouken.auth.controllers.changePassword',
+    'hadouken.auth.services.authProvider',
+    'hadouken.messaging',
+    'ui.bootstrap'
 ])
 .controller('UI.LayoutController', [
-    '$scope', 'messageService',
-    function ($scope, messageService) {
+    '$scope', '$window', '$modal', 'authProvider', 'messageService',
+    function ($scope, $window, $modal, authProvider, messageService) {
         $scope.settingsItems = {};
         $scope.menuItems = {};
+        $scope.userName = authProvider.getUserName();
 
         messageService.subscribe('ui.settings.menuItem.add', function(event, params) {
             if ($scope.settingsItems[params.state]) return;
@@ -18,5 +22,17 @@
         });
 
         messageService.publish('ui.onloaded', {});
+
+        $scope.showChangePassword = function() {
+            $modal.open({
+                controller: 'Auth.ChangePasswordController',
+                templateUrl: 'views/auth/change-password.html'
+            });
+        };
+
+        $scope.logout = function() {
+            authProvider.clearToken();
+            $window.location.reload();
+        };
     }
 ]);

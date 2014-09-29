@@ -15,10 +15,22 @@ namespace Hadouken.Core.Services
             _keyValueStore = keyValueStore;
         }
 
+        [JsonRpcMethod("config.get")]
+        public object Get(string key)
+        {
+            return _keyValueStore.Get<object>(key);
+        }
+
         [JsonRpcMethod("config.getMany")]
         public IDictionary<string, object> GetMany(string section)
         {
             return _keyValueStore.GetMany(section);
+        }
+
+        [JsonRpcMethod("config.set")]
+        public void Set(string key, object value)
+        {
+            _keyValueStore.Set(key, value);
         }
 
         [JsonRpcMethod("config.setMany")]

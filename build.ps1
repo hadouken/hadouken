@@ -18,7 +18,7 @@ Properties {
     # Directories
     $Dir_Artifacts      = Join-Path $Root "build"
     $Dir_Binaries       = Join-Path $Root "build/bin"
-    $Dir_Output         = Join-Path $Root "src/Hadouken/bin/$Configuration/"
+    $Dir_Output         = Join-Path $Root "src/Hadouken/bin/x86/$Configuration/"
 
     # GitHub settings
     $GitHub_Owner       = "hadouken"
@@ -102,12 +102,12 @@ Task Compile -depends Generate-CommonAssemblyInfo {
 }
 
 Task Test -depends Compile {
-    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/$Configuration/Hadouken.Common.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-common.xml") }
-    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/$Configuration/Hadouken.Core.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-core.xml") }
-    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoAdd.Tests/bin/$Configuration/Hadouken.Extensions.AutoAdd.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-autoadd.xml") }
-    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoMove.Tests/bin/$Configuration/Hadouken.Extensions.AutoMove.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-automove.xml") }
-    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.HipChat.Tests/bin/$Configuration/Hadouken.Extensions.HipChat.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-hipchat.xml") }
-    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.Kodi.Tests/bin/$Configuration/Hadouken.Extensions.Kodi.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-kodi.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Common.Tests/bin/x86/$Configuration/Hadouken.Common.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-common.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Core.Tests/bin/x86/$Configuration/Hadouken.Core.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-core.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoAdd.Tests/bin/x86/$Configuration/Hadouken.Extensions.AutoAdd.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-autoadd.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.AutoMove.Tests/bin/x86/$Configuration/Hadouken.Extensions.AutoMove.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-automove.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.HipChat.Tests/bin/x86/$Configuration/Hadouken.Extensions.HipChat.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-hipchat.xml") }
+    Exec { & $Tools_xUnit "./src/Hadouken.Extensions.Kodi.Tests/bin/x86/$Configuration/Hadouken.Extensions.Kodi.Tests.dll" /xml (Join-Path $Dir_Artifacts "xunit-results-ext-kodi.xml") }
 
     if($env:APPVEYOR) {
         # upload results to AppVeyor
@@ -144,8 +144,8 @@ Task Output -depends Compile {
         } -Force
 
     # Copy tools
-    $poshTool = ".\src\Hadouken.Tools.Posh\bin\$Configuration\Hadouken.Tools.Posh.dll"
-    $poshToolManifest = ".\src\Hadouken.Tools.Posh\bin\$Configuration\Hadouken.Tools.Posh.psd1"
+    $poshTool = ".\src\Hadouken.Tools.Posh\bin\x86\$Configuration\Hadouken.Tools.Posh.dll"
+    $poshToolManifest = ".\src\Hadouken.Tools.Posh\bin\x86\$Configuration\Hadouken.Tools.Posh.psd1"
     $poshToolOut = Join-Path $Dir_Binaries "Tools/PowerShellModules/Hadouken.Tools.Posh"
     New-Item $poshToolOut -ItemType directory
     Copy-Item -Path $poshTool -Destination $poshToolOut
@@ -172,7 +172,7 @@ Task Zip -depends Output {
     }
 }
 
-Task MSI -depends Output {
+Task MSI {
     $wxs = Get-ChildItem "src\Installer\" -Include *.wxs -recurse | Select-Object FullName | foreach {$_.FullName}
 
     # Copy the correct config file
@@ -187,7 +187,7 @@ Task MSI -depends Output {
     $msi = Join-Path $Dir_Artifacts $Artifact_Msi
 
     Exec {
-        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -sval -o $msi $wixobj
+        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -sval -o $msi -cultures:en-us -loc "src\Installer\Hadouken.en-us.wxl"  $wixobj
     }
 }
 

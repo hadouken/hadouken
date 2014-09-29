@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
+        <Directory Id="INSTALLDIR" Name="Hadouken">
+          <Directory Id="TOOLSDIR" Name="Tools">
+            <Directory Id="POSHMODULESDIR" Name="PowerShellModules">
+              <Directory Id="HDKNPOSHDIR" Name="Hadouken.Tools.Posh" />
+            </Directory>
+          </Directory>
+          <Directory Id="X64DIR" Name="x64" />
+          <Directory Id="X86DIR" Name="x86" />
+        </Directory>
+      </Directory>
+
+      <Directory Id="CommonAppDataFolder" Name="ProgramDataFolder">
+        <Directory Id="HDKNDATA" Name="Hadouken" />
+      </Directory>
+    </Directory>
+  </Fragment>
+</Wix>

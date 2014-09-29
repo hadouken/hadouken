@@ -9,10 +9,9 @@ namespace Hadouken.Extensions.Kodi
 {
     [Extension("notifier.kodi",
         Name = "Kodi/XBMC",
-        Description = "Sends notifications to Kodi (previously XBMC).",
-        ResourceNamespace = "Hadouken.Extensions.Kodi.Resources",
-        Scripts = new[] { "js/app.js", "js/controllers/settingsController.js" }
+        Description = "Sends notifications to Kodi (previously XBMC)."
     )]
+    [Configuration(typeof(KodiConfig), Key = "kodi.config")]
     public class KodiNotifier : INotifier
     {
         private readonly IKodiClient _kodiClient;
