@@ -33,27 +33,6 @@ namespace Hadouken.Core.Http.Security
         }
 
         /// <summary>
-        /// Enables Token authentication for a module
-        /// </summary>
-        /// <param name="module">Module to add handlers to (usually "this")</param>
-        /// <param name="configuration">Forms authentication configuration</param>
-        public static void Enable(INancyModule module, TokenAuthenticationConfiguration configuration)
-        {
-            if (module == null)
-            {
-                throw new ArgumentNullException("module");
-            }
-
-            if (configuration == null)
-            {
-                throw new ArgumentNullException("configuration");
-            }
-
-            module.RequiresAuthentication();
-            module.Before.AddItemToStartOfPipeline(GetCredentialRetrievalHook(configuration));
-        }
-
-        /// <summary>
         /// Gets the pre request hook for loading the authenticated user's details
         /// from the auth header.
         /// </summary>
@@ -79,11 +58,11 @@ namespace Hadouken.Core.Http.Security
 
             if (token != null)
             {
-                var user = configuration.Tokenizer.Detokenize(token, context);
+                var user = configuration.UserManager.GetUserByToken(token);
 
                 if (user != null)
                 {
-                    context.CurrentUser = user;
+                    context.CurrentUser = new TokenUserIdentity(user);
                 }
             }
         }

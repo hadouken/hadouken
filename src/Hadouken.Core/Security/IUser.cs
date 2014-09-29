@@ -9,5 +9,7 @@ namespace Hadouken.Core.Security
         string UserName { get; }
 
         string[] Claims { get; }
+
+        string Token { get; }
     }
 }

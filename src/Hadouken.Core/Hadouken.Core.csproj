@@ -97,13 +97,9 @@
     <Compile Include="Http\Modules\AuthModule.cs" />
     <Compile Include="Http\Modules\JsonRpcModule.cs" />
     <Compile Include="Http\Modules\Models\UserDto.cs" />
-    <Compile Include="Http\Security\ITokenizer.cs" />
-    <Compile Include="Http\Security\Storage\InMemoryTokenKeyStore.cs" />
-    <Compile Include="Http\Security\Storage\ITokenKeyStore.cs" />
     <Compile Include="Http\Security\TokenAuthentication.cs" />
     <Compile Include="Http\Security\TokenAuthenticationConfiguration.cs" />
-    <Compile Include="Http\Security\Tokenizer.cs" />
-    <Compile Include="Http\Security\UserIdentity.cs" />
+    <Compile Include="Http\Security\TokenUserIdentity.cs" />
     <Compile Include="IHadoukenService.cs" />
     <Compile Include="JsonRpc\ByNameResolver.cs" />
     <Compile Include="JsonRpc\ByPositionResolver.cs" />
@@ -181,6 +177,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Data\Sql\20140915234315_CreateNotifierTable.sql" />
+    <EmbeddedResource Include="Data\Sql\20140928234254_AddTokenColumnToUserTable.sql" />
     <Content Include="torrent.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

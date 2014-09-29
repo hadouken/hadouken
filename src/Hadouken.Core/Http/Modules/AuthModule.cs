@@ -1,6 +1,5 @@
 ﻿using Hadouken.Common.Logging;
 using Hadouken.Core.Http.Modules.Models;
-using Hadouken.Core.Http.Security;
 using Hadouken.Core.Security;
 using Nancy;
 using Nancy.ModelBinding;
@@ -10,8 +9,7 @@ namespace Hadouken.Core.Http.Modules
     public sealed class AuthModule : NancyModule
     {
         public AuthModule(ILogger<AuthModule> logger,
-            IUserManager userManager,
-            ITokenizer tokenizer)
+            IUserManager userManager)
             : base("auth")
         {
             Get["/setup"] = _ => !userManager.HasUsers();
@@ -35,13 +33,18 @@ namespace Hadouken.Core.Http.Modules
                     return HttpStatusCode.Unauthorized;
                 }
 
-                var identity = new UserIdentity(user.UserName, user.Claims);
-                var token = tokenizer.Tokenize(identity, Context);
+                var token = user.Token;
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    logger.Info("Generating token for user: {UserName}.", userData.UserName);
+                    token = userManager.GenerateToken(user.Id);
+                }
 
                 return new
                 {
                     Token = token,
-                    identity.UserName
+                    user.UserName
                 };
             };
         }
