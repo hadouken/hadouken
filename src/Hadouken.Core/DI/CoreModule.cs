@@ -47,6 +47,7 @@ namespace Hadouken.Core.DI
 
             // JSONRPC services
             builder.RegisterType<BitTorrentService>().As<IJsonRpcService>();
+            builder.RegisterType<CoreService>().As<IJsonRpcService>();
             builder.RegisterType<ConfigurationService>().As<IJsonRpcService>();
             builder.RegisterType<LoggingService>().As<IJsonRpcService>();
             builder.RegisterType<NotificationService>().As<IJsonRpcService>();
