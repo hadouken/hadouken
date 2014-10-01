@@ -58,5 +58,11 @@
 </div>
 
 <div class="container" role="main" id="main-container">
+    <div class="row" ng-show="notifications.length">
+        <alert ng-repeat="notif in notifications" type="{{ notif.type }}" close="removeNotification($index)">
+            <div ng-bind-html="notif.message"></div>
+        </alert>
+    </div>
+
     <div ui-view></div>
 </div>

@@ -106,6 +106,10 @@
       <Project>{2a879968-8db5-44bd-bb5b-bf40cd683a71}</Project>
       <Name>Hadouken.Extensions.Rss</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hadouken.Extensions.UpdateChecker\Hadouken.Extensions.UpdateChecker.csproj">
+      <Project>{0fc4606e-2111-4ba7-b1f3-6b8afb980c23}</Project>
+      <Name>Hadouken.Extensions.UpdateChecker</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

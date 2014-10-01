@@ -55,5 +55,11 @@
         <File Name="Hadouken.Extensions.Rss.dll" />
       </Component>
     </ComponentGroup>
+
+    <ComponentGroup Id="UpdateCheckerExtensionComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Name="Hadouken.Extensions.UpdateChecker.dll" />
+      </Component>
+    </ComponentGroup>
   </Fragment>
 </Wix>
