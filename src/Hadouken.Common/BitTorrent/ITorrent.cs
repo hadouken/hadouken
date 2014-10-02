@@ -73,5 +73,18 @@
         /// Gets a list of peers for this torrent.
         /// </summary>
         IPeer[] Peers { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this torrent is finished. A torrent
+        /// is considered finished if all pieces with a priority > 0 are
+        /// downloaded.
+        /// </summary>
+        bool IsFinished { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this torrent is seeding. <c>True</c>
+        /// is all pieces are downloaded.
+        /// </summary>
+        bool IsSeeding { get; }
     }
 }
