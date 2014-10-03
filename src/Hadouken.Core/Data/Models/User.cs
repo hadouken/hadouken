@@ -14,5 +14,7 @@ namespace Hadouken.Core.Data.Models
         public string UserName { get; set; }
 
         public string HashedPassword { get; set; }
+
+        public string Token { get; set; }
     }
 }

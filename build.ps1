@@ -9,6 +9,7 @@ Properties {
     $Name               = "Hadouken"
     $SolutionFile       = "Hadouken.sln"
     $AssemblyInfo       = "src/CommonAssemblyInfo.cs"
+    $Commit             = $null
 
     # Artifacts
     $Artifact_Choco     = "hadouken.$BuildVersion.nupkg"
@@ -49,21 +50,6 @@ Task Default -depends Prepare, Clean, Generate-CommonAssemblyInfo, Compile, Test
 Task Publish -depends Default, Publish-GitHub, Publish-Chocolatey
 
 Task Prepare {
-    # Get commit hash
-    If (Test-Command git) {
-        # Get commit
-        if (!$Commit) {
-            $Commit = (git rev-parse HEAD)
-
-            (git diff-files --quiet)
-            if($LASTEXITCODE -ne 0) {
-                $Commit = $Commit + "*"
-            }
-
-            Write-BuildMessage "Updated commit hash to $Commit"
-        }
-    }
-
     # Update version
     if($env:APPVEYOR) {
         Write-BuildMessage "Updating AppVeyor version to $BuildVersion"
@@ -86,6 +72,21 @@ Task Clean -depends Prepare {
 }
 
 Task Generate-CommonAssemblyInfo -depends Clean {
+    # Get commit hash
+    If (Test-Command git) {
+        # Get commit
+        if (!$Commit) {
+            $Commit = (git rev-parse HEAD)
+
+            (git diff-files --quiet)
+            if($LASTEXITCODE -ne 0) {
+                $Commit = $Commit + "*"
+            }
+
+            Write-BuildMessage "Updated commit hash to $Commit"
+        }
+    }
+    
     Generate-Assembly-Info -file $AssemblyInfo `
                            -buildDate ([System.DateTime]::UtcNow).ToString("yyyy-MM-ddTHH\:mm\:ss.fffffffzzz") `
                            -commit $Commit `

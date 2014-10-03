@@ -25,6 +25,8 @@
   <String Id="Pushover_Ext_Description" Overridable="yes">Sends push notifications via Pushover to your devices.</String>
   <String Id="Rss_Ext_Title" Overridable="yes">RSS</String>
   <String Id="Rss_Ext_Description" Overridable="yes">Monitors feeds and adds torrents according to user-specified rules.</String>
+  <String Id="UpdateChecker_Ext_Title" Overridable="yes">UpdateChecker</String>
+  <String Id="UpdateChecker_Ext_Description" Overridable="yes">Periodically checks for new Hadouken releases.</String>
 
   <!-- VC redist -->
   <String Id="VCRedist_Title" Overridable="yes">VC++ 12.0 runtime</String>

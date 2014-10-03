@@ -49,7 +49,7 @@
             $scope.parameters.push({
                 Id: -1,
                 Source: "Name",
-                Pattern: "^$"
+                Pattern: ".*"
             });
         };
 

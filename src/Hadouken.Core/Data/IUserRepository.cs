@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Hadouken.Core.Data.Models;
 
 namespace Hadouken.Core.Data
@@ -9,8 +10,12 @@ namespace Hadouken.Core.Data
 
         User GetByUserName(string userName);
 
+        User GetByToken(string token);
+
         void CreateUser(User user);
 
         void UpdatePassword(string userName, string hashedPassword);
+        
+        void UpdateUserToken(Guid userId, string token);
     }
 }

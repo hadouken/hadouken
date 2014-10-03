@@ -51,7 +51,7 @@ using System.Runtime.InteropServices;
 
 namespace Hadouken
 {
-    public static class AssemblyInformation
+    internal static class AssemblyInformation
     {
         public static readonly string Commit = ""$commit"";
         public static readonly DateTime BuildDate = DateTime.Parse(""$buildDate"");

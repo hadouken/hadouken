@@ -47,6 +47,10 @@
         <Feature Id="RssExtension" Title="!(loc.Rss_Ext_Title)" Description="!(loc.Rss_Ext_Description)" Level="1">
           <ComponentGroupRef Id="RssExtensionComponents" />
         </Feature>
+
+        <Feature Id="UpdateCheckerExtension" Title="!(loc.UpdateChecker_Ext_Title)" Description="!(loc.UpdateChecker_Ext_Description)" Level="1">
+          <ComponentGroupRef Id="UpdateCheckerExtensionComponents" />
+        </Feature>
       </Feature>
 
       <Feature Id="VCRedist" Title="!(loc.VCRedist_Title)" Description="!(loc.VCRedist_Description)" Display="expand" Level="1">

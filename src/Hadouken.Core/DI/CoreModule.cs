@@ -6,7 +6,6 @@ using Hadouken.Core.BitTorrent.Handlers;
 using Hadouken.Core.Data;
 using Hadouken.Core.Handlers;
 using Hadouken.Core.Http;
-using Hadouken.Core.Http.Security;
 using Hadouken.Core.JsonRpc;
 using Hadouken.Core.Security;
 using Hadouken.Core.Services;
@@ -48,6 +47,7 @@ namespace Hadouken.Core.DI
 
             // JSONRPC services
             builder.RegisterType<BitTorrentService>().As<IJsonRpcService>();
+            builder.RegisterType<CoreService>().As<IJsonRpcService>();
             builder.RegisterType<ConfigurationService>().As<IJsonRpcService>();
             builder.RegisterType<LoggingService>().As<IJsonRpcService>();
             builder.RegisterType<NotificationService>().As<IJsonRpcService>();
@@ -60,7 +60,6 @@ namespace Hadouken.Core.DI
             // HTTP
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();
             builder.RegisterType<CustomNancyBootstrapper>().As<INancyBootstrapper>().SingleInstance();
-            builder.RegisterType<Tokenizer>().As<ITokenizer>().SingleInstance();
 
             // Repositories
             builder.RegisterType<NotifierRepository>().As<INotifierRepository>().SingleInstance();

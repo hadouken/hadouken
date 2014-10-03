@@ -34,10 +34,6 @@
     <Reference Include="Autofac">
       <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper, Version=1.34.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Dapper.1.34\lib\net45\Dapper.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -87,6 +83,7 @@
     <Compile Include="Data\IMigrator.cs" />
     <Compile Include="Data\KeyValueChangedMessage.cs" />
     <Compile Include="Data\KeyValueStore.cs" />
+    <Compile Include="Data\Dapper.cs" />
     <Compile Include="Data\SqlMigrator.cs" />
     <Compile Include="DI\CommonModule.cs" />
     <Compile Include="Extensibility\ComponentAttribute.cs" />
@@ -140,6 +137,7 @@
     <Compile Include="JsonRpc\IJsonRpcService.cs" />
     <Compile Include="JsonRpc\JsonRpcException.cs" />
     <Compile Include="JsonRpc\JsonRpcMethodAttribute.cs" />
+    <Compile Include="LinqExtensions.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerRepository.cs" />
     <Compile Include="Logging\LogEntry.cs" />

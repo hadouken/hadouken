@@ -9,6 +9,10 @@ body.Auth-LoginController {
   background-color: #eee;
 }
 
+h1.page-header {
+  margin-top: 0;
+}
+
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }

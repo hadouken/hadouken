@@ -1,29 +1,20 @@
 ﻿using System;
+using Hadouken.Core.Security;
 
 namespace Hadouken.Core.Http.Security
 {
-    /// <summary>
-    /// Configuration options for token authentication
-    /// </summary>
     public class TokenAuthenticationConfiguration
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TokenAuthenticationConfiguration"/> class.
-        /// </summary>
-        /// <param name="tokenizer">A valid instance of <see cref="ITokenizer"/> class</param>
-        public TokenAuthenticationConfiguration(ITokenizer tokenizer)
+        public TokenAuthenticationConfiguration(IUserManager userManager)
         {
-            if (tokenizer == null)
+            if (userManager == null)
             {
-                throw new ArgumentNullException("tokenizer");
+                throw new ArgumentNullException("userManager");
             }
 
-            Tokenizer = tokenizer;
+            UserManager = userManager;
         }
 
-        /// <summary>
-        /// Gets the token validator
-        /// </summary>
-        public ITokenizer Tokenizer { get; private set; }
+        public IUserManager UserManager { get; private set; }
     }
 }

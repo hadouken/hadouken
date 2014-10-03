@@ -35,7 +35,13 @@ namespace Hadouken.Core.Security
                 Convert.ToBase64String(salt),
                 Convert.ToBase64String(hash));
 
-            var u = new User { UserName = userName, HashedPassword = hashedPassword };
+            var u = new User
+            {
+                UserName = userName,
+                HashedPassword = hashedPassword,
+                Token = Guid.NewGuid().ToString("D")
+            };
+
             _userRepository.CreateUser(u);
         }
 
@@ -56,7 +62,19 @@ namespace Hadouken.Core.Security
                 return null;
             }
 
-            return new HadoukenUser(Guid.Parse(user.Id), user.UserName);
+            return new HadoukenUser(Guid.Parse(user.Id), user.UserName, user.Token);
+        }
+
+        public IUser GetUserByToken(string token)
+        {
+            var user = _userRepository.GetByToken(token);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new HadoukenUser(Guid.Parse(user.Id), user.UserName, user.Token);
         }
 
         public void ChangePassword(string userName, string newPassword)
@@ -73,6 +91,15 @@ namespace Hadouken.Core.Security
                 Convert.ToBase64String(hash));
 
             _userRepository.UpdatePassword(userName, hashedPassword);
+        }
+
+        public string GenerateToken(Guid userId)
+        {
+            var token = Guid.NewGuid().ToString("D");
+
+            _userRepository.UpdateUserToken(userId, token);
+
+            return token;
         }
 
         private byte[] HashPassword(string password, byte[] salt, int iterationCount)

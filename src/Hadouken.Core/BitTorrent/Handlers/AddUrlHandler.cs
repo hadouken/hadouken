@@ -32,7 +32,8 @@ namespace Hadouken.Core.BitTorrent.Handlers
         {
             using (var addParams = new AddTorrentParams())
             {
-                addParams.Name = message.Name;
+                if (!string.IsNullOrEmpty(message.Name)) addParams.Name = message.Name;
+
                 addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
                 addParams.Url = message.Url;
 

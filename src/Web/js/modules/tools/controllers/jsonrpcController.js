@@ -3,7 +3,7 @@ angular.module('hadouken.tools.controllers.jsonrpc', [])
         '$scope', 'jsonrpc',
         function ($scope, jsonrpc) {
             $scope.json = JSON.stringify({
-              "method": "core.plugins.list",
+              "method": "core.getVersion",
               "params": null
             }, null, 2);
 

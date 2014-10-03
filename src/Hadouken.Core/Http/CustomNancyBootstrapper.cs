@@ -6,6 +6,7 @@ using Hadouken.Common;
 using Hadouken.Common.IO;
 using Hadouken.Common.Logging;
 using Hadouken.Core.Http.Security;
+using Hadouken.Core.Security;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
@@ -46,8 +47,8 @@ namespace Hadouken.Core.Http
 
         protected override void ApplicationStartup(ILifetimeScope container, IPipelines pipelines)
         {
-            var tokenizer = container.Resolve<ITokenizer>();
-            var cfg = new TokenAuthenticationConfiguration(tokenizer);
+            var userManager = container.Resolve<IUserManager>();
+            var cfg = new TokenAuthenticationConfiguration(userManager);
 
             TokenAuthentication.Enable(pipelines, cfg);
 
