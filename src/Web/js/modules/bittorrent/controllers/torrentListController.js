@@ -32,10 +32,44 @@
         return queuePosition + 1;
     }
 })
+.filter('sort', function() {
+    function compareByName(a, b) { an = a.Name.toUpperCase(); bn = b.Name.toUpperCase(); if(an > bn) { return 1; } if(an < bn) { return -1; } return 0; }
+    function compareByProgress(a, b) { if(a.Progress > b.Progress) { return 1; } if(a.Progress < b.Progress) { return -1; } return 0; }
+    function compareByQueuePosition(a, b) { var ap = a.QueuePosition; var bp = b.QueuePosition; if(ap < 0) return 1; if(ap > bp) { return 1; } if(ap < bp) { return -1; }return 0; }
+
+    var comparers = {};
+    comparers['Name'] = compareByName;
+    comparers['Progress'] = compareByProgress;
+    comparers['QueuePosition'] = compareByQueuePosition;
+
+    return function(array, field, direction) {
+        var comparer = comparers[field];
+        var sorted = [];
+
+        angular.forEach(array, function(item) { sorted.push(item); });
+
+        if(direction === 'desc') {
+            sorted.sort(function(a, b) {
+                return comparer(b, a);
+            });
+        } else {
+            sorted.sort(comparer);
+        }
+
+        return sorted;
+    }
+})
 .controller('BitTorrent.TorrentListController', [
     '$scope', '$timeout', '$modal', 'jsonrpc',
     function ($scope, $timeout, $modal, jsonrpc) {
-        $scope.torrents = {};
+        $scope.sortField = 'Name';
+        $scope.sortDirection = 'asc';
+        $scope.torrents = [];
+
+        $scope.sort = function(field, dir) {
+            $scope.sortField = field;
+            $scope.sortDirection = dir;
+        };
 
         $scope.showAdd = function() {
             $modal.open({
@@ -113,6 +147,16 @@
             notify('torrents.queue.bottom', infoHash);
         };
 
+        function getIndex(infoHash) {
+            for(var i = 0; i < $scope.torrents.length; i++) {
+                if(infoHash === $scope.torrents[i].InfoHash) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         function notify(method, infoHash) {
             jsonrpc.request(method, {
                 params: [infoHash],
@@ -120,21 +164,38 @@
             });
         }
 
+        function updateTorrent(oldTorrent, newTorrent) {
+            oldTorrent.DownloadSpeed = newTorrent.DownloadSpeed;
+            oldTorrent.Paused = newTorrent.Paused;
+            oldTorrent.Progress = newTorrent.Progress;
+            oldTorrent.QueuePosition = newTorrent.QueuePosition;
+            oldTorrent.SavePath = newTorrent.SavePath;
+            oldTorrent.State = newTorrent.State;
+            oldTorrent.UploadSpeed = newTorrent.UploadSpeed;
+        }
+
         function update() {
             jsonrpc.request('torrents.getAll', {
                 success: function (data) {
                     for (var i = 0; i < data.result.length; i++) {
                         var torrent = data.result[i];
-                        $scope.torrents[torrent.InfoHash] = torrent;
+                        var idx = getIndex(torrent.InfoHash);
+
+                        if(idx < 0) {
+                            $scope.torrents.push(torrent);
+                        } else {
+                            updateTorrent($scope.torrents[idx], torrent);
+                        }
                     }
 
                     if (data.result.length) {
                         var currentIdList = data.result.map(function(x) { return x.InfoHash; });
-                        var selfIds = Object.keys($scope.torrents);
+                        var selfIds = $scope.torrents.map(function(x) { return x.InfoHash; });
 
                         for (var i = 0; i < selfIds.length; i++) {
                             if (currentIdList.indexOf(selfIds[i]) < 0) {
-                                delete $scope.torrents[selfIds[i]];
+                                var idx = getIndex(selfIds[i]);
+                                $scope.torrents.splice(idx, 1);
                             }
                         }
                     }
