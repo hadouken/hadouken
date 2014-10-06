@@ -5,6 +5,9 @@ using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
+    using System.IO;
+    using System.Text;
+
     internal sealed class Torrent : ITorrent
     {
         public string InfoHash { get; private set; }
@@ -50,7 +53,7 @@ namespace Hadouken.Core.BitTorrent
                 var t = new Torrent
                 {
                     InfoHash = handle.InfoHash.ToHex(),
-                    Name = status.Name,
+                    Name = EncodeLocalString(status.Name),
                     SavePath = status.SavePath,
                     Size = file == null ? -1 : file.TotalSize,
                     Progress = status.Progress,
@@ -85,6 +88,13 @@ namespace Hadouken.Core.BitTorrent
 
                 return t;
             }
+        }
+
+        private static string EncodeLocalString(string localString)
+        {
+            var utf = Encoding.UTF8;
+            byte[] winBytes = Encoding.GetEncoding("windows-1251").GetBytes(localString);
+            return utf.GetString(winBytes);
         }
     }
 }
