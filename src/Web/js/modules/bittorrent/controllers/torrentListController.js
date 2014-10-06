@@ -174,6 +174,7 @@
             oldTorrent.Progress = newTorrent.Progress;
             oldTorrent.QueuePosition = newTorrent.QueuePosition;
             oldTorrent.SavePath = newTorrent.SavePath;
+            oldTorrent.Size = newTorrent.Size;
             oldTorrent.State = newTorrent.State;
             oldTorrent.UploadSpeed = newTorrent.UploadSpeed;
         }
