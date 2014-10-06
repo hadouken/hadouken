@@ -35,7 +35,19 @@
 .filter('sort', function() {
     function compareByName(a, b) { an = a.Name.toUpperCase(); bn = b.Name.toUpperCase(); if(an > bn) { return 1; } if(an < bn) { return -1; } return 0; }
     function compareByProgress(a, b) { if(a.Progress > b.Progress) { return 1; } if(a.Progress < b.Progress) { return -1; } return 0; }
-    function compareByQueuePosition(a, b) { var ap = a.QueuePosition; var bp = b.QueuePosition; if(ap < 0) return 1; if(ap > bp) { return 1; } if(ap < bp) { return -1; }return 0; }
+    function compareByQueuePosition(a, b, desc) {
+        var ap = a.QueuePosition;
+        var bp = b.QueuePosition;
+
+        // The following two assignments makes sure the -1 (seeding) always comes last
+        if(!desc && ap === -1) { ap = 1000000; }
+        if(!desc && bp === -1) { bp = 1000000; }
+
+        if(ap > bp) { return 1; }
+        if(ap < bp) { return -1; }
+
+        return 0;
+    }
 
     var comparers = {};
     comparers['Name'] = compareByName;
@@ -47,10 +59,10 @@
         var sorted = [];
 
         angular.forEach(array, function(item) { sorted.push(item); });
-
+        
         if(direction === 'desc') {
             sorted.sort(function(a, b) {
-                return comparer(b, a);
+                return comparer(b, a, true);
             });
         } else {
             sorted.sort(comparer);
