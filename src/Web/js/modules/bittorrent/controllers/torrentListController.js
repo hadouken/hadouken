@@ -79,11 +79,13 @@
         };
 
         $scope.showDetails = function(infoHash) {
+            var index = getIndex(infoHash);
+
             $modal.open({
                 controller: 'BitTorrent.TorrentDetailsController',
                 resolve: {
                     torrent: function() {
-                        return $scope.torrents[infoHash];
+                        return $scope.torrents[index];
                     }
                 },
                 templateUrl: 'views/bittorrent/details.html'
