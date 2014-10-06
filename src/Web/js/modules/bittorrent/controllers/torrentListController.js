@@ -123,12 +123,14 @@
         };
 
         $scope.remove = function(infoHash) {
+            var index = getIndex(infoHash);
+
             jsonrpc.request('torrents.remove', {
                 params: [infoHash, false],
                 success: function() {}
             });
 
-            delete $scope.torrents[infoHash];
+            $scope.torrents.splice(index, 1);
         };
 
         $scope.queuePosUp = function(infoHash) {
@@ -188,15 +190,15 @@
                         }
                     }
 
-                    if (data.result.length) {
-                        var currentIdList = data.result.map(function(x) { return x.InfoHash; });
-                        var selfIds = $scope.torrents.map(function(x) { return x.InfoHash; });
+                    var currentIdList = data.result.map(function(x) { return x.InfoHash; });
+                    var selfIds = $scope.torrents.map(function(x) { return x.InfoHash; });
 
-                        for (var i = 0; i < selfIds.length; i++) {
-                            if (currentIdList.indexOf(selfIds[i]) < 0) {
-                                var idx = getIndex(selfIds[i]);
-                                $scope.torrents.splice(idx, 1);
-                            }
+                    for (var i = 0; i < selfIds.length; i++) {
+                        if (currentIdList.indexOf(selfIds[i]) < 0) {
+                            console.log('removing torrent');
+
+                            var idx = getIndex(selfIds[i]);
+                            $scope.torrents.splice(idx, 1);
                         }
                     }
 
