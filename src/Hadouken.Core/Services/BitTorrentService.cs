@@ -100,5 +100,33 @@ namespace Hadouken.Core.Services
         {
             _messageBus.Publish(new ChangeTorrentLabelMessage(infoHash) {Label = label});
         }
+
+        /*
+         * Queuing
+        */
+
+        [JsonRpcMethod("torrents.queue.bottom")]
+        public void QueuePositionBottom(string infoHash)
+        {
+            _messageBus.Publish(new QueuePositionBottomMessage(infoHash));
+        }
+
+        [JsonRpcMethod("torrents.queue.down")]
+        public void QueuePositionDown(string infoHash)
+        {
+            _messageBus.Publish(new QueuePositionDownMessage(infoHash));
+        }
+
+        [JsonRpcMethod("torrents.queue.top")]
+        public void QueuePositionTop(string infoHash)
+        {
+            _messageBus.Publish(new QueuePositionTopMessage(infoHash));
+        }
+
+        [JsonRpcMethod("torrents.queue.up")]
+        public void QueuePositionUp(string infoHash)
+        {
+            _messageBus.Publish(new QueuePositionUpMessage(infoHash));
+        }
     }
 }

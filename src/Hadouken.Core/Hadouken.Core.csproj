@@ -71,6 +71,10 @@
     <Compile Include="BitTorrent\Handlers\ChangeTorrentLabelHandler.cs" />
     <Compile Include="BitTorrent\Handlers\MoveTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\PauseTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\QueuePositionBottomHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\QueuePositionDownHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\QueuePositionTopHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\QueuePositionUpHandler.cs" />
     <Compile Include="BitTorrent\Handlers\RemoveTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ResumeTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\SessionSettingsChangedHandler.cs" />

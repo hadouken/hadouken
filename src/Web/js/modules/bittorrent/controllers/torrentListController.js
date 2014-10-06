@@ -23,6 +23,15 @@
         return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
     }
 })
+.filter('prettyQueue', function() {
+    return function(queuePosition) {
+        if(queuePosition < 0) {
+            return '';
+        }
+
+        return queuePosition + 1;
+    }
+})
 .controller('BitTorrent.TorrentListController', [
     '$scope', '$timeout', '$modal', 'jsonrpc',
     function ($scope, $timeout, $modal, jsonrpc) {
@@ -48,17 +57,11 @@
         };
 
         $scope.resume = function(infoHash) {
-            jsonrpc.request('torrents.resume', {
-                params: [infoHash],
-                success: function() {}
-            });
+            notify('torrents.resume', infoHash);
         };
 
         $scope.pause = function(infoHash) {
-            jsonrpc.request('torrents.pause', {
-                params: [infoHash],
-                success: function () { }
-            });
+            notify('torrents.pause', infoHash);
         };
 
         $scope.move = function(infoHash) {
@@ -93,6 +96,29 @@
 
             delete $scope.torrents[infoHash];
         };
+
+        $scope.queuePosUp = function(infoHash) {
+            notify('torrents.queue.up', infoHash);
+        };
+
+        $scope.queuePosDown = function(infoHash) {
+            notify('torrents.queue.down', infoHash);
+        };
+
+        $scope.queuePosTop = function(infoHash) {
+            notify('torrents.queue.top', infoHash);
+        };
+
+        $scope.queuePosBottom = function(infoHash) {
+            notify('torrents.queue.bottom', infoHash);
+        };
+
+        function notify(method, infoHash) {
+            jsonrpc.request(method, {
+                params: [infoHash],
+                success: function() {}
+            });
+        }
 
         function update() {
             jsonrpc.request('torrents.getAll', {

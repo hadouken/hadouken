@@ -35,9 +35,11 @@ namespace Hadouken.Core.BitTorrent
 
         public string Label { get; private set; }
 
-        public bool IsSeeding { get; set; }
+        public bool IsSeeding { get; private set; }
 
-        public bool IsFinished { get; set; }
+        public bool IsFinished { get; private set; }
+
+        public int QueuePosition { get; private set; }
 
         internal static ITorrent CreateFromHandle(TorrentHandle handle, ITorrentMetadataRepository metadataRepository)
         {
@@ -61,7 +63,8 @@ namespace Hadouken.Core.BitTorrent
                     Files = new ITorrentFile[file == null ? 0 : file.NumFiles],
                     Peers = handle.GetPeerInfo().Select(Peer.CreateFromPeerInfo).ToArray(),
                     IsFinished = status.IsFinished,
-                    IsSeeding = status.IsSeeding
+                    IsSeeding = status.IsSeeding,
+                    QueuePosition = status.QueuePosition
                 };
 
                 t.Label = metadataRepository.GetLabel(t.InfoHash);

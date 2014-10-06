@@ -86,5 +86,10 @@
         /// is all pieces are downloaded.
         /// </summary>
         bool IsSeeding { get; }
+
+        /// <summary>
+        /// Gets the position of this torrent in the queue.
+        /// </summary>
+        int QueuePosition { get; }
     }
 }

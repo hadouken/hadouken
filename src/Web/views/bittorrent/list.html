@@ -12,6 +12,7 @@
 <table class="table table-striped table-hover" id="tbl-torrents-list">
     <thead>
         <tr>
+            <th style="width: 24px;">#</th>
             <th>Name</th>
             <th style="width: 15%;">State</th>
             <th style="width: 10%;">Progress</th>
@@ -24,6 +25,7 @@
     
     <tbody id="tbody-torrents-list">
         <tr ng-repeat="(infoHash, torrent) in torrents" class="torrent-row">
+            <td>{{ torrent.QueuePosition | prettyQueue }}</td>
             <td>
                 <a href ng-click="showDetails(infoHash)">{{ torrent.Name }}</a>
                 <span class="dropdown" on-toggle="toggled(open)">
@@ -31,6 +33,15 @@
                     <ul class="dropdown-menu">
                         <li><a href ng-click="changeLabel(infoHash)"><i class="fa fa-tag"></i> Change label</a></li>
                         <li><a href ng-click="move(infoHash)"><i class="fa fa-sign-out"></i> Move</a></li>
+                        <li class="divider"></li>
+
+                        <!-- Queuing -->
+                        <li class="dropdown-header">Queuing</li>
+                        <li><a href ng-click="queuePosUp(infoHash)"><i class="fa fa-angle-up"></i> Up</a></li>
+                        <li><a href ng-click="queuePosDown(infoHash)"><i class="fa fa-angle-down"></i> Down</a></li>
+                        <li><a href ng-click="queuePosTop(infoHash)"><i class="fa fa-angle-double-up"></i> Top</a></li>
+                        <li><a href ng-click="queuePosBottom(infoHash)"><i class="fa fa-angle-double-down"></i> Bottom</a></li>
+
                         <li class="divider"></li>
                         <li><a href ng-click="remove(infoHash)"><i class="fa fa-trash-o"></i> Remove</a></li>
                     </ul>
