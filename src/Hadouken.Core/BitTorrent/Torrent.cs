@@ -67,7 +67,7 @@ namespace Hadouken.Core.BitTorrent
                     QueuePosition = status.QueuePosition
                 };
 
-                t.Label = metadataRepository.GetLabel(t.InfoHash);
+                t.Label = metadataRepository.GetLabel(t.InfoHash.ToLowerInvariant());
 
                 // If no torrent file (ie. downloading metadata)
                 if (file == null) return t;
