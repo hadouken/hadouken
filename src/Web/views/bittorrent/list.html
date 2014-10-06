@@ -12,9 +12,23 @@
 <table class="table table-striped table-hover" id="tbl-torrents-list">
     <thead>
         <tr>
-            <th>Name</th>
+            <th style="width: 24px; white-space: nowrap;">
+                <a href ng-click="sort('QueuePosition', 'asc')" ng-show="sortField !== 'QueuePosition'"># <i class="fa fa-sort"></i></a>
+                <a href ng-click="sort('QueuePosition', 'asc')" ng-show="sortField === 'QueuePosition' && sortDirection === 'desc'"># <i class="fa fa-sort-asc"></i></a>
+                <a href ng-click="sort('QueuePosition', 'desc')" ng-show="sortField === 'QueuePosition' && sortDirection === 'asc'"># <i class="fa fa-sort-desc"></i></a>
+            </th>
+            <th>
+                <a href ng-click="sort('Name', 'asc')" ng-show="sortField !== 'Name'">Name <i class="fa fa-sort"></i></a>
+                <a href ng-click="sort('Name', 'asc')" ng-show="sortField === 'Name' && sortDirection === 'desc'">Name <i class="fa fa-sort-asc"></i></a>
+                <a href ng-click="sort('Name', 'desc')" ng-show="sortField === 'Name' && sortDirection === 'asc'">Name <i class="fa fa-sort-desc"></i></a>
+            </th>
+            <th></th>
             <th style="width: 15%;">State</th>
-            <th style="width: 10%;">Progress</th>
+            <th style="width: 10%;">
+                <a href ng-click="sort('Progress', 'asc')" ng-show="sortField !== 'Progress'">Progress <i class="fa fa-sort"></i></a>
+                <a href ng-click="sort('Progress', 'asc')" ng-show="sortField === 'Progress' && sortDirection === 'desc'">Progress <i class="fa fa-sort-asc"></i></a>
+                <a href ng-click="sort('Progress', 'desc')" ng-show="sortField === 'Progress' && sortDirection === 'asc'">Progress <i class="fa fa-sort-desc"></i></a>
+            </th>
             <th style="width: 120px;">Size</th>
             <th style="width: 120px">DL Speed</th>
             <th style="width: 120px">UL Speed</th>
@@ -23,21 +37,31 @@
     </thead>
     
     <tbody id="tbody-torrents-list">
-        <tr ng-repeat="(infoHash, torrent) in torrents" class="torrent-row">
+        <tr ng-repeat="torrent in torrents | sort:sortField:sortDirection" class="torrent-row">
+            <td>{{ torrent.QueuePosition | prettyQueue }}</td>
             <td>
-                <a href ng-click="showDetails(infoHash)">{{ torrent.Name }}</a>
+                <div style="white-space: nowrap;"><a href ng-click="showDetails(torrent.InfoHash)">{{ torrent.Name }}</a></div>
+                <small class="savePath">{{ torrent.SavePath }}</small>
+            </td>
+            <td>
                 <span class="dropdown" on-toggle="toggled(open)">
-                    <a href class="dropdown-toggle"><span class="caret"></span></a>
+                    <button class="btn btn-xs btn-default dropdown-toggle"><i class="fa fa-bars"></i></button>
                     <ul class="dropdown-menu">
-                        <li><a href ng-click="changeLabel(infoHash)"><i class="fa fa-tag"></i> Change label</a></li>
-                        <li><a href ng-click="move(infoHash)"><i class="fa fa-sign-out"></i> Move</a></li>
+                        <li><a href ng-click="changeLabel(torrent.InfoHash)"><i class="fa fa-tag"></i> Change label</a></li>
+                        <li><a href ng-click="move(torrent.InfoHash)"><i class="fa fa-sign-out"></i> Move</a></li>
                         <li class="divider"></li>
-                        <li><a href ng-click="remove(infoHash)"><i class="fa fa-trash-o"></i> Remove</a></li>
+
+                        <!-- Queuing -->
+                        <li class="dropdown-header">Queuing</li>
+                        <li><a href ng-click="queuePosUp(torrent.InfoHash)"><i class="fa fa-angle-up"></i> Up</a></li>
+                        <li><a href ng-click="queuePosDown(torrent.InfoHash)"><i class="fa fa-angle-down"></i> Down</a></li>
+                        <li><a href ng-click="queuePosTop(torrent.InfoHash)"><i class="fa fa-angle-double-up"></i> Top</a></li>
+                        <li><a href ng-click="queuePosBottom(torrent.InfoHash)"><i class="fa fa-angle-double-down"></i> Bottom</a></li>
+
+                        <li class="divider"></li>
+                        <li><a href ng-click="remove(torrent.InfoHash)"><i class="fa fa-trash-o"></i> Remove</a></li>
                     </ul>
                 </span>
-
-                <br />
-                <small class="savePath">{{ torrent.SavePath }}</small>
             </td>
             <td>
                 <span class="state">{{ torrent.State }}</span>
@@ -53,8 +77,8 @@
             <td><span class="ulSpeed">{{ torrent.UploadSpeed | speed }}</span></td>
             <td>
                 <div class="actions pull-right">
-                    <button type="button" class="btn btn-primary" ng-click="resume(infoHash)" ng-show="torrent.Paused"><i class="fa fa-play"></i></button>
-                    <button type="button" class="btn btn-primary" ng-click="pause(infoHash)" ng-show="!torrent.Paused"><i class="fa fa-pause"></i></button>
+                    <button type="button" class="btn btn-primary" ng-click="resume(torrent.InfoHash)" ng-show="torrent.Paused"><i class="fa fa-play"></i></button>
+                    <button type="button" class="btn btn-primary" ng-click="pause(torrent.InfoHash)" ng-show="!torrent.Paused"><i class="fa fa-pause"></i></button>
                 </div>
             </td>
         </tr>

@@ -46,7 +46,7 @@ namespace Hadouken.Core.BitTorrent.Handlers
                 }
 
                 // Parse info hash
-                var infoHash = Regex.Match(message.Url, "urn:btih:([\\w]{32,40})").Groups[1].Value;
+                var infoHash = Regex.Match(message.Url, "urn:btih:([\\w]{32,40})").Groups[1].Value.ToLowerInvariant();
 
                 if (infoHash.Length == 32)
                 {
