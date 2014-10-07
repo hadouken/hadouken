@@ -26,6 +26,11 @@ angular.module('hadouken.filesystem', [
         return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
     }
 
+    function $anyParentHasClass(element, classname) {
+        if (element.className && element.className.split(' ').indexOf(classname)>=0) return true;
+        return element.parentNode && $anyParentHasClass(element.parentNode, classname);
+    }
+
     function getDirectories(selected, cb) {
         jsonrpc.request('fileSystem.getDirectories', {
             params: [selected],
@@ -109,7 +114,7 @@ angular.module('hadouken.filesystem', [
         link: function($scope, element, attrs) {
             $document.bind('click', function(e) {
                 if(e.target === element[0]
-                    || e.target.matches('.directoryBrowser, .directoryBrowser *')) {
+                    || $anyParentHasClass(e.target, 'directoryBrowser')) {
                     return;
                 }
                 
