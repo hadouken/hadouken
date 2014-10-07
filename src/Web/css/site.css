@@ -18,6 +18,12 @@ h1.page-header {
   z-index: 10;
 }
 
+.directoryBrowser .list-group-item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
