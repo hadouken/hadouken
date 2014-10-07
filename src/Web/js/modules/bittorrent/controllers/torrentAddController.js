@@ -1,4 +1,5 @@
 ﻿angular.module('hadouken.bittorrent.controllers.torrentAdd', [
+    'hadouken.filesystem',
     'hadouken.jsonrpc',
     'hadouken.bittorrent.directives.fileread'
 ])
@@ -6,6 +7,15 @@
     '$scope', '$modalInstance', 'jsonrpc',
     function ($scope, $modalInstance, jsonrpc) {
         $scope.source = 'file';
+
+        function getDefaultSavePath(cb) {
+            jsonrpc.request('config.get', {
+                params: ['bt.save_path'],
+                success: function(d) {
+                    cb(d.result);
+                }
+            });
+        }
 
         $scope.add = function (source, fileData, url, name, label, savePath) {
             $scope.inProgress = true;
@@ -37,9 +47,13 @@
             });
         };
 
-        jsonrpc.request('torrents.getLabels', {
-            success: function(data) {
-                $scope.existingLabels = data.result;
-            }
-        });
+        getDefaultSavePath(function(savePath) {
+            $scope.savePath = savePath;
+
+            jsonrpc.request('torrents.getLabels', {
+                success: function(data) {
+                    $scope.existingLabels = data.result;
+                }
+            });
+        })
     }]);

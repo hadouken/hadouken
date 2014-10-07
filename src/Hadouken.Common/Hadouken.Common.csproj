@@ -107,6 +107,7 @@
     <Compile Include="IO\Directory.cs" />
     <Compile Include="IO\DirectoryPath.cs" />
     <Compile Include="IO\DirectoryPathCollection.cs" />
+    <Compile Include="IO\DriveInfo.cs" />
     <Compile Include="IO\File.cs" />
     <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FilePath.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="IO\Globbing\Token.cs" />
     <Compile Include="IO\Globbing\TokenKind.cs" />
     <Compile Include="IO\IDirectory.cs" />
+    <Compile Include="IO\IDriveInfo.cs" />
     <Compile Include="IO\IFile.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="IO\IGlobber.cs" />

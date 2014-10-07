@@ -1,4 +1,5 @@
 ﻿angular.module('hadouken.settings.controllers.index', [
+    'hadouken.filesystem',
     'hadouken.messaging',
     'ui.bootstrap',
     'hadouken.settings.controllers.notifierConfiguration'
