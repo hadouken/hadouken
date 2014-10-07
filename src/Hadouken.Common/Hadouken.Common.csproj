@@ -169,7 +169,9 @@
     <Compile Include="Reflection\IEmbeddedResourceFinder.cs" />
     <Compile Include="Text\Base32Encoder.cs" />
     <Compile Include="Text\IJsonSerializer.cs" />
+    <Compile Include="Text\IStringEncoder.cs" />
     <Compile Include="Text\JsonSerializer.cs" />
+    <Compile Include="Text\Win1251StringEncoder.cs" />
     <Compile Include="Timers\ITimer.cs" />
     <Compile Include="Timers\ITimerFactory.cs" />
     <Compile Include="Timers\ThreadedTimer.cs" />

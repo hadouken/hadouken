@@ -14,6 +14,8 @@ using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
+    using Hadouken.Common.Text;
+
     public class SessionHandler : ISessionHandler, ITorrentEngine
     {
         private readonly ILogger<SessionHandler> _logger;
@@ -26,6 +28,7 @@ namespace Hadouken.Core.BitTorrent
         private readonly ITorrentMetadataRepository _metadataRepository;
         private readonly IList<string> _muted;
         private readonly Thread _alertsThread;
+        private readonly IStringEncoder _stringEncoder;
         private bool _alertsThreadRunning;
 
         public SessionHandler(ILogger<SessionHandler> logger,
@@ -35,7 +38,8 @@ namespace Hadouken.Core.BitTorrent
             IMessageBus messageBus,
             ISession session,
             ITorrentInfoRepository torrentInfoRepository,
-            ITorrentMetadataRepository metadataRepository)
+            ITorrentMetadataRepository metadataRepository,
+            IStringEncoder stringEncoder)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (environment == null) throw new ArgumentNullException("environment");
@@ -45,6 +49,7 @@ namespace Hadouken.Core.BitTorrent
             if (session == null) throw new ArgumentNullException("session");
             if (torrentInfoRepository == null) throw new ArgumentNullException("torrentInfoRepository");
             if (metadataRepository == null) throw new ArgumentNullException("metadataRepository");
+            if (stringEncoder == null) throw new ArgumentException("stringEncoder");
 
             _logger = logger;
             _environment = environment;
@@ -54,6 +59,7 @@ namespace Hadouken.Core.BitTorrent
             _session = session;
             _torrentInfoRepository = torrentInfoRepository;
             _metadataRepository = metadataRepository;
+            _stringEncoder = stringEncoder;
             _muted = new List<string>();
             _alertsThread = new Thread(ReadAlerts);
         }
@@ -233,13 +239,13 @@ namespace Hadouken.Core.BitTorrent
 
         public IEnumerable<ITorrent> GetAll()
         {
-            return _session.GetTorrents().Select(t => Torrent.CreateFromHandle(t, _metadataRepository));
+            return _session.GetTorrents().Select(t => Torrent.CreateFromHandle(t, _metadataRepository, _stringEncoder));
         }
 
         public ITorrent GetByInfoHash(string infoHash)
         {
             var handle = _session.FindTorrent(infoHash);
-            return handle == null ? null : Torrent.CreateFromHandle(handle, _metadataRepository);
+            return handle == null ? null : Torrent.CreateFromHandle(handle, _metadataRepository, _stringEncoder);
         }
 
         private void ReadAlerts()
@@ -281,7 +287,7 @@ namespace Hadouken.Core.BitTorrent
 
         private void Handle(TorrentAddedAlert alert)
         {
-            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
+            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository, _stringEncoder);
             if (_muted.Contains(torrent.InfoHash)) return;
 
             _messageBus.Publish(new TorrentAddedMessage(torrent));
@@ -289,7 +295,7 @@ namespace Hadouken.Core.BitTorrent
 
         private void Handle(TorrentFinishedAlert alert)
         {
-            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
+            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository, _stringEncoder);
             if (_muted.Contains(torrent.InfoHash)) return;
 
             _messageBus.Publish(new TorrentCompletedMessage(torrent));

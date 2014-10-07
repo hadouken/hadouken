@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Hadouken.Common.Text;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Core.BitTorrent;
 using Hadouken.Core.BitTorrent.Data;
@@ -74,6 +75,9 @@ namespace Hadouken.Core.DI
 
             // The main service
             builder.RegisterType<HadoukenService>().As<IHadoukenService>().SingleInstance();
+
+            // Encoding
+            builder.RegisterType<Win1251StringEncoder>().As<IStringEncoder>();
         }
     }
 }

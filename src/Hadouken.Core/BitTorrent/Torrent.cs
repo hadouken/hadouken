@@ -5,8 +5,7 @@ using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
-    using System.IO;
-    using System.Text;
+    using Hadouken.Common.Text;
 
     internal sealed class Torrent : ITorrent
     {
@@ -44,7 +43,7 @@ namespace Hadouken.Core.BitTorrent
 
         public int QueuePosition { get; private set; }
 
-        internal static ITorrent CreateFromHandle(TorrentHandle handle, ITorrentMetadataRepository metadataRepository)
+        internal static ITorrent CreateFromHandle(TorrentHandle handle, ITorrentMetadataRepository metadataRepository, IStringEncoder stringEncoder)
         {
             using (handle)
             using (var file = handle.TorrentFile)
@@ -53,7 +52,7 @@ namespace Hadouken.Core.BitTorrent
                 var t = new Torrent
                 {
                     InfoHash = handle.InfoHash.ToHex(),
-                    Name = EncodeLocalString(status.Name),
+                    Name = stringEncoder.Encode(status.Name),
                     SavePath = status.SavePath,
                     Size = file == null ? -1 : file.TotalSize,
                     Progress = status.Progress,
@@ -81,7 +80,7 @@ namespace Hadouken.Core.BitTorrent
                 for (var i = 0; i < file.NumFiles; i++)
                 {
                     var entry = file.FileAt(i);
-                    var torrentFile = TorrentFile.CreateFromEntry(entry, progresses[i], priorities[i]);
+                    var torrentFile = TorrentFile.CreateFromEntry(entry, progresses[i], priorities[i], stringEncoder);
 
                     t.Files[i] = torrentFile;
                 }
@@ -89,12 +88,6 @@ namespace Hadouken.Core.BitTorrent
                 return t;
             }
         }
-
-        private static string EncodeLocalString(string localString)
-        {
-            var utf = Encoding.UTF8;
-            byte[] winBytes = Encoding.GetEncoding("windows-1251").GetBytes(localString);
-            return utf.GetString(winBytes);
-        }
+     
     }
 }
