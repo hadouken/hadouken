@@ -13,5 +13,10 @@ namespace Hadouken.Common.BitTorrent
         /// Gets a single <see cref="ITorrent"/> by its InfoHash property.
         /// </summary>
         ITorrent GetByInfoHash(string infoHash);
+
+        /// <summary>
+        /// Gets a list of all labels.
+        /// </summary>
+        IEnumerable<string> GetLabels();
     }
 }
