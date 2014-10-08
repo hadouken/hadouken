@@ -23,6 +23,8 @@ namespace Hadouken.Common.Tests.Fakes
             set { _exist = value; }
         }
 
+        public bool Hidden { get; set; }
+
         public FakeDirectory(FakeFileSystem fileSystem, DirectoryPath path, bool creatable)
         {
             _fileSystem = fileSystem;
@@ -83,6 +85,11 @@ namespace Hadouken.Common.Tests.Fakes
                 }
             }
             return result;
+        }
+
+        public IDirectory GetParent()
+        {
+            throw new NotImplementedException();
         }
     }
 }

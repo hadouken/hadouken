@@ -1,4 +1,6 @@
-﻿namespace Hadouken.Common.IO
+﻿using System.Collections.Generic;
+
+namespace Hadouken.Common.IO
 {
     /// <summary>
     /// Represents a file system.
@@ -18,5 +20,7 @@
         /// <param name="path">The path.</param>
         /// <returns>A <see cref="IDirectory"/> instance representing the specified path.</returns>
         IDirectory GetDirectory(DirectoryPath path);
+
+        IEnumerable<IDriveInfo> GetDrives();
     }
 }

@@ -1,4 +1,5 @@
 ﻿angular.module('hadouken.bittorrent.controllers.torrentMove', [
+    'hadouken.filesystem',
     'hadouken.jsonrpc'
 ])
 .controller('BitTorrent.TorrentMoveController', [
@@ -7,6 +8,7 @@
         jsonrpc.request('torrents.getByInfoHash', {
             params: [infoHash],
             success: function(data) {
+                $scope.newPath = data.result.SavePath;
                 $scope.torrent = data.result;
             }
         });

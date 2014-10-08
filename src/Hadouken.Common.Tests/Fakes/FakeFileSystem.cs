@@ -66,6 +66,11 @@ namespace Hadouken.Common.Tests.Fakes
             return GetDirectory(path, creatable: true);
         }
 
+        public IEnumerable<IDriveInfo> GetDrives()
+        {
+            throw new NotImplementedException();
+        }
+
         public IDirectory GetCreatedDirectory(DirectoryPath path)
         {
             var directory = GetDirectory(path, creatable: true);

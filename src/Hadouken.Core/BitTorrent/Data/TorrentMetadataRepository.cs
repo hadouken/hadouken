@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Hadouken.Common.Data;
 
@@ -37,6 +38,12 @@ namespace Hadouken.Core.BitTorrent.Data
         {
             var query = "select tm.Label from TorrentMetadata tm where tm.InfoHash = @InfoHash";
             return _dbConnection.Query<string>(query, new {InfoHash = infoHash}).SingleOrDefault();
+        }
+
+        public IEnumerable<string> GetAllLabels()
+        {
+            var query = "select distinct tm.Label from TorrentMetadata tm where tm.Label is not null and trim(tm.Label) <> ''";
+            return _dbConnection.Query<string>(query);
         }
     }
 }

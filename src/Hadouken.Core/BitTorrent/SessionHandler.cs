@@ -248,6 +248,11 @@ namespace Hadouken.Core.BitTorrent
             return handle == null ? null : Torrent.CreateFromHandle(handle, _metadataRepository, _stringEncoder);
         }
 
+        public IEnumerable<string> GetLabels()
+        {
+            return _metadataRepository.GetAllLabels();
+        } 
+
         private void ReadAlerts()
         {
             _logger.Debug("Starting alerts thread.");

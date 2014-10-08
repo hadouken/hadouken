@@ -140,6 +140,7 @@
     <Compile Include="Services\BitTorrentService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\CoreService.cs" />
+    <Compile Include="Services\FileSystemService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\Models\ConfigurationItem.cs" />
     <Compile Include="Services\Models\Notifier.cs" />
