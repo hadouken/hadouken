@@ -42,7 +42,7 @@ namespace Hadouken.Core.Services
         [JsonRpcMethod("torrents.getLabels")]
         public IEnumerable<string> GetLabels()
         {
-            return _torrentEngine.GetAll().Select(t => t.Label).Where(l => !string.IsNullOrEmpty(l)).Distinct();
+            return _torrentEngine.GetLabels();
         }
 
         [JsonRpcMethod("torrents.addFile")]

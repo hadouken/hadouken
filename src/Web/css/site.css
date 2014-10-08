@@ -13,6 +13,17 @@ h1.page-header {
   margin-top: 0;
 }
 
+.directoryBrowser {
+  position: absolute;
+  z-index: 10;
+}
+
+.directoryBrowser .list-group-item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }

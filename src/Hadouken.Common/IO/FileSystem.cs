@@ -1,4 +1,7 @@
-﻿namespace Hadouken.Common.IO
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Hadouken.Common.IO
 {
     /// <summary>
     /// A physical file system implementation.
@@ -23,6 +26,11 @@
         public IDirectory GetDirectory(DirectoryPath path)
         {
             return new Directory(path);
+        }
+
+        public IEnumerable<IDriveInfo> GetDrives()
+        {
+            return System.IO.DriveInfo.GetDrives().Select(d => new DriveInfo(d));
         }
     }
 }

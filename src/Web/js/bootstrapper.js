@@ -38,6 +38,9 @@ window.pluginModules = window.pluginModules || [];
             'js/modules/bittorrent/controllers/torrentMoveController.js',
             'js/modules/bittorrent/directives/filereadDirective.js',
 
+            /* FileSystem module */
+            'js/modules/filesystem/filesystemModule.js',
+
             /* JSONRPC module */
             'js/modules/jsonrpc/jsonrpcModule.js',
 

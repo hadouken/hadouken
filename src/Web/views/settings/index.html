@@ -9,7 +9,7 @@
                 <div class="form-group">
                     <label for="bt_save_path" class="control-label col-sm-3">Save path</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" name="bt_save_path" ng-model="config['bt.save_path']" />
+                        <input type="text" class="form-control" name="bt_save_path" ng-model="config['bt.save_path']" directory-browser directory="config['bt.save_path']" />
                         <span class="help-block">Where to put your downloads.</span>
                     </div>
                 </div>

@@ -21,6 +21,8 @@ namespace Hadouken.Common.IO
         /// </value>
         bool Exists { get; }
 
+        bool Hidden { get; }
+
         /// <summary>
         /// Creates the directory.
         /// </summary>
@@ -47,5 +49,7 @@ namespace Hadouken.Common.IO
         /// <param name="scope">The scope.</param>
         /// <returns>Files matching the specified filter and scope.</returns>
         IEnumerable<IFile> GetFiles(string filter, SearchScope scope);
+
+        IDirectory GetParent();
     }
 }

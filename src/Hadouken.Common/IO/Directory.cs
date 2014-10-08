@@ -19,6 +19,11 @@ namespace Hadouken.Common.IO
             get { return _directory.Exists; }
         }
 
+        public bool Hidden
+        {
+            get { return _directory.Attributes.HasFlag(FileAttributes.Hidden); }
+        }
+
         public Directory(DirectoryPath path)
         {
             _path = path;
@@ -45,6 +50,12 @@ namespace Hadouken.Common.IO
         {
             var option = scope == SearchScope.Current ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
             return _directory.GetFiles(filter, option).Select(file => new File(file.FullName));
+        }
+
+        public IDirectory GetParent()
+        {
+            if (_directory.Parent == null) return null;
+            return new Directory(_directory.Parent.FullName);
         }
     }
 }
