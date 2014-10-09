@@ -1,6 +1,4 @@
 param (
-    [string]$ChocolateyAPIKey  = $env:CHOCOLATEY_API_KEY,
-    [string]$GitHubToken       = $env:GITHUB_TOKEN,
     [string]$Task              = "Default",
     [string]$BuildNumber       = $null
 )
@@ -11,6 +9,9 @@ $BuildVersion = $Version
 if($BuildNumber) {
     $BuildVersion = "$Version-build-$BuildNumber"
 }
+
+# Load publish configuration
+. .\build.config.ps1
 
 $nuget = Join-Path $PSScriptRoot "tools/nuget.exe"
 Start-Process -NoNewWindow -Wait $nuget "restore packages.config -PackagesDirectory packages"
