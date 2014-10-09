@@ -13,5 +13,7 @@
         public bool RecursiveSearch { get; set; }
 
         public bool AutoStart { get; set; }
+
+        public string Label { get; set; }
     }
 }

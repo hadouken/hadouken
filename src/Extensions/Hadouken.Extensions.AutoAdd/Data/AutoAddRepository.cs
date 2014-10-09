@@ -20,7 +20,7 @@ namespace Hadouken.Extensions.AutoAdd.Data
 
         public void CreateFolder(Folder folder)
         {
-            var query = @"insert into AutoAdd_Folder (Path, Pattern, RemoveSourceFile, RecursiveSearch, AutoStart) values (@Path, @Pattern, @RemoveSourceFile, @RecursiveSearch, @AutoStart); select last_insert_rowid();";
+            var query = @"insert into AutoAdd_Folder (Path, Pattern, RemoveSourceFile, RecursiveSearch, AutoStart, Label) values (@Path, @Pattern, @RemoveSourceFile, @RecursiveSearch, @AutoStart, @Label); select last_insert_rowid();";
             folder.Id = _connection.Query<int>(query, folder).First();
         }
 
@@ -38,7 +38,7 @@ namespace Hadouken.Extensions.AutoAdd.Data
 
         public IEnumerable<Folder> GetFolders()
         {
-            var query = @"select f.Id, f.Path, f.Pattern, f.RemoveSourceFile, f.AutoStart from AutoAdd_Folder f";
+            var query = @"select f.Id, f.Path, f.Pattern, f.RemoveSourceFile, f.AutoStart, f.Label from AutoAdd_Folder f";
             return _connection.Query<Folder>(query);
         }
 
@@ -50,7 +50,7 @@ namespace Hadouken.Extensions.AutoAdd.Data
 
         public void UpdateFolder(Folder folder)
         {
-            var query = @"update AutoAdd_Folder set Path = @Path, Pattern = @Pattern, RemoveSourceFile = @RemoveSourceFile, RecursiveSearch = @RecursiveSearch, AutoStart = @AutoStart where Id = @Id";
+            var query = @"update AutoAdd_Folder set Path = @Path, Pattern = @Pattern, RemoveSourceFile = @RemoveSourceFile, RecursiveSearch = @RecursiveSearch, AutoStart = @AutoStart, Label = @Label where Id = @Id";
             _connection.Execute(query, folder);
         }
     }

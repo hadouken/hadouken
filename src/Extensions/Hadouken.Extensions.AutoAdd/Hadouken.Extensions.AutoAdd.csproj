@@ -65,7 +65,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\20140804201352_CreateAutoAddTables.sql" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Sql\20141009203901_AddAutoAddLabels.sql" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\views\settings.html" />
   </ItemGroup>
