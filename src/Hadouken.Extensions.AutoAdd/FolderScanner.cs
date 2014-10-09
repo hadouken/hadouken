@@ -53,7 +53,7 @@ namespace Hadouken.Extensions.AutoAdd
 
                 if (_autoAddRepository.GetHistoryByPath(file.Path.FullPath) != null) continue;
                 
-                AddFile(file);
+                AddFile(file, folder.Label);
 
                 if (folder.RemoveSourceFile)
                 {
@@ -62,13 +62,13 @@ namespace Hadouken.Extensions.AutoAdd
             }
         }
 
-        private void AddFile(IFile file)
+        private void AddFile(IFile file, string label)
         {
             using (var stream = file.OpenRead())
             using (var ms = new MemoryStream())
             {
                 stream.CopyTo(ms);
-                _messageBus.Publish(new AddTorrentMessage(ms.ToArray()));
+                _messageBus.Publish(new AddTorrentMessage(ms.ToArray()) {Label = label});
             }
 
             // Add file to history
