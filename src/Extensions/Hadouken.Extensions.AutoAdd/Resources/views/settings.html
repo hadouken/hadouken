@@ -8,6 +8,7 @@
         <tr>
             <th>Path</th>
             <th>Pattern</th>
+            <th>Label</th>
             <th>Remove</th>
             <th>Recursive</th>
             <th>Autostart</th>
@@ -18,6 +19,7 @@
         <tr ng-repeat="folder in folders">
             <td>{{ folder.Path }}</td>
             <td>{{ folder.Pattern }}</td>
+            <td>{{ folder.Label }}</td>
             <td><i class="fa fa-check" ng-show="folder.RemoveSourceFile"></i></td>
             <td><i class="fa fa-check" ng-show="folder.RecursiveSearch"></i></td>
             <td><i class="fa fa-check" ng-show="folder.AutoStart"></i></td>
