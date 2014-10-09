@@ -11,7 +11,12 @@ if($BuildNumber) {
 }
 
 # Load publish configuration
-. .\build.config.ps1
+If (Test-Path .\build.config.ps1) {
+    . .\build.config.ps1
+} Else {
+    $ChocolateyAPIKey = ""
+    $GitHubToken = ""
+}
 
 $nuget = Join-Path $PSScriptRoot "tools/nuget.exe"
 Start-Process -NoNewWindow -Wait $nuget "restore packages.config -PackagesDirectory packages"
