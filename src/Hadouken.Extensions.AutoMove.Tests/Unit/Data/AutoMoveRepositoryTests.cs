@@ -140,14 +140,16 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
-                repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*"});
-                repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*"});
+                repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*", Source = ParameterSource.Label});
+                repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*", Source = ParameterSource.Name});
 
                 // When
-                var parameters = repository.GetParametersByRuleId(1);
+                var parameters = repository.GetParametersByRuleId(1).ToList();
 
                 // Then
                 Assert.Equal(2, parameters.Count());
+                Assert.Equal(ParameterSource.Label, parameters.First().Source);
+                Assert.Equal(ParameterSource.Name, parameters.Last().Source);
             }
         }
 

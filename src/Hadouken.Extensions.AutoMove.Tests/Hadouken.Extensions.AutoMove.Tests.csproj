@@ -48,9 +48,14 @@
   <ItemGroup>
     <Compile Include="Fixtures\AutoMoveRepositoryFixture.cs" />
     <Compile Include="Fixtures\AutoMoveServiceFixture.cs" />
+    <Compile Include="Fixtures\ParameterValueReplacerFixture.cs" />
+    <Compile Include="Fixtures\RuleFinderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit\Data\AutoMoveRepositoryTests.cs" />
     <Compile Include="Unit\AutoMoveServiceTests.cs" />
+    <Compile Include="Unit\ParameterValueReplacerTests.cs" />
+    <Compile Include="Unit\RuleFinderTests.cs" />
+    <Compile Include="Unit\SourceValueProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
