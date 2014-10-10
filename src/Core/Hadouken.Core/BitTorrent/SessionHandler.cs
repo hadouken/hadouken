@@ -303,8 +303,7 @@ namespace Hadouken.Core.BitTorrent
         private void Handle(TorrentFinishedAlert alert)
         {
             var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
-            if (_muted.Contains(torrent.InfoHash)) return;
-
+           
             if (torrent.TotalDownloadedBytes > 0)
             {
                 _messageBus.Publish(new TorrentCompletedMessage(torrent));                
@@ -319,8 +318,6 @@ namespace Hadouken.Core.BitTorrent
 
         private void Handle(TorrentRemovedAlert alert)
         {
-            if (_muted.Contains(alert.InfoHash)) _muted.Remove(alert.InfoHash);
-
             _torrentInfoRepository.Remove(alert.InfoHash);
             _messageBus.Publish(new TorrentRemovedMessage(alert.InfoHash));
         }
