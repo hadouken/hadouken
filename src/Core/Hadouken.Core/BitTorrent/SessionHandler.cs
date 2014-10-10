@@ -305,7 +305,10 @@ namespace Hadouken.Core.BitTorrent
             var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
             if (_muted.Contains(torrent.InfoHash)) return;
 
-            _messageBus.Publish(new TorrentCompletedMessage(torrent));
+            if (torrent.TotalDownloadedBytes > 0)
+            {
+                _messageBus.Publish(new TorrentCompletedMessage(torrent));                
+            }
         }
 
         public void Handle(TorrentPausedAlert alert)
