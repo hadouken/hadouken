@@ -24,6 +24,18 @@
       </Component>
 
       <Component>
+        <File Name="Microsoft.Owin.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Microsoft.Owin.Host.HttpListener.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Microsoft.Owin.Hosting.dll" />
+      </Component>
+
+      <Component>
         <File Name="Nancy.Bootstrappers.Autofac.dll" />
       </Component>
 
@@ -32,11 +44,15 @@
       </Component>
 
       <Component>
-        <File Name="Nancy.Hosting.Self.dll" />
+        <File Name="Nancy.Owin.dll" />
       </Component>
 
       <Component>
         <File Name="Newtonsoft.Json.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Owin.dll" />
       </Component>
 
       <Component>
@@ -63,12 +79,6 @@
     <ComponentGroup Id="X86Components" Directory="X86DIR" Source="$(var.BinDir)\x86\">
       <Component>
         <File Id="SQLiteInteropx86dll" Name="SQLite.Interop.dll" />
-      </Component>
-    </ComponentGroup>
-
-    <ComponentGroup Id="X64Components" Directory="X64DIR" Source="$(var.BinDir)\x64\">
-      <Component>
-        <File Id="SQLiteInteropx64dll" Name="SQLite.Interop.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

@@ -80,6 +80,9 @@
     <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
     <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />
     <Compile Include="BitTorrent\TorrentLabelChangedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentPausedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentRemovedMessage.cs" />
+    <Compile Include="BitTorrent\TorrentResumedMessage.cs" />
     <Compile Include="BitTorrent\TorrentState.cs" />
     <Compile Include="Data\DbConnection.cs" />
     <Compile Include="Data\IDbConnection.cs" />

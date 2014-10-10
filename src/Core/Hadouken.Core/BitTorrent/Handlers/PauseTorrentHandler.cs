@@ -22,7 +22,14 @@ namespace Hadouken.Core.BitTorrent.Handlers
                 if (handle == null) return;
 
                 handle.AutoManaged = false;
-                handle.Pause();
+
+                using (var status = handle.QueryStatus())
+                {
+                    if (!status.Paused)
+                    {
+                        handle.Pause();
+                    }
+                }
             }
         }
     }

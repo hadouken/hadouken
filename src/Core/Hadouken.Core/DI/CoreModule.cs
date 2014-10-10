@@ -63,6 +63,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<NotifyTorrentCompletedHandler>().AsImplementedInterfaces();
 
             // HTTP
+            builder.RegisterType<EventStreamServer>().AsSelf();
             builder.RegisterType<HttpServer>().As<IHttpServer>().SingleInstance();
             builder.RegisterType<CustomNancyBootstrapper>().As<INancyBootstrapper>().SingleInstance();
 

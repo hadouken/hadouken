@@ -1,27 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
+using Autofac;
 using Hadouken.Common.Data;
 using Hadouken.Common.Logging;
+using Hadouken.Core.Http.WebSockets.Extensions;
+using Hadouken.Core.Security;
+using Microsoft.Owin.Hosting;
 using Nancy.Bootstrapper;
-using Nancy.Hosting.Self;
+using Owin;
 
 namespace Hadouken.Core.Http
 {
     public class HttpServer : IHttpServer
     {
+#pragma warning disable 169
+// ReSharper disable once InconsistentNaming
+        private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener _owinHttpListener;
+#pragma warning restore 169
+
         private readonly ILogger<HttpServer> _logger;
         private readonly INancyBootstrapper _bootstrapper;
         private readonly IKeyValueStore _keyValueStore;
-        private NancyHost _nancyHost;
+        private readonly ILifetimeScope _lifetimeScope;
+        private readonly IUserManager _userManager;
+        private IDisposable _owinHost;
 
-        public HttpServer(ILogger<HttpServer> logger, INancyBootstrapper bootstrapper, IKeyValueStore keyValueStore)
+        public HttpServer(ILogger<HttpServer> logger,
+            INancyBootstrapper bootstrapper,
+            IKeyValueStore keyValueStore,
+            ILifetimeScope lifetimeScope,
+            IUserManager userManager)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (bootstrapper == null) throw new ArgumentNullException("bootstrapper");
             if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
+            if (lifetimeScope == null) throw new ArgumentNullException("lifetimeScope");
+            if (userManager == null) throw new ArgumentNullException("userManager");
             _logger = logger;
             _bootstrapper = bootstrapper;
             _keyValueStore = keyValueStore;
+            _lifetimeScope = lifetimeScope;
+            _userManager = userManager;
         }
 
         public void Start()
@@ -29,35 +47,18 @@ namespace Hadouken.Core.Http
             var binding = _keyValueStore.Get("http.binding", "localhost");
             var port = _keyValueStore.Get("http.port", 7890);
 
-            var cfg = new HostConfiguration
-            {
-                RewriteLocalhost = false
-            };
-
-            // If binding == '+', rewrite localhost and change binding to localhost
-            if (binding == "+")
-            {
-                cfg.RewriteLocalhost = true;
-                binding = "localhost";
-            }
-
-            var prefixes = new List<Uri>()
-            {
-                new Uri(string.Format("http://{0}:{1}/", binding, port))
-            };
+            var startOptions = new StartOptions(string.Format("http://{0}:{1}/", binding, port));
 
             // Safeguard if some address is wrong
             if (binding != "localhost")
             {
-                prefixes.Add(new Uri("http://localhost:" + port + "/"));
+                startOptions.Urls.Add("http://localhost:" + port + "/");
             }
-
-            _nancyHost = new NancyHost(_bootstrapper, cfg, prefixes.ToArray());
 
             try
             {
-                _nancyHost.Start();
-                _logger.Info("HTTP server accepting connections on {Prefixes}.", prefixes);
+                _owinHost = WebApp.Start(startOptions, AppBuilder);
+                _logger.Info("HTTP server accepting connections on {Urls}.", startOptions.Urls);
             }
             catch (Exception exception)
             {
@@ -67,8 +68,14 @@ namespace Hadouken.Core.Http
 
         public void Stop()
         {
-            _nancyHost.Stop();
-            _nancyHost.Dispose();
+            _owinHost.Dispose();
+        }
+
+        private void AppBuilder(IAppBuilder builder)
+        {
+            builder
+                .MapWebSocketRoute<EventStreamServer>("/events", _lifetimeScope, _userManager)
+                .UseNancy(nancyOptions => nancyOptions.Bootstrapper = _bootstrapper);
         }
     }
 }

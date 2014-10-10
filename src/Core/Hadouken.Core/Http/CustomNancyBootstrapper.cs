@@ -11,9 +11,7 @@ using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
 using Nancy.Conventions;
-using Nancy.Extensions;
 using Nancy.Responses;
-using Path = Hadouken.Common.IO.Path;
 
 namespace Hadouken.Core.Http
 {

@@ -272,9 +272,17 @@ namespace Hadouken.Core.BitTorrent
                     {
                         Handle((TorrentFinishedAlert) alert);
                     }
+                    else if (alert is TorrentPausedAlert)
+                    {
+                        Handle((TorrentPausedAlert) alert);
+                    }
                     else if (alert is TorrentRemovedAlert)
                     {
                         Handle((TorrentRemovedAlert) alert);
+                    }
+                    else if (alert is TorrentResumedAlert)
+                    {
+                        Handle((TorrentResumedAlert) alert);
                     }
                     else if (alert is MetadataReceivedAlert)
                     {
@@ -300,9 +308,24 @@ namespace Hadouken.Core.BitTorrent
             _messageBus.Publish(new TorrentCompletedMessage(torrent));
         }
 
+        public void Handle(TorrentPausedAlert alert)
+        {
+            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
+            _messageBus.Publish(new TorrentPausedMessage(torrent));
+        }
+
         private void Handle(TorrentRemovedAlert alert)
         {
+            if (_muted.Contains(alert.InfoHash)) _muted.Remove(alert.InfoHash);
+
             _torrentInfoRepository.Remove(alert.InfoHash);
+            _messageBus.Publish(new TorrentRemovedMessage(alert.InfoHash));
+        }
+
+        public void Handle(TorrentResumedAlert alert)
+        {
+            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
+            _messageBus.Publish(new TorrentResumedMessage(torrent));
         }
 
         private void Handle(MetadataReceivedAlert alert)
