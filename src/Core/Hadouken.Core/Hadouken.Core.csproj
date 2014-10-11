@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="Ragnar, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Ragnar.0.5.0\lib\net45\Ragnar.dll</HintPath>
+      <HintPath>..\..\..\packages\Ragnar.0.6.0\lib\net45\Ragnar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -76,10 +76,12 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BitTorrent\AlertBus.cs" />
     <Compile Include="BitTorrent\Data\ITorrentMetadataRepository.cs" />
     <Compile Include="BitTorrent\Data\TorrentMetadataRepository.cs" />
     <Compile Include="BitTorrent\Handlers\AddUrlHandler.cs" />
     <Compile Include="BitTorrent\Handlers\AddTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\ChangeFilePriorityHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ChangeTorrentLabelHandler.cs" />
     <Compile Include="BitTorrent\Handlers\MoveTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\PauseTorrentHandler.cs" />
@@ -90,13 +92,17 @@
     <Compile Include="BitTorrent\Handlers\RemoveTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ResumeTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\SessionSettingsChangedHandler.cs" />
+    <Compile Include="BitTorrent\IAlertBus.cs" />
     <Compile Include="BitTorrent\ISessionHandler.cs" />
     <Compile Include="BitTorrent\ITorrentInfoRepository.cs" />
+    <Compile Include="BitTorrent\ITorrentManager.cs" />
     <Compile Include="BitTorrent\Peer.cs" />
     <Compile Include="BitTorrent\SessionHandler.cs" />
     <Compile Include="BitTorrent\Torrent.cs" />
+    <Compile Include="BitTorrent\TorrentEngine.cs" />
     <Compile Include="BitTorrent\TorrentFile.cs" />
     <Compile Include="BitTorrent\TorrentInfoRepository.cs" />
+    <Compile Include="BitTorrent\TorrentManager.cs" />
     <Compile Include="Data\INotifierRepository.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Data\Models\User.cs" />

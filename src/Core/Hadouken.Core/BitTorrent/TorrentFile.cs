@@ -1,30 +1,23 @@
 ﻿using Hadouken.Common.BitTorrent;
-using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
     internal sealed class TorrentFile : ITorrentFile
     {
+        public TorrentFile(int index, string path, long size, long offset)
+        {
+            Index = index;
+            Path = path;
+            Size = size;
+            Offset = offset;
+        }
+
+        public int Index { get; private set; }
+
         public string Path { get; private set; }
 
         public long Size { get; private set; }
         
-        public float Progress { get; private set; }
-        
-        public int Priority { get; private set; }
-
-        public static ITorrentFile CreateFromEntry(FileEntry entry, long progress, int priority)
-        {
-            using (entry)
-            {
-                return new TorrentFile
-                {
-                    Path = entry.Path,
-                    Priority = priority,
-                    Progress = (progress / (float) entry.Size) * 100f,
-                    Size = entry.Size
-                };
-            }
-        }
+        public long Offset { get; private set; }
     }
 }

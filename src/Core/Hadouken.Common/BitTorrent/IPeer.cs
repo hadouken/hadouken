@@ -1,9 +1,19 @@
-﻿using System.Net;
-
-namespace Hadouken.Common.BitTorrent
+﻿namespace Hadouken.Common.BitTorrent
 {
     public interface IPeer
     {
-        string EndPoint { get; }
+        string Client { get; }
+
+        string Country { get; }
+
+        long DownloadSpeed { get; }
+
+        string IP { get; }
+
+        float Progress { get; }
+
+        bool IsSeed { get; }
+
+        long UploadSpeed { get; }
     }
 }

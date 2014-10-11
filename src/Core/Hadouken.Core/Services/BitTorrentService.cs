@@ -45,6 +45,34 @@ namespace Hadouken.Core.Services
             return _torrentEngine.GetLabels();
         }
 
+        [JsonRpcMethod("torrents.getFiles")]
+        public IEnumerable<ITorrentFile> GetFiles(string infoHash)
+        {
+            var torrent = _torrentEngine.GetByInfoHash(infoHash);
+            return torrent == null ? null : torrent.GetFiles();
+        }
+
+        [JsonRpcMethod("torrents.getFileProgress")]
+        public IEnumerable<float> GetFileProgress(string infoHash)
+        {
+            var torrent = _torrentEngine.GetByInfoHash(infoHash);
+            return torrent == null ? null : torrent.GetFileProgress();
+        }
+
+        [JsonRpcMethod("torrents.getFilePriorities")]
+        public IEnumerable<int> GetFilePriorities(string infoHash)
+        {
+            var torrent = _torrentEngine.GetByInfoHash(infoHash);
+            return torrent == null ? null : torrent.GetFilePriorities();
+        }
+
+        [JsonRpcMethod("torrents.getPeers")]
+        public IEnumerable<IPeer> GetPeers(string infoHash)
+        {
+            var torrent = _torrentEngine.GetByInfoHash(infoHash);
+            return torrent == null ? null : torrent.GetPeers();
+        }
+        
         [JsonRpcMethod("torrents.addFile")]
         public void AddFile(byte[] data, TorrentParameters parameters)
         {
@@ -99,6 +127,12 @@ namespace Hadouken.Core.Services
         public void ChangeLabel(string infoHash, string label)
         {
             _messageBus.Publish(new ChangeTorrentLabelMessage(infoHash) {Label = label});
+        }
+
+        [JsonRpcMethod("torrents.setFilePriority")]
+        public void SetFilePriority(string infoHash, int fileIndex, int priority)
+        {
+            _messageBus.Publish(new ChangeFilePriorityMessage(infoHash, fileIndex, priority));
         }
 
         /*

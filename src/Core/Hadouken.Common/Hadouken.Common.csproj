@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="BitTorrent\AddUrlMessage.cs" />
     <Compile Include="BitTorrent\AddTorrentMessage.cs" />
+    <Compile Include="BitTorrent\ChangeFilePriorityMessage.cs" />
     <Compile Include="BitTorrent\ChangeTorrentLabelMessage.cs" />
     <Compile Include="BitTorrent\IPeer.cs" />
     <Compile Include="BitTorrent\ITorrent.cs" />

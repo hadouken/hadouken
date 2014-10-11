@@ -1,90 +1,236 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Hadouken.Common.BitTorrent;
-using Hadouken.Core.BitTorrent.Data;
 using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
-    internal sealed class Torrent : ITorrent
+    internal sealed class Torrent : ITorrent, IDisposable
     {
-        public string InfoHash { get; private set; }
-        
-        public string Name { get; private set; }
-        
-        public long Size { get; private set; }
-        
-        public float Progress { get; private set; }
+        private readonly TorrentHandle _handle;
+        private TorrentInfo _info;
+        private TorrentStatus _status;
 
-        public string SavePath { get; private set; }
+        public Torrent(TorrentHandle handle)
+        {
+            if (handle == null) throw new ArgumentNullException("handle");
+            _handle = handle;
+            _status = handle.QueryStatus();
 
-        public long DownloadSpeed { get; private set; }
-        
-        public long UploadSpeed { get; private set; }
-        
-        public long TotalDownloadedBytes { get; private set; }
-        
-        public long TotalUploadedBytes { get; private set; }
+            // Set initial properties
+            TorrentInfo = _handle.TorrentFile;
+        }
 
-        public Common.BitTorrent.TorrentState State { get; private set; }
+        internal TorrentHandle Handle
+        {
+            get { return _handle; }
+        }
 
-        public bool Paused { get; private set; }
+        internal TorrentInfo TorrentInfo
+        {
+            get { return _info; }
+            set
+            {
+                if (_info != null) _info.Dispose();
+                _info = value;
+            }
+        }
 
-        public ITorrentFile[] Files { get; private set; }
+        internal TorrentStatus Status
+        {
+            get { return _status; }
+            set
+            {
+                if (_status != null) _status.Dispose();
+                _status = value;
+            }
+        }
 
-        public IPeer[] Peers { get; private set; }
+        public string InfoHash
+        {
+            get { return _handle.InfoHash.ToHex(); }
+        }
+
+        public string Name
+        {
+            get { return GetName(); }
+        }
+
+        public bool HasMetadata
+        {
+            get { return TorrentInfo != null; }
+        }
+
+        public long Size
+        {
+            get { return HasMetadata ? TorrentInfo.TotalSize : -1; }
+        }
+
+        public float Progress
+        {
+            get { return _status.Progress; }
+        }
+
+        public string SavePath
+        {
+            get { return GetSavePath(); }
+        }
+
+        public long DownloadSpeed
+        {
+            get { return _status.DownloadPayloadRate; }
+        }
+
+        public long UploadSpeed
+        {
+            get { return _status.UploadPayloadRate; }
+        }
+
+        public long TotalDownloadedBytes
+        {
+            get { return _status.TotalPayloadDownload; }
+        }
+
+        public long TotalUploadedBytes
+        {
+            get { return _status.TotalPayloadUpload; }
+        }
+
+        public Common.BitTorrent.TorrentState State
+        {
+            get { return (Common.BitTorrent.TorrentState) (int) _status.State; }
+        }
+
+        public bool Paused
+        {
+            get { return _status.Paused; }
+        }
 
         public string Label { get; private set; }
 
-        public bool IsSeeding { get; private set; }
-
-        public bool IsFinished { get; private set; }
-
-        public int QueuePosition { get; private set; }
-
-        internal static ITorrent CreateFromHandle(TorrentHandle handle, ITorrentMetadataRepository metadataRepository)
+        public bool IsSeed
         {
-            using (handle)
-            using (var file = handle.TorrentFile)
-            using (var status = handle.QueryStatus())
+            get { return _status.IsSeeding; }
+        }
+
+        public bool IsFinished
+        {
+            get { return _status.IsFinished; }
+        }
+
+        public int QueuePosition
+        {
+            get { return _handle.QueuePosition; }
+        }
+
+        public IEnumerable<ITorrentFile> GetFiles()
+        {
+            if (!HasMetadata)
             {
-                var t = new Torrent
+                return Enumerable.Empty<ITorrentFile>();
+            }
+
+            var result = new List<ITorrentFile>();
+
+            for (var i = 0; i < TorrentInfo.NumFiles; i++)
+            {
+                using (var entry = TorrentInfo.FileAt(i))
                 {
-                    InfoHash = handle.InfoHash.ToHex(),
-                    Name = status.Name,
-                    SavePath = status.SavePath,
-                    Size = file == null ? -1 : file.TotalSize,
-                    Progress = status.Progress,
-                    DownloadSpeed = status.DownloadRate,
-                    UploadSpeed = status.UploadRate,
-                    TotalDownloadedBytes = status.TotalDownload,
-                    TotalUploadedBytes = status.TotalUpload,
-                    State = (Common.BitTorrent.TorrentState) (int) status.State,
-                    Paused = status.Paused,
-                    Files = new ITorrentFile[file == null ? 0 : file.NumFiles],
-                    Peers = handle.GetPeerInfo().Select(Peer.CreateFromPeerInfo).ToArray(),
-                    IsFinished = status.IsFinished,
-                    IsSeeding = status.IsSeeding,
-                    QueuePosition = status.QueuePosition
-                };
+                    result.Add(new TorrentFile(i, entry.Path, entry.Size, entry.Offset));
+                }
+            }
 
-                t.Label = metadataRepository.GetLabel(t.InfoHash.ToLowerInvariant());
+            return result;
+        }
 
-                // If no torrent file (ie. downloading metadata)
-                if (file == null) return t;
+        public IEnumerable<int> GetFilePriorities()
+        {
+            return !HasMetadata ? Enumerable.Empty<int>() : _handle.GetFilePriorities();
+        }
 
-                var progresses = handle.GetFileProgresses();
-                var priorities = handle.GetFilePriorities();
+        public IEnumerable<float> GetFileProgress()
+        {
+            if (!HasMetadata)
+            {
+                return Enumerable.Empty<float>();
+            }
 
-                for (var i = 0; i < file.NumFiles; i++)
+            var progress = _handle.GetFileProgresses();
+            var result = new List<float>();
+
+            foreach (var file in GetFiles())
+            {
+                try
                 {
-                    var entry = file.FileAt(i);
-                    var torrentFile = TorrentFile.CreateFromEntry(entry, progresses[i], priorities[i]);
+                    result.Add(progress[file.Index]/(float) file.Size);
+                }
+                catch (DivideByZeroException)
+                {
+                    result.Add(0.0f);
+                }
+            }
 
-                    t.Files[i] = torrentFile;
+            return result;
+        } 
+
+        public IEnumerable<IPeer> GetPeers()
+        {
+            var result = new List<IPeer>();
+            var peers = _handle.GetPeerInfo();
+
+            foreach (var peer in peers)
+            {
+                if (peer.Flags.HasFlag(PeerFlags.Connecting)
+                    || peer.Flags.HasFlag(PeerFlags.Handshake))
+                {
+                    continue;
                 }
 
-                return t;
+                result.Add(new Peer
+                {
+                    Client = peer.Client,
+                    Country = string.Empty,
+                    DownloadSpeed = peer.PayloadDownSpeed,
+                    IP = peer.EndPoint.ToString(),
+                    IsSeed = peer.Flags.HasFlag(PeerFlags.Seed),
+                    Progress = peer.Progress,
+                    UploadSpeed = peer.PayloadUpSpeed
+                });
+
+                peer.Dispose();
             }
+
+            return result;
+        }
+
+        private string GetName()
+        {
+            if (!HasMetadata) return InfoHash;
+
+            using (var entry = TorrentInfo.FileAt(0))
+            {
+                var name = entry.Path.Replace("\\", "/").Split('/').FirstOrDefault();
+                return string.IsNullOrEmpty(name) ? TorrentInfo.Name : name;
+            }
+        }
+
+        private string GetSavePath()
+        {
+            return (HasMetadata && TorrentInfo.NumFiles > 1
+                ? System.IO.Path.Combine(_status.SavePath, GetName())
+                : _status.SavePath);
+        }
+
+        public void Dispose()
+        {
+            if (TorrentInfo != null)
+            {
+                TorrentInfo.Dispose();
+            }
+
+            _status.Dispose();
+            _handle.Dispose();
         }
     }
 }

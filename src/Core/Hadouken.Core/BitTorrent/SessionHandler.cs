@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using Hadouken.Common;
-using Hadouken.Common.BitTorrent;
 using Hadouken.Common.Data;
 using Hadouken.Common.IO;
 using Hadouken.Common.Logging;
 using Hadouken.Common.Messaging;
-using Hadouken.Core.BitTorrent.Data;
+using Hadouken.Common.Timers;
 using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
-    public class SessionHandler : ISessionHandler, ITorrentEngine
+    internal class SessionHandler : ISessionHandler
     {
         private readonly ILogger<SessionHandler> _logger;
         private readonly IEnvironment _environment;
@@ -22,11 +19,10 @@ namespace Hadouken.Core.BitTorrent
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMessageBus _messageBus;
         private readonly ISession _session;
-        private readonly ITorrentInfoRepository _torrentInfoRepository;
-        private readonly ITorrentMetadataRepository _metadataRepository;
+        private readonly IAlertBus _alertBus;
+        private readonly ITorrentManager _torrentManager;
         private readonly IList<string> _muted;
-        private readonly Thread _alertsThread;
-        private bool _alertsThreadRunning;
+        private readonly ITimer _timer;
 
         public SessionHandler(ILogger<SessionHandler> logger,
             IEnvironment environment,
@@ -34,8 +30,9 @@ namespace Hadouken.Core.BitTorrent
             IKeyValueStore keyValueStore,
             IMessageBus messageBus,
             ISession session,
-            ITorrentInfoRepository torrentInfoRepository,
-            ITorrentMetadataRepository metadataRepository)
+            IAlertBus alertBus,
+            ITorrentManager torrentManager,
+            ITimerFactory timerFactory)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (environment == null) throw new ArgumentNullException("environment");
@@ -43,8 +40,8 @@ namespace Hadouken.Core.BitTorrent
             if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
             if (session == null) throw new ArgumentNullException("session");
-            if (torrentInfoRepository == null) throw new ArgumentNullException("torrentInfoRepository");
-            if (metadataRepository == null) throw new ArgumentNullException("metadataRepository");
+            if (alertBus == null) throw new ArgumentNullException("alertBus");
+            if (torrentManager == null) throw new ArgumentNullException("torrentManager");
 
             _logger = logger;
             _environment = environment;
@@ -52,10 +49,10 @@ namespace Hadouken.Core.BitTorrent
             _keyValueStore = keyValueStore;
             _messageBus = messageBus;
             _session = session;
-            _torrentInfoRepository = torrentInfoRepository;
-            _metadataRepository = metadataRepository;
+            _alertBus = alertBus;
+            _torrentManager = torrentManager;
             _muted = new List<string>();
-            _alertsThread = new Thread(ReadAlerts);
+            _timer = timerFactory.Create(1000, PostTorrentUpdates);
         }
 
         public void Load()
@@ -67,6 +64,7 @@ namespace Hadouken.Core.BitTorrent
             _logger.Debug("Setting alert mask.");
             _session.SetAlertMask(SessionAlertCategory.Error
                                   | SessionAlertCategory.Peer
+                                  | SessionAlertCategory.Stats
                                   | SessionAlertCategory.Status);
 
             var listenPort = _keyValueStore.Get<int>("bt.net.listen_port");
@@ -77,9 +75,10 @@ namespace Hadouken.Core.BitTorrent
             // Reload session settings
             _messageBus.Publish(new KeyValueChangedMessage(new[] {"bt.forceReloadSettings"}));
 
+            _torrentManager.Load();
+
             // Start alerts thread
-            _alertsThreadRunning = true;
-            _alertsThread.Start();
+            _alertBus.StartRead();
 
             // Load previous session state (if any)
             var sessionStatePath = _environment.GetApplicationDataPath().CombineWithFilePath("session_state");
@@ -141,12 +140,14 @@ namespace Hadouken.Core.BitTorrent
                     _session.AsyncAddTorrent(addParams);
                 }
             }
+
+            _timer.Start();
         }
 
         public void Unload()
         {
-            _alertsThreadRunning = false;
-            _alertsThread.Join();
+            _timer.Stop();
+            _alertBus.StopRead();
 
             // Save state
             _session.Pause();
@@ -229,112 +230,9 @@ namespace Hadouken.Core.BitTorrent
             if (sessImpl != null) sessImpl.Dispose();
         }
 
-        public ISession Session { get { return _session; } }
-
-        public IEnumerable<ITorrent> GetAll()
+        private void PostTorrentUpdates()
         {
-            return _session.GetTorrents().Select(t => Torrent.CreateFromHandle(t, _metadataRepository));
-        }
-
-        public ITorrent GetByInfoHash(string infoHash)
-        {
-            var handle = _session.FindTorrent(infoHash);
-            return handle == null ? null : Torrent.CreateFromHandle(handle, _metadataRepository);
-        }
-
-        public IEnumerable<string> GetLabels()
-        {
-            return _metadataRepository.GetAllLabels();
-        } 
-
-        private void ReadAlerts()
-        {
-            _logger.Debug("Starting alerts thread.");
-
-            var timeout = TimeSpan.FromSeconds(1);
-
-            while (_alertsThreadRunning)
-            {
-                var foundAlerts = _session.Alerts.PeekWait(timeout);
-                if (!foundAlerts) continue;
-
-                var alerts = _session.Alerts.PopAll();
-
-                foreach (var alert in alerts)
-                {
-                    _logger.Debug(alert.Message);
-
-                    if (alert is TorrentAddedAlert)
-                    {
-                        Handle((TorrentAddedAlert) alert);
-                    }
-                    else if (alert is TorrentFinishedAlert)
-                    {
-                        Handle((TorrentFinishedAlert) alert);
-                    }
-                    else if (alert is TorrentPausedAlert)
-                    {
-                        Handle((TorrentPausedAlert) alert);
-                    }
-                    else if (alert is TorrentRemovedAlert)
-                    {
-                        Handle((TorrentRemovedAlert) alert);
-                    }
-                    else if (alert is TorrentResumedAlert)
-                    {
-                        Handle((TorrentResumedAlert) alert);
-                    }
-                    else if (alert is MetadataReceivedAlert)
-                    {
-                        Handle((MetadataReceivedAlert) alert);
-                    }
-                }
-            }
-        }
-
-        private void Handle(TorrentAddedAlert alert)
-        {
-            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
-            if (_muted.Contains(torrent.InfoHash)) return;
-
-            _messageBus.Publish(new TorrentAddedMessage(torrent));
-        }
-
-        private void Handle(TorrentFinishedAlert alert)
-        {
-            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
-           
-            if (torrent.TotalDownloadedBytes > 0)
-            {
-                _messageBus.Publish(new TorrentCompletedMessage(torrent));                
-            }
-        }
-
-        public void Handle(TorrentPausedAlert alert)
-        {
-            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
-            _messageBus.Publish(new TorrentPausedMessage(torrent));
-        }
-
-        private void Handle(TorrentRemovedAlert alert)
-        {
-            _torrentInfoRepository.Remove(alert.InfoHash);
-            _messageBus.Publish(new TorrentRemovedMessage(alert.InfoHash));
-        }
-
-        public void Handle(TorrentResumedAlert alert)
-        {
-            var torrent = Torrent.CreateFromHandle(alert.Handle, _metadataRepository);
-            _messageBus.Publish(new TorrentResumedMessage(torrent));
-        }
-
-        private void Handle(MetadataReceivedAlert alert)
-        {
-            using (var h = alert.Handle)
-            using (var info = h.TorrentFile)
-            {
-                _torrentInfoRepository.Save(info);
-            }
+            _session.PostTorrentUpdates();
         }
     }
 }

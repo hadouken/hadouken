@@ -2,12 +2,12 @@
 {
     public interface ITorrentFile
     {
+        int Index { get; }
+
         string Path { get; }
 
         long Size { get; }
 
-        float Progress { get; }
-
-        int Priority { get; }
+        long Offset { get; }
     }
 }

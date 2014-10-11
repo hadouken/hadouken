@@ -140,9 +140,12 @@
             });
         };
 
-        $scope.remove = function(infoHash) {
+        $scope.remove = function(infoHash, removeData) {
+            var idx = getIndex(infoHash);
+            $scope.torrents[idx].Removing = true;
+
             jsonrpc.request('torrents.remove', {
-                params: [infoHash, false],
+                params: [infoHash, removeData],
                 success: function() {}
             });
         };
@@ -212,6 +215,7 @@
 
         function updateTorrent(oldTorrent, newTorrent) {
             oldTorrent.DownloadSpeed = newTorrent.DownloadSpeed;
+            oldTorrent.Name = newTorrent.Name;
             oldTorrent.Paused = newTorrent.Paused;
             oldTorrent.Progress = newTorrent.Progress;
             oldTorrent.QueuePosition = newTorrent.QueuePosition;

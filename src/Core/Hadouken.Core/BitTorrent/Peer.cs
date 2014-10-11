@@ -1,22 +1,21 @@
-﻿using System.Net;
-using Hadouken.Common.BitTorrent;
-using Ragnar;
+﻿using Hadouken.Common.BitTorrent;
 
 namespace Hadouken.Core.BitTorrent
 {
     internal sealed class Peer : IPeer
     {
-        public string EndPoint { get; private set; }
+        public string Client { get; internal set; }
 
-        public static IPeer CreateFromPeerInfo(PeerInfo info)
-        {
-            using (info)
-            {
-                return new Peer
-                {
-                    EndPoint = info.EndPoint.ToString()
-                };
-            }
-        }
+        public string Country { get; internal set; }
+
+        public long DownloadSpeed { get; internal set; }
+
+        public string IP { get; internal set; }
+
+        public float Progress { get; internal set; }
+
+        public bool IsSeed { get; internal set; }
+
+        public long UploadSpeed { get; internal set; }
     }
 }

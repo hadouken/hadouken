@@ -1,27 +1,25 @@
 ﻿using System;
 using Hadouken.Common.BitTorrent;
 using Hadouken.Common.Messaging;
-using Ragnar;
 
 namespace Hadouken.Core.BitTorrent.Handlers
 {
-    public sealed class QueuePositionUpHandler : IMessageHandler<QueuePositionUpMessage>
+    internal sealed class QueuePositionUpHandler : IMessageHandler<QueuePositionUpMessage>
     {
-        private readonly ISession _session;
+        private readonly ITorrentManager _torrentManager;
 
-        public QueuePositionUpHandler(ISession session)
+        public QueuePositionUpHandler(ITorrentManager torrentManager)
         {
-            if (session == null) throw new ArgumentNullException("session");
-            _session = session;
+            if (torrentManager == null) throw new ArgumentNullException("torrentManager");
+            _torrentManager = torrentManager;
         }
 
         public void Handle(QueuePositionUpMessage message)
         {
-            using (var handle = _session.FindTorrent(message.InfoHash))
-            {
-                if (handle == null) return;
-                handle.QueuePositionUp();
-            }
+            Torrent torrent;
+            if (!_torrentManager.Torrents.TryGetValue(message.InfoHash, out torrent)) return;
+
+            torrent.Handle.QueuePositionUp();
         }
     }
 }

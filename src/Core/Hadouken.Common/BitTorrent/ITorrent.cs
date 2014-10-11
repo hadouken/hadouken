@@ -1,4 +1,6 @@
-﻿namespace Hadouken.Common.BitTorrent
+﻿using System.Collections.Generic;
+
+namespace Hadouken.Common.BitTorrent
 {
     public interface ITorrent
     {
@@ -65,16 +67,6 @@
         bool Paused { get; }
 
         /// <summary>
-        /// Gets a list of the files that make up this torrent.
-        /// </summary>
-        ITorrentFile[] Files { get; }
-
-        /// <summary>
-        /// Gets a list of peers for this torrent.
-        /// </summary>
-        IPeer[] Peers { get; }
-
-        /// <summary>
         /// Gets a value indicating whether this torrent is finished. A torrent
         /// is considered finished if all pieces with a priority > 0 are
         /// downloaded.
@@ -85,11 +77,32 @@
         /// Gets a value indicating whether this torrent is seeding. <c>True</c>
         /// is all pieces are downloaded.
         /// </summary>
-        bool IsSeeding { get; }
+        bool IsSeed { get; }
 
         /// <summary>
         /// Gets the position of this torrent in the queue.
         /// </summary>
         int QueuePosition { get; }
+
+        /// <summary>
+        /// Gets a list of the files that make up this torrent.
+        /// </summary>
+        IEnumerable<ITorrentFile> GetFiles();
+
+        /// <summary>
+        /// Gets a list of the file priorities.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<int> GetFilePriorities();
+            
+        /// <summary>
+        /// Gets the file progress as a list of floats (0.0 -> 1.0).
+        /// </summary>
+        IEnumerable<float> GetFileProgress();
+            
+        /// <summary>
+        /// Gets a list of peers for this torrent.
+        /// </summary>
+        IEnumerable<IPeer> GetPeers();
     }
 }
