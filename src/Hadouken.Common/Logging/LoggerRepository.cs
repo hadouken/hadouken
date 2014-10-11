@@ -6,9 +6,18 @@ using Serilog.Events;
 
 namespace Hadouken.Common.Logging
 {
+    using Hadouken.Common.Text;
+
     public sealed class LoggerRepository : ILoggerRepository, ILogEventSink
     {
         private readonly IList<LogEntry> _entries = new List<LogEntry>();
+
+        private IStringEncoder _stringEncoder;
+
+        public LoggerRepository(IStringEncoder stringEncoder)
+        {
+            _stringEncoder = stringEncoder;
+        }
 
         public IEnumerable<LogEntry> GetAll()
         {
@@ -29,7 +38,7 @@ namespace Hadouken.Common.Logging
             _entries.Add(new LogEntry
             {
                 Level = level,
-                Message = logEvent.RenderMessage(),
+                Message = _stringEncoder.Encode(logEvent.RenderMessage()),
                 Source = source,
                 Timestamp = logEvent.Timestamp,
                 ExceptionString = logEvent.Exception != null ? logEvent.Exception.ToString() : string.Empty
