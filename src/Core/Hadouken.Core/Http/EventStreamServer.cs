@@ -35,6 +35,7 @@ namespace Hadouken.Core.Http
         {
             _messageBus.Unsubscribe<TorrentAddedMessage>(OnTorrentAdded);
             _messageBus.Unsubscribe<TorrentCompletedMessage>(OnTorrentCompleted);
+            _messageBus.Unsubscribe<TorrentRemovedMessage>(OnTorrentRemoved);
         }
 
         private void OnTorrentAdded(TorrentAddedMessage message)
