@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Hadouken.Common.BitTorrent;
 using Hadouken.Common.Messaging;
@@ -11,7 +12,7 @@ namespace Hadouken.Core.BitTorrent
         private readonly IAlertBus _alertBus;
         private readonly IMessageBus _messageBus;
         private readonly ITorrentInfoRepository _torrentInfoRepository;
-        private readonly IDictionary<string, Torrent> _torrents;  
+        private readonly ConcurrentDictionary<string, Torrent> _torrents;  
 
         public TorrentManager(IAlertBus alertBus, IMessageBus messageBus, ITorrentInfoRepository torrentInfoRepository)
         {
@@ -22,7 +23,7 @@ namespace Hadouken.Core.BitTorrent
             _alertBus = alertBus;
             _messageBus = messageBus;
             _torrentInfoRepository = torrentInfoRepository;
-            _torrents = new Dictionary<string, Torrent>(StringComparer.OrdinalIgnoreCase);
+            _torrents = new ConcurrentDictionary<string, Torrent>(StringComparer.OrdinalIgnoreCase);
         }
 
         public IDictionary<string, Torrent> Torrents
@@ -59,9 +60,11 @@ namespace Hadouken.Core.BitTorrent
         private void OnTorrentAdded(TorrentAddedAlert alert)
         {
             var torrent = new Torrent(alert.Handle);
-            _torrents.Add(torrent.InfoHash, torrent);
-
-            _messageBus.Publish(new TorrentAddedMessage(torrent));
+            
+            if (_torrents.TryAdd(torrent.InfoHash, torrent))
+            {
+                _messageBus.Publish(new TorrentAddedMessage(torrent));   
+            }
         }
 
         private void OnTorrentFinished(TorrentFinishedAlert alert)
@@ -87,10 +90,12 @@ namespace Hadouken.Core.BitTorrent
 
         private void OnTorrentRemoved(TorrentRemovedAlert alert)
         {
-            var torrent = _torrents[alert.InfoHash];
-            torrent.Dispose();
+            Torrent torrent;
 
-            _torrents.Remove(alert.InfoHash);
+            if (_torrents.TryRemove(alert.InfoHash, out torrent))
+            {
+                torrent.Dispose();                
+            }
 
             _messageBus.Publish(new TorrentRemovedMessage(alert.InfoHash));
         }
@@ -99,8 +104,8 @@ namespace Hadouken.Core.BitTorrent
         {
             foreach (var status in alert.Statuses)
             {
-                var torrent = _torrents[status.InfoHash.ToHex()];
-                if (torrent == null) continue;
+                Torrent torrent;
+                if (!_torrents.TryGetValue(status.InfoHash.ToHex(), out torrent)) continue;
 
                 torrent.Status = status;
             }
