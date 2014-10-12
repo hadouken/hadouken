@@ -107,7 +107,7 @@ namespace Hadouken.Core.BitTorrent
             get { return _status.Paused; }
         }
 
-        public string Label { get; private set; }
+        public string Label { get; internal set; }
 
         public bool IsSeed
         {
