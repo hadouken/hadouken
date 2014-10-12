@@ -25,45 +25,52 @@
                 </div>
             </form>
         </tab>
-        <tab heading="Files ({{torrent.Files.length}})">
+        <tab heading="Files ({{ files.length }})">
             <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Path</th>
                         <th>Size</th>
-                        <th>Progress</th>
+                        <th style="text-align: right;">Progress</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="file in torrent.Files">
+                    <tr ng-repeat="file in files">
+                        <td>{{ file.Path }}</td>
+                        <td>{{ file.Size | bytes }}</td>
+                        <td style="text-align: right;">{{ progress[$index] | fileProgress }}%</td>
                         <td>
-                            {{ file.Path }}
-                            <span class="dropdown" on-toggle="toggled(open)">
-                                <a href class="dropdown-toggle"><span class="caret"></span></a>
+                            <div class="dropdown pull-right" on-toggle="toggled(open)">
+                                <button class="btn btn-xs btn-default dropdown-toggle"><i class="fa fa-bars"></i></button>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-header">Priority</li>
-                                    <li><a href ng-click="setPriority($index, 0)">Do not download <i class="fa fa-check" ng-show="file.Priority == 0"></i></a></li>
-                                    <li><a href ng-click="setPriority($index, 1)">Normal <i class="fa fa-check" ng-show="file.Priority == 1"></i></a></li>
-                                    <li><a href ng-click="setPriority($index, 7)">Highest <i class="fa fa-check" ng-show="file.Priority == 7"></i></a></li>
+                                    <li><a href ng-click="setPriority($index, 0)">Do not download <i class="fa fa-check" ng-show="priorities[$index] == 0"></i></a></li>
+                                    <li><a href ng-click="setPriority($index, 1)">Normal <i class="fa fa-check" ng-show="priorities[$index] == 1"></i></a></li>
+                                    <li><a href ng-click="setPriority($index, 7)">Highest <i class="fa fa-check" ng-show="priorities[$index] == 7"></i></a></li>
                                 </ul>
-                            </span>
+                            </div>
                         </td>
-                        <td>{{ file.Size | bytes }}</td>
-                        <td>{{ file.Progress }}%</td>
                     </tr>
                 </tbody>
             </table>
         </tab>
-        <tab heading="Peers ({{torrent.Peers.length}})">
+        <tab heading="Peers ({{ peersCount }})">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Endpoint</th>
+                        <th>IP</th>
+                        <th>DL Speed</th>
+                        <th>UL Speed</th>
+                        <th style="text-align: right;">Progress</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="peer in torrent.Peers">
-                        <td>{{ peer.EndPoint }}</td>
+                    <tr ng-repeat="(ip, peer) in peers | orderBy:'IP':'asc'">
+                        <td>{{ peer.IP }}</td>
+                        <td>{{ peer.DownloadSpeed | speed }}</td>
+                        <td>{{ peer.UploadSpeed | speed }}</td>
+                        <td style="text-align: right;">{{ peer.Progress | fileProgress }}%</td>
                     </tr>
                 </tbody>
             </table>

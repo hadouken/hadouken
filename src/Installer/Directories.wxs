@@ -10,7 +10,6 @@
               <Directory Id="HDKNPOSHDIR" Name="Hadouken.Tools.Posh" />
             </Directory>
           </Directory>
-          <Directory Id="X64DIR" Name="x64" />
           <Directory Id="X86DIR" Name="x86" />
         </Directory>
       </Directory>

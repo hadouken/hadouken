@@ -6,7 +6,6 @@
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="WebComponents" />
       <ComponentGroupRef Id="LibComponents" />
-      <ComponentGroupRef Id="X64Components" />
       <ComponentGroupRef Id="X86Components" />
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="ConfigComponents" />

@@ -2,34 +2,88 @@
     'ui.bootstrap',
     'hadouken.jsonrpc'
 ])
+.filter('fileProgress', function() {
+    return function(progress) {
+        return (progress * 100) | 0;
+    }
+})
+.filter('speed', function () {
+    return function (bytes, precision) {
+        if (isNaN(parseFloat(bytes)) || !isFinite(bytes) || bytes <= 1024) return '-';
+        if (typeof precision === 'undefined') precision = 1;
+        var units = ['B/s', 'KiB/s', 'MiB/s', 'GiB/s', 'TiB/s', 'PiB/s'],
+            number = Math.floor(Math.log(bytes) / Math.log(1024));
+        return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
+    }
+})
 .controller('BitTorrent.TorrentDetailsController', [
     '$scope', '$timeout', '$modalInstance', 'jsonrpc', 'torrent',
     function ($scope, $timeout, $modalInstance, jsonrpc, torrent) {
         var updateTimer;
+        $scope.peers = {};
+        $scope.peersCount = 0;
+        $scope.priorities = [];
+        $scope.progress = [];
         $scope.torrent = torrent;
 
-        function update() {
-            jsonrpc.request('torrents.getByInfoHash', {
+        function getFilePriorities(cb) {
+            jsonrpc.request('torrents.getFilePriorities', {
                 params: [torrent.InfoHash],
-                success: function (data) {
-                    // Update file progress
-                    for(var i = 0; i < data.result.Files.length; i++) {
-                        $scope.torrent.Files[i].Progress = data.result.Files[i].Progress;
-                    }
-
-                    // Update peers
-                    $scope.torrent.Peers = data.result.Peers;
-
-                    updateTimer = $timeout(update, 1000);
+                success: function(d) {
+                    $scope.priorities = d.result;
+                    cb();
                 }
             });
         }
 
-        $scope.setPriority = function (fileIndex, priority) {
-            $scope.torrentFiles[fileIndex].Priority = priority;
+        function updateFileProgress(cb) {
+            jsonrpc.request('torrents.getFileProgress', {
+                params: [torrent.InfoHash],
+                success: function (data) {
+                    $scope.progress = data.result;
+                    cb();
+                }
+            });
+        }
 
+        function updatePeers(cb) {
+            jsonrpc.request('torrents.getPeers', {
+                params: [torrent.InfoHash],
+                success: function(d) {
+                    $scope.peersCount = d.result.length;
+
+                    for(var i = 0; i < d.result.length; i++) {
+                        var peer = d.result[i];
+                        $scope.peers[peer.IP] = peer;
+                    }
+
+                    var currentIps = d.result.map(function(x) { return x.IP; });
+
+                    for(var key in $scope.peers) {
+                        if(currentIps.indexOf(key) < 0) {
+                            delete $scope.peers[key];
+                        }
+                    }
+
+                    cb();
+                }
+            });
+        }
+
+        function update() {
+            updateFileProgress(function() {
+                updatePeers(function() {
+                    updateTimer = $timeout(update, 1000);
+                });
+            });
+        }
+
+        $scope.setPriority = function (fileIndex, priority) {
             jsonrpc.request('torrents.setFilePriority', {
-                params: [torrent.InfoHash, fileIndex, priority]
+                params: [torrent.InfoHash, fileIndex, priority],
+                success: function() {
+                    $scope.priorities[fileIndex] = priority;
+                }
             });
         };
 
@@ -41,5 +95,14 @@
             $timeout.cancel(updateTimer);
         });
 
-        updateTimer = $timeout(update);
+        jsonrpc.request('torrents.getFiles', {
+            params: [torrent.InfoHash],
+            success: function(data) {
+                $scope.files = data.result;
+
+                getFilePriorities(function() {
+                    updateTimer = $timeout(update);
+                });
+            }
+        });
     }]);
