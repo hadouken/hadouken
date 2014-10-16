@@ -49,18 +49,33 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Cmdlets\AddTorrent.cs" />
-    <Compile Include="Cmdlets\GetAccessToken.cs" />
-    <Compile Include="Cmdlets\GetTorrents.cs" />
-    <Compile Include="Cmdlets\Models\AccessToken.cs" />
-    <Compile Include="Cmdlets\Models\Torrent.cs" />
+    <Compile Include="Commands\AddTorrentCommand.cs" />
+    <Compile Include="Cmdlets\AddTorrentCmdlet.cs" />
+    <Compile Include="Commands\GetTorrentCommand.cs" />
+    <Compile Include="Commands\IAddTorrentCommand.cs" />
+    <Compile Include="CmdletBase.cs" />
+    <Compile Include="Cmdlets\GetTorrentCmdlet.cs" />
+    <Compile Include="Models\Torrent.cs" />
+    <Compile Include="Cmdlets\RemoveTorrentCmdlet.cs" />
+    <Compile Include="Commands\IGetTorrentCommand.cs" />
+    <Compile Include="Commands\IRemoveTorrentCommand.cs" />
+    <Compile Include="Commands\RemoveTorrentCommand.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\HttpContentExtensions.cs" />
     <Compile Include="Extensions\SecureStringExtensions.cs" />
+    <Compile Include="ICommand.cs" />
+    <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="IRuntime.cs" />
+    <Compile Include="Net\HttpClientWrapper.cs" />
+    <Compile Include="Net\IHttpClient.cs" />
+    <Compile Include="Net\IJsonRpcClient.cs" />
+    <Compile Include="Net\JsonRpcClient.cs" />
+    <Compile Include="PowershellRuntime.cs" />
+    <Compile Include="ServiceLocator.cs" />
+    <Compile Include="TinyIoC.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Net\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Hadouken.Tools.Posh.psd1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

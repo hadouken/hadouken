@@ -1,4 +1,7 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
@@ -15,6 +18,13 @@ namespace Hadouken.Tools.Posh.Extensions
         {
             var json = await httpContent.ReadAsStringAsync();
             var serializer = new JavaScriptSerializer();
+
+            var response = serializer.Deserialize<IDictionary<string, object>>(json);
+
+            if (response.ContainsKey("error"))
+            {
+                throw new InvalidOperationException();
+            }
 
             return serializer.Deserialize<JsonRpcResponse<T>>(json).result;
         }
