@@ -124,6 +124,18 @@ namespace Hadouken.Core.BitTorrent
             get { return _handle.QueuePosition; }
         }
 
+        public ITorrentSettings GetSettings()
+        {
+            return new TorrentSettings
+            {
+                DownloadRateLimit = _handle.DownloadLimit,
+                MaxConnections = _handle.MaxConnections,
+                MaxUploads = _handle.MaxUploads,
+                SequentialDownload = _handle.SequentialDownload,
+                UploadRateLimit = _handle.UploadLimit
+            };
+        }
+
         public IEnumerable<ITorrentFile> GetFiles()
         {
             if (!HasMetadata)

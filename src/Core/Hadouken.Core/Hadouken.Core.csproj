@@ -83,6 +83,7 @@
     <Compile Include="BitTorrent\Handlers\AddTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ChangeFilePriorityHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ChangeTorrentLabelHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\ChangeTorrentSettingsHandler.cs" />
     <Compile Include="BitTorrent\Handlers\MoveTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\PauseTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\QueuePositionBottomHandler.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="BitTorrent\TorrentFile.cs" />
     <Compile Include="BitTorrent\TorrentInfoRepository.cs" />
     <Compile Include="BitTorrent\TorrentManager.cs" />
+    <Compile Include="BitTorrent\TorrentSettings.cs" />
     <Compile Include="Data\INotifierRepository.cs" />
     <Compile Include="Data\IUserRepository.cs" />
     <Compile Include="Data\Models\User.cs" />
@@ -170,6 +172,7 @@
     <Compile Include="Services\Models\Notifier.cs" />
     <Compile Include="Services\Models\NotifierConfiguration.cs" />
     <Compile Include="Services\Models\TorrentParameters.cs" />
+    <Compile Include="Services\Models\TorrentSettings.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\UserServices.cs" />
   </ItemGroup>

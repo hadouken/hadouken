@@ -66,10 +66,12 @@
     <Compile Include="BitTorrent\AddTorrentMessage.cs" />
     <Compile Include="BitTorrent\ChangeFilePriorityMessage.cs" />
     <Compile Include="BitTorrent\ChangeTorrentLabelMessage.cs" />
+    <Compile Include="BitTorrent\ChangeTorrentSettingsMessage.cs" />
     <Compile Include="BitTorrent\IPeer.cs" />
     <Compile Include="BitTorrent\ITorrent.cs" />
     <Compile Include="BitTorrent\ITorrentEngine.cs" />
     <Compile Include="BitTorrent\ITorrentFile.cs" />
+    <Compile Include="BitTorrent\ITorrentSettings.cs" />
     <Compile Include="BitTorrent\MoveTorrentMessage.cs" />
     <Compile Include="BitTorrent\PauseTorrentMessage.cs" />
     <Compile Include="BitTorrent\QueuePositionBottomMessage.cs" />

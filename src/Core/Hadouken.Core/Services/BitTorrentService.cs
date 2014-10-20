@@ -72,6 +72,25 @@ namespace Hadouken.Core.Services
             var torrent = _torrentEngine.GetByInfoHash(infoHash);
             return torrent == null ? null : torrent.GetPeers();
         }
+
+        [JsonRpcMethod("torrents.getSettings")]
+        public ITorrentSettings GetSettings(string infoHash)
+        {
+            var torrent = _torrentEngine.GetByInfoHash(infoHash);
+            return torrent == null ? null : torrent.GetSettings();
+        }
+
+        [JsonRpcMethod("torrents.setSettings")]
+        public void SetSettings(string infoHash, TorrentSettings settings)
+        {
+            if (settings == null) return;
+            _messageBus.Publish(new ChangeTorrentSettingsMessage(infoHash,
+                settings.DownloadRateLimit,
+                settings.MaxConnections,
+                settings.MaxUploads,
+                settings.SequentialDownload,
+                settings.UploadRateLimit));
+        }
         
         [JsonRpcMethod("torrents.addFile")]
         public void AddFile(byte[] data, TorrentParameters parameters)

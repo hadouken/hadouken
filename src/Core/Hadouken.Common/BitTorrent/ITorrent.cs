@@ -85,6 +85,11 @@ namespace Hadouken.Common.BitTorrent
         int QueuePosition { get; }
 
         /// <summary>
+        /// Gets the torrent-specific settings.
+        /// </summary>
+        ITorrentSettings GetSettings();
+
+        /// <summary>
         /// Gets a list of the files that make up this torrent.
         /// </summary>
         IEnumerable<ITorrentFile> GetFiles();

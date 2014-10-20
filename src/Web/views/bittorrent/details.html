@@ -23,6 +23,57 @@
                         <p class="form-control-static">{{ torrent.Label }}</p>
                     </div>
                 </div>
+
+                <hr />
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">DL. limit</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" ng-model="settings.DownloadRateLimit" />
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="form-control-static"><em>kB/s.</em></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">UL. limit</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" ng-model="settings.UploadRateLimit" />
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="form-control-static"><em>kB/s.</em></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Max conn.</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" ng-model="settings.MaxConnections" />
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="form-control-static"><em>Max open connections.</em></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Max uploads</label>
+                    <div class="col-sm-3">
+                        <input type="number" class="form-control" ng-model="settings.MaxUploads" />
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="form-control-static"><em>Max upload slots.</em></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="button" class="btn btn-primary" ng-click="saveSettings()" ng-disabled="busy">
+                            <i class="fa fa-spin fa-spinner" ng-show="busy" />
+                            Save
+                        </button>
+                    </div>
+                </div>
             </form>
         </tab>
         <tab heading="Files ({{ files.length }})">
