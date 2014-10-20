@@ -62,6 +62,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Extensions\Hadouken.Extensions.Importer\Hadouken.Extensions.Importer.csproj">
+      <Project>{ba64f7ac-b746-41f1-a185-9b43d4845a58}</Project>
+      <Name>Hadouken.Extensions.Importer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}</Project>
       <Name>Hadouken.Common</Name>

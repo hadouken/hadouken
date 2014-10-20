@@ -20,6 +20,12 @@
       </Component>
     </ComponentGroup>
 
+    <ComponentGroup Id="ImporterExtensionComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Name="Hadouken.Extensions.Importer.dll" />
+      </Component>
+    </ComponentGroup>
+
     <ComponentGroup Id="KodiExtensionComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component>
         <File Name="Hadouken.Extensions.Kodi.dll" />

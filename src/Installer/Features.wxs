@@ -23,6 +23,10 @@
           <ComponentGroupRef Id="HipChatExtensionComponents" />
         </Feature>
 
+        <Feature Id="ImporterExtension" Title="!(loc.Importer_Ext_Title)" Description="!(loc.Importer_Ext_Description)" Level="1">
+          <ComponentGroupRef Id="ImporterExtensionComponents" />
+        </Feature>
+
         <Feature Id="KodiExtension" Title="!(loc.Kodi_Ext_Title)" Description="!(loc.Kodi_Ext_Description)" Level="1">
           <ComponentGroupRef Id="KodiExtensionComponents" />
         </Feature>
