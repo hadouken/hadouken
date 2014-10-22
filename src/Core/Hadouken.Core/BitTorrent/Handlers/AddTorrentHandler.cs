@@ -47,6 +47,12 @@ namespace Hadouken.Core.BitTorrent.Handlers
                 addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
                 addParams.TorrentInfo = new TorrentInfo(message.Data);
 
+                // Set default settings
+                addParams.MaxConnections = _keyValueStore.Get("bt.defaults.max_connections", 200);
+                addParams.MaxUploads = _keyValueStore.Get("bt.defaults.max_uploads", 10);
+                addParams.DownloadLimit = _keyValueStore.Get("bt.defaults.download_limit", 0);
+                addParams.UploadLimit = _keyValueStore.Get("bt.defaults.upload_limit", 0);
+
                 // Save torrent info
                 _torrentInfoRepository.Save(addParams.TorrentInfo);
 
