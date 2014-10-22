@@ -89,12 +89,12 @@ namespace Hadouken.Core.BitTorrent
 
         public long TotalDownloadedBytes
         {
-            get { return _status.TotalPayloadDownload; }
+            get { return _status.AllTimeDownload; }
         }
 
         public long TotalUploadedBytes
         {
-            get { return _status.TotalPayloadUpload; }
+            get { return _status.AllTimeUpload; }
         }
 
         public Common.BitTorrent.TorrentState State

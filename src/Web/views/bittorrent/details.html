@@ -6,20 +6,32 @@
         <tab heading="General">
             <form role="form" class="form-horizontal">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Info Hash</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-4 control-label">Info Hash</label>
+                    <div class="col-sm-8">
                         <p class="form-control-static">{{ torrent.InfoHash }}</p>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Size</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-4 control-label">Size</label>
+                    <div class="col-sm-8">
                         <p class="form-control-static">{{ torrent.Size | bytes }}</p>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Label</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-4 control-label">Total downloaded</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-static">{{ torrent.TotalDownloadedBytes | bytes }}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Total uploaded</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-static">{{ torrent.TotalUploadedBytes | bytes }}</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Label</label>
+                    <div class="col-sm-8">
                         <p class="form-control-static">{{ torrent.Label }}</p>
                     </div>
                 </div>
@@ -27,47 +39,47 @@
                 <hr />
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">DL. limit</label>
+                    <label class="col-sm-4 control-label">DL. limit</label>
                     <div class="col-sm-3">
                         <input type="number" class="form-control" ng-model="settings.DownloadRateLimit" />
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <p class="form-control-static"><em>kB/s.</em></p>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">UL. limit</label>
+                    <label class="col-sm-4 control-label">UL. limit</label>
                     <div class="col-sm-3">
                         <input type="number" class="form-control" ng-model="settings.UploadRateLimit" />
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <p class="form-control-static"><em>kB/s.</em></p>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Max conn.</label>
+                    <label class="col-sm-4 control-label">Max conn.</label>
                     <div class="col-sm-3">
                         <input type="number" class="form-control" ng-model="settings.MaxConnections" />
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <p class="form-control-static"><em>Max open connections.</em></p>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Max uploads</label>
+                    <label class="col-sm-4 control-label">Max uploads</label>
                     <div class="col-sm-3">
                         <input type="number" class="form-control" ng-model="settings.MaxUploads" />
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <p class="form-control-static"><em>Max upload slots.</em></p>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
+                    <div class="col-sm-offset-4 col-sm-8">
                         <button type="button" class="btn btn-primary" ng-click="saveSettings()" ng-disabled="busy">
                             <i class="fa fa-spin fa-spinner" ng-show="busy" />
                             Save
