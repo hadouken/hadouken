@@ -49,7 +49,7 @@ namespace Hadouken.Core.BitTorrent
 
         public string InfoHash
         {
-            get { return _handle.InfoHash.ToHex(); }
+            get { return _status.InfoHash.ToHex(); }
         }
 
         public string Name
@@ -74,7 +74,7 @@ namespace Hadouken.Core.BitTorrent
 
         public string SavePath
         {
-            get { return GetSavePath(); }
+            get { return _status.SavePath; }
         }
 
         public long DownloadSpeed
@@ -121,7 +121,7 @@ namespace Hadouken.Core.BitTorrent
 
         public int QueuePosition
         {
-            get { return _handle.QueuePosition; }
+            get { return _status.QueuePosition; }
         }
 
         public ITorrentSettings GetSettings()
@@ -225,13 +225,6 @@ namespace Hadouken.Core.BitTorrent
                 var name = entry.Path.Replace("\\", "/").Split('/').FirstOrDefault();
                 return string.IsNullOrEmpty(name) ? TorrentInfo.Name : name;
             }
-        }
-
-        private string GetSavePath()
-        {
-            return (HasMetadata && TorrentInfo.NumFiles > 1
-                ? System.IO.Path.Combine(_status.SavePath, GetName())
-                : _status.SavePath);
         }
 
         public void Dispose()
