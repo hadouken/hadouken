@@ -1,5 +1,6 @@
 ﻿angular.module('hadouken.bittorrent.controllers.torrentList', [
     'ui.bootstrap',
+    'hadouken.events',
     'hadouken.jsonrpc'
 ])
 .filter('torrentProgress', function () {
@@ -72,8 +73,8 @@
     }
 })
 .controller('BitTorrent.TorrentListController', [
-    '$document', '$scope', '$timeout', '$modal', 'jsonrpc',
-    function ($document, $scope, $timeout, $modal, jsonrpc) {
+    '$document', '$scope', '$timeout', '$modal', 'eventListener', 'jsonrpc',
+    function ($document, $scope, $timeout, $modal, eventListener, jsonrpc) {
         $scope.sortField = readCookie('sortField') || 'Name';
         $scope.sortDirection = readCookie('sortDirection') || 'asc';
         $scope.torrents = [];
@@ -139,15 +140,14 @@
             });
         };
 
-        $scope.remove = function(infoHash) {
-            var index = getIndex(infoHash);
+        $scope.remove = function(infoHash, removeData) {
+            var idx = getIndex(infoHash);
+            $scope.torrents[idx].Removing = true;
 
             jsonrpc.request('torrents.remove', {
-                params: [infoHash, false],
+                params: [infoHash, removeData],
                 success: function() {}
             });
-
-            $scope.torrents.splice(index, 1);
         };
 
         $scope.queuePosUp = function(infoHash) {
@@ -215,6 +215,7 @@
 
         function updateTorrent(oldTorrent, newTorrent) {
             oldTorrent.DownloadSpeed = newTorrent.DownloadSpeed;
+            oldTorrent.Name = newTorrent.Name;
             oldTorrent.Paused = newTorrent.Paused;
             oldTorrent.Progress = newTorrent.Progress;
             oldTorrent.QueuePosition = newTorrent.QueuePosition;
@@ -224,40 +225,48 @@
             oldTorrent.UploadSpeed = newTorrent.UploadSpeed;
         }
 
-        function update() {
+        function getTorrents(callback) {
             jsonrpc.request('torrents.getAll', {
-                success: function (data) {
-                    for (var i = 0; i < data.result.length; i++) {
-                        var torrent = data.result[i];
-                        var idx = getIndex(torrent.InfoHash);
-
-                        if(idx < 0) {
-                            $scope.torrents.push(torrent);
-                        } else {
-                            updateTorrent($scope.torrents[idx], torrent);
-                        }
-                    }
-
-                    var currentIdList = data.result.map(function(x) { return x.InfoHash; });
-                    var selfIds = $scope.torrents.map(function(x) { return x.InfoHash; });
-
-                    for (var i = 0; i < selfIds.length; i++) {
-                        if (currentIdList.indexOf(selfIds[i]) < 0) {
-                            console.log('removing torrent');
-
-                            var idx = getIndex(selfIds[i]);
-                            $scope.torrents.splice(idx, 1);
-                        }
-                    }
-
-                    timer = $timeout(update, 1000);
+                success: function(data) {
+                    callback(data.result);
                 }
             });
         }
-        var timer = $timeout(update, 0);
+
+        function update() {
+            getTorrents(function(torrents) {
+                for (var i = 0; i < torrents.length; i++) {
+                    var torrent = torrents[i];
+                    var idx = getIndex(torrent.InfoHash);
+
+                    if(idx >= 0) {
+                        updateTorrent($scope.torrents[idx], torrent);
+                    }
+                }
+
+                timer = $timeout(update, 1000);
+            });
+        }
+
+        var timer = $timeout(function() {
+            getTorrents(function(t) {
+                $scope.torrents = t;
+                timer = $timeout(update, 1000);
+            });
+        }, 0);        
+
+        var listener = new eventListener();
+        listener.onopen = function() {
+            listener.subscribe("torrent.added", function(t) { $scope.torrents.push(t); });
+            listener.subscribe("torrent.removed", function(infoHash) {
+                var idx = getIndex(infoHash);
+                $scope.torrents.splice(idx, 1);
+            });
+        };
 
         $scope.$on('$destroy', function() {
             $timeout.cancel(timer);
+            listener.dispose();
         });
     }
 ]);

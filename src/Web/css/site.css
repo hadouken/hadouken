@@ -81,3 +81,7 @@ h1.page-header {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.torrent-operation {
+  opacity: 0.5;
+}

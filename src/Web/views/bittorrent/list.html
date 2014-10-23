@@ -37,11 +37,11 @@
     </thead>
     
     <tbody id="tbody-torrents-list">
-        <tr ng-repeat="torrent in torrents | sort:sortField:sortDirection" class="torrent-row">
+        <tr ng-repeat="torrent in torrents | sort:sortField:sortDirection" class="torrent-row" ng-class="{ 'torrent-operation': torrent.Removing }">
             <td>{{ torrent.QueuePosition | prettyQueue }}</td>
             <td>
-                <div style="white-space: nowrap;"><a href ng-click="showDetails(torrent.InfoHash)">{{ torrent.Name }}</a></div>
-                <small class="savePath">{{ torrent.SavePath }}</small>
+                <div style="white-space: nowrap; text-overflow: ellipsis;"><a href ng-click="showDetails(torrent.InfoHash)">{{ torrent.Name }}</a></div>
+                <div style="white-space: nowrap; text-overflow: ellipsis;"><small class="savePath">{{ torrent.SavePath }}</small></div>
             </td>
             <td>
                 <span class="dropdown" on-toggle="toggled(open)">
@@ -59,7 +59,8 @@
                         <li><a href ng-click="queuePosBottom(torrent.InfoHash)"><i class="fa fa-angle-double-down"></i> Bottom</a></li>
 
                         <li class="divider"></li>
-                        <li><a href ng-click="remove(torrent.InfoHash)"><i class="fa fa-trash-o"></i> Remove</a></li>
+                        <li><a href ng-click="remove(torrent.InfoHash, false)"><i class="fa fa-trash-o"></i> Remove</a></li>
+                        <li><a href ng-click="remove(torrent.InfoHash, true)"><i class="fa fa-trash-o"></i> Remove (+data)</a></li>
                     </ul>
                 </span>
             </td>

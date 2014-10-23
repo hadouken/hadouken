@@ -1,6 +1,9 @@
 # Ignore CommonAssemblyInfo.cs
 src/CommonAssemblyInfo.cs
 
+# Ignore build configuration
+build.config.ps1
+
 _ReSharper.Hadouken/
 
 # Build output

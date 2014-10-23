@@ -1,0 +1,34 @@
+﻿<h1 class="page-header">
+    AutoAdd settings
+    <button class="btn btn-xs btn-primary" ng-click="upsertFolder()">Add folder</button>
+</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Path</th>
+            <th>Pattern</th>
+            <th>Label</th>
+            <th>Remove</th>
+            <th>Recursive</th>
+            <th>Autostart</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="folder in folders">
+            <td>{{ folder.Path }}</td>
+            <td>{{ folder.Pattern }}</td>
+            <td>{{ folder.Label }}</td>
+            <td><i class="fa fa-check" ng-show="folder.RemoveSourceFile"></i></td>
+            <td><i class="fa fa-check" ng-show="folder.RecursiveSearch"></i></td>
+            <td><i class="fa fa-check" ng-show="folder.AutoStart"></i></td>
+            <td>
+                <div class="pull-right">
+                    <button class="btn btn-xs btn-warning" ng-click="upsertFolder(folder)"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-xs btn-danger" ng-click="removeFolder(folder, $index)"><i class="fa fa-trash-o"></i></button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

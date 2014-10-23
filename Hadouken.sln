@@ -3,53 +3,53 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common", "src\Hadouken.Common\Hadouken.Common.csproj", "{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common", "src\Core\Hadouken.Common\Hadouken.Common.csproj", "{19BD768C-F3B3-4E88-9F7F-E2F1E912FAAE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{DA3C1FA8-150D-4107-B1C8-FC5D70957FE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushover", "src\Hadouken.Extensions.Pushover\Hadouken.Extensions.Pushover.csproj", "{9C79C44E-8132-471E-9105-757A978421C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushover", "src\Extensions\Hadouken.Extensions.Pushover\Hadouken.Extensions.Pushover.csproj", "{9C79C44E-8132-471E-9105-757A978421C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Core", "src\Hadouken.Core\Hadouken.Core.csproj", "{0C9D54CD-EDEC-477C-AA2E-7F98AB61837D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Core", "src\Core\Hadouken.Core\Hadouken.Core.csproj", "{0C9D54CD-EDEC-477C-AA2E-7F98AB61837D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Hadouken\Hadouken.csproj", "{49F6EB45-CC41-4F02-A6C2-998F2608101E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken", "src\Core\Hadouken\Hadouken.csproj", "{49F6EB45-CC41-4F02-A6C2-998F2608101E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8B0325A4-A134-4B6E-8948-EF2BFF81D1FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Tests", "src\Hadouken.Common.Tests\Hadouken.Common.Tests.csproj", "{D2F70075-17D3-47B4-BBE8-C630CA0357FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Tests", "src\Tests\Hadouken.Common.Tests\Hadouken.Common.Tests.csproj", "{D2F70075-17D3-47B4-BBE8-C630CA0357FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Core.Tests", "src\Hadouken.Core.Tests\Hadouken.Core.Tests.csproj", "{4A765776-E58B-44EE-A173-9C9840FB89F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Core.Tests", "src\Tests\Hadouken.Core.Tests\Hadouken.Core.Tests.csproj", "{4A765776-E58B-44EE-A173-9C9840FB89F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushbullet", "src\Hadouken.Extensions.Pushbullet\Hadouken.Extensions.Pushbullet.csproj", "{78970567-455C-4EE8-8A65-E7CF92F4714C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushbullet", "src\Extensions\Hadouken.Extensions.Pushbullet\Hadouken.Extensions.Pushbullet.csproj", "{78970567-455C-4EE8-8A65-E7CF92F4714C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Mailer", "src\Hadouken.Extensions.Mailer\Hadouken.Extensions.Mailer.csproj", "{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Mailer", "src\Extensions\Hadouken.Extensions.Mailer\Hadouken.Extensions.Mailer.csproj", "{5B9D97E4-93D9-4502-999F-5E4CC9D031ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Localization", "src\Hadouken.Localization\Hadouken.Localization.csproj", "{B8E58883-80EE-4C7C-AFA7-5829DD107F79}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Localization", "src\Core\Hadouken.Localization\Hadouken.Localization.csproj", "{B8E58883-80EE-4C7C-AFA7-5829DD107F79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Rss", "src\Hadouken.Extensions.Rss\Hadouken.Extensions.Rss.csproj", "{2A879968-8DB5-44BD-BB5B-BF40CD683A71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Rss", "src\Extensions\Hadouken.Extensions.Rss\Hadouken.Extensions.Rss.csproj", "{2A879968-8DB5-44BD-BB5B-BF40CD683A71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoAdd", "src\Hadouken.Extensions.AutoAdd\Hadouken.Extensions.AutoAdd.csproj", "{944F2C95-0678-4EDC-AEAD-F9AF47852ADD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoAdd", "src\Extensions\Hadouken.Extensions.AutoAdd\Hadouken.Extensions.AutoAdd.csproj", "{944F2C95-0678-4EDC-AEAD-F9AF47852ADD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3A9987A2-D4AB-4912-806D-871DD4B545E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tools.Posh", "src\Hadouken.Tools.Posh\Hadouken.Tools.Posh.csproj", "{6BC61673-8AD2-4793-A40E-759E113C0131}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Tools.Posh", "src\Tools\Hadouken.Tools.Posh\Hadouken.Tools.Posh.csproj", "{6BC61673-8AD2-4793-A40E-759E113C0131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoAdd.Tests", "src\Hadouken.Extensions.AutoAdd.Tests\Hadouken.Extensions.AutoAdd.Tests.csproj", "{4CFCF578-78CB-4D92-AC1A-023A5A03320C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoAdd.Tests", "src\Tests\Hadouken.Extensions.AutoAdd.Tests\Hadouken.Extensions.AutoAdd.Tests.csproj", "{4CFCF578-78CB-4D92-AC1A-023A5A03320C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushalot", "src\Hadouken.Extensions.Pushalot\Hadouken.Extensions.Pushalot.csproj", "{CB00F7AC-73CA-41C3-82D6-AFB87FFDBDBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Pushalot", "src\Extensions\Hadouken.Extensions.Pushalot\Hadouken.Extensions.Pushalot.csproj", "{CB00F7AC-73CA-41C3-82D6-AFB87FFDBDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoMove", "src\Hadouken.Extensions.AutoMove\Hadouken.Extensions.AutoMove.csproj", "{835B335B-949A-440D-BE43-3D686D3355DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoMove", "src\Extensions\Hadouken.Extensions.AutoMove\Hadouken.Extensions.AutoMove.csproj", "{835B335B-949A-440D-BE43-3D686D3355DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoMove.Tests", "src\Hadouken.Extensions.AutoMove.Tests\Hadouken.Extensions.AutoMove.Tests.csproj", "{ED3C5ECB-76F6-4DE6-BC6A-3A67AF74293B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.AutoMove.Tests", "src\Tests\Hadouken.Extensions.AutoMove.Tests\Hadouken.Extensions.AutoMove.Tests.csproj", "{ED3C5ECB-76F6-4DE6-BC6A-3A67AF74293B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Kodi", "src\Hadouken.Extensions.Kodi\Hadouken.Extensions.Kodi.csproj", "{7799782C-D430-4D72-A74C-60C0FA0BB42C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Kodi", "src\Extensions\Hadouken.Extensions.Kodi\Hadouken.Extensions.Kodi.csproj", "{7799782C-D430-4D72-A74C-60C0FA0BB42C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Kodi.Tests", "src\Hadouken.Extensions.Kodi.Tests\Hadouken.Extensions.Kodi.Tests.csproj", "{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.Kodi.Tests", "src\Tests\Hadouken.Extensions.Kodi.Tests\Hadouken.Extensions.Kodi.Tests.csproj", "{9B8A2AE7-4528-41A6-A21D-8ECAF89F498C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.HipChat", "src\Hadouken.Extensions.HipChat\Hadouken.Extensions.HipChat.csproj", "{980C4C49-1B37-4D0D-A311-55C081B1EBB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.HipChat", "src\Extensions\Hadouken.Extensions.HipChat\Hadouken.Extensions.HipChat.csproj", "{980C4C49-1B37-4D0D-A311-55C081B1EBB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.HipChat.Tests", "src\Hadouken.Extensions.HipChat.Tests\Hadouken.Extensions.HipChat.Tests.csproj", "{0DE5CF3E-708A-4173-9672-96BDCF9D79E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.HipChat.Tests", "src\Tests\Hadouken.Extensions.HipChat.Tests\Hadouken.Extensions.HipChat.Tests.csproj", "{0DE5CF3E-708A-4173-9672-96BDCF9D79E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.UpdateChecker", "src\Hadouken.Extensions.UpdateChecker\Hadouken.Extensions.UpdateChecker.csproj", "{0FC4606E-2111-4BA7-B1F3-6B8AFB980C23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Extensions.UpdateChecker", "src\Extensions\Hadouken.Extensions.UpdateChecker\Hadouken.Extensions.UpdateChecker.csproj", "{0FC4606E-2111-4BA7-B1F3-6B8AFB980C23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

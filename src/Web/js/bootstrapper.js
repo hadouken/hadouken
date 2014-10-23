@@ -38,6 +38,10 @@ window.pluginModules = window.pluginModules || [];
             'js/modules/bittorrent/controllers/torrentMoveController.js',
             'js/modules/bittorrent/directives/filereadDirective.js',
 
+            /* Events */
+            'js/modules/events/eventsModule.js',
+            'js/modules/events/services/eventListener.js',
+
             /* FileSystem module */
             'js/modules/filesystem/filesystemModule.js',
 
