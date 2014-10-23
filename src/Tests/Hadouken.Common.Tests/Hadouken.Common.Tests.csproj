@@ -63,6 +63,7 @@
     <Compile Include="Unit\IO\GlobberTests.cs" />
     <Compile Include="Unit\IO\PathComparerTests.cs" />
     <Compile Include="Unit\IO\PathTests.cs" />
+    <Compile Include="Unit\Text\BEncoding\BDecoderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Hadouken.Common\Hadouken.Common.csproj">

@@ -1,0 +1,45 @@
+﻿<h1 class="page-header">
+    Importer
+</h1>
+
+<p>
+    The <em>Importer</em> makes it easy to import your torrents from an existing
+    client installed on the same machine as Hadouken. The following clients are supported,
+    
+    <ul>
+        <li>uTorrent</li>
+        <li>qBittorrent</li>
+    </ul>
+    
+    To import your data, select your client from the list, then input the path to
+    that clients data files. <a href="https://github.com/hadouken/hadouken/wiki/Importing-data" target="_blank">More about client data paths</a>.
+</p>
+
+<hr />
+
+<form class="form-horizontal" role="form">
+    <div class="form-group">
+        <label class="control-label col-sm-3">Import from client</label>
+        <div class="col-sm-9">
+            <select name="clientName" class="form-control" ng-model="selectedImporter">
+                <option ng-repeat="importer in importers" value="{{ importer }}">{{ importer }}</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-sm-3">Data path</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" ng-model="dataPath" directory-browser directory="dataPath" />
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn btn-primary" ng-click="import(selectedImporter, dataPath)" ng-disabled="busy">
+                <i class="fa fa-spin fa-spinner" ng-show="busy"></i>
+                Import data
+            </button>
+        </div>
+    </div>
+</form>
