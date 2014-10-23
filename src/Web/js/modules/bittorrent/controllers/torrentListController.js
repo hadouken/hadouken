@@ -140,15 +140,15 @@
         };
 
         $scope.remove = function(infoHash) {
-            remoteTorrent(infoHash, false);
-        };
+            var index = getIndex(infoHash);
 
-        $scope.removeWithFiles = function (infoHash) {
-            var confirmResult = confirm("Do you want to remove the torrent and all files?");
-            if (confirmResult == true) {
-                removeTorrent(infoHash, true);
-            }
-        }
+            jsonrpc.request('torrents.remove', {
+                params: [infoHash, false],
+                success: function() {}
+            });
+
+            $scope.torrents.splice(index, 1);
+        };
 
         $scope.queuePosUp = function(infoHash) {
             notify('torrents.queue.up', infoHash);
@@ -254,17 +254,6 @@
                 }
             });
         }
-
-        function removeTorrent(infoHash, removeWithFiles) {
-            var index = getIndex(infoHash);
-            jsonrpc.request('torrents.remove', {
-                params: [infoHash, removeWithFiles],
-                success: function() {}
-            });
-
-            $scope.torrents.splice(index, 1);
-        }
-
         var timer = $timeout(update, 0);
 
         $scope.$on('$destroy', function() {
