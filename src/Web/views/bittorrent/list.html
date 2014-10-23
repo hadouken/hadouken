@@ -29,6 +29,7 @@
                 <a href ng-click="sort('Progress', 'asc')" ng-show="sortField === 'Progress' && sortDirection === 'desc'">Progress <i class="fa fa-sort-asc"></i></a>
                 <a href ng-click="sort('Progress', 'desc')" ng-show="sortField === 'Progress' && sortDirection === 'asc'">Progress <i class="fa fa-sort-desc"></i></a>
             </th>
+            <th>ETA</th>
             <th style="width: 120px;">Size</th>
             <th style="width: 120px">DL Speed</th>
             <th style="width: 120px">UL Speed</th>
@@ -73,6 +74,7 @@
                     <div class="progress-bar" ng-style="{width: (torrent.Progress * 100) + '%'}"></div>
                 </div>
             </td>
+            <td><span style="white-space: nowrap;">{{ torrent | eta | prettySeconds }}</span></td>
             <td>{{ torrent.Size | bytes }}</td>
             <td><span class="dlSpeed">{{ torrent.DownloadSpeed | speed}}</span></td>
             <td><span class="ulSpeed">{{ torrent.UploadSpeed | speed }}</span></td>

@@ -3,6 +3,37 @@
     'hadouken.events',
     'hadouken.jsonrpc'
 ])
+.filter('eta', function() {
+    return function(torrent) {
+        return parseInt(torrent.TotalRemainingBytes / torrent.DownloadSpeed);
+    }
+})
+.filter('prettySeconds', function() {
+    return function(totalSec) {
+        if(isNaN(totalSec)) {
+            return '∞';
+        }
+        
+        var hours = Math.floor(totalSec / 3600);
+        var minutes = Math.floor((totalSec - (hours * 3600)) / 60);
+        var seconds = totalSec - (hours * 3600) - (minutes * 60);
+
+        if(hours > 24) {
+            return '> 1d';
+        }
+
+        if(minutes < 10) minutes = '0' + minutes;
+        if(seconds < 10) seconds = '0' + seconds;
+
+        if(hours === 0) {
+            return minutes + 'm ' + seconds + 's';
+        }
+
+        if(hours < 10) hours = '0' + hours;
+
+        return hours + 'h ' + minutes + 'm ';
+    }
+})
 .filter('torrentProgress', function () {
     return function (torrent) {
         if (torrent.State === 'CheckingFiles'
