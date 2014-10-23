@@ -12,7 +12,7 @@ using Hadouken.Common.Text;
 
 namespace Hadouken.Core.BitTorrent
 {
-    public class SessionHandler : ISessionHandler, ITorrentEngine
+    internal class SessionHandler : ISessionHandler
     {
         private readonly ILogger<SessionHandler> _logger;
         private readonly IEnvironment _environment;
