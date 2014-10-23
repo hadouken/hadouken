@@ -222,6 +222,8 @@
             oldTorrent.SavePath = newTorrent.SavePath;
             oldTorrent.Size = newTorrent.Size;
             oldTorrent.State = newTorrent.State;
+            oldTorrent.TotalDownloadedBytes = newTorrent.TotalDownloadedBytes;
+            oldTorrent.TotalUploadedBytes = newTorrent.TotalUploadedBytes;
             oldTorrent.UploadSpeed = newTorrent.UploadSpeed;
         }
 

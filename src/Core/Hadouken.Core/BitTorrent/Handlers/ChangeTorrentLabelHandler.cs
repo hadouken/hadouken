@@ -7,19 +7,19 @@ namespace Hadouken.Core.BitTorrent.Handlers
 {
     internal sealed class ChangeTorrentLabelHandler : IMessageHandler<ChangeTorrentLabelMessage>
     {
-        private readonly ITorrentEngine _torrentEngine;
+        private readonly ITorrentManager _torrentManager;
         private readonly ITorrentMetadataRepository _metadataRepository;
         private readonly IMessageBus _messageBus;
 
-        public ChangeTorrentLabelHandler(ITorrentEngine torrentEngine,
+        public ChangeTorrentLabelHandler(ITorrentManager torrentManager,
             ITorrentMetadataRepository metadataRepository,
             IMessageBus messageBus)
         {
-            if (torrentEngine == null) throw new ArgumentNullException("torrentEngine");
+            if (torrentManager == null) throw new ArgumentNullException("torrentManager");
             if (metadataRepository == null) throw new ArgumentNullException("metadataRepository");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
 
-            _torrentEngine = torrentEngine;
+            _torrentManager = torrentManager;
             _metadataRepository = metadataRepository;
             _messageBus = messageBus;
         }
@@ -28,7 +28,12 @@ namespace Hadouken.Core.BitTorrent.Handlers
         {
             _metadataRepository.SetLabel(message.InfoHash, message.Label);
 
-            var torrent = _torrentEngine.GetByInfoHash(message.InfoHash);
+            Torrent torrent;
+            if (_torrentManager.Torrents.TryGetValue(message.InfoHash, out torrent))
+            {
+                torrent.Label = message.Label;
+            }
+
             _messageBus.Publish(new TorrentLabelChangedMessage(torrent));
         }
     }

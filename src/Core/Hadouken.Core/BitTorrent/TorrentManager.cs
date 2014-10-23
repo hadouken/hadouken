@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Hadouken.Common.BitTorrent;
 using Hadouken.Common.Messaging;
+using Hadouken.Core.BitTorrent.Data;
 using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
@@ -12,17 +13,23 @@ namespace Hadouken.Core.BitTorrent
         private readonly IAlertBus _alertBus;
         private readonly IMessageBus _messageBus;
         private readonly ITorrentInfoRepository _torrentInfoRepository;
+        private readonly ITorrentMetadataRepository _torrentMetadataRepository;
         private readonly ConcurrentDictionary<string, Torrent> _torrents;  
 
-        public TorrentManager(IAlertBus alertBus, IMessageBus messageBus, ITorrentInfoRepository torrentInfoRepository)
+        public TorrentManager(IAlertBus alertBus,
+            IMessageBus messageBus,
+            ITorrentInfoRepository torrentInfoRepository,
+            ITorrentMetadataRepository torrentMetadataRepository)
         {
             if (alertBus == null) throw new ArgumentNullException("alertBus");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
             if (torrentInfoRepository == null) throw new ArgumentNullException("torrentInfoRepository");
+            if (torrentMetadataRepository == null) throw new ArgumentNullException("torrentMetadataRepository");
 
             _alertBus = alertBus;
             _messageBus = messageBus;
             _torrentInfoRepository = torrentInfoRepository;
+            _torrentMetadataRepository = torrentMetadataRepository;
             _torrents = new ConcurrentDictionary<string, Torrent>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -60,6 +67,7 @@ namespace Hadouken.Core.BitTorrent
         private void OnTorrentAdded(TorrentAddedAlert alert)
         {
             var torrent = new Torrent(alert.Handle);
+            torrent.Label = _torrentMetadataRepository.GetLabel(torrent.InfoHash);
             
             if (_torrents.TryAdd(torrent.InfoHash, torrent))
             {

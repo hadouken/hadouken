@@ -24,6 +24,7 @@
         $scope.peersCount = 0;
         $scope.priorities = [];
         $scope.progress = [];
+        $scope.settings = {};
         $scope.torrent = torrent;
 
         function getFilePriorities(cb) {
@@ -31,6 +32,16 @@
                 params: [torrent.InfoHash],
                 success: function(d) {
                     $scope.priorities = d.result;
+                    cb();
+                }
+            });
+        }
+
+        function getSettings(cb) {
+            jsonrpc.request('torrents.getSettings', {
+                params: [torrent.InfoHash],
+                success: function(d) {
+                    $scope.settings = d.result;
                     cb();
                 }
             });
@@ -87,6 +98,17 @@
             });
         };
 
+        $scope.saveSettings = function() {
+            $scope.busy = true;
+
+            jsonrpc.request('torrents.setSettings', {
+                params: [torrent.InfoHash, $scope.settings],
+                success: function() {
+                    $scope.busy = false;
+                }
+            });
+        };
+
         $scope.close = function() {
             $modalInstance.dismiss('close');
         };
@@ -100,8 +122,10 @@
             success: function(data) {
                 $scope.files = data.result;
 
-                getFilePriorities(function() {
-                    updateTimer = $timeout(update);
+                getSettings(function() {
+                    getFilePriorities(function() {
+                        updateTimer = $timeout(update);
+                    });
                 });
             }
         });

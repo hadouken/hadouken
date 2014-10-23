@@ -21,6 +21,7 @@ namespace Hadouken.Core.Http
         private readonly ILogger<CustomNancyBootstrapper> _logger;
         private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
+        private byte[] _favicon;
 
         public CustomNancyBootstrapper(ILifetimeScope lifetimeScope,
             ILogger<CustomNancyBootstrapper> logger,
@@ -41,6 +42,11 @@ namespace Hadouken.Core.Http
         protected override ILifetimeScope GetApplicationContainer()
         {
             return _lifetimeScope;
+        }
+
+        protected override byte[] FavIcon
+        {
+            get { return _favicon ?? (_favicon = LoadFavicon()); }
         }
 
         protected override void ApplicationStartup(ILifetimeScope container, IPipelines pipelines)
@@ -97,6 +103,18 @@ namespace Hadouken.Core.Http
 
                 return new StreamResponse(file.OpenRead, MimeTypes.GetMimeType(filePath.GetExtension()));
             });
+        }
+
+        private byte[] LoadFavicon()
+        {
+            using (var resource = typeof(IEnvironment).Assembly.GetManifestResourceStream("Hadouken.Common.Resources.ApplicationIcon.ico"))
+            {
+                if (resource == null) return null;
+
+                var tempFavicon = new byte[resource.Length];
+                resource.Read(tempFavicon, 0, (int)resource.Length);
+                return tempFavicon;
+            }
         }
     }
 }

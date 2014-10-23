@@ -66,10 +66,12 @@
     <Compile Include="BitTorrent\AddTorrentMessage.cs" />
     <Compile Include="BitTorrent\ChangeFilePriorityMessage.cs" />
     <Compile Include="BitTorrent\ChangeTorrentLabelMessage.cs" />
+    <Compile Include="BitTorrent\ChangeTorrentSettingsMessage.cs" />
     <Compile Include="BitTorrent\IPeer.cs" />
     <Compile Include="BitTorrent\ITorrent.cs" />
     <Compile Include="BitTorrent\ITorrentEngine.cs" />
     <Compile Include="BitTorrent\ITorrentFile.cs" />
+    <Compile Include="BitTorrent\ITorrentSettings.cs" />
     <Compile Include="BitTorrent\MoveTorrentMessage.cs" />
     <Compile Include="BitTorrent\PauseTorrentMessage.cs" />
     <Compile Include="BitTorrent\QueuePositionBottomMessage.cs" />
@@ -174,6 +176,13 @@
     <Compile Include="Reflection\IEmbeddedResource.cs" />
     <Compile Include="Reflection\IEmbeddedResourceFinder.cs" />
     <Compile Include="Text\Base32Encoder.cs" />
+    <Compile Include="Text\BEncoding\BDecoderExtensions.cs" />
+    <Compile Include="Text\BEncoding\BEncodedDictionary.cs" />
+    <Compile Include="Text\BEncoding\BEncodedList.cs" />
+    <Compile Include="Text\BEncoding\BEncodedNumber.cs" />
+    <Compile Include="Text\BEncoding\BEncodedString.cs" />
+    <Compile Include="Text\BEncoding\BEncodedValue.cs" />
+    <Compile Include="Text\BEncoding\BDecoder.cs" />
     <Compile Include="Text\IJsonSerializer.cs" />
     <Compile Include="Text\IStringEncoder.cs" />
     <Compile Include="Text\JsonSerializer.cs" />
@@ -188,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\20140804181001_CreateSettingTable.sql" />
+    <EmbeddedResource Include="Resources\ApplicationIcon.ico" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

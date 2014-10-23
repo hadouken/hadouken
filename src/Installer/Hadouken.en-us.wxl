@@ -13,6 +13,8 @@
   <String Id="AutoMove_Ext_Description" Overridable="yes">Automatically moves completed torrents according to user-specified rules.</String>
   <String Id="HipChat_Ext_Title" Overridable="yes">HipChat</String>
   <String Id="HipChat_Ext_Description" Overridable="yes">Sends notifications to a HipChat room.</String>
+  <String Id="Importer_Ext_Title" Overridable="yes">Importer</String>
+  <String Id="Importer_Ext_Description" Overridable="yes">Helps you import data from other BitTorrent clients such as uTorrent and qBittorrent.</String>
   <String Id="Kodi_Ext_Title" Overridable="yes">Kodi/XBMC</String>
   <String Id="Kodi_Ext_Description" Overridable="yes">Sends notifications to a Kodi/XBMC instance.</String>
   <String Id="Mailer_Ext_Title" Overridable="yes">Mailer</String>
