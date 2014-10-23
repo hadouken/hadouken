@@ -87,6 +87,16 @@ namespace Hadouken.Core.BitTorrent
             get { return _status.UploadPayloadRate; }
         }
 
+        public long DownloadedBytes
+        {
+            get { return _status.TotalPayloadDownload; }
+        }
+
+        public long UploadedBytes
+        {
+            get { return _status.TotalPayloadUpload; }
+        }
+
         public long TotalDownloadedBytes
         {
             get { return _status.AllTimeDownload; }
@@ -95,6 +105,11 @@ namespace Hadouken.Core.BitTorrent
         public long TotalUploadedBytes
         {
             get { return _status.AllTimeUpload; }
+        }
+
+        public long TotalRemainingBytes
+        {
+            get { return _status.TotalWanted - _status.TotalWantedDone; }
         }
 
         public Common.BitTorrent.TorrentState State

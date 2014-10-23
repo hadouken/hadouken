@@ -47,6 +47,16 @@ namespace Hadouken.Common.BitTorrent
         long UploadSpeed { get; }
 
         /// <summary>
+        /// Gets the downloaded bytes for the torrent in the current session.
+        /// </summary>
+        long DownloadedBytes { get; }
+
+        /// <summary>
+        /// Gets the uploaded bytes for the torrent in the current session.
+        /// </summary>
+        long UploadedBytes { get; }
+
+        /// <summary>
         /// Gets the total number of downloaded bytes for this torrent.
         /// </summary>
         long TotalDownloadedBytes { get; }
@@ -55,6 +65,11 @@ namespace Hadouken.Common.BitTorrent
         /// Gets the total number of uploaded bytes for this torrent.
         /// </summary>
         long TotalUploadedBytes { get; }
+
+        /// <summary>
+        /// Gets the total number of bytes remaining (wanted - done).
+        /// </summary>
+        long TotalRemainingBytes { get; }
 
         /// <summary>
         /// Gets the current state for the torrent.

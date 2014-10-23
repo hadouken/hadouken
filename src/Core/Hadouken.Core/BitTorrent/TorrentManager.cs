@@ -85,9 +85,9 @@ namespace Hadouken.Core.BitTorrent
                 // Update status
                 torrent.Status = handle.QueryStatus();
 
-                // If the total downloaded bytes are 0 we probably just added a torrent
+                // If the downloaded bytes are 0 we probably just added a torrent
                 // which was already downloaded. 
-                if (torrent.TotalDownloadedBytes == 0)
+                if (torrent.DownloadedBytes == 0)
                 {
                     return;
                 }
