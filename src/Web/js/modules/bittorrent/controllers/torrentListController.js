@@ -3,6 +3,44 @@
     'hadouken.events',
     'hadouken.jsonrpc'
 ])
+.filter('eta', function() {
+    return function(torrent) {
+        if(torrent.TotalRemainingBytes === 0 || torrent.Paused) {
+            return -1;
+        }
+
+        return parseInt(torrent.TotalRemainingBytes / torrent.DownloadSpeed);
+    }
+})
+.filter('prettySeconds', function() {
+    return function(totalSec) {
+        if(isNaN(totalSec)) {
+            return '∞';
+        }
+
+        if(totalSec < 0) {
+            return '-';
+        }
+
+        var hours = Math.floor(totalSec / 3600);
+        var minutes = Math.floor((totalSec - (hours * 3600)) / 60);
+        var seconds = totalSec - (hours * 3600) - (minutes * 60);
+
+        if(hours > 24) {
+            return '> 1d';
+        }
+
+        if(hours === 0 && minutes > 0) {
+            return minutes + 'm ' + seconds + 's';
+        }
+
+        if(hours === 0 && minutes === 0) {
+            return seconds + 's';
+        }
+
+        return hours + 'h ' + minutes + 'm ';
+    }
+})
 .filter('torrentProgress', function () {
     return function (torrent) {
         if (torrent.State === 'CheckingFiles'
@@ -223,6 +261,7 @@
             oldTorrent.Size = newTorrent.Size;
             oldTorrent.State = newTorrent.State;
             oldTorrent.TotalDownloadedBytes = newTorrent.TotalDownloadedBytes;
+            oldTorrent.TotalRemainingBytes = newTorrent.TotalRemainingBytes;
             oldTorrent.TotalUploadedBytes = newTorrent.TotalUploadedBytes;
             oldTorrent.UploadSpeed = newTorrent.UploadSpeed;
         }
