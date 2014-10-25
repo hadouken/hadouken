@@ -7,6 +7,22 @@
         return (progress * 100) | 0;
     }
 })
+.filter('ratio', function() {
+    return function(torrent) {
+        var dl = torrent.TotalDownloadedBytes;
+        var ul = torrent.TotalUploadedBytes;
+
+        if(ul > 0 && dl <= 0) {
+            return '∞';
+        }
+
+        if(dl <= 0) {
+            return (0).toFixed(2);
+        }
+
+        return (ul / dl).toFixed(2);
+    }
+})
 .filter('speed', function () {
     return function (bytes, precision) {
         if (isNaN(parseFloat(bytes)) || !isFinite(bytes) || bytes <= 1024) return '-';
