@@ -6,7 +6,6 @@ using Hadouken.Common.BitTorrent;
 using Hadouken.Common.Messaging;
 using Hadouken.Common.Text;
 using Hadouken.Core.Http.WebSockets;
-using Hadouken.Core.Security;
 
 namespace Hadouken.Core.Http
 {

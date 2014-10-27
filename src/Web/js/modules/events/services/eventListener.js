@@ -4,7 +4,13 @@ angular.module('hadouken.events.services.eventListener', [
 .factory('eventListener', [ '$window', 'authProvider', function($window, authProvider) {
     var host = $window.location.host;
     var token = authProvider.getToken();
-    var url = "ws://" + host + "/events?token=" + token;
+    var url = host + "/events?token=" + token;
+
+    if($window.location.protocol === 'https:') {
+        url = "wss://" + url;
+    } else {
+        url = "ws://" + url;
+    }
 
     return function() {
         $ = this;
@@ -14,7 +20,7 @@ angular.module('hadouken.events.services.eventListener', [
         $._callbacks = {};
 
         $._socket = new WebSocket(url);
-        $._socket.onclose = function() { console.log('closing'); console.log(arguments); $.onclose(); }
+        $._socket.onclose = function() { $.onclose(); }
         $._socket.onopen = function() { $.onopen(); }
 
         $._socket.onmessage = function(event) {
