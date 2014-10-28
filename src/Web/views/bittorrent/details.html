@@ -4,6 +4,10 @@
 <div class="modal-body">
     <tabset>
         <tab heading="General">
+            <alert ng-show="torrent.Error !== ''" type="warning" close="clearError()">
+                {{ torrent.Error }}
+            </alert>
+
             <form role="form" class="form-horizontal">
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Info Hash</label>

@@ -84,6 +84,7 @@
     <Compile Include="BitTorrent\Handlers\ChangeFilePriorityHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ChangeTorrentLabelHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ChangeTorrentSettingsHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\ClearTorrentErrorHandler.cs" />
     <Compile Include="BitTorrent\Handlers\MoveTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\PauseTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\QueuePositionBottomHandler.cs" />

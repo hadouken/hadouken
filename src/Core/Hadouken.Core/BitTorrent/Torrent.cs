@@ -139,6 +139,11 @@ namespace Hadouken.Core.BitTorrent
             get { return _status.QueuePosition; }
         }
 
+        public string Error
+        {
+            get { return _status.Error; }
+        }
+
         public ITorrentSettings GetSettings()
         {
             return new TorrentSettings

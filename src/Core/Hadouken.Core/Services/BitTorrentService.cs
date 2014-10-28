@@ -154,6 +154,12 @@ namespace Hadouken.Core.Services
             _messageBus.Publish(new ChangeFilePriorityMessage(infoHash, fileIndex, priority));
         }
 
+        [JsonRpcMethod("torrents.clearError")]
+        public void ClearError(string infoHash)
+        {
+            _messageBus.Publish(new ClearTorrentErrorMessage(infoHash));
+        }
+
         /*
          * Queuing
         */

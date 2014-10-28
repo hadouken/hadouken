@@ -129,6 +129,15 @@
             $modalInstance.dismiss('close');
         };
 
+        $scope.clearError = function() {
+            jsonrpc.request('torrents.clearError', {
+                params: [torrent.InfoHash],
+                success: function() {
+                    torrent.Error = '';
+                }
+            });
+        }
+
         $scope.$on('$destroy', function() {
             $timeout.cancel(updateTimer);
         });
