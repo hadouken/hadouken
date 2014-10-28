@@ -54,7 +54,10 @@
 
                 <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-9">
-                        <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
+                        <button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="busyIndicators['settings']">
+                            <i class="fa fa-spin fa-spinner" ng-show="busyIndicators['settings']" />
+                            Save
+                        </button>
                     </div>
                 </div>
             </form>

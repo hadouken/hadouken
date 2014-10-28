@@ -77,6 +77,8 @@
         };
 
         $scope.save = function() {
+            $scope.busyIndicators['settings'] = 1;
+            
             var keys = [
                 'bt.save_path',
                 'bt.net.listen_port',
@@ -92,7 +94,9 @@
 
             jsonrpc.request('config.setMany', {
                 params: [data],
-                success: function() {}
+                success: function() {
+                    delete $scope.busyIndicators['settings'];
+                }
             });
         };
 
