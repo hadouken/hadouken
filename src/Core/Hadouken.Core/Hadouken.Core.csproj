@@ -92,6 +92,7 @@
     <Compile Include="BitTorrent\Handlers\QueuePositionTopHandler.cs" />
     <Compile Include="BitTorrent\Handlers\QueuePositionUpHandler.cs" />
     <Compile Include="BitTorrent\Handlers\RemoveTorrentHandler.cs" />
+    <Compile Include="BitTorrent\Handlers\RenameTorrentFileHandler.cs" />
     <Compile Include="BitTorrent\Handlers\ResumeTorrentHandler.cs" />
     <Compile Include="BitTorrent\Handlers\SessionSettingsChangedHandler.cs" />
     <Compile Include="BitTorrent\IAlertBus.cs" />

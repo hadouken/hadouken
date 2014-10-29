@@ -31,6 +31,7 @@ window.pluginModules = window.pluginModules || [];
             /* BitTorrent module */
             'js/modules/bittorrent/bittorrentModule.js',
             'js/modules/bittorrent/controllers/settingsController.js',
+            'js/modules/bittorrent/controllers/renameTorrentFileController.js',
             'js/modules/bittorrent/controllers/torrentAddController.js',
             'js/modules/bittorrent/controllers/torrentChangeLabelController.js',
             'js/modules/bittorrent/controllers/torrentDetailsController.js',

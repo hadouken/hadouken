@@ -80,6 +80,7 @@
     <Compile Include="BitTorrent\QueuePositionTopMessage.cs" />
     <Compile Include="BitTorrent\QueuePositionUpMessage.cs" />
     <Compile Include="BitTorrent\RemoveTorrentMessage.cs" />
+    <Compile Include="BitTorrent\RenameTorrentFileMessage.cs" />
     <Compile Include="BitTorrent\ResumeTorrentMessage.cs" />
     <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
     <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />

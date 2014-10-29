@@ -1,6 +1,7 @@
 ﻿angular.module('hadouken.bittorrent.controllers.torrentDetails', [
     'ui.bootstrap',
-    'hadouken.jsonrpc'
+    'hadouken.jsonrpc',
+    'hadouken.bittorrent.controllers.renameTorrentFile'
 ])
 .filter('fileProgress', function() {
     return function(progress) {
@@ -33,8 +34,8 @@
     }
 })
 .controller('BitTorrent.TorrentDetailsController', [
-    '$scope', '$timeout', '$modalInstance', 'jsonrpc', 'torrent',
-    function ($scope, $timeout, $modalInstance, jsonrpc, torrent) {
+    '$scope', '$timeout', '$modal', '$modalInstance', 'jsonrpc', 'torrent',
+    function ($scope, $timeout, $modal, $modalInstance, jsonrpc, torrent) {
         var updateTimer;
         $scope.peers = {};
         $scope.peersCount = 0;
@@ -104,6 +105,18 @@
                 });
             });
         }
+
+        $scope.showRenameFile = function(infoHash, fileIndex, fileName) {
+            $modal.open({
+                controller: 'BitTorrent.RenameTorrentFileController',
+                resolve: {
+                    infoHash: function() { return infoHash; },
+                    fileIndex: function() { return fileIndex; },
+                    fileName: function() { return fileName; }
+                },
+                templateUrl: 'views/bittorrent/rename-torrentfile.html'
+            });
+        };
 
         $scope.setPriority = function (fileIndex, priority) {
             jsonrpc.request('torrents.setFilePriority', {

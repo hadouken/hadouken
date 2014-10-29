@@ -160,6 +160,12 @@ namespace Hadouken.Core.Services
             _messageBus.Publish(new ClearTorrentErrorMessage(infoHash));
         }
 
+        [JsonRpcMethod("torrents.renameFile")]
+        public void RenameFile(string infoHash, int fileIndex, string fileName)
+        {
+            _messageBus.Publish(new RenameTorrentFileMessage(infoHash, fileIndex, fileName));
+        }
+
         /*
          * Queuing
         */

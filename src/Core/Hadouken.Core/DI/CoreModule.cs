@@ -43,6 +43,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<QueuePositionTopHandler>().AsImplementedInterfaces();
             builder.RegisterType<QueuePositionUpHandler>().AsImplementedInterfaces();
             builder.RegisterType<RemoveTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<RenameTorrentFileHandler>().AsImplementedInterfaces();
             builder.RegisterType<ResumeTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<SessionSettingsChangedHandler>().AsImplementedInterfaces();
 
