@@ -35,6 +35,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<ChangeFilePriorityHandler>().AsImplementedInterfaces();
             builder.RegisterType<ChangeTorrentLabelHandler>().AsImplementedInterfaces();
             builder.RegisterType<ChangeTorrentSettingsHandler>().AsImplementedInterfaces();
+            builder.RegisterType<ClearTorrentErrorHandler>().AsImplementedInterfaces();
             builder.RegisterType<MoveTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<PauseTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<QueuePositionBottomHandler>().AsImplementedInterfaces();
@@ -42,6 +43,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<QueuePositionTopHandler>().AsImplementedInterfaces();
             builder.RegisterType<QueuePositionUpHandler>().AsImplementedInterfaces();
             builder.RegisterType<RemoveTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<RenameTorrentFileHandler>().AsImplementedInterfaces();
             builder.RegisterType<ResumeTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<SessionSettingsChangedHandler>().AsImplementedInterfaces();
 

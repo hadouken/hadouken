@@ -100,6 +100,11 @@ namespace Hadouken.Common.BitTorrent
         int QueuePosition { get; }
 
         /// <summary>
+        /// Gets the error message if this torrent is errored. <c>null</c> if no error.
+        /// </summary>
+        string Error { get; }
+
+        /// <summary>
         /// Gets the torrent-specific settings.
         /// </summary>
         ITorrentSettings GetSettings();

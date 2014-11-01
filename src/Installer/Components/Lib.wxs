@@ -28,10 +28,6 @@
       </Component>
 
       <Component>
-        <File Name="Microsoft.Owin.Host.HttpListener.dll" />
-      </Component>
-
-      <Component>
         <File Name="Microsoft.Owin.Hosting.dll" />
       </Component>
 
@@ -49,6 +45,10 @@
 
       <Component>
         <File Name="Newtonsoft.Json.dll" />
+      </Component>
+
+      <Component>
+        <File Name="Nowin.dll" />
       </Component>
 
       <Component>

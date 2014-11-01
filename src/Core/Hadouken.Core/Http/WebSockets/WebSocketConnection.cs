@@ -159,23 +159,23 @@ namespace Hadouken.Core.Http.WebSockets
 
         private async Task RunWebSocket(IDictionary<string, object> websocketContext)
         {
-            // Try to get the websocket context from the environment
-            object value;
-            if (!websocketContext.TryGetValue(typeof(WebSocketContext).FullName, out value))
-            {
-                throw new InvalidOperationException("Unable to find web socket context");
-            }
-
-            _webSocket = ((WebSocketContext)value).WebSocket;
+            _webSocket = new OwinWebSocket(websocketContext);
 
             OnOpen();
 
             var buffer = new byte[MaxMessageSize];
             do
             {
-                var received = await ReceiveOneMessage(buffer);
-                if (received.Item1.Count > 0)
-                    OnMessageReceived(received.Item1, received.Item2);
+                try
+                {
+                    var received = await ReceiveOneMessage(buffer);
+                    if (received.Item1.Count > 0)
+                        OnMessageReceived(received.Item1, received.Item2);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
             }
             while (!_webSocket.CloseStatus.HasValue);
 
