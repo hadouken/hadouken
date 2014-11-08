@@ -59,6 +59,10 @@
       <Feature Id="VCRedist" Title="!(loc.VCRedist_Title)" Description="!(loc.VCRedist_Description)" Display="expand" Level="1">
         <MergeRef Id="VCRedist" />
       </Feature>
+	  
+	  <Feature Id="FirewallException" Title="!(loc.Firewall_Title)" Description="!(loc.Firewall_Description)" Level="1">
+		<ComponentGroupRef Id="FirewallComponents" />
+	  </Feature>
     </Feature>
 
     <Feature Id="Tools" Title="Tools" Description="Tools and utilities extending Hadouken." Display="expand" Level="1">
