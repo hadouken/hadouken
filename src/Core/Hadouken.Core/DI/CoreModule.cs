@@ -20,7 +20,21 @@ namespace Hadouken.Core.DI
         protected override void Load(ContainerBuilder builder)
         {
             // BitTorrent stuff
-            builder.RegisterType<Session>().As<ISession>().SingleInstance().ExternallyOwned();
+            builder.Register<ISession>(c =>
+            {
+                var v = typeof (AssemblyInformation).Assembly.GetName().Version;
+                var fingerprint = new Fingerprint("HA", v.Major, v.Minor, v.Build, v.Revision);
+                var session = new Session(fingerprint);
+
+                using (var settings = session.QuerySettings())
+                {
+                    settings.UserAgent = "Hadouken/" + v;
+                    session.SetSettings(settings);
+                }
+
+                return session;
+            }).SingleInstance().ExternallyOwned();
+
             builder.Register(c => c.Resolve<ISession>().Alerts).SingleInstance().ExternallyOwned();
             builder.RegisterType<AlertBus>().As<IAlertBus>().SingleInstance();
             builder.RegisterType<SessionHandler>().AsImplementedInterfaces().SingleInstance();
