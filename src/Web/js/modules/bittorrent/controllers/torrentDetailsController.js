@@ -59,6 +59,8 @@
                 params: [torrent.InfoHash],
                 success: function(d) {
                     $scope.settings = d.result;
+                    $scope.settings.DownloadRateLimitKbs = $scope.settings.DownloadRateLimit/1024;
+                    $scope.settings.UploadRateLimitKbs = $scope.settings.UploadRateLimit/1024;
                     cb();
                 }
             });
@@ -129,6 +131,9 @@
 
         $scope.saveSettings = function() {
             $scope.busy = true;
+
+            $scope.settings.DownloadRateLimit = $scope.settings.DownloadRateLimitKbs*1024;
+            $scope.settings.UploadRateLimit = $scope.settings.UploadRateLimitKbs*1024;
 
             jsonrpc.request('torrents.setSettings', {
                 params: [torrent.InfoHash, $scope.settings],
