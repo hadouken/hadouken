@@ -13,6 +13,8 @@ namespace Hadouken.Core.BitTorrent
 {
     internal class SessionHandler : ISessionHandler
     {
+        private static readonly int SaveInterval = 300;
+
         private readonly ILogger<SessionHandler> _logger;
         private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
@@ -52,7 +54,7 @@ namespace Hadouken.Core.BitTorrent
             _alertBus = alertBus;
             _torrentManager = torrentManager;
             _muted = new List<string>();
-            _timer = timerFactory.Create(1000, PostTorrentUpdates);
+            _timer = timerFactory.Create(1000, Tick);
         }
 
         public void Load()
@@ -230,8 +232,21 @@ namespace Hadouken.Core.BitTorrent
             if (sessImpl != null) sessImpl.Dispose();
         }
 
-        private void PostTorrentUpdates()
+        private void Tick()
         {
+            if (_timer.Ticks%SaveInterval == 0)
+            {
+                _logger.Trace("Saving resume data for torrents.");
+
+                foreach (var torrent in _torrentManager.Torrents.Values)
+                {
+                    if (torrent.Handle.NeedSaveResumeData())
+                    {
+                        torrent.Handle.SaveResumeData();                        
+                    }
+                }
+            }
+
             _session.PostTorrentUpdates();
         }
     }
