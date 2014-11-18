@@ -62,7 +62,7 @@ namespace Hadouken.Core.BitTorrent
 
         public string Name
         {
-            get { return (HasMetadata ? _status.Name : InfoHash); }
+            get { return (HasMetadata ? _stringEncoder.Encode(_status.Name) : InfoHash); }
         }
 
         public bool HasMetadata
@@ -242,18 +242,6 @@ namespace Hadouken.Core.BitTorrent
             }
 
             return result;
-        }
-
-        private string GetName()
-        {
-            if (!HasMetadata) return InfoHash;
-
-            using (var entry = TorrentInfo.FileAt(0))
-            {
-                var name = entry.Path.Replace("\\", "/").Split('/').FirstOrDefault();
-                string result = string.IsNullOrEmpty(name) ? TorrentInfo.Name : name;
-                return _stringEncoder.Encode(result);
-            }
         }
 
         public void Dispose()
