@@ -38,7 +38,7 @@
     </thead>
     
     <tbody id="tbody-torrents-list">
-        <tr ng-repeat="torrent in torrents | sort:sortField:sortDirection" class="torrent-row" ng-class="{ 'torrent-operation': torrent.Removing }">
+        <tr ng-repeat="torrent in torrents | sort:sortField:sortDirection" class="torrent-row" ng-class="{ 'torrent-operation': torrent.Removing, 'warning': torrent.Error }">
             <td>{{ torrent.QueuePosition | prettyQueue }}</td>
             <td>
                 <div style="white-space: nowrap; text-overflow: ellipsis;"><a href ng-click="showDetails(torrent.InfoHash)">{{ torrent.Name }}</a></div>
@@ -66,7 +66,7 @@
                 </span>
             </td>
             <td>
-                <span class="state">{{ torrent.State }}</span>
+                <span class="state">{{ torrent | state }}</span>
                 <span class="state-progress">{{ torrent | torrentProgress }}</span>
             </td>
             <td>
@@ -80,8 +80,8 @@
             <td><span class="ulSpeed">{{ torrent.UploadSpeed | speed }}</span></td>
             <td>
                 <div class="actions pull-right">
-                    <button type="button" class="btn btn-primary" ng-click="resume(torrent.InfoHash)" ng-show="torrent.Paused"><i class="fa fa-play"></i></button>
-                    <button type="button" class="btn btn-primary" ng-click="pause(torrent.InfoHash)" ng-show="!torrent.Paused"><i class="fa fa-pause"></i></button>
+                    <button type="button" class="btn btn-primary" ng-click="resume(torrent.InfoHash)" ng-show="torrent.Paused" ng-disabled="torrent.Error !== ''"><i class="fa fa-play"></i></button>
+                    <button type="button" class="btn btn-primary" ng-click="pause(torrent.InfoHash)" ng-show="!torrent.Paused" ng-disabled="torrent.Error !== ''"><i class="fa fa-pause"></i></button>
                 </div>
             </td>
         </tr>

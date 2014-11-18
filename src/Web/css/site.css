@@ -85,3 +85,6 @@ h1.page-header {
 .torrent-operation {
   opacity: 0.5;
 }
+
+.torrent-error {
+}

@@ -43,6 +43,8 @@
 })
 .filter('torrentProgress', function () {
     return function (torrent) {
+        if(torrent.Error !== '') return '';
+
         if (torrent.State === 'CheckingFiles'
             || torrent.state === 'CheckingResumeData'
             || torrent.State === 'Downloading') {
@@ -60,6 +62,14 @@
         var units = ['B/s', 'KiB/s', 'MiB/s', 'GiB/s', 'TiB/s', 'PiB/s'],
             number = Math.floor(Math.log(bytes) / Math.log(1024));
         return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
+    }
+})
+.filter('state', function() {
+    return function(torrent) {
+        if(torrent.Error !== '') return 'Error';
+        if(torrent.State === 'CheckingFiles') return 'Checking files';
+        if(torrent.State === 'CheckingResumeData') return 'Checking resume data';
+        return torrent.State;
     }
 })
 .filter('prettyQueue', function() {
@@ -253,6 +263,7 @@
 
         function updateTorrent(oldTorrent, newTorrent) {
             oldTorrent.DownloadSpeed = newTorrent.DownloadSpeed;
+            oldTorrent.Error = newTorrent.Error;
             oldTorrent.Name = newTorrent.Name;
             oldTorrent.Paused = newTorrent.Paused;
             oldTorrent.Progress = newTorrent.Progress;

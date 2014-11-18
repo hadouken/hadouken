@@ -1,28 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Autofac;
 using Hadouken.Common.Data;
 using Hadouken.Common.Logging;
 using Hadouken.Core.Http.WebSockets.Extensions;
 using Hadouken.Core.Security;
+using Microsoft.Owin.Builder;
 using Microsoft.Owin.Hosting;
 using Nancy.Bootstrapper;
+using Nowin;
 using Owin;
 
 namespace Hadouken.Core.Http
 {
     public class HttpServer : IHttpServer
     {
-#pragma warning disable 169
+// ReSharper disable once UnusedField.Compiler
 // ReSharper disable once InconsistentNaming
-        private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener _owinHttpListener;
-#pragma warning restore 169
+        private static readonly Microsoft.Owin.Hosting.StartOptions __startOptions;
 
         private readonly ILogger<HttpServer> _logger;
         private readonly INancyBootstrapper _bootstrapper;
         private readonly IKeyValueStore _keyValueStore;
         private readonly ILifetimeScope _lifetimeScope;
         private readonly IUserManager _userManager;
-        private IDisposable _owinHost;
+        private INowinServer _nowinServer;
 
         public HttpServer(ILogger<HttpServer> logger,
             INancyBootstrapper bootstrapper,
@@ -44,21 +49,51 @@ namespace Hadouken.Core.Http
 
         public void Start()
         {
-            var binding = _keyValueStore.Get("http.binding", "localhost");
+            var binding = _keyValueStore.Get("http.binding", "127.0.0.1");
             var port = _keyValueStore.Get("http.port", 7890);
 
-            var startOptions = new StartOptions(string.Format("http://{0}:{1}/", binding, port));
+            if (binding == "localhost") binding = "127.0.0.1";
+            if (binding == "+") binding = "0.0.0.0";
 
-            // Safeguard if some address is wrong
-            if (binding != "localhost")
+            var address = IPAddress.Parse(binding);
+            var endPoint = new IPEndPoint(address, port);
+
+            var certificateFile = _keyValueStore.Get<string>("http.x509.file");
+            var certificatePassword = _keyValueStore.Get<string>("http.x509.password");
+            X509Certificate2 certificate = null;
+
+            if (!string.IsNullOrEmpty(certificateFile))
             {
-                startOptions.Urls.Add("http://localhost:" + port + "/");
+                try
+                {
+                    certificate = string.IsNullOrEmpty(certificatePassword)
+                        ? new X509Certificate2(certificateFile)
+                        : new X509Certificate2(certificateFile, certificatePassword);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Warn(exception, "Failed to load X509 certificate.");
+                }
             }
 
             try
             {
-                _owinHost = WebApp.Start(startOptions, AppBuilder);
-                _logger.Info("HTTP server accepting connections on {Urls}.", startOptions.Urls);
+                var app = BuildOwinApp();
+                var builder = ServerBuilder
+                    .New()
+                    .SetOwinApp(app.Build())
+                    .SetOwinCapabilities((IDictionary<string, object>) app.Properties[OwinKeys.ServerCapabilitiesKey])
+                    .SetEndPoint(endPoint);
+
+                if (certificate != null) builder.SetCertificate(certificate);
+
+                _nowinServer = builder.Build();
+
+                Task.Run(() => _nowinServer.Start());
+
+                var protocol = certificate != null ? "https" : "http";
+                _logger.Info("HTTP server accepting connections on {Url}.",
+                    string.Format("{0}://{1}", protocol, endPoint));
             }
             catch (Exception exception)
             {
@@ -68,14 +103,19 @@ namespace Hadouken.Core.Http
 
         public void Stop()
         {
-            _owinHost.Dispose();
+            _nowinServer.Dispose();
         }
 
-        private void AppBuilder(IAppBuilder builder)
+        private IAppBuilder BuildOwinApp()
         {
+            var builder = new AppBuilder();
+            OwinServerFactory.Initialize(builder.Properties);
+
             builder
                 .MapWebSocketRoute<EventStreamServer>("/events", _lifetimeScope, _userManager)
                 .UseNancy(nancyOptions => nancyOptions.Bootstrapper = _bootstrapper);
+
+            return builder;
         }
     }
 }

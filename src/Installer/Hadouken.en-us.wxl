@@ -34,4 +34,7 @@
   <String Id="VCRedist_Title" Overridable="yes">VC++ 12.0 runtime</String>
   <String Id="VCRedist_Description" Overridable="yes">The Visual C++ 12.0 runtime required to run Hadouken.</String>
   
+  <!-- Windows Firewall Exception -->
+  <String Id="Firewall_Title" Overridable="yes">Windows Firewall Exception</String>
+  <String Id="Firewall_Description" Overridable="yes">This adds an Exception for the Hadouken Service to the Windows Firewall.</String>
 </WixLocalization>

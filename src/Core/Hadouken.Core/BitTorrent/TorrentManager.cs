@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using Hadouken.Common;
 using Hadouken.Common.BitTorrent;
+using Hadouken.Common.IO;
 using Hadouken.Common.Messaging;
 using Hadouken.Core.BitTorrent.Data;
 using Ragnar;
@@ -10,22 +13,30 @@ namespace Hadouken.Core.BitTorrent
 {
     internal class TorrentManager : ITorrentManager
     {
+        private readonly IEnvironment _environment;
+        private readonly IFileSystem _fileSystem;
         private readonly IAlertBus _alertBus;
         private readonly IMessageBus _messageBus;
         private readonly ITorrentInfoRepository _torrentInfoRepository;
         private readonly ITorrentMetadataRepository _torrentMetadataRepository;
         private readonly ConcurrentDictionary<string, Torrent> _torrents;  
 
-        public TorrentManager(IAlertBus alertBus,
+        public TorrentManager(IEnvironment environment,
+            IFileSystem fileSystem,
+            IAlertBus alertBus,
             IMessageBus messageBus,
             ITorrentInfoRepository torrentInfoRepository,
             ITorrentMetadataRepository torrentMetadataRepository)
         {
+            if (environment == null) throw new ArgumentNullException("environment");
+            if (fileSystem == null) throw new ArgumentNullException("fileSystem");
             if (alertBus == null) throw new ArgumentNullException("alertBus");
             if (messageBus == null) throw new ArgumentNullException("messageBus");
             if (torrentInfoRepository == null) throw new ArgumentNullException("torrentInfoRepository");
             if (torrentMetadataRepository == null) throw new ArgumentNullException("torrentMetadataRepository");
 
+            _environment = environment;
+            _fileSystem = fileSystem;
             _alertBus = alertBus;
             _messageBus = messageBus;
             _torrentInfoRepository = torrentInfoRepository;
@@ -42,6 +53,7 @@ namespace Hadouken.Core.BitTorrent
         {
             // Set up alert subscriptions
             _alertBus.Subscribe<MetadataReceivedAlert>(OnMetadataReceived);
+            _alertBus.Subscribe<SaveResumeDataAlert>(OnSaveResumeData);
             _alertBus.Subscribe<StateUpdateAlert>(OnStateUpdate);
             _alertBus.Subscribe<TorrentAddedAlert>(OnTorrentAdded);
             _alertBus.Subscribe<TorrentFinishedAlert>(OnTorrentFinished);
@@ -61,6 +73,24 @@ namespace Hadouken.Core.BitTorrent
 
                 torrent.TorrentInfo = handle.TorrentFile;
                 _torrentInfoRepository.Save(torrent.TorrentInfo);
+            }
+        }
+
+        private void OnSaveResumeData(SaveResumeDataAlert alert)
+        {
+            using (var handle = alert.Handle)
+            using (var status = handle.QueryStatus())
+            {
+                var resumePath = _environment.GetApplicationDataPath()
+                    .Combine("Torrents")
+                    .CombineWithFilePath(string.Concat(status.InfoHash.ToHex(), ".resume"));
+
+                var file = _fileSystem.GetFile(resumePath);
+
+                using (var fileStream = file.Open(FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    fileStream.Write(alert.ResumeData, 0, alert.ResumeData.Length);
+                }
             }
         }
 

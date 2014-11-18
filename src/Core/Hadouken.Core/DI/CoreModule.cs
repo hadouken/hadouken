@@ -22,7 +22,21 @@ namespace Hadouken.Core.DI
         protected override void Load(ContainerBuilder builder)
         {
             // BitTorrent stuff
-            builder.RegisterType<Session>().As<ISession>().SingleInstance().ExternallyOwned();
+            builder.Register<ISession>(c =>
+            {
+                var v = typeof (AssemblyInformation).Assembly.GetName().Version;
+                var fingerprint = new Fingerprint("HA", v.Major, v.Minor, v.Build, v.Revision);
+                var session = new Session(fingerprint);
+
+                using (var settings = session.QuerySettings())
+                {
+                    settings.UserAgent = "Hadouken/" + v;
+                    session.SetSettings(settings);
+                }
+
+                return session;
+            }).SingleInstance().ExternallyOwned();
+
             builder.Register(c => c.Resolve<ISession>().Alerts).SingleInstance().ExternallyOwned();
             builder.RegisterType<AlertBus>().As<IAlertBus>().SingleInstance();
             builder.RegisterType<SessionHandler>().AsImplementedInterfaces().SingleInstance();
@@ -37,6 +51,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<ChangeFilePriorityHandler>().AsImplementedInterfaces();
             builder.RegisterType<ChangeTorrentLabelHandler>().AsImplementedInterfaces();
             builder.RegisterType<ChangeTorrentSettingsHandler>().AsImplementedInterfaces();
+            builder.RegisterType<ClearTorrentErrorHandler>().AsImplementedInterfaces();
             builder.RegisterType<MoveTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<PauseTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<QueuePositionBottomHandler>().AsImplementedInterfaces();
@@ -44,6 +59,7 @@ namespace Hadouken.Core.DI
             builder.RegisterType<QueuePositionTopHandler>().AsImplementedInterfaces();
             builder.RegisterType<QueuePositionUpHandler>().AsImplementedInterfaces();
             builder.RegisterType<RemoveTorrentHandler>().AsImplementedInterfaces();
+            builder.RegisterType<RenameTorrentFileHandler>().AsImplementedInterfaces();
             builder.RegisterType<ResumeTorrentHandler>().AsImplementedInterfaces();
             builder.RegisterType<SessionSettingsChangedHandler>().AsImplementedInterfaces();
 

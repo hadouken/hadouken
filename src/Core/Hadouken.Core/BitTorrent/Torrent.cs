@@ -17,7 +17,7 @@ namespace Hadouken.Core.BitTorrent
         private readonly TorrentHandle _handle;
         private TorrentInfo _info;
         private TorrentStatus _status;
-        
+
         private IStringEncoder _stringEncoder;
 
         public Torrent(TorrentHandle handle)
@@ -62,7 +62,7 @@ namespace Hadouken.Core.BitTorrent
 
         public string Name
         {
-            get { return GetName(); }
+            get { return (HasMetadata ? _status.Name : InfoHash); }
         }
 
         public bool HasMetadata
@@ -145,6 +145,11 @@ namespace Hadouken.Core.BitTorrent
         public int QueuePosition
         {
             get { return _status.QueuePosition; }
+        }
+
+        public string Error
+        {
+            get { return _status.Error; }
         }
 
         public ITorrentSettings GetSettings()
