@@ -8,7 +8,6 @@ using Hadouken.Common.Logging;
 using Hadouken.Common.Messaging;
 using Hadouken.Common.Timers;
 using Ragnar;
-using Hadouken.Common.Text;
 
 namespace Hadouken.Core.BitTorrent
 {
@@ -26,7 +25,6 @@ namespace Hadouken.Core.BitTorrent
         private readonly ITorrentManager _torrentManager;
         private readonly IList<string> _muted;
         private readonly ITimer _timer;
-        private readonly IStringEncoder _stringEncoder;
 
         public SessionHandler(ILogger<SessionHandler> logger,
             IEnvironment environment,
@@ -36,8 +34,7 @@ namespace Hadouken.Core.BitTorrent
             ISession session,
             IAlertBus alertBus,
             ITorrentManager torrentManager,
-            ITimerFactory timerFactory,
-            IStringEncoder stringEncoder)
+            ITimerFactory timerFactory)
         {
             if (logger == null) throw new ArgumentNullException("logger");
             if (environment == null) throw new ArgumentNullException("environment");
@@ -47,7 +44,6 @@ namespace Hadouken.Core.BitTorrent
             if (session == null) throw new ArgumentNullException("session");
             if (alertBus == null) throw new ArgumentNullException("alertBus");
             if (torrentManager == null) throw new ArgumentNullException("torrentManager");
-            if (stringEncoder == null) throw new ArgumentException("stringEncoder");
 
             _logger = logger;
             _environment = environment;
@@ -58,8 +54,7 @@ namespace Hadouken.Core.BitTorrent
             _alertBus = alertBus;
             _torrentManager = torrentManager;
             _muted = new List<string>();
-            _stringEncoder = stringEncoder;
-            _timer = timerFactory.Create(1000, PostTorrentUpdates);
+            _timer = timerFactory.Create(1000, Tick);
         }
 
         public void Load()
@@ -246,7 +241,7 @@ namespace Hadouken.Core.BitTorrent
                 foreach (var torrent in _torrentManager.Torrents.Values)
                 {
                     if (torrent.Handle.NeedSaveResumeData())
-        {
+                    {
                         torrent.Handle.SaveResumeData();                        
                     }
                 }
