@@ -1,5 +1,12 @@
 # Hadouken BitTorrent client
 
+Primary goal of EQR-Hadouken is to provide support for cyrillic (and, optionally, all non-latin) torrent names and file names.
+
+Other plans include:
+1) Support for sorting torrents by "Added date" as it is usually done in desktop clients like uTorrent. 
+2) ...
+
+
 [![Build status](https://ci.appveyor.com/api/projects/status/7ncg3jiginoapada/branch/develop)](https://ci.appveyor.com/project/hadouken/hadouken/branch/develop)
 
 Hadouken is a BitTorrent client written in C# and designed to run as a Windows Service. It is *lightweight*, *extensible* and built on top of *libtorrent* to bring you the best in class of BitTorrent services.
