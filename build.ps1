@@ -181,14 +181,14 @@ Task MSI {
     Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.msi.config" -Destination $configTarget
 
     Exec {
-        & $Tools_WixCandle "-dBinDir=$Dir_Binaries" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -o "$Dir_Artifacts\wixobj\" $wxs
+        & $Tools_WixCandle "-dBinDir=$Dir_Binaries" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -ext WixFirewallExtension -o "$Dir_Artifacts\wixobj\" $wxs
     }
 
     $wixobj = Get-ChildItem "$Dir_Artifacts\wixobj\" -Include *.wixobj -Recurse | Select-Object FullName | foreach {$_.FullName}
     $msi = Join-Path $Dir_Artifacts $Artifact_Msi
 
     Exec {
-        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -sval -o $msi -cultures:en-us -loc "src\Installer\Hadouken.en-us.wxl"  $wixobj
+        & $Tools_WixLight -ext WixUIExtension -ext WixUtilExtension -ext WixNetFxExtension -ext WixFirewallExtension -sval -o $msi -cultures:en-us -loc "src\Installer\Hadouken.en-us.wxl"  $wixobj
     }
 }
 
