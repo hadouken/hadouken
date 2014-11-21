@@ -186,7 +186,9 @@
     <Compile Include="Text\BEncoding\BEncodedValue.cs" />
     <Compile Include="Text\BEncoding\BDecoder.cs" />
     <Compile Include="Text\IJsonSerializer.cs" />
+    <Compile Include="Text\IStringEncoder.cs" />
     <Compile Include="Text\JsonSerializer.cs" />
+    <Compile Include="Text\Win1251StringEncoder.cs" />
     <Compile Include="Timers\ITimer.cs" />
     <Compile Include="Timers\ITimerFactory.cs" />
     <Compile Include="Timers\ThreadedTimer.cs" />

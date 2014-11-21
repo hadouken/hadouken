@@ -6,18 +6,26 @@ using Ragnar;
 
 namespace Hadouken.Core.BitTorrent
 {
+    using Autofac.Core;
+
+    using Hadouken.Common.Text;
+
+    using Nancy.Bootstrappers.Autofac;
+
     internal sealed class Torrent : ITorrent, IDisposable
     {
         private readonly TorrentHandle _handle;
         private TorrentInfo _info;
         private TorrentStatus _status;
 
+        private IStringEncoder _stringEncoder;
+
         public Torrent(TorrentHandle handle)
         {
             if (handle == null) throw new ArgumentNullException("handle");
             _handle = handle;
             _status = handle.QueryStatus();
-
+            _stringEncoder = new Win1251StringEncoder();
             // Set initial properties
             TorrentInfo = _handle.TorrentFile;
         }
@@ -54,7 +62,7 @@ namespace Hadouken.Core.BitTorrent
 
         public string Name
         {
-            get { return (HasMetadata ? _status.Name : InfoHash); }
+            get { return (HasMetadata ? _stringEncoder.Encode(_status.Name) : InfoHash); }
         }
 
         public bool HasMetadata
@@ -169,7 +177,7 @@ namespace Hadouken.Core.BitTorrent
             {
                 using (var entry = TorrentInfo.FileAt(i))
                 {
-                    result.Add(new TorrentFile(i, entry.Path, entry.Size, entry.Offset));
+                    result.Add(new TorrentFile(i, _stringEncoder.Encode(entry.Path), entry.Size, entry.Offset));
                 }
             }
 

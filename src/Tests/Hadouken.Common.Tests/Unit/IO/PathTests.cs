@@ -43,7 +43,8 @@ namespace Hadouken.Common.Tests.Unit.IO
                 // Then
                 Assert.IsType<ArgumentException>(result);
                 Assert.Equal("path", ((ArgumentException)result).ParamName);
-                Assert.Equal(string.Format("Path cannot be empty.{0}Parameter name: path", Environment.NewLine), result.Message);
+
+                Assert.True(result.Message.Contains("Path cannot be empty."));
             }
 
             [Fact]
@@ -95,7 +96,11 @@ namespace Hadouken.Common.Tests.Unit.IO
                 // Then
                 Assert.IsType<ArgumentException>(result);
                 Assert.Equal("path", ((ArgumentException)result).ParamName);
-                Assert.Equal(string.Format("Illegal characters in directory path (*).{0}Parameter name: path", Environment.NewLine), result.Message);
+
+                // We should not check the whole exception message because developet's machine may have
+                // system language different from English so the system part of the exception message
+                // will be localized.
+                Assert.True(result.Message.Contains("Illegal characters in directory path (*)"));
             }
 
             [Theory]

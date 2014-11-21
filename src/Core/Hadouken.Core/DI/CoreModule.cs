@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Hadouken.Common.BitTorrent;
 using Hadouken.Common.JsonRpc;
 using Hadouken.Core.BitTorrent;
 using Hadouken.Core.BitTorrent.Data;
@@ -10,11 +9,14 @@ using Hadouken.Core.Http;
 using Hadouken.Core.JsonRpc;
 using Hadouken.Core.Security;
 using Hadouken.Core.Services;
+using Hadouken.Common.Text;
 using Nancy.Bootstrapper;
 using Ragnar;
 
 namespace Hadouken.Core.DI
 {
+    using Hadouken.Common.BitTorrent;
+
     public class CoreModule : Module
     {
         protected override void Load(ContainerBuilder builder)
@@ -99,6 +101,9 @@ namespace Hadouken.Core.DI
 
             // The main service
             builder.RegisterType<HadoukenService>().As<IHadoukenService>().SingleInstance();
+
+            // Encoding
+            builder.RegisterType<Win1251StringEncoder>().As<IStringEncoder>();
         }
     }
 }
