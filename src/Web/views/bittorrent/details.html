@@ -114,8 +114,8 @@
                         <td>{{ file.Size | bytes }}</td>
                         <td style="text-align: right;">{{ progress[$index] | fileProgress }}%</td>
                         <td>
-                            <div class="dropdown pull-right" on-toggle="toggled(open)">
-                                <button class="btn btn-xs btn-default dropdown-toggle"><i class="fa fa-bars"></i></button>
+                            <div class="dropdown pull-right" dropdown on-toggle="toggled(open)">
+                                <button class="btn btn-xs btn-default dropdown-toggle" dropdown-toggle><i class="fa fa-bars"></i></button>
                                 <ul class="dropdown-menu">
                                     <li><a href ng-click="showRenameFile(torrent.InfoHash, $index, file.Path)"><i class="fa fa-fw fa-sign-out"></i> Rename</a></li>
                                     <li class="divider"></li>
