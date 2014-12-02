@@ -103,6 +103,9 @@ namespace Hadouken.Core.BitTorrent
             {
                 _messageBus.Publish(new TorrentAddedMessage(torrent));   
             }
+
+            // Save initial resume data
+            torrent.Handle.SaveResumeData();
         }
 
         private void OnTorrentFinished(TorrentFinishedAlert alert)
