@@ -45,8 +45,9 @@
                 <div style="white-space: nowrap; text-overflow: ellipsis;"><small class="savePath">{{ torrent.SavePath }}</small></div>
             </td>
             <td>
-                <span class="dropdown" on-toggle="toggled(open)">
-                    <button class="btn btn-xs btn-default dropdown-toggle"><i class="fa fa-bars"></i></button>
+                <span class="dropdown" dropdown on-toggle="toggled(open)">
+                    <button class="btn btn-xs btn-default dropdown-toggle" dropdown-toggle><i class="fa fa-bars"></i></button>
+
                     <ul class="dropdown-menu">
                         <li><a href ng-click="changeLabel(torrent.InfoHash)"><i class="fa fa-tag"></i> Change label</a></li>
                         <li><a href ng-click="move(torrent.InfoHash)"><i class="fa fa-sign-out"></i> Move</a></li>
