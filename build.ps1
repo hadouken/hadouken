@@ -181,7 +181,7 @@ Task MSI {
     Copy-Item -Path ".\src\Configuration\$Configuration\Hadouken.exe.msi.config" -Destination $configTarget
 
     Exec {
-        & $Tools_WixCandle "-dBinDir=$Dir_Binaries" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -ext WixFirewallExtension -o "$Dir_Artifacts\wixobj\" $wxs
+        & $Tools_WixCandle "-dBinDir=$Dir_Binaries" "-dBuildVersion=$Version" -dConfigDir=src\Configuration\Service -ext WixUtilExtension -ext WixFirewallExtension -o "$Dir_Artifacts\wixobj\\" $wxs
     }
 
     $wixobj = Get-ChildItem "$Dir_Artifacts\wixobj\" -Include *.wixobj -Recurse | Select-Object FullName | foreach {$_.FullName}
