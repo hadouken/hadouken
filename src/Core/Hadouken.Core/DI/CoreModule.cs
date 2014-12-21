@@ -15,8 +15,6 @@ using Ragnar;
 
 namespace Hadouken.Core.DI
 {
-    using Hadouken.Common.Text;
-
     public class CoreModule : Module
     {
         protected override void Load(ContainerBuilder builder)
@@ -98,9 +96,6 @@ namespace Hadouken.Core.DI
 
             // Security
             builder.RegisterType<UserManager>().As<IUserManager>().SingleInstance();
-
-            // String encoding
-            builder.RegisterType<Windows1251StringEncoder>().As<IStringEncoder>();
 
             // The main service
             builder.RegisterType<HadoukenService>().As<IHadoukenService>().SingleInstance();

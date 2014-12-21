@@ -22,9 +22,9 @@ namespace Hadouken.Core.Services
         }
 
         [JsonRpcMethod("torrents.getAll")]
-        public IEnumerable<ITorrent> GetAll()
+        public IEnumerable<TorrentViewModel> GetAll()
         {
-            return _torrentEngine.GetAll();
+            return _torrentEngine.GetAll().Select(t => new TorrentViewModel(t));
         }
 
         [JsonRpcMethod("torrents.getByInfoHashList")]
@@ -46,10 +46,10 @@ namespace Hadouken.Core.Services
         }
 
         [JsonRpcMethod("torrents.getFiles")]
-        public IEnumerable<ITorrentFile> GetFiles(string infoHash)
+        public IEnumerable<TorrentFileViewModel> GetFiles(string infoHash)
         {
             var torrent = _torrentEngine.GetByInfoHash(infoHash);
-            return torrent == null ? null : torrent.GetFiles();
+            return torrent == null ? null : torrent.GetFiles().Select(tf => new TorrentFileViewModel(tf)).ToList();
         }
 
         [JsonRpcMethod("torrents.getFileProgress")]
