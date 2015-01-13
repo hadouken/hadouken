@@ -174,8 +174,10 @@
     <Compile Include="Services\Models\ConfigurationItem.cs" />
     <Compile Include="Services\Models\Notifier.cs" />
     <Compile Include="Services\Models\NotifierConfiguration.cs" />
+    <Compile Include="Services\Models\TorrentFileViewModel.cs" />
     <Compile Include="Services\Models\TorrentParameters.cs" />
     <Compile Include="Services\Models\TorrentSettings.cs" />
+    <Compile Include="Services\Models\TorrentViewModel.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\UserServices.cs" />
   </ItemGroup>

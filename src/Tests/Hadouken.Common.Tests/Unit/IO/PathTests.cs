@@ -5,6 +5,9 @@ using Xunit.Extensions;
 
 namespace Hadouken.Common.Tests.Unit.IO
 {
+    using System.Globalization;
+    using System.Threading;
+
     public sealed class PathTests
     {
         #region Private Test Classes
@@ -38,6 +41,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             public void Should_Throw_If_Path_Is_Empty(string fullPath)
             {
                 // Given, When
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                
                 var result = Record.Exception(() => new TestingPath(fullPath));
 
                 // Then
@@ -89,6 +95,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Fact]
             public void Should_Throw_If_Path_Contains_Illegal_Characters()
             {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                
                 // Given
                 var result = Record.Exception(() => new TestingPath("hello/**/world.txt"));
 
