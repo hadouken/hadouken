@@ -5,6 +5,10 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hadouken", "src\hadouken.vcxproj", "{8408440E-40EC-4978-A6DE-5B8CBAC5DED8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{4CB6E7C0-D86C-4BF5-AC1A-6DBDA336134E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "folder_watcher", "plugins\folder_watcher\folder_watcher.vcxproj", "{97455F0C-629D-4DF3-9A2F-1293D54F4002}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,8 +19,15 @@ Global
 		{8408440E-40EC-4978-A6DE-5B8CBAC5DED8}.Debug|Win32.Build.0 = Debug|Win32
 		{8408440E-40EC-4978-A6DE-5B8CBAC5DED8}.Release|Win32.ActiveCfg = Release|Win32
 		{8408440E-40EC-4978-A6DE-5B8CBAC5DED8}.Release|Win32.Build.0 = Release|Win32
+		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Debug|Win32.ActiveCfg = Debug|Win32
+		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Debug|Win32.Build.0 = Debug|Win32
+		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Release|Win32.ActiveCfg = Release|Win32
+		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{97455F0C-629D-4DF3-9A2F-1293D54F4002} = {4CB6E7C0-D86C-4BF5-AC1A-6DBDA336134E}
 	EndGlobalSection
 EndGlobal
