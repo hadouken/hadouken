@@ -19,7 +19,9 @@ session::session(boost::asio::io_service& io_service)
 
 session::~session()
 {
+    BOOST_LOG_TRIVIAL(trace) << "[i] session::~session()";
     delete sess_;
+    BOOST_LOG_TRIVIAL(trace) << "[o] session::~session()";
 }
 
 void session::load()
@@ -38,6 +40,17 @@ void session::unload()
 
     save_state();
     save_resume_data();
+}
+
+void session::add_torrent_file(const std::string& file, const std::string& save_path)
+{
+    libtorrent::add_torrent_params params;
+    params.save_path = save_path;
+    params.ti = new libtorrent::torrent_info(file);
+
+    BOOST_LOG_TRIVIAL(debug) << "Adding torrent file " << file;
+
+    sess_->async_add_torrent(params);
 }
 
 void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
@@ -75,7 +88,7 @@ void session::load_state()
 
     if (ec)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not load session status: " << ec.message();
+        BOOST_LOG_TRIVIAL(error) << "Could not load session state: " << ec.message();
         return;
     }
 
@@ -139,7 +152,7 @@ void session::save_state()
     std::vector<char> out;
     libtorrent::bencode(std::back_inserter(out), entry);
 
-    std::ofstream file(".session_state");
+    std::ofstream file(".session_state", std::ios::binary);
     file.write(&out[0], out.size());
 }
 

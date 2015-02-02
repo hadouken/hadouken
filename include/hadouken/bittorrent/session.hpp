@@ -14,7 +14,7 @@ namespace hadouken
 {
     namespace bittorrent
     {
-        class session
+        class __declspec(dllexport) session
         {
         public:
             session(boost::asio::io_service& io_service);
@@ -22,6 +22,8 @@ namespace hadouken
 
             void load();
             void unload();
+
+            void add_torrent_file(const std::string& file, const std::string& save_path);
 
         private:
             void alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr);

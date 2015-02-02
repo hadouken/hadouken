@@ -16,6 +16,7 @@ public:
 
 private:
     void timer_callback(const boost::system::error_code& error);
+    void add_torrents_from_folder(const std::string& folder);
 
     hadouken::bittorrent::session* sess_;
     boost::asio::deadline_timer* timer_;
