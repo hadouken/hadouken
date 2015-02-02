@@ -1,4 +1,4 @@
-#include "torrent_engine.hpp"
+#include <hadouken/bittorrent/session.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -9,31 +9,50 @@
 #include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/session.hpp>
 
-using namespace hadouken;
+using namespace hadouken::bittorrent;
 
-torrent_engine::torrent_engine()
+session::session(boost::asio::io_service& io_service)
+    : io_srv_(io_service)
 {
-    session_ = new libtorrent::session();
+    sess_ = new libtorrent::session();
 }
 
-torrent_engine::~torrent_engine()
+session::~session()
 {
-    delete session_;
+    delete sess_;
 }
 
-void torrent_engine::load()
+void session::load()
 {
+    sess_->set_alert_dispatch(boost::bind(&session::alert_dispatch, this, _1));
+    sess_->set_alert_mask(libtorrent::alert::all_categories);
+
     load_state();
     load_resume_data();
 }
 
-void torrent_engine::unload()
+void session::unload()
 {
     save_state();
     save_resume_data();
 }
 
-void torrent_engine::load_state()
+void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
+{
+    auto alert = alert_ptr.get();
+    alert_ptr.release();
+
+    io_srv_.dispatch(boost::bind(&session::handle_alert, this, alert));
+}
+
+void session::handle_alert(libtorrent::alert* alert)
+{
+    // BOOST_LOG_TRIVIAL(trace) << alert->message();
+
+    delete alert;
+}
+
+void session::load_state()
 {
     std::ifstream file(".session_state", std::ios::binary);
     if (!file.good()) return;
@@ -47,13 +66,20 @@ void torrent_engine::load_state()
     std::vector<char> buffer(size);
     file.read(buffer.data(), size);
 
+    libtorrent::error_code ec;
     libtorrent::lazy_entry entry;
-    libtorrent::lazy_bdecode(&buffer[0], &buffer[0] + buffer.size(), entry);
+    libtorrent::lazy_bdecode(&buffer[0], &buffer[0] + buffer.size(), entry, ec);
 
-    session_->load_state(entry);
+    if (ec)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Could not load session status: " << ec.message();
+        return;
+    }
+
+    sess_->load_state(entry);
 }
 
-void torrent_engine::load_resume_data()
+void session::load_resume_data()
 {
     using namespace boost::filesystem;
 
@@ -77,33 +103,35 @@ void torrent_engine::load_resume_data()
         params.ti = ti;
         params.save_path = "C:\\Downloads";
 
-        path resume_data = entry.path();
-        resume_data += ".resume";
+        path resume_data_path = entry.path();
+        resume_data_path += ".resume";
 
-        if (exists(resume_data))
+        if (exists(resume_data_path))
         {
-            ifstream rf(resume_data);
+            BOOST_LOG_TRIVIAL(debug) << "Loading resume data from file: " << resume_data_path;
+
+            ifstream rf(resume_data_path);
 
             rf.seekg(0, std::ios::end);
             std::streamsize size = rf.tellg();
             rf.seekg(0, std::ios::beg);
 
-            std::vector<char> resume(size);
-            rf.read(resume.data(), size);
+            std::vector<char> resume_data(size);
+            rf.read(resume_data.data(), size);
 
-            params.resume_data = resume;
+            params.resume_data = resume_data;
         }
 
-        session_->async_add_torrent(params);
+        sess_->async_add_torrent(params);
     }
 }
 
-void torrent_engine::save_state()
+void session::save_state()
 {
     BOOST_LOG_TRIVIAL(debug) << "Saving session state.";
 
     libtorrent::entry entry;
-    session_->save_state(entry);
+    sess_->save_state(entry);
 
     std::vector<char> out;
     libtorrent::bencode(std::back_inserter(out), entry);
@@ -112,14 +140,14 @@ void torrent_engine::save_state()
     file.write(&out[0], out.size());
 }
 
-void torrent_engine::save_resume_data()
+void session::save_resume_data()
 {
-    session_->pause();
+    sess_->pause();
 
     int num = 0;
 
     std::vector<libtorrent::torrent_status> temp;
-    session_->get_torrent_status(&temp, [](const libtorrent::torrent_status) { return true; });
+    sess_->get_torrent_status(&temp, [](const libtorrent::torrent_status) { return true; });
 
     for (auto &status : temp)
     {
@@ -133,11 +161,11 @@ void torrent_engine::save_resume_data()
 
     while (num > 0)
     {
-        libtorrent::alert const* alert = session_->wait_for_alert(libtorrent::seconds(10));
+        libtorrent::alert const* alert = sess_->wait_for_alert(libtorrent::seconds(10));
         if (alert == 0) continue;
 
         std::deque<libtorrent::alert*> alerts;
-        session_->pop_alerts(&alerts);
+        sess_->pop_alerts(&alerts);
 
         for (auto &alert : alerts)
         {
@@ -158,7 +186,9 @@ void torrent_engine::save_resume_data()
 
             if (!rd->resume_data) continue;
 
-            BOOST_LOG_TRIVIAL(info) << "Saving resume data for " << rd->handle.name();
+            libtorrent::torrent_status st = rd->handle.status(libtorrent::torrent_handle::status_flags_t::query_name);
+
+            BOOST_LOG_TRIVIAL(info) << "Saving resume data for " << st.name;
 
             std::vector<char> out;
             libtorrent::bencode(std::back_inserter(out), *rd->resume_data);

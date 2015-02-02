@@ -1,30 +1,38 @@
 #include <boost/asio.hpp>
 
+#include <hadouken/service_locator.hpp>
+#include <hadouken/bittorrent/session.hpp>
+
 #include "plugin_manager.hpp"
-#include "torrent_engine.hpp"
 
 int main(int argc, char* argv[])
 {
     using namespace hadouken;
+    using namespace hadouken::bittorrent;
 
-    boost::asio::io_service io_service;
-    boost::asio::signal_set signals(io_service, SIGINT, SIGTERM);
+    boost::asio::io_service* io_service = new boost::asio::io_service();
+    boost::asio::signal_set signals(*io_service, SIGINT, SIGTERM);
 
-    torrent_engine* engine = new torrent_engine();
-    engine->load();
+    service_locator* locator = new service_locator();
+    locator->add_service("bt.session", new session(*io_service));
+    locator->add_service("io_service", io_service);
 
-    plugin_manager* manager = new plugin_manager();
+    session* sess = locator->request<session*>("bt.session");
+    sess->load();
+
+    plugin_manager* manager = new plugin_manager(*locator);
     manager->load();
 
-    signals.async_wait([&engine](boost::system::error_code error, int signal)
+    signals.async_wait([&sess, &manager](boost::system::error_code error, int signal)
     {
-        engine->unload();
+        manager->unload();
+        sess->unload();
     });
 
-    io_service.run();
+    io_service->run();
 
     delete manager;
-    delete engine;
+    delete io_service;
 
     return 0;
 }

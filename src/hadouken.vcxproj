@@ -53,7 +53,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BOOST_ASIO_DYN_LINK;BOOST_ALL_DYN_LINK;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_ASIO_DYN_LINK;BOOST_ALL_DYN_LINK;TORRENT_NO_DEPRECATE;WIN32;WIN32_LEAN_AND_MEAN;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -83,11 +83,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin_manager.cpp" />
-    <ClCompile Include="torrent_engine.cpp" />
+    <ClCompile Include="bt_session.cpp" />
+    <ClCompile Include="service_locator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="plugin_manager.hpp" />
-    <ClInclude Include="torrent_engine.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

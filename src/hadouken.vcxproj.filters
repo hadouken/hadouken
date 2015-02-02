@@ -18,17 +18,17 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="torrent_engine.cpp">
+    <ClCompile Include="plugin_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_manager.cpp">
+    <ClCompile Include="bt_session.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="service_locator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="torrent_engine.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="plugin_manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
