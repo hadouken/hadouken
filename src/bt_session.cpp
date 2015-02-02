@@ -33,6 +33,9 @@ void session::load()
 
 void session::unload()
 {
+    typedef boost::function<void(std::auto_ptr<libtorrent::alert>)> dispatch_function_t;
+    sess_->set_alert_dispatch(dispatch_function_t());
+
     save_state();
     save_resume_data();
 }

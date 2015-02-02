@@ -33,6 +33,7 @@ int main(int argc, char* argv[])
 
     delete manager;
     delete io_service;
+    delete sess;
 
     return 0;
 }
