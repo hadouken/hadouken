@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bt_torrent_handle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plugin_manager.cpp" />
     <ClCompile Include="bt_session.cpp" />

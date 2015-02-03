@@ -27,6 +27,9 @@
     <ClCompile Include="service_locator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bt_torrent_handle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="plugin_manager.hpp">

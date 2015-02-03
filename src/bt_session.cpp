@@ -9,6 +9,8 @@
 #include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/session.hpp>
 
+#include <hadouken/bittorrent/torrent_handle.hpp>
+
 using namespace hadouken::bittorrent;
 
 session::session(boost::asio::io_service& io_service)
@@ -66,6 +68,11 @@ boost::signals2::connection session::on_torrent_added(const torrent_added_t::slo
     return torrent_added_.connect(subscriber);
 }
 
+boost::signals2::connection session::on_torrent_finished(const torrent_finished_t::slot_type &subscriber)
+{
+    return torrent_finished_.connect(subscriber);
+}
+
 void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
 {
     auto alert = alert_ptr.get();
@@ -78,13 +85,24 @@ void session::handle_alert(libtorrent::alert* alert)
 {
     // BOOST_LOG_TRIVIAL(trace) << alert->message();
 
-    if (libtorrent::alert_cast<libtorrent::torrent_added_alert>(alert))
+    switch (alert->type())
     {
+    case libtorrent::torrent_added_alert::alert_type:
         torrent_added_();
-    }
-    else if (libtorrent::alert_cast<libtorrent::torrent_removed_alert>(alert))
+        break;
+
+    case libtorrent::torrent_finished_alert::alert_type:
     {
+        libtorrent::torrent_finished_alert* finished_alert = libtorrent::alert_cast<libtorrent::torrent_finished_alert>(alert);
+        torrent_handle handle(finished_alert->handle);
+
+        torrent_finished_(handle);
+    }
+        break;
+
+    case libtorrent::torrent_removed_alert::alert_type:
         torrent_removed_();
+        break;
     }
 
     delete alert;
