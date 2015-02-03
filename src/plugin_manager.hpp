@@ -24,7 +24,7 @@ namespace hadouken
         void* get_library_symbol(void* handle, const std::string& symbol);
 
         hadouken::service_locator& service_locator_;
-        std::map<std::string, hadouken::plugin*>* plugins_;
+        std::map<std::string, hadouken::plugin*> plugins_;
     };
 }
 

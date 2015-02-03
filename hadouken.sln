@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "folder_watcher", "plugins\f
 		{8408440E-40EC-4978-A6DE-5B8CBAC5DED8} = {8408440E-40EC-4978-A6DE-5B8CBAC5DED8}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "auto_move", "plugins\auto_move\auto_move.vcxproj", "{368F03D0-4E30-405D-871C-CA092CE812A9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8408440E-40EC-4978-A6DE-5B8CBAC5DED8} = {8408440E-40EC-4978-A6DE-5B8CBAC5DED8}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -26,11 +31,16 @@ Global
 		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Debug|Win32.Build.0 = Debug|Win32
 		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Release|Win32.ActiveCfg = Release|Win32
 		{97455F0C-629D-4DF3-9A2F-1293D54F4002}.Release|Win32.Build.0 = Release|Win32
+		{368F03D0-4E30-405D-871C-CA092CE812A9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{368F03D0-4E30-405D-871C-CA092CE812A9}.Debug|Win32.Build.0 = Debug|Win32
+		{368F03D0-4E30-405D-871C-CA092CE812A9}.Release|Win32.ActiveCfg = Release|Win32
+		{368F03D0-4E30-405D-871C-CA092CE812A9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{97455F0C-629D-4DF3-9A2F-1293D54F4002} = {4CB6E7C0-D86C-4BF5-AC1A-6DBDA336134E}
+		{368F03D0-4E30-405D-871C-CA092CE812A9} = {4CB6E7C0-D86C-4BF5-AC1A-6DBDA336134E}
 	EndGlobalSection
 EndGlobal

@@ -4,7 +4,11 @@
 #include <windows.h>
 
 #include <boost/asio/io_service.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 #include <hadouken/plugin.hpp>
 
 using namespace hadouken;
@@ -12,28 +16,63 @@ using namespace hadouken;
 plugin_manager::plugin_manager(hadouken::service_locator& service_locator)
     : service_locator_(service_locator)
 {
-    plugins_ = new std::map<std::string, hadouken::plugin*>();
 }
 
 plugin_manager::~plugin_manager()
 {
-    delete plugins_;
 }
 
 void plugin_manager::load()
 {
-    BOOST_LOG_TRIVIAL(info) << "Loading plugin files.";
+    namespace fs = boost::filesystem;
 
-    void* handle = open_dynamic_library("folder_watcher.dll");
+    fs::path plugins_config("config/plugins.json");
+    
+    if (!fs::exists(plugins_config))
+    {
+        BOOST_LOG_TRIVIAL(warning) << "No \"plugins.json\" found at " << fs::current_path() / "config";
+        return;
+    }
 
-    create_t* creator = (create_t*)get_library_symbol(handle, "hdkn_create_folder_watcher");
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_json(plugins_config.string(), pt);
 
-    plugin* plugin = creator(service_locator_);
-    plugin->load();
+    std::string plugins_directory = pt.get<std::string>("plugins_directory");
+    fs::path plugins_path(plugins_directory);
 
-    plugins_->insert(std::make_pair("folder_watcher", plugin));
+    if (!fs::exists(plugins_path))
+    {
+        BOOST_LOG_TRIVIAL(warning) << "Plugins directory does not exist.";
+        return;
+    }
 
-    return;
+    boost::property_tree::ptree plugins_list = pt.get_child("plugins");
+
+    for (auto plugin_list_item : plugins_list)
+    {
+        std::string plugin_id = plugin_list_item.second.get<std::string>("");
+        std::string plugin_file = plugin_id + ".dll";
+
+        fs::path plugin_path = plugins_path / plugin_file;
+
+        if (!fs::exists(plugin_path))
+        {
+            BOOST_LOG_TRIVIAL(warning) << "Plugin file " << plugin_path << " does not exist.";
+            continue;
+        }
+
+        BOOST_LOG_TRIVIAL(info) << "Loading plugin " << plugin_id << " from file " << plugin_path;
+
+        // open library and find create symbol
+        void* handle = open_dynamic_library(plugin_path.string());
+        create_t* creator = (create_t*)get_library_symbol(handle, "hdkn_create_" + plugin_id);
+
+        // invoke create and load plugin
+        plugin* plugin = creator(service_locator_);
+        plugin->load();
+
+        plugins_.insert(std::make_pair(plugin_id, plugin));
+    }
 
     /*
     destroy_t* destroyer = (destroy_t*)GetProcAddress(lib, "hdkn_destroy_folder_watcher");
@@ -45,7 +84,11 @@ void plugin_manager::load()
 
 void plugin_manager::unload()
 {
-    plugins_->at("folder_watcher")->unload();
+    for (auto it : plugins_)
+    {
+        BOOST_LOG_TRIVIAL(info) << "Unloading plugin " << it.first;
+        it.second->unload();
+    }
 }
 
 void* plugin_manager::open_dynamic_library(const std::string& file)
