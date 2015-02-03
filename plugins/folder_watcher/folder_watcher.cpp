@@ -34,11 +34,11 @@ void folder_watcher::load_configuration()
 {
     namespace fs = boost::filesystem;
 
-    fs::path config_path("folder_watcher.json");
+    fs::path config_path("config/folder_watcher.json");
 
     if (!fs::exists(config_path))
     {
-        BOOST_LOG_TRIVIAL(warning) << "No \"folder_watcher.json\" at " << fs::current_path();
+        BOOST_LOG_TRIVIAL(warning) << "No \"folder_watcher.json\" at " << fs::current_path() / "config";
         return;
     }
 
