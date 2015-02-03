@@ -6,6 +6,9 @@
 
 namespace hadouken
 {
+    typedef plugin* create_t(hadouken::service_locator&);
+    typedef void destroy_t(plugin*);
+
     class plugin_manager
     {
     public:
@@ -16,6 +19,10 @@ namespace hadouken
         void unload();
 
     private:
+        void* open_dynamic_library(const std::string& file);
+        void close_dynamic_library(void* handle);
+        void* get_library_symbol(void* handle, const std::string& symbol);
+
         hadouken::service_locator& service_locator_;
         std::map<std::string, hadouken::plugin*>* plugins_;
     };

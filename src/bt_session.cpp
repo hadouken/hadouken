@@ -31,6 +31,14 @@ void session::load()
 
     load_state();
     load_resume_data();
+
+    libtorrent::error_code ec;
+    sess_->listen_on(std::make_pair(6881, 6889), ec);
+
+    if (ec)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Could not listen on port: " << ec.message();
+    }
 }
 
 void session::unload()
@@ -53,6 +61,11 @@ void session::add_torrent_file(const std::string& file, const std::string& save_
     sess_->async_add_torrent(params);
 }
 
+boost::signals2::connection session::on_torrent_added(const torrent_added_t::slot_type &subscriber)
+{
+    return torrent_added_.connect(subscriber);
+}
+
 void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
 {
     auto alert = alert_ptr.get();
@@ -64,6 +77,15 @@ void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
 void session::handle_alert(libtorrent::alert* alert)
 {
     // BOOST_LOG_TRIVIAL(trace) << alert->message();
+
+    if (libtorrent::alert_cast<libtorrent::torrent_added_alert>(alert))
+    {
+        torrent_added_();
+    }
+    else if (libtorrent::alert_cast<libtorrent::torrent_removed_alert>(alert))
+    {
+        torrent_removed_();
+    }
 
     delete alert;
 }

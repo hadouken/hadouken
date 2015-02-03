@@ -15,11 +15,15 @@ public:
     void unload();
 
 private:
+    void load_configuration();
+
     void timer_callback(const boost::system::error_code& error);
-    void add_torrents_from_folder(const std::string& folder);
+    void add_torrents_from_folder(const std::string& folder, const std::string& save_path);
 
     hadouken::bittorrent::session* sess_;
     boost::asio::deadline_timer* timer_;
+
+    std::map<std::string, std::string> folders_;
 };
 
 HADOUKEN_PLUGIN(folder_watcher)

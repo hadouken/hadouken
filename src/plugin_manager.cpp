@@ -22,14 +22,11 @@ plugin_manager::~plugin_manager()
 
 void plugin_manager::load()
 {
-    typedef plugin* create_t(hadouken::service_locator&);
-    typedef void destroy_t(plugin*);
-
     BOOST_LOG_TRIVIAL(info) << "Loading plugin files.";
 
-    HINSTANCE lib = LoadLibrary(L"folder_watcher.dll");
+    void* handle = open_dynamic_library("folder_watcher.dll");
 
-    create_t* creator = (create_t*) GetProcAddress(lib, "hdkn_create_folder_watcher");
+    create_t* creator = (create_t*)get_library_symbol(handle, "hdkn_create_folder_watcher");
 
     plugin* plugin = creator(service_locator_);
     plugin->load();
@@ -38,13 +35,30 @@ void plugin_manager::load()
 
     return;
 
+    /*
     destroy_t* destroyer = (destroy_t*)GetProcAddress(lib, "hdkn_destroy_folder_watcher");
     destroyer(plugin);
 
     FreeLibrary(lib);
+    */
 }
 
 void plugin_manager::unload()
 {
     plugins_->at("folder_watcher")->unload();
+}
+
+void* plugin_manager::open_dynamic_library(const std::string& file)
+{
+    return LoadLibraryA(file.c_str());
+}
+
+void plugin_manager::close_dynamic_library(void* handle)
+{
+    FreeLibrary((HMODULE)handle);
+}
+
+void* plugin_manager::get_library_symbol(void* handle, const std::string& symbol)
+{
+    return GetProcAddress((HMODULE)handle, symbol.c_str());
 }

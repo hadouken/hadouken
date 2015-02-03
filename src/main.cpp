@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
     io_service->run();
 
     delete manager;
-    delete io_service;
     delete sess;
+    delete io_service;
 
     return 0;
 }
