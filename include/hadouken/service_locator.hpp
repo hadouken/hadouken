@@ -6,7 +6,7 @@
 
 namespace hadouken
 {
-    class service_locator
+    class __declspec(dllexport) service_locator
     {
     public:
         service_locator();

@@ -1,5 +1,3 @@
-#include "plugin_manager.hpp"
-
 #include <iostream>
 #include <windows.h>
 
@@ -9,6 +7,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+#include <hadouken/plugin_manager.hpp>
 #include <hadouken/plugin.hpp>
 
 using namespace hadouken;

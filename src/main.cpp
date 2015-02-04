@@ -1,9 +1,8 @@
 #include <boost/asio.hpp>
 
+#include <hadouken/plugin_manager.hpp>
 #include <hadouken/service_locator.hpp>
 #include <hadouken/bittorrent/session.hpp>
-
-#include "plugin_manager.hpp"
 
 int main(int argc, char* argv[])
 {
