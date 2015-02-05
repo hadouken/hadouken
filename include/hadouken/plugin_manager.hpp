@@ -9,7 +9,7 @@ namespace hadouken
     typedef plugin* create_t(hadouken::service_locator&);
     typedef void destroy_t(plugin*);
 
-    class __declspec(dllexport) plugin_manager
+    class HDKN_API plugin_manager
     {
     public:
         plugin_manager(hadouken::service_locator& service_locator);

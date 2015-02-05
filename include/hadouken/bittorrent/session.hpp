@@ -1,6 +1,12 @@
 #ifndef HDKN_BT_SESSION_HPP
 #define HDKN_BT_SESSION_HPP
 
+#ifdef WIN32
+    #define HDKN_API __declspec(dllexport)
+#else
+    #define HDKN_API
+#endif
+
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
 #include <memory>
@@ -17,7 +23,7 @@ namespace hadouken
     {
         class torrent_handle;
 
-        class __declspec(dllexport) session
+        class HDKN_API session
         {
         public:
             typedef boost::signals2::signal<void()> torrent_added_t;

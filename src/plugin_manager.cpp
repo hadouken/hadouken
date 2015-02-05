@@ -1,5 +1,10 @@
 #include <iostream>
-#include <windows.h>
+
+#ifdef WIN32
+    #include <windows.h>
+#else
+    #include <dlfcn.h>
+#endif
 
 #include <boost/asio/io_service.hpp>
 #include <boost/filesystem.hpp>
@@ -92,15 +97,27 @@ void plugin_manager::unload()
 
 void* plugin_manager::open_dynamic_library(const std::string& file)
 {
-    return LoadLibraryA(file.c_str());
+    #ifdef WIN32
+        return LoadLibraryA(file.c_str());
+    #else
+        return dlopen(file.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+    #endif
 }
 
 void plugin_manager::close_dynamic_library(void* handle)
 {
-    FreeLibrary((HMODULE)handle);
+    #ifdef WIN32
+        FreeLibrary((HMODULE)handle);
+    #else
+        dlclose(handle);
+    #endif
 }
 
 void* plugin_manager::get_library_symbol(void* handle, const std::string& symbol)
 {
-    return GetProcAddress((HMODULE)handle, symbol.c_str());
+    #ifdef WIN32
+        return GetProcAddress((HMODULE)handle, symbol.c_str());
+    #else
+        return dlsym(handle, symbol.c_str());
+    #endif
 }

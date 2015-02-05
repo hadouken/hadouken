@@ -1,30 +1,44 @@
-cmake_minimum_required(VERSION 3.1.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project("hadouken")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
+add_compile_options(-std=c++0x) 
+
 add_definitions(
     -DBOOST_ASIO_DYN_LINK
     -DBOOST_ALL_DYN_LINK
     -DTORRENT_NO_DEPRECATE
-    -DWIN32
-    -DWIN32_LEAN_AND_MEAN
-    -D_WIN32_WINNT=0x0501
 )
+
+if(WIN32)
+    add_definitions(
+        -DWIN32
+        -DWIN32_LEAN_AND_MEAN
+        -D_WIN32_WINNT=0x0501
+    )
+endif()
 
 include_directories(
     include
-    $ENV{BOOST_ROOT}
-    $ENV{LIBTORRENT_ROOT}/include
-    $ENV{OPENSSL_ROOT}/include
 )
 
-link_directories(
-    $ENV{BOOST_ROOT}/stage/lib
-    $ENV{LIBTORRENT_ROOT}/build/debug.x86
-    $ENV{OPENSSL_ROOT}/build/debug.x86/lib
-)
+if(WIN32)
+    include_directories(
+        $ENV{BOOST_ROOT}
+        $ENV{LIBTORRENT_ROOT}/include
+        $ENV{OPENSSL_ROOT}/include
+    )
+endif()
+
+if(WIN32)
+    link_directories(
+        $ENV{BOOST_ROOT}/stage/lib
+        $ENV{LIBTORRENT_ROOT}/build/debug.x86
+        $ENV{OPENSSL_ROOT}/build/debug.x86/lib
+    )
+endif()
 
 add_library(
     hadouken
@@ -35,10 +49,20 @@ add_library(
     src/service_locator.cpp
 )
 
-target_link_libraries(
-    hadouken
-    torrent.lib
-)
+if(WIN32)
+    target_link_libraries(
+        hadouken
+        torrent.lib
+    )
+else()
+    target_link_libraries(
+        hadouken
+        libtorrent-rasterbar.so
+        libboost_system.so
+        libboost_filesystem.so
+        libboost_log.so
+    )
+endif()
 
 add_executable(
     hadoukend

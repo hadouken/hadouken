@@ -142,16 +142,18 @@ void session::load_resume_data()
     path p("torrents");
     if (!exists(p)) return;
 
-    for (auto entry : directory_iterator(p))
-    {
-        if (!is_regular_file(entry)) continue;
-        if (entry.path().extension() != ".torrent") continue;
+    directory_iterator end;
 
-        boost::intrusive_ptr<libtorrent::torrent_info> ti = new libtorrent::torrent_info(entry.path().generic_string());
+    for (directory_iterator entry(p); entry != end; ++entry)
+    {
+        if (!is_regular_file(*entry)) continue;
+        if (entry->path().extension() != ".torrent") continue;
+
+        boost::intrusive_ptr<libtorrent::torrent_info> ti = new libtorrent::torrent_info(entry->path().generic_string());
 
         if (!ti->is_valid())
         {
-            BOOST_LOG_TRIVIAL(warning) << "File " << entry.path() << " is not a valid torrent file.";
+            BOOST_LOG_TRIVIAL(warning) << "File " << entry->path() << " is not a valid torrent file.";
             continue;
         }
 
@@ -159,7 +161,7 @@ void session::load_resume_data()
         params.ti = ti;
         params.save_path = "C:\\Downloads";
 
-        path resume_data_path = entry.path();
+        path resume_data_path = entry->path();
         resume_data_path += ".resume";
 
         if (exists(resume_data_path))

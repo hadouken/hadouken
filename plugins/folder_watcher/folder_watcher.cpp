@@ -84,14 +84,16 @@ void folder_watcher::add_torrents_from_folder(const std::string& folder, const s
 
     if (!fs::exists(p)) return;
 
-    for (auto entry : fs::directory_iterator(p))
-    {
-        if (!fs::is_regular_file(entry)) continue;
-        if (entry.path().extension() != ".torrent") continue;
+    fs::directory_iterator end;
 
-        sess_->add_torrent_file(entry.path().string(), save_path);
+    for (fs::directory_iterator entry(p); entry != end; ++entry)
+    {
+        if (!fs::is_regular_file(*entry)) continue;
+        if (entry->path().extension() != ".torrent") continue;
+
+        sess_->add_torrent_file(entry->path().string(), save_path);
 
         // Remove file after adding
-        fs::remove(entry.path());
+        fs::remove(entry->path());
     }
 }

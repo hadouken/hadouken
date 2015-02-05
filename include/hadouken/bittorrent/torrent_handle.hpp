@@ -1,6 +1,12 @@
 #ifndef HDKN_BT_TORRENT_HANDLE_HPP
 #define HDKN_BT_TORRENT_HANDLE_HPP
 
+#ifdef WIN32
+    #define HDKN_API __declspec(dllexport)
+#else
+    #define HDKN_API
+#endif
+
 #include <string>
 
 namespace libtorrent
@@ -12,7 +18,7 @@ namespace hadouken
 {
     namespace bittorrent
     {
-        class __declspec(dllexport) torrent_handle
+        class HDKN_API torrent_handle
         {
         public:
             torrent_handle(const libtorrent::torrent_handle& handle);
