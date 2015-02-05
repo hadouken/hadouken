@@ -3,6 +3,8 @@ language: cpp
 compiler: gcc
 
 before_install:
+ - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe"
+ - sudo apt-get clean
  - sudo apt-get update -qq
  - sudo apt-get install -qq libboost-filesystem-dev libboost-log-dev libboost-system-dev libssl-dev
 
