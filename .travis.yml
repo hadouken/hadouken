@@ -23,6 +23,6 @@ script: make
 notifications:
   email:
     recipients:
-      - viktor@viktorelofsson.se
+      - viktor+travisci@viktorelofsson.se
     on_success: change
     on_failure: always
