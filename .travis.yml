@@ -6,7 +6,7 @@ before_install:
  - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe"
  - sudo apt-get clean
  - sudo apt-get update -qq
- - sudo apt-get install -qq cmake libboost-filesystem-dev libboost-log-dev libboost-system-dev libssl-dev
+ - sudo apt-get install -qq build-essential cmake libboost-filesystem-dev libboost-log-dev libboost-system-dev libssl-dev
 
 before_script:
   - svn co http://libtorrent.googlecode.com/svn/tags/libtorrent-1_0_3 libtorrent
