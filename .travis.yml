@@ -4,7 +4,7 @@ compiler: gcc
 
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq libboost-filesystem-dev libboost-log-dev libboost-system libssl-dev
+ - sudo apt-get install -qq libboost-filesystem-dev libboost-log-dev libboost-system-dev libssl-dev
 
 before_script:
   - svn co http://libtorrent.googlecode.com/svn/tags/libtorrent-1_0_3 libtorrent
