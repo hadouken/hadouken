@@ -14,6 +14,7 @@ add_definitions(
 
 if(WIN32)
     add_definitions(
+        -DBOOST_ALL_NO_LIB
         -DWIN32
         -DWIN32_LEAN_AND_MEAN
         -D_WIN32_WINNT=0x0501
@@ -26,17 +27,17 @@ include_directories(
 
 if(WIN32)
     include_directories(
-        $ENV{BOOST_ROOT}
-        $ENV{LIBTORRENT_ROOT}/include
-        $ENV{OPENSSL_ROOT}/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.5/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/include
     )
 endif()
 
 if(WIN32)
     link_directories(
-        $ENV{BOOST_ROOT}/stage/lib
-        $ENV{LIBTORRENT_ROOT}/build/debug.x86
-        $ENV{OPENSSL_ROOT}/build/debug.x86/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.5/win32/debug/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/lib
     )
 endif()
 
@@ -53,6 +54,11 @@ if(WIN32)
     target_link_libraries(
         hadouken
         torrent.lib
+        boost_date_time.lib
+        boost_filesystem.lib
+        boost_log.lib
+        boost_regex.lib
+        boost_system.lib
     )
 else()
     target_link_libraries(
