@@ -27,6 +27,7 @@ include_directories(
 
 if(WIN32)
     include_directories(
+        C:/Python27/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.5/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/include
@@ -35,6 +36,7 @@ endif()
 
 if(WIN32)
     link_directories(
+        C:/Python27/libs
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.5/win32/debug/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/lib
@@ -57,6 +59,7 @@ if(WIN32)
         boost_date_time.lib
         boost_filesystem.lib
         boost_log.lib
+        boost_python.lib
         boost_regex.lib
         boost_system.lib
     )
@@ -79,6 +82,3 @@ target_link_libraries(
     hadoukend
     hadouken
 )
-
-add_subdirectory(plugins/auto_move)
-add_subdirectory(plugins/folder_watcher)
