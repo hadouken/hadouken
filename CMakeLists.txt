@@ -57,6 +57,7 @@ if(WIN32)
         boost_date_time.lib
         boost_filesystem.lib
         boost_log.lib
+        boost_program_options.lib
         boost_regex.lib
         boost_system.lib
     )
@@ -72,6 +73,11 @@ endif()
 
 add_executable(
     hadoukend
+    src/host.hpp
+    src/console_host.hpp
+    src/console_host.cpp
+    src/service_host.hpp
+    src/service_host.cpp
     src/main.cpp
 )
 

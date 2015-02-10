@@ -1,38 +1,50 @@
 #include <boost/asio.hpp>
+#include <boost/program_options.hpp>
 
 #include <hadouken/plugin_manager.hpp>
 #include <hadouken/service_locator.hpp>
 #include <hadouken/bittorrent/session.hpp>
 
+#include "console_host.hpp"
+
+#ifdef WIN32
+#include "service_host.hpp"
+#endif
+
 int main(int argc, char* argv[])
 {
+    namespace po = boost::program_options;
+
     using namespace hadouken;
     using namespace hadouken::bittorrent;
 
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("daemon", "run as a daemon/service");
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+
     boost::asio::io_service* io_service = new boost::asio::io_service();
-    boost::asio::signal_set signals(*io_service, SIGINT, SIGTERM);
 
     service_locator* locator = new service_locator();
     locator->add_service("bt.session", new session(*io_service));
+    locator->add_service("plugin_manager", new plugin_manager(*locator));
     locator->add_service("io_service", io_service);
 
-    session* sess = locator->request<session*>("bt.session");
-    sess->load();
+    host* host;
 
-    plugin_manager* manager = new plugin_manager(*locator);
-    manager->load();
-
-    signals.async_wait([&sess, &manager](boost::system::error_code error, int signal)
+    if (vm.count("daemon"))
     {
-        manager->unload();
-        sess->unload();
-    });
+#ifdef WIN32
+        host = new service_host();
+#endif
+    }
+    else
+    {
+        host = new console_host(*locator);
+    }
 
-    io_service->run();
-
-    delete manager;
-    delete sess;
-    delete io_service;
-
-    return 0;
+    return host->run();
 }
