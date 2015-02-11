@@ -1,13 +1,34 @@
 # Overview
 
-Hadouken is a modern, open source, cross-platform BitTorrent client written in C++11. It has native plugin support and comes bundled with a bunch of useful plugins.
+Hadouken is a modern, open source, cross-platform BitTorrent client written in C++11. It is written using Boost, Rasterbar-libtorrent and Google's V8 engine to make both the core and plugin ecosystem platform independent.
 
-It runs as a Linux daemon/Windows Service and can be controlled with the bundled HTTP API plugin which provides a JSONRPC service that should support everything needed for a remote client implementation.
+It is designed to run headless as a native Linux daemon/Windows Service.
 
-## Getting started
+Plugins has always been Hadoukens strong point, and the rewritten plugin framework is utilizing Google's V8 engine to expose a powerful plugin engine for JavaScript plugins.
 
-Currently, building from source is the only way of getting binaries. To build Hadouken you will need Boost (>= 1.57), OpenSSL (>= 1.0.2) and Rasterbar-libtorrent (>= 1.0.3).
+## Building
 
-## For developers
+The following will get you started building Hadouken for various platforms. This is currently the only way of getting binaries for different platforms and will be until development has stabilized.
 
-*TODO*
+*Hadouken uses CMake to generate makefiles for different platforms. Make sure CMake (>= 2.8) is installed and in your path.*
+
+### Windows
+
+Building Hadouken on Windows is done using a simple PowerShell script. The third-party components needed, ie. Boost, Rasterbar-libtorrent and OpenSSL, will be downloaded and installed from the NuGet packages `hadouken.boost`, `hadouken.libtorrent` and `hadouken.openssl`. This is to ensure a smooth setup for new developers.
+
+After cloning the repository, open a PowerShell prompt in the root directory and execute `.\win32\prepare.ps1`. This will download and install the NuGet packages needed.
+
+Next, run the following,
+
+```posh
+PS> mkdir build
+PS> cd build
+PS> cmake -G "Visual Studio 12" ..
+PS> msbuild .\hadouken.sln
+```
+
+This will generate a Visual Studio solution with related projects as well as building Hadouken.
+
+### Linux
+
+For now, refer to the `.travis.yml` file for how to build on Linux.

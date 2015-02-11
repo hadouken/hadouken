@@ -27,7 +27,7 @@ include_directories(
 
 if(WIN32)
     include_directories(
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.5/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/include
     )
@@ -35,7 +35,7 @@ endif()
 
 if(WIN32)
     link_directories(
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.5/win32/debug/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/win32/debug/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/lib
     )

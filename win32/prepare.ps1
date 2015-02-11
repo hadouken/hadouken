@@ -5,7 +5,7 @@
 $PACKAGES_DIRECTORY = Join-Path (Convert-Path .) "packages"
 
 # Versions
-$BOOST_VERSION = "0.1.5"
+$BOOST_VERSION = "0.1.8"
 $LIBTORRENT_VERSION = "0.1.3"
 $OPENSSL_VERSION = "0.1.3"
 
