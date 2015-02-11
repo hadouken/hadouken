@@ -1,12 +1,10 @@
 #include "service_host.hpp"
 
 #include <boost/asio.hpp>
-#include <hadouken/plugin_manager.hpp>
-#include <hadouken/bittorrent/session.hpp>
+#include <hadouken/logger.hpp>
 #include <windows.h>
 
 using namespace hadouken;
-using namespace hadouken::bittorrent;
 
 SERVICE_STATUS        g_ServiceStatus = { 0 };
 SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
@@ -20,6 +18,7 @@ int service_host::run(boost::asio::io_service& io_service)
     {
         host_instance_ = this;
         io_service_ = &io_service;
+        signals_ = new boost::asio::signal_set(io_service);
     }
 
     SERVICE_TABLE_ENTRY ServiceTable[] =
@@ -38,6 +37,8 @@ int service_host::run(boost::asio::io_service& io_service)
 
 void service_host::service_handler(DWORD dw_opcode)
 {
+    HDKN_LOG(trace) << "Service received opcode " << dw_opcode << ".";
+
     switch (dw_opcode)
     {
     case SERVICE_CONTROL_STOP:
@@ -56,7 +57,7 @@ void service_host::service_handler(DWORD dw_opcode)
             OutputDebugString("SetServiceStatus returned error.");
         }
 
-        SetEvent(g_ServiceStopEvent);
+        signals_->cancel();
 
         break;
     }
@@ -115,11 +116,14 @@ void service_host::service_main(DWORD dw_argc, LPSTR* lpsz_argv)
         OutputDebugString("SetServiceStatus returned error.");
     }
 
-    // Run and block until we stop the service
-    io_service_->dispatch(boost::bind(&service_host::wait_for_exit, this));
+    signals_->async_wait([this](const boost::system::error_code& error, int signal)
+    {
+        HDKN_LOG(info) << "Signal received: " << signal << ", error: " << error.message();
+        io_service_->stop();
+    });
+
     io_service_->run();
 
-    // Clean up
     CloseHandle(g_ServiceStopEvent);
 
     // Tell the service controller we are stopped
@@ -131,14 +135,5 @@ void service_host::service_main(DWORD dw_argc, LPSTR* lpsz_argv)
     if (!SetServiceStatus(g_StatusHandle, &g_ServiceStatus))
     {
         OutputDebugString("SetServiceStatus returned error.");
-    }
-}
-
-void service_host::wait_for_exit()
-{
-    // Just sleep here until we receive the stop event from the SCM.
-    while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
-    {
-        Sleep(1000);
     }
 }

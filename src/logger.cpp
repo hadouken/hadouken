@@ -11,17 +11,26 @@ void logger::init()
 {
     namespace expr = boost::log::expressions;
 
+    auto format =
+        (
+            expr::stream
+            << "[" << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f") << "] "
+            << "[" << expr::attr<boost::log::attributes::current_thread_id::value_type>("ThreadID") << "] "
+            << "[" << boost::log::trivial::severity << "] "
+            << expr::smessage
+        );
+
     boost::log::add_console_log
         (
             std::clog,
-            boost::log::keywords::format = 
-            (
-                expr::stream
-                << "[" << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f") << "] "
-                << "[" << expr::attr<boost::log::attributes::current_thread_id::value_type>("ThreadID") << "] "
-                << "[" << boost::log::trivial::severity << "] "
-                << expr::smessage
-            )
+            boost::log::keywords::format = format
+            
+        );
+
+    boost::log::add_file_log
+        (
+            "hadouken.log",
+            boost::log::keywords::format = format
         );
 
     boost::log::add_common_attributes();

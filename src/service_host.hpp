@@ -23,8 +23,6 @@ namespace hadouken
             return *host_instance_;
         }
 
-        void wait_for_exit();
-
         void service_main(DWORD dw_argc, LPSTR* lpsz_argv);
 
         void service_handler(DWORD dw_opcode);
@@ -42,6 +40,7 @@ namespace hadouken
 
         static service_host* host_instance_;
         boost::asio::io_service* io_service_;
+        boost::asio::signal_set* signals_;
     };
 }
 

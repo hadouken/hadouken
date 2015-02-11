@@ -1,5 +1,9 @@
 #include <boost/asio.hpp>
+#include <boost/exception/all.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <iostream>
 #include <hadouken/logger.hpp>
 #include <hadouken/plugin_manager.hpp>
@@ -15,7 +19,9 @@
 #define DAEMON_DESCRIPTION "Run Hadouken as a daemon."
 #endif
 
+namespace fs = boost::filesystem;
 namespace po = boost::program_options;
+namespace pt = boost::property_tree;
 
 hadouken::host* get_host(bool daemon)
 {
@@ -35,6 +41,11 @@ void read_program_options(int argc, char* argv[], po::variables_map& vm)
 {
     po::options_description desc("Allowed options");
     desc.add_options()
+        // The "--config=<path>" argument can be used to specify a different
+        // configuration file. By default, the file "hadouken.json" is used
+        // if it exists next to the exe file. If not, Hadouken will fail to
+        // run.
+        ("config", po::value<std::string>(), "If specified, a path to a .json file with configuration values for Hadouken")
         // The "--daemon" argument is passed if we want to run Hadouken
         // as a Windows service/Linux daemon.
         ("daemon", DAEMON_DESCRIPTION);
@@ -52,7 +63,6 @@ void read_program_options(int argc, char* argv[], po::variables_map& vm)
     }
 
     po::store(parsed_options, vm);
-
     po::notify(vm);
 }
 
@@ -65,16 +75,59 @@ int main(int argc, char* argv[])
     // messages.
     logger::init();
 
+    std::string cmd_;
+    for (int i = 0; i < argc; i++)
+    {
+        cmd_ += argv[i];
+        cmd_ += " ";
+    }
+
+    HDKN_LOG(debug) << "Arguments: " << cmd_;
+
     // Read our program options.
     po::variables_map vm;
     read_program_options(argc, argv, vm);
+
+    // Parse configuration file.
+    fs::path config_path;
+
+    if (vm.count("config"))
+    {
+        // Try to load the file from the specified path.
+        config_path = fs::path(vm["config"].as<std::string>());
+    }
+    else
+    {
+        fs::path exe_path(argv[0]);
+        config_path = exe_path.remove_filename() / "hadouken.json";
+    }
+
+    if (!fs::exists(config_path))
+    {
+        HDKN_LOG(fatal) << "Could not find hadouken.json configuration file. Exiting.";
+        return 1;
+    }
+
+    HDKN_LOG(info) << "Loading configuration from " << config_path << ".";
+
+    pt::ptree config;
+
+    try
+    {
+        pt::json_parser::read_json(config_path.string(), config);
+    }
+    catch (const std::exception& e)
+    {
+        HDKN_LOG(fatal) << "Could not parse hadouken.json: " << e.what();
+        return 1;
+    }
 
     boost::asio::io_service* io_service = new boost::asio::io_service();
 
     // Add our services to the service locator. This is used throughout
     // Hadouken to get hold of various services you might need.
     service_locator* locator = new service_locator();
-    locator->add_service("bt.session", new session(*io_service));
+    locator->add_service("bt.session", new session(config, *io_service));
     locator->add_service("plugin_manager", new plugin_manager(*locator));
     locator->add_service("io_service", io_service);
 
