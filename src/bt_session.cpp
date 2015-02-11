@@ -2,7 +2,6 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/log/trivial.hpp>
 
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
@@ -10,6 +9,7 @@
 #include <libtorrent/session.hpp>
 
 #include <hadouken/bittorrent/torrent_handle.hpp>
+#include <hadouken/logger.hpp>
 
 using namespace hadouken::bittorrent;
 
@@ -21,9 +21,9 @@ session::session(boost::asio::io_service& io_service)
 
 session::~session()
 {
-    BOOST_LOG_TRIVIAL(trace) << "[i] session::~session()";
+    HDKN_LOG(trace) << "[i] session::~session()";
     delete sess_;
-    BOOST_LOG_TRIVIAL(trace) << "[o] session::~session()";
+    HDKN_LOG(trace) << "[o] session::~session()";
 }
 
 void session::load()
@@ -39,7 +39,7 @@ void session::load()
 
     if (ec)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not listen on port: " << ec.message();
+        HDKN_LOG(error) << "Could not listen on port: " << ec.message();
     }
 }
 
@@ -58,7 +58,7 @@ void session::add_torrent_file(const std::string& file, const std::string& save_
     params.save_path = save_path;
     params.ti = new libtorrent::torrent_info(file);
 
-    BOOST_LOG_TRIVIAL(debug) << "Adding torrent file " << file;
+    HDKN_LOG(debug) << "Adding torrent file " << file;
 
     sess_->async_add_torrent(params);
 }
@@ -113,7 +113,7 @@ void session::load_state()
     std::ifstream file(".session_state", std::ios::binary);
     if (!file.good()) return;
     
-    BOOST_LOG_TRIVIAL(debug) << "Loading session state.";
+    HDKN_LOG(debug) << "Loading session state.";
 
     file.seekg(0, std::ios::end);
     std::streamsize size = file.tellg();
@@ -128,7 +128,7 @@ void session::load_state()
 
     if (ec)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not load session state: " << ec.message();
+        HDKN_LOG(error) << "Could not load session state: " << ec.message();
         return;
     }
 
@@ -153,7 +153,7 @@ void session::load_resume_data()
 
         if (!ti->is_valid())
         {
-            BOOST_LOG_TRIVIAL(warning) << "File " << entry->path() << " is not a valid torrent file.";
+            HDKN_LOG(warning) << "File " << entry->path() << " is not a valid torrent file.";
             continue;
         }
 
@@ -166,7 +166,7 @@ void session::load_resume_data()
 
         if (exists(resume_data_path))
         {
-            BOOST_LOG_TRIVIAL(debug) << "Loading resume data from file: " << resume_data_path;
+            HDKN_LOG(debug) << "Loading resume data from file: " << resume_data_path;
 
             ifstream rf(resume_data_path);
 
@@ -186,7 +186,7 @@ void session::load_resume_data()
 
 void session::save_state()
 {
-    BOOST_LOG_TRIVIAL(debug) << "Saving session state.";
+    HDKN_LOG(debug) << "Saving session state.";
 
     libtorrent::entry entry;
     sess_->save_state(entry);
@@ -246,7 +246,7 @@ void session::save_resume_data()
 
             libtorrent::torrent_status st = rd->handle.status(libtorrent::torrent_handle::status_flags_t::query_name);
 
-            BOOST_LOG_TRIVIAL(info) << "Saving resume data for " << st.name;
+            HDKN_LOG(info) << "Saving resume data for " << st.name;
 
             std::vector<char> out;
             libtorrent::bencode(std::back_inserter(out), *rd->resume_data);

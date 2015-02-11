@@ -1,8 +1,12 @@
 #include "service_host.hpp"
 
+#include <boost/asio.hpp>
+#include <hadouken/plugin_manager.hpp>
+#include <hadouken/bittorrent/session.hpp>
 #include <windows.h>
 
 using namespace hadouken;
+using namespace hadouken::bittorrent;
 
 SERVICE_STATUS        g_ServiceStatus = { 0 };
 SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
@@ -10,16 +14,17 @@ HANDLE                g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 
 service_host* service_host::host_instance_ = 0;
 
-int service_host::run()
+int service_host::run(boost::asio::io_service& io_service)
 {
     if (host_instance_ == 0)
     {
         host_instance_ = this;
+        io_service_ = &io_service;
     }
 
     SERVICE_TABLE_ENTRY ServiceTable[] =
     {
-        { "Hadouken", (LPSERVICE_MAIN_FUNCTION)service_main_entry },
+        { "Hadouken", service_main_entry },
         { NULL, NULL }
     };
 
@@ -31,12 +36,36 @@ int service_host::run()
     return 0;
 }
 
+void service_host::service_handler(DWORD dw_opcode)
+{
+    switch (dw_opcode)
+    {
+    case SERVICE_CONTROL_STOP:
+        if (g_ServiceStatus.dwCurrentState != SERVICE_RUNNING)
+        {
+            break;
+        }
+
+        g_ServiceStatus.dwCheckPoint = 4;
+        g_ServiceStatus.dwControlsAccepted = 0;
+        g_ServiceStatus.dwCurrentState = SERVICE_STOP_PENDING;
+        g_ServiceStatus.dwWin32ExitCode = 0;
+
+        if (!SetServiceStatus(g_StatusHandle, &g_ServiceStatus))
+        {
+            OutputDebugString("SetServiceStatus returned error.");
+        }
+
+        SetEvent(g_ServiceStopEvent);
+
+        break;
+    }
+}
+
 void service_host::service_main(DWORD dw_argc, LPSTR* lpsz_argv)
 {
-    DWORD Status = E_FAIL;
-
     // register the service
-    g_StatusHandle = RegisterServiceCtrlHandler("Hadouken", ServiceControlHandler);
+    g_StatusHandle = RegisterServiceCtrlHandler("Hadouken", &service_host::service_handler_entry);
 
     if (g_StatusHandle == NULL)
     {
@@ -86,13 +115,9 @@ void service_host::service_main(DWORD dw_argc, LPSTR* lpsz_argv)
         OutputDebugString("SetServiceStatus returned error.");
     }
 
-    // Here we should wait for the io service to finish.
-
-    // Start a thread that will perform the main task.
-    HANDLE thread = CreateThread(NULL, 0, ServiceWorkerThread, NULL, 0, NULL);
-
-    // Wait for thread to exit
-    WaitForSingleObject(thread, INFINITE);
+    // Run and block until we stop the service
+    io_service_->dispatch(boost::bind(&service_host::wait_for_exit, this));
+    io_service_->run();
 
     // Clean up
     CloseHandle(g_ServiceStopEvent);
@@ -109,12 +134,11 @@ void service_host::service_main(DWORD dw_argc, LPSTR* lpsz_argv)
     }
 }
 
-void WINAPI ServiceControlHandler(DWORD controlCode)
+void service_host::wait_for_exit()
 {
-
-}
-
-DWORD WINAPI ServiceWorkerThread(LPVOID lpParam)
-{
-    return ERROR_SUCCESS;
+    // Just sleep here until we receive the stop event from the SCM.
+    while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
+    {
+        Sleep(1000);
+    }
 }

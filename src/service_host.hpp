@@ -7,23 +7,23 @@
 
 #include "host.hpp"
 
+#include <hadouken/service_locator.hpp>
 #include <windows.h>
-
-void WINAPI ServiceControlHandler(DWORD controlCode);
-DWORD WINAPI ServiceWorkerThread(LPVOID lpParam);
 
 namespace hadouken
 {
     class service_host : public host
     {
     public:
-        int run();
+        int run(boost::asio::io_service& io_service);
 
     protected:
         static service_host& instance()
         {
             return *host_instance_;
         }
+
+        void wait_for_exit();
 
         void service_main(DWORD dw_argc, LPSTR* lpsz_argv);
 
@@ -41,6 +41,7 @@ namespace hadouken
         }
 
         static service_host* host_instance_;
+        boost::asio::io_service* io_service_;
     };
 }
 

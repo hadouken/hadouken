@@ -8,10 +8,10 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+#include <hadouken/logger.hpp>
 #include <hadouken/plugin_manager.hpp>
 #include <hadouken/plugin.hpp>
 
@@ -34,7 +34,7 @@ void plugin_manager::load()
     
     if (!fs::exists(plugins_config))
     {
-        BOOST_LOG_TRIVIAL(warning) << "No \"plugins.json\" found at " << fs::current_path() / "config";
+        HDKN_LOG(warning) << "No \"plugins.json\" found at " << fs::current_path() / "config";
         return;
     }
 
@@ -46,7 +46,7 @@ void plugin_manager::load()
 
     if (!fs::exists(plugins_path))
     {
-        BOOST_LOG_TRIVIAL(warning) << "Plugins directory does not exist.";
+        HDKN_LOG(warning) << "Plugins directory does not exist.";
         return;
     }
 
@@ -61,11 +61,11 @@ void plugin_manager::load()
 
         if (!fs::exists(plugin_path))
         {
-            BOOST_LOG_TRIVIAL(warning) << "Plugin file " << plugin_path << " does not exist.";
+            HDKN_LOG(warning) << "Plugin file " << plugin_path << " does not exist.";
             continue;
         }
 
-        BOOST_LOG_TRIVIAL(info) << "Loading plugin " << plugin_id << " from file " << plugin_path;
+        HDKN_LOG(info) << "Loading plugin " << plugin_id << " from file " << plugin_path;
 
         // open library and find create symbol
         void* handle = open_dynamic_library(plugin_path.string());
@@ -90,7 +90,7 @@ void plugin_manager::unload()
 {
     for (auto it : plugins_)
     {
-        BOOST_LOG_TRIVIAL(info) << "Unloading plugin " << it.first;
+        HDKN_LOG(info) << "Unloading plugin " << it.first;
         it.second->unload();
     }
 }

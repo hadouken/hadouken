@@ -1,6 +1,7 @@
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
-
+#include <iostream>
+#include <hadouken/logger.hpp>
 #include <hadouken/plugin_manager.hpp>
 #include <hadouken/service_locator.hpp>
 #include <hadouken/bittorrent/session.hpp>
@@ -9,42 +10,90 @@
 
 #ifdef WIN32
 #include "service_host.hpp"
+#define DAEMON_DESCRIPTION "Run Hadouken as a Windows Service."
+#else
+#define DAEMON_DESCRIPTION "Run Hadouken as a daemon."
 #endif
+
+namespace po = boost::program_options;
+
+hadouken::host* get_host(bool daemon)
+{
+    if (daemon)
+    {
+#ifdef WIN32
+        return new hadouken::service_host();
+#endif
+    }
+    else
+    {
+        return new hadouken::console_host();
+    }
+}
+
+void read_program_options(int argc, char* argv[], po::variables_map& vm)
+{
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        // The "--daemon" argument is passed if we want to run Hadouken
+        // as a Windows service/Linux daemon.
+        ("daemon", DAEMON_DESCRIPTION);
+
+    // This is necessary to parse program options and not fail on unknown
+    // arguments. We will notify the user of any unknown option, but still
+    // function normally.
+
+    po::parsed_options parsed_options = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
+    std::vector<std::string> unknown_options = po::collect_unrecognized(parsed_options.options, po::include_positional);
+
+    for (auto opt : unknown_options)
+    {
+        HDKN_LOG(warning) << "Unknown option: " << opt;
+    }
+
+    po::store(parsed_options, vm);
+
+    po::notify(vm);
+}
 
 int main(int argc, char* argv[])
 {
-    namespace po = boost::program_options;
-
     using namespace hadouken;
     using namespace hadouken::bittorrent;
 
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("daemon", "run as a daemon/service");
+    // Initialize logging. Important to do this first to trap any early log
+    // messages.
+    logger::init();
 
+    // Read our program options.
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+    read_program_options(argc, argv, vm);
 
     boost::asio::io_service* io_service = new boost::asio::io_service();
 
+    // Add our services to the service locator. This is used throughout
+    // Hadouken to get hold of various services you might need.
     service_locator* locator = new service_locator();
     locator->add_service("bt.session", new session(*io_service));
     locator->add_service("plugin_manager", new plugin_manager(*locator));
     locator->add_service("io_service", io_service);
 
-    host* host;
+    // Load the BitTorrent session and the plugin manager.
+    locator->request<session*>("bt.session")->load();
+    locator->request<plugin_manager*>("plugin_manager")->load();
 
-    if (vm.count("daemon"))
-    {
-#ifdef WIN32
-        host = new service_host();
-#endif
-    }
-    else
-    {
-        host = new console_host(*locator);
-    }
+    // Get and run the host based on the --daemon argument.
+    int code = get_host(vm.count("daemon"))->run(*io_service);
 
-    return host->run();
+    // Unload the plugin manager and BitTorrent session.
+    locator->request<plugin_manager*>("plugin_manager")->unload();
+    locator->request<session*>("bt.session")->unload();
+
+    // Free memory. Muy importante. Deleting the session is what
+    // will shutdown libtorrent, so better not forget it.
+    delete locator->request<plugin_manager*>("plugin_manager");
+    delete locator->request<session*>("bt.session");
+    delete io_service;
+
+    return code;
 }

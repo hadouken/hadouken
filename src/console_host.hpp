@@ -3,22 +3,14 @@
 
 #include "host.hpp"
 
-#include <hadouken/service_locator.hpp>
+#include <boost/asio.hpp>
 
 namespace hadouken
 {
     class console_host : public host
     {
     public:
-        console_host(service_locator& locator)
-            : loc_(locator)
-        {
-        }
-
-        int run();
-
-    private:
-        service_locator& loc_;
+        int run(boost::asio::io_service& io_service);
     };
 }
 

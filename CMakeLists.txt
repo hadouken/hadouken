@@ -46,6 +46,7 @@ add_library(
     SHARED
     src/bt_session.cpp
     src/bt_torrent_handle.cpp
+    src/logger.cpp
     src/plugin_manager.cpp
     src/service_locator.cpp
 )
@@ -60,6 +61,7 @@ if(WIN32)
         boost_program_options.lib
         boost_regex.lib
         boost_system.lib
+        boost_thread.lib
     )
 else()
     target_link_libraries(
