@@ -8,7 +8,6 @@
 #include <iostream>
 
 #include <hadouken/logger.hpp>
-#include <hadouken/plugin_manager.hpp>
 #include <hadouken/service_locator.hpp>
 #include <hadouken/bittorrent/session.hpp>
 #include <hadouken/http/http_server.hpp>
@@ -130,45 +129,26 @@ int main(int argc, char* argv[])
     // Hadouken to get hold of various services you might need.
     service_locator* locator = new service_locator();
     locator->add_service("bt.session", new session(config, *io_service));
-    locator->add_service("plugin_manager", new plugin_manager(*locator));
     locator->add_service("io_service", io_service);
 
-    // Load the BitTorrent session and the plugin manager.
+    // Load the BitTorrent session.
     locator->request<session*>("bt.session")->load();
-    locator->request<plugin_manager*>("plugin_manager")->load();
 
     // Start http server
-    hadouken::http::http_server* http_server;
-
-    try
-    {
-        http_server = new hadouken::http::http_server(*io_service, 7070);
-    }
-    catch (std::exception e)
-    {
-        HDKN_LOG(error) << e.what();
-    }
-
-    http_server->start();
+    hadouken::http::http_server http_server(*io_service, 7070);
+    http_server.start();
 
     // Get and run the host based on the --daemon argument.
-    int code = get_host(vm.count("daemon"))->run(*io_service);
+    int code = get_host(vm.count("daemon") > 0)->run(*io_service);
 
-    http_server->stop();
+    http_server.stop();
 
     // Unload the plugin manager and BitTorrent session.
-    locator->request<plugin_manager*>("plugin_manager")->unload();
     locator->request<session*>("bt.session")->unload();
 
     // Free memory. Muy importante. Deleting the session is what
     // will shutdown libtorrent, so better not forget it.
-    delete locator->request<plugin_manager*>("plugin_manager");
     delete locator->request<session*>("bt.session");
-    
-    // This line causes an access violation exception.
-    // TODO investigate.
-    //delete http_server;
-
     delete io_service;
 
     return code;

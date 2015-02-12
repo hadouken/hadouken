@@ -15,7 +15,7 @@ endif()
 message("Build configuration: ${BUILD_CONFIGURATION}")
 
 add_definitions(
-    -DBOOST_ASIO_DYN_LINK
+    -DBOOST_ASIO_SEPARATE_COMPILATION
     -DBOOST_ALL_DYN_LINK
     -DTORRENT_NO_DEPRECATE
 )
@@ -25,6 +25,8 @@ if(WIN32)
         -DBOOST_ALL_NO_LIB
         -DWIN32
         -DWIN32_LEAN_AND_MEAN
+        -D_CRT_SECURE_NO_WARNINGS
+        -D_SCL_SECURE_NO_WARNINGS
         -D_WIN32_WINNT=0x0501
     )
 endif()
@@ -50,30 +52,57 @@ if(WIN32)
 endif()
 
 add_library(
-    hadouken
+    hadouken_common
+    SHARED
+    src/common.cpp
+    src/logger.cpp
+    src/service_locator.cpp
+)
+
+add_library(
+    hadouken_bittorrent
     SHARED
     src/bittorrent/session.cpp
     src/bittorrent/torrent_handle.cpp
+)
+
+add_library(
+    hadouken_http
+    SHARED
     src/http/connection.cpp
     src/http/connection_manager.cpp
+    src/http/http.cpp
+    src/http/http_parser.c
     src/http/http_server.cpp
     src/http/reply.cpp
     src/http/request_handler.cpp
-    src/http/request_parser.cpp
-    src/logger.cpp
-    src/plugin_manager.cpp
-    src/service_locator.cpp
 )
 
 if(WIN32)
     target_link_libraries(
-        hadouken
+        hadouken_common
+        boost_date_time.lib
+        boost_filesystem.lib
+        boost_log.lib
+        boost_system.lib
+        boost_thread.lib
+    )
+
+    target_link_libraries(
+        hadouken_bittorrent
+        hadouken_common
         torrent.lib
         boost_date_time.lib
         boost_filesystem.lib
         boost_log.lib
-        boost_program_options.lib
         boost_regex.lib
+        boost_system.lib
+    )
+
+    target_link_libraries(
+        hadouken_http
+        hadouken_common
+        boost_date_time.lib
         boost_system.lib
         boost_thread.lib
     )
@@ -96,5 +125,8 @@ add_executable(
 
 target_link_libraries(
     hadoukend
-    hadouken
+    hadouken_common
+    hadouken_bittorrent
+    hadouken_http
+    boost_program_options.lib
 )

@@ -12,15 +12,16 @@ namespace hadouken
 {
     namespace http
     {
-        class HDKN_API http_server
+        class http_server
         {
         public:
-            http_server(boost::asio::io_service& io_service, int port);
-            ~http_server();
+            HDKN_API http_server(boost::asio::io_service& io_service, int port);
 
-            void start();
+            HDKN_API ~http_server();
 
-            void stop();
+            void HDKN_API start();
+
+            void HDKN_API stop();
 
         private:
             void do_accept();
@@ -28,8 +29,8 @@ namespace hadouken
             void do_await_stop();
 
             boost::asio::io_service& io_service_;
-            boost::asio::ip::tcp::acceptor acceptor_;
-            boost::asio::ip::tcp::socket socket_;
+            boost::asio::ip::tcp::acceptor* acceptor_;
+            boost::asio::ip::tcp::socket* socket_;
 
             request_handler request_handler_;
             connection_manager manager_;

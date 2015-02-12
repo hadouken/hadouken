@@ -3,10 +3,10 @@
 
 #include <array>
 #include <boost/asio.hpp>
+#include <hadouken/http/http_parser.h>
 #include <hadouken/http/reply.hpp>
 #include <hadouken/http/request.hpp>
 #include <hadouken/http/request_handler.hpp>
-#include <hadouken/http/request_parser.hpp>
 #include <memory>
 
 using boost::asio::ip::tcp;
@@ -36,6 +36,10 @@ namespace hadouken
 
             void do_write();
 
+            http_parser_settings parser_settings_;
+
+            http_parser parser_;
+
             tcp::socket socket_;
 
             connection_manager& manager_;
@@ -45,8 +49,6 @@ namespace hadouken
             std::array<char, 8192> buffer_;
 
             request request_;
-
-            request_parser request_parser_;
 
             reply reply_;
         };

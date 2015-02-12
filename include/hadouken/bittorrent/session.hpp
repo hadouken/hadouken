@@ -38,23 +38,23 @@ namespace hadouken
             std::string path;
         };
 
-        class HDKN_API session
+        class session
         {
         public:
             typedef boost::signals2::signal<void()> torrent_added_t;
             typedef boost::signals2::signal<void(const torrent_handle& handle)> torrent_finished_t;
             typedef boost::signals2::signal<void()> torrent_removed_t;
 
-            session(const boost::property_tree::ptree& config, boost::asio::io_service& io_service);
-            ~session();
+            HDKN_API session(const boost::property_tree::ptree& config, boost::asio::io_service& io_service);
+            HDKN_API ~session();
 
-            void load();
-            void unload();
+            void HDKN_API load();
+            void HDKN_API unload();
 
-            void add_torrent_file(const std::string& file, const std::string& save_path);
+            void HDKN_API add_torrent_file(const std::string& file, const std::string& save_path);
 
-            boost::signals2::connection on_torrent_added(const torrent_added_t::slot_type &subscriber);
-            boost::signals2::connection on_torrent_finished(const torrent_finished_t::slot_type &subscriber);
+            boost::signals2::connection HDKN_API on_torrent_added(const torrent_added_t::slot_type &subscriber);
+            boost::signals2::connection HDKN_API on_torrent_finished(const torrent_finished_t::slot_type &subscriber);
 
         private:
             void alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr);

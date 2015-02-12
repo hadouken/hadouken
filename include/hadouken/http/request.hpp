@@ -1,10 +1,9 @@
 #ifndef HDKN_HTTP_REQUEST_HPP
 #define HDKN_HTTP_REQUEST_HPP
 
+#include <hadouken/http/header.hpp>
 #include <string>
 #include <vector>
-
-#include <hadouken/http/header.hpp>
 
 namespace hadouken
 {
@@ -17,6 +16,7 @@ namespace hadouken
             int http_version_major;
             int http_version_minor;
             std::vector<header> headers;
+            std::string body;
         };
     }
 }

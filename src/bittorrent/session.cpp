@@ -167,7 +167,7 @@ void session::load_state()
 
     fs::ifstream state_file_stream(state_file);
     std::streamsize size = fs::file_size(state_file);
-    std::vector<char> buffer(size);
+    std::vector<char> buffer((unsigned int)size);
 
     state_file_stream.read(buffer.data(), size);
 
@@ -221,7 +221,7 @@ void session::load_resume_data()
             fs::ifstream rf(resume_data_path);
             std::streamsize size = fs::file_size(resume_data_path);
 
-            std::vector<char> resume_data(size);
+            std::vector<char> resume_data((unsigned int)size);
             rf.read(resume_data.data(), size);
 
             params.resume_data = resume_data;
