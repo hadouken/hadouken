@@ -1,7 +1,7 @@
 #ifndef HDKN_CONSOLE_HOST_HPP
 #define HDKN_CONSOLE_HOST_HPP
 
-#include "host.hpp"
+#include <hadouken/hosting/host.hpp>
 
 #include <boost/asio.hpp>
 

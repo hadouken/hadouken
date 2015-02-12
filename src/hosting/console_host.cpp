@@ -1,4 +1,4 @@
-#include "console_host.hpp"
+#include <hadouken/hosting/console_host.hpp>
 
 using namespace hadouken;
 

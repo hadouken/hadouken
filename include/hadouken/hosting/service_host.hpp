@@ -2,10 +2,10 @@
 #define HDKN_SERVICE_HOST_HPP
 
 #ifndef WIN32
-#error This class should only be used on Windows.
+    #error This class should only be used on Windows.
 #endif
 
-#include "host.hpp"
+#include <hadouken/hosting/host.hpp>
 
 #include <hadouken/service_locator.hpp>
 #include <windows.h>

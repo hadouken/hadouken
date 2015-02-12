@@ -10,13 +10,13 @@
 #include <hadouken/service_locator.hpp>
 #include <hadouken/bittorrent/session.hpp>
 
-#include "console_host.hpp"
+#include <hadouken/hosting/console_host.hpp>
 
 #ifdef WIN32
-#include "service_host.hpp"
-#define DAEMON_DESCRIPTION "Run Hadouken as a Windows Service."
+    #include <hadouken/hosting/service_host.hpp>
+    #define DAEMON_DESCRIPTION "Run Hadouken as a Windows Service."
 #else
-#define DAEMON_DESCRIPTION "Run Hadouken as a daemon."
+    #define DAEMON_DESCRIPTION "Run Hadouken as a daemon."
 #endif
 
 namespace fs = boost::filesystem;

@@ -4,7 +4,15 @@ project("hadouken")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-add_compile_options(-std=c++0x) 
+if(NOT WIN32)
+    add_compile_options(-std=c++0x) 
+endif()
+
+if(NOT BUILD_CONFIGURATION)
+    set(BUILD_CONFIGURATION "debug")
+endif()
+
+message("Build configuration: ${BUILD_CONFIGURATION}")
 
 add_definitions(
     -DBOOST_ASIO_DYN_LINK
@@ -28,24 +36,24 @@ include_directories(
 if(WIN32)
     include_directories(
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/include
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/include
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/include
     )
 endif()
 
 if(WIN32)
     link_directories(
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/win32/debug/lib
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/debug/lib
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/debug/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/win32/${BUILD_CONFIGURATION}/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/lib
     )
 endif()
 
 add_library(
     hadouken
     SHARED
-    src/bt_session.cpp
-    src/bt_torrent_handle.cpp
+    src/bittorrent/session.cpp
+    src/bittorrent/torrent_handle.cpp
     src/logger.cpp
     src/plugin_manager.cpp
     src/service_locator.cpp
@@ -75,11 +83,8 @@ endif()
 
 add_executable(
     hadoukend
-    src/host.hpp
-    src/console_host.hpp
-    src/console_host.cpp
-    src/service_host.hpp
-    src/service_host.cpp
+    src/hosting/console_host.cpp
+    src/hosting/service_host.cpp
     src/main.cpp
 )
 
@@ -87,6 +92,3 @@ target_link_libraries(
     hadoukend
     hadouken
 )
-
-add_subdirectory(plugins/auto_move)
-add_subdirectory(plugins/folder_watcher)

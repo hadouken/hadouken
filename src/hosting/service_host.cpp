@@ -1,4 +1,4 @@
-#include "service_host.hpp"
+#include <hadouken/hosting/service_host.hpp>
 
 #include <boost/asio.hpp>
 #include <hadouken/logger.hpp>
