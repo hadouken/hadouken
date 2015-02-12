@@ -1,11 +1,7 @@
 #ifndef HDKN_PLUGIN_HPP
 #define HDKN_PLUGIN_HPP
 
-#ifdef WIN32
-    #define HDKN_API __declspec(dllexport)
-#else
-    #define HDKN_API
-#endif
+#include <hadouken/config.hpp>
 
 #define HADOUKEN_PLUGIN(ClassName) \
     extern "C" HDKN_API ClassName* hdkn_create_##ClassName(hadouken::service_locator& service_locator) { return new ClassName(service_locator); } \

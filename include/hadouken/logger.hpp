@@ -1,17 +1,13 @@
 #ifndef HDKN_LOGGER_HPP
 #define HDKN_LOGGER_HPP
 
+#include <hadouken/config.hpp>
+
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup.hpp>
-
-#ifdef WIN32
-#define HDKN_API __declspec(dllexport)
-#else
-#define HDKN_API
-#endif
 
 #define HDKN_LOG(lvl) BOOST_LOG_SEV(hadouken::logger::get_logger(), ::boost::log::trivial::lvl)
 

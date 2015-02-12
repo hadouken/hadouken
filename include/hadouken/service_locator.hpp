@@ -1,14 +1,9 @@
 #ifndef HDKN_SERVICE_LOCATOR_HPP
 #define HDKN_SERVICE_LOCATOR_HPP
 
-#ifdef WIN32
-    #define HDKN_API __declspec(dllexport)
-#else
-    #define HDKN_API
-#endif
-
 #include <map>
 #include <string>
+#include <hadouken/config.hpp>
 
 namespace hadouken
 {

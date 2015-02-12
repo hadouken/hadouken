@@ -1,11 +1,7 @@
 #ifndef HDKN_BT_SESSION_HPP
 #define HDKN_BT_SESSION_HPP
 
-#ifdef WIN32
-    #define HDKN_API __declspec(dllexport)
-#else
-    #define HDKN_API
-#endif
+#include <hadouken/config.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>

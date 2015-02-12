@@ -1,12 +1,7 @@
 #ifndef HDKN_BT_TORRENT_HANDLE_HPP
 #define HDKN_BT_TORRENT_HANDLE_HPP
 
-#ifdef WIN32
-    #define HDKN_API __declspec(dllexport)
-#else
-    #define HDKN_API
-#endif
-
+#include <hadouken/config.hpp>
 #include <string>
 
 namespace libtorrent
