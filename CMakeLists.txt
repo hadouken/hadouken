@@ -54,6 +54,12 @@ add_library(
     SHARED
     src/bittorrent/session.cpp
     src/bittorrent/torrent_handle.cpp
+    src/http/connection.cpp
+    src/http/connection_manager.cpp
+    src/http/http_server.cpp
+    src/http/reply.cpp
+    src/http/request_handler.cpp
+    src/http/request_parser.cpp
     src/logger.cpp
     src/plugin_manager.cpp
     src/service_locator.cpp

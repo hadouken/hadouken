@@ -115,8 +115,7 @@ void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
 
 void session::handle_alert(libtorrent::alert* alert)
 {
-    HDKN_LOG(trace) << alert->message();
-    // BOOST_LOG_TRIVIAL(trace) << alert->message();
+    //HDKN_LOG(trace) << alert->message();
 
     switch (alert->type())
     {
