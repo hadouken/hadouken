@@ -9,7 +9,11 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup.hpp>
 
-#define HDKN_LOG(lvl) BOOST_LOG_SEV(hadouken::logger::get_logger(), ::boost::log::trivial::lvl)
+#ifdef WIN32
+    #define HDKN_LOG(lvl) BOOST_LOG_SEV(hadouken::logger::get_logger(), ::boost::log::trivial::lvl)
+#else
+    #define HDKN_LOG(lvl) BOOST_LOG_SEV(hadouken::logger::lg, ::boost::log::trivial::lvl)
+#endif
 
 namespace src = boost::log::sources;
 
@@ -22,7 +26,6 @@ namespace hadouken
 
         static HDKN_API src::severity_logger_mt<boost::log::trivial::severity_level> get_logger();
 
-    private:
         static src::severity_logger_mt<boost::log::trivial::severity_level> lg;
     };
 }

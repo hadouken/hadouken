@@ -4,23 +4,23 @@ project("hadouken")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-if(NOT WIN32)
-    add_compile_options(-std=c++0x) 
-endif()
-
 if(NOT BUILD_CONFIGURATION)
     set(BUILD_CONFIGURATION "debug")
 endif()
 
 message("Build configuration: ${BUILD_CONFIGURATION}")
 
-add_definitions(
-    -DBOOST_ASIO_SEPARATE_COMPILATION
-    -DBOOST_ALL_DYN_LINK
-    -DTORRENT_NO_DEPRECATE
-)
-
 if(WIN32)
+    set(BOOST_DATE_TIME "boost_date_time.lib")
+    set(BOOST_FILESYSTEM "boost_filesystem.lib")
+    set(BOOST_LOG "boost_log.lib")
+    set(BOOST_PROGRAM_OPTIONS "boost_program_options.lib")
+    set(BOOST_REGEX "boost_regex.lib")
+    set(BOOST_SYSTEM "boost_system.lib")
+    set(BOOST_THREAD "boost_thread.lib")
+    set(LIBTORRENT "torrent.lib")
+    set(PTHREAD "")
+
     add_definitions(
         -DBOOST_ALL_NO_LIB
         -DWIN32
@@ -29,27 +29,41 @@ if(WIN32)
         -D_SCL_SECURE_NO_WARNINGS
         -D_WIN32_WINNT=0x0501
     )
-endif()
 
-include_directories(
-    include
-)
-
-if(WIN32)
     include_directories(
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/include
     )
-endif()
 
-if(WIN32)
     link_directories(
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/win32/${BUILD_CONFIGURATION}/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/lib
     )
+else()
+    set(BOOST_DATE_TIME "libboost_date_time.so")
+    set(BOOST_FILESYSTEM "libboost_filesystem.so")
+    set(BOOST_LOG "libboost_log.so")
+    set(BOOST_PROGRAM_OPTIONS "libboost_program_options.so")
+    set(BOOST_REGEX "libboost_regex.so")
+    set(BOOST_SYSTEM "libboost_system.so")
+    set(BOOST_THREAD "libboost_thread.so")
+    set(LIBTORRENT "libtorrent-rasterbar.so")
+    set(PTHREAD "pthread")
+
+    add_compile_options(-std=c++0x) 
 endif()
+
+add_definitions(
+    -DBOOST_ASIO_SEPARATE_COMPILATION
+    -DBOOST_ALL_DYN_LINK
+    -DTORRENT_NO_DEPRECATE
+)
+
+include_directories(
+    include
+)
 
 add_library(
     hadouken_common
@@ -77,43 +91,33 @@ add_library(
     src/http/reply.cpp
 )
 
-if(WIN32)
-    target_link_libraries(
-        hadouken_common
-        boost_date_time.lib
-        boost_filesystem.lib
-        boost_log.lib
-        boost_system.lib
-        boost_thread.lib
-    )
+target_link_libraries(
+    hadouken_common
+    ${BOOST_DATE_TIME}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_LOG}
+    ${BOOST_SYSTEM}
+    ${BOOST_THREAD}
+)
 
-    target_link_libraries(
-        hadouken_bittorrent
-        hadouken_common
-        torrent.lib
-        boost_date_time.lib
-        boost_filesystem.lib
-        boost_log.lib
-        boost_regex.lib
-        boost_system.lib
-    )
+target_link_libraries(
+    hadouken_bittorrent
+    hadouken_common
+    ${LIBTORRENT}
+    ${BOOST_DATE_TIME}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_LOG}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+)
 
-    target_link_libraries(
-        hadouken_http
-        hadouken_common
-        boost_date_time.lib
-        boost_system.lib
-        boost_thread.lib
-    )
-else()
-    target_link_libraries(
-        hadouken
-        libtorrent-rasterbar.so
-        libboost_system.so
-        libboost_filesystem.so
-        libboost_log.so
-    )
-endif()
+target_link_libraries(
+    hadouken_http
+    hadouken_common
+    ${BOOST_DATE_TIME}
+    ${BOOST_SYSTEM}
+    ${BOOST_THREAD}
+)
 
 add_executable(
     hadoukend
@@ -127,5 +131,6 @@ target_link_libraries(
     hadouken_common
     hadouken_bittorrent
     hadouken_http
-    boost_program_options.lib
+    ${BOOST_PROGRAM_OPTIONS}
+    ${PTHREAD}
 )

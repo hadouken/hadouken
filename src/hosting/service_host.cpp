@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include <hadouken/hosting/service_host.hpp>
 
 #include <boost/asio.hpp>
@@ -137,3 +139,5 @@ void service_host::service_main(DWORD dw_argc, LPSTR* lpsz_argv)
         OutputDebugString("SetServiceStatus returned error.");
     }
 }
+
+#endif
