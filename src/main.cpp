@@ -127,15 +127,17 @@ int main(int argc, char* argv[])
 
     // Add our services to the service locator. This is used throughout
     // Hadouken to get hold of various services you might need.
+    session* sess = new session(config, *io_service);
     service_locator* locator = new service_locator();
-    locator->add_service("bt.session", new session(config, *io_service));
+    locator->add_service("bt.session", sess);
     locator->add_service("io_service", io_service);
 
     // Load the BitTorrent session.
-    locator->request<session*>("bt.session")->load();
+    sess->load();
 
     // Start http server
     hadouken::http::http_server http_server(*io_service, 7070);
+    http_server.add_rpc_handler("session.getTorrents", boost::bind(&session::api_session_get_torrents, sess, _1, _2));
     http_server.start();
 
     // Get and run the host based on the --daemon argument.
@@ -144,11 +146,11 @@ int main(int argc, char* argv[])
     http_server.stop();
 
     // Unload the plugin manager and BitTorrent session.
-    locator->request<session*>("bt.session")->unload();
+    sess->unload();
 
     // Free memory. Muy importante. Deleting the session is what
     // will shutdown libtorrent, so better not forget it.
-    delete locator->request<session*>("bt.session");
+    delete sess;
     delete io_service;
 
     return code;

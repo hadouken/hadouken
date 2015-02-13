@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+namespace pt = boost::property_tree;
+
 namespace libtorrent
 {
     class alert;
@@ -41,20 +43,15 @@ namespace hadouken
         class session
         {
         public:
-            typedef boost::signals2::signal<void()> torrent_added_t;
-            typedef boost::signals2::signal<void(const torrent_handle& handle)> torrent_finished_t;
-            typedef boost::signals2::signal<void()> torrent_removed_t;
-
-            HDKN_API session(const boost::property_tree::ptree& config, boost::asio::io_service& io_service);
+            HDKN_API session(const pt::ptree& config, boost::asio::io_service& io_service);
             HDKN_API ~session();
 
             void HDKN_API load();
             void HDKN_API unload();
 
-            void HDKN_API add_torrent_file(const std::string& file, const std::string& save_path);
+            void HDKN_API api_session_get_torrents(const pt::ptree& params, pt::ptree& result);
 
-            boost::signals2::connection HDKN_API on_torrent_added(const torrent_added_t::slot_type &subscriber);
-            boost::signals2::connection HDKN_API on_torrent_finished(const torrent_finished_t::slot_type &subscriber);
+            void HDKN_API add_torrent_file(const std::string& file, const std::string& save_path);
 
         private:
             void alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr);
@@ -70,6 +67,7 @@ namespace hadouken
             void check_auto_add_folders(const boost::system::error_code& error);
 
             boost::filesystem::path get_state_path();
+            boost::filesystem::path get_torrents_state_path();
 
             const boost::property_tree::ptree& config_;
             boost::asio::io_service& io_srv_;
@@ -83,11 +81,6 @@ namespace hadouken
             // default values
             std::string default_save_path_;
             std::string state_path_;
-
-            // Signals
-            torrent_added_t torrent_added_;
-            torrent_finished_t torrent_finished_;
-            torrent_removed_t torrent_removed_;
         };
     }
 }

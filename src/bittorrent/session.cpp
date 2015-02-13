@@ -7,8 +7,9 @@
 
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
-#include <libtorrent/sha1_hash.hpp>
+#include <libtorrent/create_torrent.hpp>
 #include <libtorrent/session.hpp>
+#include <libtorrent/sha1_hash.hpp>
 
 #include <hadouken/bittorrent/torrent_handle.hpp>
 #include <hadouken/logger.hpp>
@@ -84,25 +85,44 @@ void session::unload()
     save_resume_data();
 }
 
+void session::api_session_get_torrents(const pt::ptree& params, pt::ptree& result)
+{
+    std::vector<libtorrent::torrent_handle> handles = sess_->get_torrents();
+
+    for (auto handle : handles)
+    {
+        libtorrent::torrent_status status = handle.status();
+
+        pt::ptree handle_tree;
+        handle_tree.add("name", status.name);
+        handle_tree.add("progress", status.progress);
+
+        result.add_child(libtorrent::to_hex(handle.info_hash().to_string()), handle_tree);
+    }
+}
+
 void session::add_torrent_file(const std::string& file, const std::string& save_path)
 {
     libtorrent::add_torrent_params params;
     params.save_path = save_path;
     params.ti = new libtorrent::torrent_info(file);
 
-    HDKN_LOG(debug) << "Adding torrent file " << params.ti->name() << " [" << libtorrent::to_hex(params.ti->info_hash().to_string()) << "].";
+    // save this torrent in the state path.
+    fs::path torrents_state_path = get_torrents_state_path();
+    std::string info_hash = libtorrent::to_hex(params.ti->info_hash().to_string());
+
+    if (!torrents_state_path.empty())
+    {
+        fs::path torrent_path(torrents_state_path / fs::path(info_hash + ".torrent"));
+        fs::ofstream torrent_file_stream(torrent_path, std::ios::binary);
+        
+        libtorrent::create_torrent creator(*params.ti);
+        libtorrent::bencode(std::ostream_iterator<char>(torrent_file_stream), creator.generate());
+    }
+
+    HDKN_LOG(debug) << "Adding torrent file " << params.ti->name() << " [" << info_hash << "].";
 
     sess_->async_add_torrent(params);
-}
-
-boost::signals2::connection session::on_torrent_added(const torrent_added_t::slot_type &subscriber)
-{
-    return torrent_added_.connect(subscriber);
-}
-
-boost::signals2::connection session::on_torrent_finished(const torrent_finished_t::slot_type &subscriber)
-{
-    return torrent_finished_.connect(subscriber);
 }
 
 void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
@@ -119,10 +139,6 @@ void session::handle_alert(libtorrent::alert* alert)
 
     switch (alert->type())
     {
-    case libtorrent::torrent_added_alert::alert_type:
-        torrent_added_();
-        break;
-
     case libtorrent::torrent_finished_alert::alert_type:
     {
         libtorrent::torrent_finished_alert* finished_alert = libtorrent::alert_cast<libtorrent::torrent_finished_alert>(alert);
@@ -145,10 +161,6 @@ void session::handle_alert(libtorrent::alert* alert)
         }
     }
         break;
-
-    case libtorrent::torrent_removed_alert::alert_type:
-        torrent_removed_();
-        break;
     }
 
     delete alert;
@@ -165,7 +177,7 @@ void session::load_state()
 
     HDKN_LOG(debug) << "Loading session state from " << state_file << ".";
 
-    fs::ifstream state_file_stream(state_file);
+    fs::ifstream state_file_stream(state_file, std::ios::binary);
     std::streamsize size = fs::file_size(state_file);
     std::vector<char> buffer((unsigned int)size);
 
@@ -269,34 +281,27 @@ void session::save_state()
 {
     HDKN_LOG(debug) << "Saving session state.";
 
-    libtorrent::entry entry;
-    sess_->save_state(entry);
-
-    std::vector<char> out;
-    libtorrent::bencode(std::back_inserter(out), entry);
-
     fs::path state_path = get_state_path();
     if (state_path.empty()) return;
 
     fs::path state_file(state_path / ".session_state");
 
+    libtorrent::entry entry;
+    sess_->save_state(entry);
+
     fs::ofstream file(state_file, std::ios::binary);
-    file.write(&out[0], out.size());
+    libtorrent::bencode(std::ostream_iterator<char>(file), entry);
+    
+    file.flush();
+    file.close();
 }
 
 void session::save_resume_data()
 {
     sess_->pause();
 
-    fs::path state_path = get_state_path();
-    if (state_path.empty()) return;
-
-    fs::path torrents_path(state_path / "torrents");
-
-    if (!fs::exists(torrents_path))
-    {
-        fs::create_directory(torrents_path);
-    }
+    fs::path torrents_path = get_torrents_state_path();
+    if (torrents_path.empty()) return;
 
     int num = 0;
 
@@ -428,4 +433,26 @@ fs::path session::get_state_path()
     }
 
     return state_path;
+}
+
+fs::path session::get_torrents_state_path()
+{
+    fs::path state_path = get_state_path();
+    if (state_path.empty()) return fs::path();
+
+    fs::path torrents_state_path = fs::path(state_path / "torrents");
+
+    if (!fs::is_directory(torrents_state_path) && fs::exists(torrents_state_path))
+    {
+        HDKN_LOG(error) << "The configured torrents state path exists but is not a directory. Path: " << torrents_state_path;
+        return fs::path();
+    }
+
+    if (!fs::exists(torrents_state_path))
+    {
+        HDKN_LOG(debug) << "Creating torrents state directory. Path: " << torrents_state_path;
+        fs::create_directories(torrents_state_path);
+    }
+
+    return torrents_state_path;
 }

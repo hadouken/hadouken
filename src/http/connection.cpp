@@ -2,7 +2,6 @@
 
 #include <hadouken/logger.hpp>
 #include <hadouken/http/connection_manager.hpp>
-#include <hadouken/http/request_handler.hpp>
 #include <utility>
 #include <boost/move/move.hpp>
 
@@ -73,11 +72,9 @@ int parser_on_url(http_parser* parser, const char* at, size_t length)
 }
 
 connection::connection(boost::asio::ip::tcp::socket socket,
-    connection_manager& manager,
-    request_handler& handler)
+    connection_manager& manager)
     : socket_(boost::move(socket)),
-      manager_(manager),
-      request_handler_(handler)
+      manager_(manager)
 {
     parser_settings_.on_body = parser_on_body;
     parser_settings_.on_headers_complete = parser_on_headers_complete;
@@ -100,6 +97,11 @@ void connection::stop()
     socket_.close();
 }
 
+boost::signals2::connection connection::on_incoming_request(const incoming_request_t::slot_type& subscriber)
+{
+    return incoming_request_.connect(subscriber);
+}
+
 void connection::do_read()
 {
     auto self(shared_from_this());
@@ -117,7 +119,14 @@ void connection::do_read()
                     parser_.data = &r;
                     size_t len = http_parser_execute(&parser_, &parser_settings_, buffer_.data(), bytes_transferred);
 
-                    request_handler_.handle_request(r.req, reply_);
+                    incoming_request_(r.req, reply_);
+
+                    header content_length;
+                    content_length.name = "Content-Length";
+                    content_length.value = std::to_string(reply_.content.size());
+
+                    reply_.headers.push_back(content_length);
+
                     do_write();
                 }
             }

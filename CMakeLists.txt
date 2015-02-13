@@ -75,7 +75,6 @@ add_library(
     src/http/http_parser.c
     src/http/http_server.cpp
     src/http/reply.cpp
-    src/http/request_handler.cpp
 )
 
 if(WIN32)
