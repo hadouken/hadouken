@@ -22,7 +22,7 @@ namespace hadouken
         class http_server
         {
         public:
-            HDKN_API http_server(boost::asio::io_service& io_service, int port);
+            HDKN_API http_server(const pt::ptree& config, boost::asio::io_service& io_service);
 
             HDKN_API ~http_server();
 
@@ -46,6 +46,8 @@ namespace hadouken
             boost::asio::io_service& io_service_;
             boost::asio::ip::tcp::acceptor* acceptor_;
             boost::asio::ip::tcp::socket* socket_;
+
+            const pt::ptree& config_;
 
             handler_map_t handlers_;
             boost::mutex handlers_mutex_;

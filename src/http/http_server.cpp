@@ -10,16 +10,12 @@ namespace pt = boost::property_tree;
 using boost::asio::ip::tcp;
 using namespace hadouken::http;
 
-http_server::http_server(boost::asio::io_service& io_service, int port)
-    : io_service_(io_service)
+http_server::http_server(const pt::ptree& config, boost::asio::io_service& io_service)
+    : config_(config),
+    io_service_(io_service)
 {
     acceptor_ = new tcp::acceptor(io_service);
     socket_ = new tcp::socket(io_service_);
-
-    acceptor_->open(tcp::v4());
-    acceptor_->bind(tcp::endpoint(tcp::v4(), port));
-    acceptor_->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
-    acceptor_->listen();
 }
 
 http_server::~http_server()
@@ -40,6 +36,26 @@ http_server::~http_server()
 
 void http_server::start()
 {
+    int port = -1;
+
+    try
+    {
+        pt::ptree server_config = config_.get_child("http");
+        port = server_config.get<int>("port");
+    }
+    catch (const std::exception& e)
+    {
+        HDKN_LOG(error) << "Could not parse HTTP port: " << e.what() << ".";
+        return;
+    }
+
+    acceptor_->open(tcp::v4());
+    acceptor_->bind(tcp::endpoint(tcp::v4(), port));
+    acceptor_->set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+    acceptor_->listen();
+
+    HDKN_LOG(info) << "HTTP server listening on port " << port << ".";
+
     do_accept();
 }
 

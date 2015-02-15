@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
     sess->load();
 
     // Start http server
-    hadouken::http::http_server http_server(*io_service, 7070);
+    hadouken::http::http_server http_server(config, *io_service);
     http_server.add_rpc_handler("session.getTorrents", boost::bind(&session::api_session_get_torrents, sess, _1, _2));
     http_server.start();
 
