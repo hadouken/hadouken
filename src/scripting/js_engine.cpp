@@ -1,7 +1,6 @@
 #include <hadouken/scripting/js_engine.hpp>
 
-#include <include/v8.h>
-#include <include/libplatform/libplatform.h>
+#include <v8.h>
 
 using namespace hadouken::scripting;
 using namespace v8;

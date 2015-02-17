@@ -35,7 +35,7 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/include
-        ${CMAKE_SOURCE_DIR}/packages/hadouken.v8.0.1.4/win32/${BUILD_CONFIGURATION}
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.v8.0.1.4/win32/${BUILD_CONFIGURATION}/include
     )
 
     link_directories(
