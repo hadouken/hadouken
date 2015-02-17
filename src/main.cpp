@@ -12,6 +12,7 @@
 #include <hadouken/bittorrent/session.hpp>
 #include <hadouken/http/http_server.hpp>
 #include <hadouken/hosting/console_host.hpp>
+#include <hadouken/scripting/js_engine.hpp>
 
 #ifdef WIN32
     #include <hadouken/hosting/service_host.hpp>
@@ -139,6 +140,9 @@ int main(int argc, char* argv[])
     hadouken::http::http_server http_server(config, *io_service);
     http_server.add_rpc_handler("session.getTorrents", boost::bind(&session::api_session_get_torrents, sess, _1, _2));
     http_server.start();
+
+    hadouken::scripting::js_engine js_engine;
+    js_engine.load();
 
     // Get and run the host based on the --daemon argument.
     int code = get_host(vm.count("daemon") > 0)->run(*io_service);

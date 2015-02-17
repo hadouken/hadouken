@@ -20,6 +20,7 @@ if(WIN32)
     set(BOOST_THREAD "boost_thread.lib")
     set(LIBTORRENT "torrent.lib")
     set(PTHREAD "")
+    set(V8 "v8.lib")
 
     add_definitions(
         -DBOOST_ALL_NO_LIB
@@ -34,12 +35,14 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/include
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/include
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.v8.0.1.4/win32/${BUILD_CONFIGURATION}
     )
 
     link_directories(
         ${CMAKE_SOURCE_DIR}/packages/hadouken.boost.0.1.8/win32/${BUILD_CONFIGURATION}/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.libtorrent.0.1.3/win32/${BUILD_CONFIGURATION}/lib
         ${CMAKE_SOURCE_DIR}/packages/hadouken.openssl.0.1.3/win32/${BUILD_CONFIGURATION}/lib
+        ${CMAKE_SOURCE_DIR}/packages/hadouken.v8.0.1.4/win32/${BUILD_CONFIGURATION}/lib
     )
 else()
     set(BOOST_DATE_TIME "libboost_date_time.so")
@@ -51,6 +54,7 @@ else()
     set(BOOST_THREAD "libboost_thread.so")
     set(LIBTORRENT "libtorrent-rasterbar.so")
     set(PTHREAD "pthread")
+    set(V8 "libv8.so")
 
     add_compile_options(-std=c++0x) 
 endif()
@@ -91,6 +95,12 @@ add_library(
     src/http/reply.cpp
 )
 
+add_library(
+    hadouken_scripting
+    SHARED
+    src/scripting/js_engine.cpp
+)
+
 target_link_libraries(
     hadouken_common
     ${BOOST_DATE_TIME}
@@ -119,6 +129,12 @@ target_link_libraries(
     ${BOOST_THREAD}
 )
 
+target_link_libraries(
+    hadouken_scripting
+    hadouken_common
+    ${V8}
+)
+
 add_executable(
     hadoukend
     src/hosting/console_host.cpp
@@ -131,6 +147,7 @@ target_link_libraries(
     hadouken_common
     hadouken_bittorrent
     hadouken_http
+    hadouken_scripting
     ${BOOST_PROGRAM_OPTIONS}
     ${PTHREAD}
 )
