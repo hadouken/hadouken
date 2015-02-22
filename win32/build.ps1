@@ -20,10 +20,8 @@ if (!(Test-Path $NUGET_EXE)) {
 }
 
 # Restore Cake from NuGet.
-Push-Location
-Set-Location $TOOLS_DIR
-Invoke-Expression "$NUGET_EXE install Cake -ExcludeVersion"
-Pop-Location
+Start-Process $NUGET_EXE -ArgumentList "install Cake -OutputDirectory $TOOLS_DIR -ExcludeVersion" -Wait -NoNewWindow
+
 if ($LASTEXITCODE -ne 0)
 {
     exit $LASTEXITCODE
