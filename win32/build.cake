@@ -5,6 +5,18 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
+Task("Clean")
+    .Does(() =>
+    {
+        CleanDirectories(new[]
+        {
+            "bin",
+            "build/Debug",
+            "build/Release",
+            "wixobj"
+        });
+    });
+
 Task("Restore-NuGet-Packages")
     .Does(() =>
     {
@@ -28,7 +40,7 @@ Task("Generate-CMake-Project")
             });
     });
 
-Task("Build")
+Task("Compile")
     .IsDependentOn("Restore-NuGet-Packages")
     .IsDependentOn("Generate-CMake-Project")
     .Does(() =>
@@ -39,8 +51,78 @@ Task("Build")
         });
     });
 
+Task("Output")
+    .IsDependentOn("Compile")
+    .Does(() =>
+    {
+        // Copy Boost and libtorrent binaries.
+        CopyFiles(
+            GetFiles("libs/hadouken.libtorrent/win32/bin/" + configuration + "/*.dll"),
+            "build/" + configuration);
+
+        // Copy OpenSSL binaries.
+        CopyFiles(
+            GetFiles("libs/hadouken.openssl/win32/" + configuration + "/bin/*.dll"),
+            "build/" + configuration);
+
+        // Copy Poco binaries.
+        var pocoSuffix = (configuration == "Release" ? string.Empty : "d");
+        var pocoTemplate = "libs/hadouken.poco/win32/bin/Poco{0}{1}.dll";
+        var pocoBinaries = new[]
+        {
+            string.Format(pocoTemplate, "Foundation", pocoSuffix),
+            string.Format(pocoTemplate, "JSON", pocoSuffix),
+            string.Format(pocoTemplate, "Net", pocoSuffix),
+            string.Format(pocoTemplate, "NetSSL", pocoSuffix),
+            string.Format(pocoTemplate, "Util", pocoSuffix),
+            string.Format(pocoTemplate, "XML", pocoSuffix)
+        };
+
+        CopyFiles(
+            pocoBinaries,
+            "build/" + configuration
+        );
+    });
+
+Task("Create-Zip-Package")
+    .IsDependentOn("Output")
+    .Does(() =>
+    {
+        CreateDirectory("bin");
+
+        var suffix = (configuration == "Release" ? string.Empty : "-debug");
+        Zip("./build/" + configuration, "bin/hadouken-win32" + suffix + ".zip");
+    });
+
+Task("Create-Msi-Package")
+    .IsDependentOn("Output")
+    .Does(() =>
+    {
+        var suffix = (configuration == "Release" ? string.Empty : "-debug");
+
+        WiXCandle("./installer/*.wxs", new CandleSettings
+        {
+            Defines = new Dictionary<string, string>
+            {
+                { "BuildVersion", "0.0.0" }
+            },
+            OutputDirectory = "./wixobj",
+            ToolPath = "./libs/WiX.Toolset/tools/wix/candle.exe"
+        });
+
+        WiXLight("./wixobj/*.wixobj", new LightSettings
+        {
+            Extensions = new[] { "WixUtilExtension", "WixUIExtension" },
+            OutputFile = "./bin/hadouken-win32" + suffix + ".msi",
+            ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe"
+        });
+    });
+
 Task("Default")
-    .IsDependentOn("Build");
+    .IsDependentOn("Clean")
+    .IsDependentOn("Output")
+    .IsDependentOn("Create-Zip-Package")
+    .IsDependentOn("Create-Msi-Package");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION

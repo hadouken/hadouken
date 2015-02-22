@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+    Id="*"
+    Name="Hadouken"
+    Manufacturer="Viktor Elofsson - viktorelofsson.se"
+    Version="$(var.BuildVersion)"
+    UpgradeCode="f37e1bf1-cbf8-4a28-92c2-f3f07ea79b8f"
+    Language="1033"
+    Codepage="1252">
+
+    <Package Id="*" InstallScope="perMachine" />
+
+    <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
+    
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="Installer does not support downgrading." Schedule="afterInstallInitialize" />
+    
+    <!-- Search for installation directory in registry -->
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
+    </Property>
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- The UI parts -->
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+  </Product>
+</Wix>

@@ -1,7 +1,7 @@
 Param(
     [string]$Script = "build.cake",
     [string]$Target = "Default",
-    [string]$Configuration = "Debug",
+    [string]$Configuration = "Release",
     [string]$Verbosity = "Verbose"
 )
 
