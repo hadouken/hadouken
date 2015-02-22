@@ -22,11 +22,6 @@ if (!(Test-Path $NUGET_EXE)) {
 # Restore Cake from NuGet.
 Start-Process $NUGET_EXE -ArgumentList "install Cake -OutputDirectory $TOOLS_DIR -ExcludeVersion" -Wait -NoNewWindow
 
-if ($LASTEXITCODE -ne 0)
-{
-    exit $LASTEXITCODE
-}
-
 # Make sure that Cake has been installed.
 if (!(Test-Path $CAKE_EXE)) {
     Throw "Could not find Cake.exe"
