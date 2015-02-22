@@ -12,7 +12,6 @@ function Get-ScriptDirectory {
 $TOOLS_DIR = Join-Path (Get-ScriptDirectory) "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $CAKE_EXE = Join-Path $TOOLS_DIR "Cake/Cake.exe"
-$CAKE_ARGUMENTS = "$Script -target=$Target -configuration=$Configuration -verbosity=$verbosity"
 
 # Make sure NuGet exists where we expect it.
 if (!(Test-Path $NUGET_EXE)) {
@@ -20,7 +19,7 @@ if (!(Test-Path $NUGET_EXE)) {
 }
 
 # Restore Cake from NuGet.
-Start-Process $NUGET_EXE -ArgumentList "install Cake -OutputDirectory $TOOLS_DIR -ExcludeVersion" -Wait -NoNewWindow
+& $NUGET_EXE install Cake -OutputDirectory $TOOLS_DIR -ExcludeVersion
 
 # Make sure that Cake has been installed.
 if (!(Test-Path $CAKE_EXE)) {
@@ -28,5 +27,8 @@ if (!(Test-Path $CAKE_EXE)) {
 }
 
 # Start Cake
-Start-Process $CAKE_EXE -ArgumentList $CAKE_ARGUMENTS -Wait -NoNewWindow -WorkingDirectory (Get-ScriptDirectory)
-exit $LASTEXITCODE
+Push-Location (Get-ScriptDirectory)
+& $CAKE_EXE $Script -target="$Target" -configuration="$Configuration" -verbosity="$verbosity"
+Pop-Location
+
+exit $LastExitCode
