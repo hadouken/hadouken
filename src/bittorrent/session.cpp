@@ -1,307 +1,256 @@
-#include <hadouken/bittorrent/session.hpp>
+#include <Hadouken/BitTorrent/Session.hpp>
 
-#include <boost/date_time.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/regex.hpp>
+#include <fstream>
+#include <iostream>
 
+#include <Hadouken/BitTorrent/AddTorrentParams.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
-#include <libtorrent/create_torrent.hpp>
 #include <libtorrent/session.hpp>
-#include <libtorrent/sha1_hash.hpp>
+#include <Poco/File.h>
+#include <Poco/Path.h>
+#include <Poco/Util/Application.h>
+#include <Poco/RunnableAdapter.h>
 
-#include <hadouken/bittorrent/torrent_handle.hpp>
-#include <hadouken/logger.hpp>
+using namespace Hadouken::BitTorrent;
+using namespace Poco::Util;
 
-namespace fs = boost::filesystem;
-namespace pt = boost::property_tree;
-using namespace hadouken::bittorrent;
-
-session::session(const boost::property_tree::ptree& config, boost::asio::io_service& io_service)
-    : config_(config),
-      io_srv_(io_service),
-      auto_add_timer_(io_service, boost::posix_time::seconds(1))
+Session::Session(const Poco::Util::LayeredConfiguration& config)
+    : logger_(Poco::Logger::get("hadouken.bittorrent.session")),
+      config_(config),
+      read_alerts_runner_(*this, &Session::readAlerts)
 {
+    if (config_.has("bittorrent.default_save_path"))
+    {
+        default_save_path_ = config_.getString("bittorrent.default_save_path");
+    }
+    else
+    {
+        default_save_path_ = ".";
+    }
+
     sess_ = new libtorrent::session();
-
-    pt::ptree session_config = config_.get_child("session");
-
-    default_save_path_ = session_config.get<std::string>("default_save_path");
-    state_path_ = session_config.get<std::string>("state_path");
 }
 
-session::~session()
+Session::~Session()
 {
-    HDKN_LOG(trace) << "Disposing session.";
     delete sess_;
-    HDKN_LOG(trace) << "Session disposed.";
 }
 
-void session::load()
+void Session::load()
 {
-    sess_->set_alert_dispatch(boost::bind(&session::alert_dispatch, this, _1));
+    Application& app = Application::instance();
+
+    loadSessionState();
+    loadResumeData();
+
     sess_->set_alert_mask(libtorrent::alert::all_categories);
 
-    pt::ptree session_config = config_.get_child("session");
+    // Start alert reader thread
+    read_alerts_ = true;
+    read_alerts_thread_.start(read_alerts_runner_);
+}
 
-    auto port_it = session_config.get_child("listen_port_range").begin();
-    int port_min = (port_it)->second.get_value<int>();
-    int port_max = (++port_it)->second.get_value<int>();
+void Session::loadSessionState()
+{
+    // Load session state
+    Poco::Path data_path = getDataPath();
 
-    load_state();
-    load_resume_data();
+    Poco::Path state_path(data_path, ".session_state");
+    Poco::File state_file(state_path);
 
-    // load auto add and auto move
-    load_auto_add_rules();
-    load_auto_move_rules();
-
-    HDKN_LOG(debug) << "Starting session in port range [" << port_min << "-" << port_max << "].";
-
-    libtorrent::error_code ec;
-    sess_->listen_on(std::make_pair(port_min, port_max), ec);
-
-    if (ec)
+    if (!state_file.exists())
     {
-        HDKN_LOG(error) << "Could not listen on port: " << ec.message();
+        logger_.information("No previous session state to load.");
+        return;
     }
 
-    HDKN_LOG(info) << "Session started on port " << sess_->listen_port() << ".";
-
-    // start the auto add timer
-    auto_add_timer_.async_wait(boost::bind(&session::check_auto_add_folders, this, _1));
-}
-
-void session::unload()
-{
-    // Cancel the timer, otherwise the io service loop
-    // will never complete.
-    auto_add_timer_.cancel();
-
-    typedef boost::function<void(std::auto_ptr<libtorrent::alert>)> dispatch_function_t;
-    sess_->set_alert_dispatch(dispatch_function_t());
-
-    save_state();
-    save_resume_data();
-}
-
-void session::api_session_get_torrents(const pt::ptree& params, pt::ptree& result)
-{
-    std::vector<libtorrent::torrent_handle> handles = sess_->get_torrents();
-
-    for (auto handle : handles)
+    if (!state_file.isFile())
     {
-        libtorrent::torrent_status status = handle.status();
-
-        pt::ptree handle_tree;
-        handle_tree.add("name", status.name);
-        handle_tree.add("progress", status.progress);
-
-        result.add_child(libtorrent::to_hex(handle.info_hash().to_string()), handle_tree);
-    }
-}
-
-void session::add_torrent_file(const std::string& file, const std::string& save_path)
-{
-    libtorrent::add_torrent_params params;
-    params.save_path = save_path;
-    params.ti = new libtorrent::torrent_info(file);
-
-    // save this torrent in the state path.
-    fs::path torrents_state_path = get_torrents_state_path();
-    std::string info_hash = libtorrent::to_hex(params.ti->info_hash().to_string());
-
-    if (!torrents_state_path.empty())
-    {
-        fs::path torrent_path(torrents_state_path / fs::path(info_hash + ".torrent"));
-        fs::ofstream torrent_file_stream(torrent_path, std::ios::binary);
-        
-        libtorrent::create_torrent creator(*params.ti);
-        libtorrent::bencode(std::ostream_iterator<char>(torrent_file_stream), creator.generate());
+        logger_.error("State file is not a regular file.");
+        return;
     }
 
-    HDKN_LOG(debug) << "Adding torrent file " << params.ti->name() << " [" << info_hash << "].";
+    std::vector<char> buffer((unsigned int)state_file.getSize());
 
-    sess_->async_add_torrent(params);
-}
+    std::ifstream state_file_stream(state_file.path(), std::ios::binary);
+    state_file_stream.read(buffer.data(), buffer.size());
 
-void session::alert_dispatch(std::auto_ptr<libtorrent::alert> alert_ptr)
-{
-    auto alert = alert_ptr.get();
-    alert_ptr.release();
-
-    io_srv_.dispatch(boost::bind(&session::handle_alert, this, alert));
-}
-
-void session::handle_alert(libtorrent::alert* alert)
-{
-    //HDKN_LOG(trace) << alert->message();
-
-    switch (alert->type())
-    {
-    case libtorrent::torrent_finished_alert::alert_type:
-    {
-        libtorrent::torrent_finished_alert* finished_alert = libtorrent::alert_cast<libtorrent::torrent_finished_alert>(alert);
-        libtorrent::torrent_handle handle = finished_alert->handle;
-        std::string name = handle.status(libtorrent::torrent_handle::query_name).name;
-        
-        HDKN_LOG(info) << "Torrent " << name << " finished downloading.";
-
-        for (auto rule : auto_move_rules_)
-        {
-            boost::regex re(rule.pattern, boost::regex_constants::icase);
-
-            if (boost::regex_match(name, re))
-            {
-                HDKN_LOG(info) << "Moving torrent to " << rule.path << ".";
-                handle.move_storage(rule.path);
-
-                break;
-            }
-        }
-    }
-        break;
-    }
-
-    delete alert;
-}
-
-void session::load_state()
-{
-    fs::path state_path = get_state_path();
-    if (state_path.empty()) return;
-
-    fs::path state_file(state_path / ".session_state");
-    if (!fs::exists(state_file)) return;
-
-
-    HDKN_LOG(debug) << "Loading session state from " << state_file << ".";
-
-    fs::ifstream state_file_stream(state_file, std::ios::binary);
-    std::streamsize size = fs::file_size(state_file);
-    std::vector<char> buffer((unsigned int)size);
-
-    state_file_stream.read(buffer.data(), size);
-
+    // Load session state
     libtorrent::error_code ec;
     libtorrent::lazy_entry entry;
     libtorrent::lazy_bdecode(&buffer[0], &buffer[0] + buffer.size(), entry, ec);
 
     if (ec)
     {
-        HDKN_LOG(error) << "Could not load session state: " << ec.message();
+        logger_.error("Could not load session state from file: %s.", ec.message());
         return;
     }
 
     sess_->load_state(entry);
+
+    logger_.information("Loaded session state from %s", state_file.path());
 }
 
-void session::load_resume_data()
+void Session::loadResumeData()
 {
-    fs::path state_path = get_state_path();
-    if (state_path.empty()) return;
+    // Load existing torrents
+    Poco::Path data_path = getDataPath();
 
-    fs::path torrents_path(state_path / "torrents");
-    if (!fs::exists(torrents_path)) return;
+    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::File torrents_dir(torrents_path);
 
-    fs::directory_iterator end;
-
-    for (fs::directory_iterator entry(torrents_path); entry != end; ++entry)
+    if (!torrents_dir.exists())
     {
-        if (!is_regular_file(*entry)) continue;
-        if (entry->path().extension() != ".torrent") continue;
+        logger_.information("Creating torrents path " + torrents_dir.path());
+        torrents_dir.createDirectories();
+    }
 
-        boost::intrusive_ptr<libtorrent::torrent_info> ti = new libtorrent::torrent_info(entry->path().generic_string());
+    if (!torrents_dir.isDirectory())
+    {
+        logger_.error("%s is not a directory.", torrents_dir.path());
+        return;
+    }
 
-        if (!ti->is_valid())
+    std::vector<Poco::File> torrent_files;
+    torrents_dir.list(torrent_files);
+    std::vector<Poco::File>::iterator it = torrent_files.begin();
+
+    for (; it != torrent_files.end(); ++it)
+    {
+        Poco::Path torrent_file_path(it->path());
+        if (torrent_file_path.getExtension() != ".torrent") continue;
+
+        libtorrent::add_torrent_params params;
+        params.ti = new libtorrent::torrent_info(it->path());
+
+        if (!params.ti->is_valid())
         {
-            HDKN_LOG(warning) << "File " << entry->path() << " is not a valid torrent file.";
+            logger_.warning("File %s is not a valid torrent file.", it->path());
             continue;
         }
 
-        libtorrent::add_torrent_params params;
-        params.ti = ti;
+        // Set defaults
         params.save_path = default_save_path_;
 
-        fs::path resume_data_path = entry->path();
-        resume_data_path += ".resume";
+        // Check if resume data exists
+        Poco::File torrent_state_file(torrent_file_path.setExtension(".resume"));
 
-        if (exists(resume_data_path))
+        if (torrent_state_file.exists() && torrent_state_file.isFile())
         {
-            HDKN_LOG(debug) << "Loading resume data from file: " << resume_data_path;
+            std::vector<char> resume_buffer((unsigned int)torrent_state_file.getSize());
 
-            fs::ifstream rf(resume_data_path);
-            std::streamsize size = fs::file_size(resume_data_path);
+            std::ifstream state_stream(torrent_state_file.path());
+            state_stream.read(resume_buffer.data(), resume_buffer.size());
 
-            std::vector<char> resume_data((unsigned int)size);
-            rf.read(resume_data.data(), size);
-
-            params.resume_data = resume_data;
+            params.resume_data = resume_buffer;
         }
 
         sess_->async_add_torrent(params);
     }
 }
 
-void session::load_auto_add_rules()
+void Session::unload()
 {
-    if (!config_.count("auto_add")) return;
+    // Join the thread that reads alerts.
+    read_alerts_ = false;
+    read_alerts_thread_.join();
 
-    for (auto item : config_.get_child("auto_add"))
-    {
-        auto_add_rule rule;
-        rule.pattern = item.second.get<std::string>("pattern");
-        rule.save_path = item.second.get<std::string>("save_path");
-        rule.source_path = item.second.get<std::string>("source_path");
-
-        auto_add_rules_.push_back(rule);
-    }
-
-    HDKN_LOG(info) << "Added " << auto_add_rules_.size() << " auto add rule(s).";
+    saveSessionState();
+    saveResumeData();
 }
 
-void session::load_auto_move_rules()
+std::string Session::addTorrentFile(Poco::Path& filePath, AddTorrentParams& params)
 {
-    if (!config_.count("auto_move")) return;
+    std::ifstream file_stream(filePath.toString(), std::ios::binary);
+    std::vector<char> file_data((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
 
-    for (auto item : config_.get_child("auto_move"))
-    {
-        auto_move_rule rule;
-        rule.input = item.second.get<std::string>("match_input");
-        rule.path = item.second.get<std::string>("destination_path");
-        rule.pattern = item.second.get<std::string>("match_pattern");
-
-        auto_move_rules_.push_back(rule);
-    }
-
-    HDKN_LOG(info) << "Added " << auto_move_rules_.size() << " auto move rule(s).";
+    return addTorrentFile(file_data, params);
 }
 
-void session::save_state()
+std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params)
 {
-    HDKN_LOG(debug) << "Saving session state.";
+    libtorrent::error_code ec;
+    libtorrent::lazy_entry le;
+    libtorrent::lazy_bdecode(&buffer[0], &buffer[0] + buffer.size(), le, ec);
 
-    fs::path state_path = get_state_path();
-    if (state_path.empty()) return;
+    if (ec)
+    {
+        logger_.error("Error when bdecoding torrent: %s", ec.message());
+        return nullptr;
+    }
 
-    fs::path state_file(state_path / ".session_state");
+    libtorrent::add_torrent_params p;
+
+    if (!params.savePath.isDirectory())
+    {
+        p.save_path = default_save_path_;
+    }
+    else
+    {
+        p.save_path = params.savePath.toString();
+    }
+
+    /*
+    Set storage mode. This is configured in the properties
+    and defaults to sparse files.
+    */
+
+    if (config_.has("bittorrent.storage_allocate")
+        && config_.getBool("bittorrent.storage_allocate"))
+    {
+        p.storage_mode = libtorrent::storage_mode_allocate;
+    }
+    else
+    {
+        p.storage_mode = libtorrent::storage_mode_sparse;
+    }
+    
+    p.ti = new libtorrent::torrent_info(le);
+
+    std::string hash = libtorrent::to_hex(p.ti->info_hash().to_string());
+
+    sess_->async_add_torrent(p);
+
+    return hash;
+}
+
+void Session::saveSessionState()
+{
+    // Save session state
+    Poco::Path data_path = getDataPath();
+
+    Poco::Path state_path(data_path, ".session_state");
+    Poco::File state_file(state_path);
 
     libtorrent::entry entry;
     sess_->save_state(entry);
 
-    fs::ofstream file(state_file, std::ios::binary);
-    libtorrent::bencode(std::ostream_iterator<char>(file), entry);
-    
-    file.flush();
-    file.close();
+    std::ofstream state_file_stream(state_file.path(), std::ios::binary);
+    libtorrent::bencode(std::ostream_iterator<char>(state_file_stream), entry);
 }
 
-void session::save_resume_data()
+void Session::saveResumeData()
 {
-    sess_->pause();
+    // Save resume data
+    Poco::Path data_path = getDataPath();
 
-    fs::path torrents_path = get_torrents_state_path();
-    if (torrents_path.empty()) return;
+    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::File torrents_dir(torrents_path);
+
+    if (!torrents_dir.exists())
+    {
+        logger_.information("Creating torrents path " + torrents_dir.path());
+        torrents_dir.createDirectories();
+    }
+
+    if (!torrents_dir.isDirectory())
+    {
+        logger_.error("%s is not a directory.", torrents_dir.path());
+        return;
+    }
+
+    sess_->pause();
 
     int num = 0;
 
@@ -318,7 +267,7 @@ void session::save_resume_data()
         status.handle.save_resume_data();
     }
 
-    HDKN_LOG(info) << "Saving resume data for " << num << " torrents.";
+    logger_.information("Saving resume data for %d torrents.", num);
 
     while (num > 0)
     {
@@ -330,9 +279,12 @@ void session::save_resume_data()
 
         for (auto &alert : alerts)
         {
-            std::auto_ptr<libtorrent::alert> a(alert);
+            std::unique_ptr<libtorrent::alert> a(alert);
 
-            if (libtorrent::alert_cast<libtorrent::torrent_paused_alert>(alert)) continue;
+            if (libtorrent::alert_cast<libtorrent::torrent_paused_alert>(alert))
+            {
+                continue;
+            }
 
             if (libtorrent::alert_cast<libtorrent::save_resume_data_failed_alert>(alert))
             {
@@ -341,118 +293,88 @@ void session::save_resume_data()
             }
 
             const libtorrent::save_resume_data_alert* rd = libtorrent::alert_cast<libtorrent::save_resume_data_alert>(alert);
+
             if (!rd) continue;
-
             --num;
-
             if (!rd->resume_data) continue;
-
-            libtorrent::torrent_status st = rd->handle.status(libtorrent::torrent_handle::status_flags_t::query_name);
-
-            HDKN_LOG(info) << "Saving resume data for " << st.name;
 
             std::vector<char> out;
             libtorrent::bencode(std::back_inserter(out), *rd->resume_data);
 
             std::string hash = libtorrent::to_hex(rd->handle.info_hash().to_string());
-            fs::path file_path(hash + ".resume");
-            
-            fs::ofstream file_stream(torrents_path / file_path);
-            file_stream.write(&out[0], out.size());
+
+            logger_.information("Saving state for %s.", hash);
+
+            // Path to state file
+            Poco::Path torrent_state_path(torrents_path, hash + ".resume");
+
+            std::ofstream torrent_state_stream(torrent_state_path.toString());
+            torrent_state_stream.write(out.data(), out.size());
+
+            logger_.information("State saved for %s (%z bytes).", hash, out.size());
         }
     }
 }
 
-void session::check_auto_add_folders(const boost::system::error_code& error)
+void Session::readAlerts()
 {
-    if (error && error == boost::asio::error::operation_aborted)
+    // If you really want to have verbose output
+
+    bool traceAlerts = (config_.hasProperty("bittorrent.trace_alerts")
+        && config_.getBool("bittorrent.trace_alerts"));
+
+    while (read_alerts_)
     {
-        return;
-    }
+        const libtorrent::alert* alert = sess_->wait_for_alert(libtorrent::seconds(1));
+        if (!alert) continue;
 
-    for (auto rule : auto_add_rules_)
-    {
-        fs::path source_path(rule.source_path);
-        if (!fs::exists(source_path)) continue;
+        std::deque<libtorrent::alert*> alerts;
+        sess_->pop_alerts(&alerts);
 
-        if (!fs::is_directory(source_path))
+        for (auto &alert : alerts)
         {
-            HDKN_LOG(warning) << "Source path is not a directory. Path: " << source_path << ".";
-            continue;
-        }
+            std::unique_ptr<libtorrent::alert> a(alert);
 
-        std::string save_path = default_save_path_;
-
-        if (!rule.save_path.empty())
-        {
-            save_path = rule.save_path;
-        }
-
-        fs::directory_iterator end_iter;
-
-        for (fs::directory_iterator entry(source_path); entry != end_iter; ++entry)
-        {
-            if (!fs::is_regular_file(entry->path())) continue;
-
-            if (rule.pattern.empty() && entry->path().extension() == ".torrent")
+            if (traceAlerts)
             {
-                // if no pattern is specified, only add .torrent files.
-                add_torrent_file(entry->path().string(), save_path);
-            }
-            else
-            {
-                boost::regex re(rule.pattern);
-                if (!boost::regex_match(entry->path().filename().string(), re)) continue;
-
-                // add file
-                add_torrent_file(entry->path().string(), save_path);
+                logger_.trace("%s", a->message());
             }
 
-            fs::remove(entry->path());
+            switch (a->type())
+            {
+            case libtorrent::torrent_added_alert::alert_type:
+                // save torrent file to state path if it doesn't
+                // already exist there. then publish an added event.
+                break;
+            }
         }
     }
 
-    auto_add_timer_.expires_at(auto_add_timer_.expires_at() + boost::posix_time::seconds(5));
-    auto_add_timer_.async_wait(boost::bind(&session::check_auto_add_folders, this, _1));
+    logger_.information("Shutting down read alerts thread.");
 }
 
-fs::path session::get_state_path()
+Poco::Path Session::getDataPath()
 {
-    fs::path state_path(state_path_);
+    std::string configured_data_path = "state";
 
-    if (!fs::is_directory(state_path) && fs::exists(state_path))
+    if (config_.has("bittorrent.state_path"))
     {
-        HDKN_LOG(error) << "The configured state path exists but is not a directory. Path: " << state_path;
-        return fs::path();
+        configured_data_path = config_.getString("bittorrent.state_path");
     }
 
-    if (!fs::exists(state_path))
+    // Save session state
+    Poco::Path data_path(configured_data_path);
+    Poco::File data_dir(data_path);
+
+    if (!data_dir.exists())
     {
-        HDKN_LOG(debug) << "Creating state directory. Path: " << state_path;
-        fs::create_directories(state_path);
+        data_dir.createDirectories();
     }
 
-    return state_path;
-}
-
-fs::path session::get_torrents_state_path()
-{
-    fs::path state_path = get_state_path();
-    if (state_path.empty()) return fs::path();
-
-    fs::path torrents_state_path = fs::path(state_path / "torrents");
-
-    if (!fs::is_directory(torrents_state_path) && fs::exists(torrents_state_path))
+    if (!data_dir.isDirectory())
     {
-        HDKN_LOG(error) << "The configured torrents state path exists but is not a directory. Path: " << torrents_state_path;
-        return fs::path();
+        return Poco::Path();
     }
 
-    if (!fs::exists(torrents_state_path))
-    {
-        HDKN_LOG(debug) << "Creating torrents state directory. Path: " << torrents_state_path;
-        fs::create_directories(torrents_state_path);
-    }
-
-    return torrents_state_path;
+    return data_path;
 }
