@@ -1,10 +1,8 @@
 # Overview
 
-Hadouken is a modern, open source, cross-platform BitTorrent client written in C++11. It is written using Boost, Rasterbar-libtorrent and Google's V8 engine to make both the core and plugin ecosystem platform independent.
+[![Build status](https://ci.appveyor.com/api/projects/status/yilo7st03s6me867?svg=true)](https://ci.appveyor.com/project/hadouken/hadouken-vnext)
 
-It is designed to run headless as a native Linux daemon/Windows Service.
-
-Plugins has always been Hadoukens strong point, and the rewritten plugin framework is utilizing Google's V8 engine to expose a powerful plugin engine for JavaScript plugins.
+Hadouken is a modern, open source, cross-platform BitTorrent client written in C++11. It is written using Poco and Rasterbar-libtorrent and designed to run headless as a native Linux daemon/Windows Service.
 
 ## Building
 
@@ -14,21 +12,12 @@ The following will get you started building Hadouken for various platforms. This
 
 ### Windows
 
-Building Hadouken on Windows is done using a simple PowerShell script. The third-party components needed, ie. Boost, Rasterbar-libtorrent and OpenSSL, will be downloaded and installed from the NuGet packages `hadouken.boost`, `hadouken.libtorrent` and `hadouken.openssl`. This is to ensure a smooth setup for new developers.
-
-After cloning the repository, open a PowerShell prompt in the root directory and execute `.\win32\prepare.ps1`. This will download and install the NuGet packages needed.
-
-Next, run the following,
+Running the build script in a clean repository will install dependencies and build Hadouken in debug configuration.
 
 ```posh
-PS> mkdir build
-PS> cd build
-PS> cmake -G "Visual Studio 12" ..
-PS> msbuild .\hadouken.sln
+PS> .\win32\build.ps1
 ```
-
-This will generate a Visual Studio solution with related projects as well as building Hadouken.
 
 ### Linux
 
-For now, refer to the `.travis.yml` file for how to build on Linux.
+*TODO*
