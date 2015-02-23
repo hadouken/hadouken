@@ -88,8 +88,6 @@ Task("Create-Zip-Package")
     .IsDependentOn("Output")
     .Does(() =>
     {
-        CreateDirectory("bin");
-
         var suffix = (configuration == "Release" ? string.Empty : "-debug");
         Zip("./build/" + configuration, "bin/hadouken-win32" + suffix + ".zip");
     });
