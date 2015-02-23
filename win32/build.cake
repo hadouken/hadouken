@@ -10,10 +10,10 @@ Task("Clean")
     {
         CleanDirectories(new[]
         {
-            "bin",
-            "build/Debug",
-            "build/Release",
-            "wixobj"
+            "./bin",
+            "./build/Debug",
+            "./build/Release",
+            "./wixobj"
         });
     });
 
@@ -104,6 +104,8 @@ Task("Create-Msi-Package")
         {
             Defines = new Dictionary<string, string>
             {
+                { "BinDir",       "./build/" + configuration },
+                { "BuildConfiguration", configuration },
                 { "BuildVersion", "0.0.0" }
             },
             OutputDirectory = "./wixobj",
