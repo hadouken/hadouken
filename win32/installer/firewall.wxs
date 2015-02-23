@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
+     xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension">
+  <Fragment>
+    <ComponentGroup Id="FirewallComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component Id="HadoukenFirewall" Guid="7278f07d-de6f-497f-9267-d5feb5216a5c">
+        <CreateFolder/>
+        
+        <fire:FirewallException Id="HDKN1"
+                                Name="Hadouken"
+                                Program="[#HadoukenServiceExecutable]"
+                                Scope="any" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

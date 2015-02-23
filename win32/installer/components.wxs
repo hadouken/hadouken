@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?if $(var.BuildConfiguration) = Debug ?>
+  <?define Lib_BoostChrono    = "boost_chrono-vc120-mt-gd-1_57.dll" ?>
+  <?define Lib_BoostDateTime  = "boost_date_time-vc120-mt-gd-1_57.dll" ?>
+  <?define Lib_BoostSystem    = "boost_system-vc120-mt-gd-1_57.dll" ?>
+  <?define Lib_BoostThread    = "boost_thread-vc120-mt-gd-1_57.dll" ?>
+  <?define Lib_PocoFoundation = "PocoFoundationd.dll" ?>
+  <?define Lib_PocoJSON       = "PocoJSONd.dll" ?>
+  <?define Lib_PocoNet        = "PocoNetd.dll" ?>
+  <?define Lib_PocoNetSSL     = "PocoNetSSLd.dll" ?>
+  <?define Lib_PocoUtil       = "PocoUtild.dll" ?>
+  <?define Lib_PocoXML        = "PocoXMLd.dll" ?>
+<?else ?>
+  <?define Lib_BoostChrono    = "boost_chrono-vc120-mt-1_57.dll" ?>
+  <?define Lib_BoostDateTime  = "boost_date_time-vc120-mt-1_57.dll" ?>
+  <?define Lib_BoostSystem    = "boost_system-vc120-mt-1_57.dll" ?>
+  <?define Lib_BoostThread    = "boost_thread-vc120-mt-1_57.dll" ?>
+  <?define Lib_PocoFoundation = "PocoFoundation.dll" ?>
+  <?define Lib_PocoJSON       = "PocoJSON.dll" ?>
+  <?define Lib_PocoNet        = "PocoNet.dll" ?>
+  <?define Lib_PocoNetSSL     = "PocoNetSSL.dll" ?>
+  <?define Lib_PocoUtil       = "PocoUtil.dll" ?>
+  <?define Lib_PocoXML        = "PocoXML.dll" ?>
+<?endif ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="CoreComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Name="$(var.Lib_BoostChrono)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_BoostDateTime)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_BoostSystem)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_BoostThread)" />
+      </Component>
+
+      <Component>
+        <File Name="libeay32.dll" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoFoundation)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoJSON)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoNet)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoNetSSL)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoUtil)" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoXML)" />
+      </Component>
+
+      <Component>
+        <File Name="ssleay32.dll" />
+      </Component>
+
+      <Component>
+        <File Name="torrent.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

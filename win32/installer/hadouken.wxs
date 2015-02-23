@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<?if $(var.BuildConfiguration) = Debug ?>
-  <?define BoostSuffix = "-gd" ?>
-  <?define PocoSuffix = "d" ?>
-<?else ?>
-  <?define BoostSuffix = "" ?>
-  <?define PocoSuffix = "" ?>
-<?endif ?>
+<?define IsWin64 = "no" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product
@@ -22,94 +16,40 @@
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
-    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading." Schedule="afterInstallInitialize" />
-    
+    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading."
+                  Schedule="afterInstallInitialize" />
+
+    <!-- Directory -->
+    <DirectoryRef Id="TARGETDIR" />
+
+    <!-- Features -->
+    <Feature Id="Complete" Level="1" Title="Hadouken" Description="The Hadouken BitTorrent client.">
+      <ComponentGroupRef Id="CoreComponents" />
+      <ComponentGroupRef Id="ServiceComponents" />
+
+      <Feature Id="FirewallException" Title="Windows Firewall Exception" Description="Add an exception for Hadouken in the Windows firewall." Level="1">
+        <ComponentGroupRef Id="FirewallComponents" />
+      </Feature>
+    </Feature>
+
+    <!-- Search for Visual C++ redist 2013 -->
+    <Property Id="VCREDIST">
+      <RegistrySearch Id="SearchVCRedistRegistry"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x86"
+                      Name="Installed"
+                      Win64="$(var.IsWin64)" />
+    </Property>
+
+    <Condition Message="Hadouken requires the Visual C++ 2013 (x86) redistributable package.">
+      <![CDATA[(Installed OR VCREDIST)]]>
+    </Condition>
+
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
       <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
     </Property>
-
-    <!-- Directory structure -->
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder" Name="PFiles">
-        <Directory Id="INSTALLDIR" Name="Hadouken">
-          <!-- Components -->
-          <Component Id="boostchrono">
-            <File Name="boost_chrono-vc120-mt$(var.BoostSuffix)-1_57.dll" Source="$(var.BinDir)\boost_chrono-vc120-mt$(var.BoostSuffix)-1_57.dll" />
-          </Component>
-
-          <Component Id="boostdatetime">
-            <File Name="boost_date_time-vc120-mt$(var.BoostSuffix)-1_57.dll" Source="$(var.BinDir)\boost_date_time-vc120-mt$(var.BoostSuffix)-1_57.dll" />
-          </Component>
-
-          <Component Id="boostsystem">
-            <File Name="boost_system-vc120-mt$(var.BoostSuffix)-1_57.dll" Source="$(var.BinDir)\boost_system-vc120-mt$(var.BoostSuffix)-1_57.dll" />
-          </Component>
-
-          <Component Id="boostthread">
-            <File Name="boost_thread-vc120-mt$(var.BoostSuffix)-1_57.dll" Source="$(var.BinDir)\boost_thread-vc120-mt$(var.BoostSuffix)-1_57.dll" />
-          </Component>
-
-          <Component Id="hadouken">
-            <File Name="hadouken.exe" Source="$(var.BinDir)\hadouken.exe" />
-          </Component>
-
-          <Component Id="libeay32">
-            <File Name="libeay32.dll" Source="$(var.BinDir)\libeay32.dll" />
-          </Component>
-
-          <Component Id="PocoFoundation">
-            <File Name="PocoFoundation$(var.PocoSuffix)" Source="$(var.BinDir)\PocoFoundation$(var.PocoSuffix).dll" />
-          </Component>
-
-          <Component Id="PocoJSON">
-            <File Name="PocoJSON$(var.PocoSuffix)" Source="$(var.BinDir)\PocoJSON$(var.PocoSuffix).dll" />
-          </Component>
-
-          <Component Id="PocoNet">
-            <File Name="PocoNet$(var.PocoSuffix)" Source="$(var.BinDir)\PocoNet$(var.PocoSuffix).dll" />
-          </Component>
-
-          <Component Id="PocoNetSSL">
-            <File Name="PocoNetSSL$(var.PocoSuffix)" Source="$(var.BinDir)\PocoNetSSL$(var.PocoSuffix).dll" />
-          </Component>
-
-          <Component Id="PocoUtil">
-            <File Name="PocoUtil$(var.PocoSuffix)" Source="$(var.BinDir)\PocoUtil$(var.PocoSuffix).dll" />
-          </Component>
-
-          <Component Id="PocoXML">
-            <File Name="PocoXML$(var.PocoSuffix)" Source="$(var.BinDir)\PocoXML$(var.PocoSuffix).dll" />
-          </Component>
-
-          <Component Id="ssleay32">
-            <File Name="ssleay32.dll" Source="$(var.BinDir)\ssleay32.dll" />
-          </Component>
-
-          <Component Id="torrent">
-            <File Name="torrent.dll" Source="$(var.BinDir)\torrent.dll" />
-          </Component>
-        </Directory>
-      </Directory>
-    </Directory>
-
-    <!-- Features -->
-    <Feature Id="Complete" Level="1">
-      <ComponentRef Id="boostchrono" />
-      <ComponentRef Id="boostdatetime" />
-      <ComponentRef Id="boostsystem" />
-      <ComponentRef Id="boostthread" />
-      <ComponentRef Id="hadouken" />
-      <ComponentRef Id="libeay32" />
-      <ComponentRef Id="PocoFoundation" />
-      <ComponentRef Id="PocoJSON" />
-      <ComponentRef Id="PocoNet" />
-      <ComponentRef Id="PocoNetSSL" />
-      <ComponentRef Id="PocoUtil" />
-      <ComponentRef Id="PocoXML" />
-      <ComponentRef Id="ssleay32" />
-      <ComponentRef Id="torrent" />
-    </Feature>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
