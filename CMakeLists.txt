@@ -55,6 +55,7 @@ add_executable(
     src/main.cpp
     src/bittorrent/fileentry.cpp
     src/bittorrent/filestorage.cpp
+    src/bittorrent/peerinfo.cpp
     src/bittorrent/session.cpp
     src/bittorrent/torrentinfo.cpp
     src/bittorrent/torrenthandle.cpp
@@ -67,6 +68,7 @@ add_executable(
     src/http/jsonrpc/sessionaddtorrentfilemethod.cpp
     src/http/jsonrpc/sessiongettorrentsmethod.cpp
     src/http/jsonrpc/torrentgetfilesmethod.cpp
+    src/http/jsonrpc/torrentgetpeersmethod.cpp
     src/http/jsonrpc/torrentpausemethod.cpp
     src/http/jsonrpc/torrentresumemethod.cpp
 )

@@ -1,7 +1,9 @@
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 
+#include <Hadouken/BitTorrent/PeerInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
+#include <libtorrent/peer_info.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include <string>
 
@@ -28,6 +30,19 @@ void TorrentHandle::getFileProgress(std::vector<size_t>& progress) const
 std::string TorrentHandle::getInfoHash() const
 {
     return libtorrent::to_hex(handle_.info_hash().to_string());
+}
+
+void TorrentHandle::getPeerInfo(std::vector<PeerInfo>& peers) const
+{
+    std::vector<libtorrent::peer_info> p;
+    handle_.get_peer_info(p);
+
+    peers.empty();
+
+    for (libtorrent::peer_info inf : p)
+    {
+        peers.push_back(PeerInfo(inf));
+    }
 }
 
 int TorrentHandle::getQueuePosition() const

@@ -8,6 +8,7 @@ namespace Hadouken
 {
     namespace BitTorrent
     {
+        struct PeerInfo;
         class TorrentInfo;
         struct TorrentStatus;
 
@@ -18,6 +19,8 @@ namespace Hadouken
             void getFileProgress(std::vector<size_t>& progress) const;
 
             std::string getInfoHash() const;
+
+            void getPeerInfo(std::vector<PeerInfo>& peers) const;
 
             int getQueuePosition() const;
 
