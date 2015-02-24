@@ -1,4 +1,5 @@
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
+#include <Hadouken/Extensions/ExtensionSubsystem.hpp>
 #include <Hadouken/Http/HttpSubsystem.hpp>
 #include <Poco/File.h>
 #include <Poco/Util/ServerApplication.h>
@@ -15,6 +16,7 @@ public:
     {
         addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
         addSubsystem(new Hadouken::Http::HttpSubsystem());
+        addSubsystem(new Hadouken::Extensions::ExtensionSubsystem());
     }
 
 protected:

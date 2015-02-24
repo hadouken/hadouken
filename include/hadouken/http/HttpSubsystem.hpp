@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_HTTP_SUBSYSTEM_HPP
 #define HADOUKEN_HTTP_SUBSYSTEM_HPP
 
+#include <Hadouken/Config.hpp>
 #include <Poco/Net/HTTPServer.h>
 #include <Poco/Util/Application.h>
 #include <Poco/Util/Subsystem.h>
@@ -14,7 +15,7 @@ namespace Hadouken
         class HttpSubsystem : public Subsystem
         {
         public:
-            HttpSubsystem();
+            HDKN_EXPORT HttpSubsystem();
 
         protected:
             void initialize(Application& app);

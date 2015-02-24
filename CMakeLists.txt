@@ -50,9 +50,9 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
-add_executable(
+add_library(
     hadouken
-    src/main.cpp
+    SHARED
     src/bittorrent/fileentry.cpp
     src/bittorrent/filestorage.cpp
     src/bittorrent/peerinfo.cpp
@@ -61,6 +61,7 @@ add_executable(
     src/bittorrent/torrenthandle.cpp
     src/bittorrent/torrentstatus.cpp
     src/bittorrent/torrentsubsystem.cpp
+    src/extensions/extensionsubsystem.cpp
     src/http/defaultrequesthandlerfactory.cpp
     src/http/jsonrpcrequesthandler.cpp
     src/http/httpsubsystem.cpp
@@ -73,6 +74,11 @@ add_executable(
     src/http/jsonrpc/torrentresumemethod.cpp
 )
 
+add_executable(
+    hadoukend
+    src/main.cpp
+)
+
 target_link_libraries(
     hadouken
     ${LIBTORRENT}
@@ -80,3 +86,15 @@ target_link_libraries(
     ${LIBPOCO}
     ${PTHREAD}
 )
+
+target_link_libraries(
+    hadoukend
+    hadouken
+    ${LIBTORRENT}
+    ${LIBBOOST}
+    ${LIBPOCO}
+    ${PTHREAD}
+)
+
+# Extensions
+include(${CMAKE_SOURCE_DIR}/extensions/autoadd/CMakeLists.txt)
