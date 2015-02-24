@@ -1,5 +1,6 @@
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 
+#include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include <string>
@@ -9,6 +10,19 @@ using namespace Hadouken::BitTorrent;
 TorrentHandle::TorrentHandle(const libtorrent::torrent_handle& handle)
     : handle_(handle)
 {
+}
+
+void TorrentHandle::getFileProgress(std::vector<size_t>& progress) const
+{
+    std::vector<libtorrent::size_type> p;
+    handle_.file_progress(p);
+
+    progress.resize(p.size());
+
+    for (int i = 0; i < p.size(); i++)
+    {
+        progress[i] = p[i];
+    }
 }
 
 std::string TorrentHandle::getInfoHash() const
@@ -25,6 +39,14 @@ TorrentStatus TorrentHandle::getStatus() const
 {
     libtorrent::torrent_status status = handle_.status();
     return TorrentStatus(status);
+}
+
+TorrentInfo TorrentHandle::getTorrentFile() const
+{
+    auto f = handle_.torrent_file();
+    auto a = f.detach();
+
+    return TorrentInfo(*a);
 }
 
 bool TorrentHandle::isValid() const
