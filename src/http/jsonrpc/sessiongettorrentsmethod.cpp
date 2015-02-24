@@ -1,6 +1,8 @@
 #include <Hadouken/Http/JsonRpc/SessionGetTorrentsMethod.hpp>
 
 #include <Hadouken/BitTorrent/Session.hpp>
+#include <Hadouken/BitTorrent/TorrentHandle.hpp>
+#include <Hadouken/BitTorrent/TorrentStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Poco/Util/Application.h>
 
@@ -14,16 +16,38 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
     /*
     Return all torrents in this session in a dictionary where the torrents info
     hash is key.
+
+    {
+      "<hash>": {
+        "name": <string>,
+        ...
+      },
+
+      ...
+    }
     */
     
     Application& app = Application::instance();
     Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
 
-    Poco::DynamicStruct data;
-    data["foo"] = "bar";
+    std::vector<TorrentHandle> handles = sess.getTorrents();
+    Poco::DynamicStruct result;
 
-    Poco::Dynamic::Array objects;
-    objects.push_back(data);
+    for (auto handle : handles)
+    {
+        TorrentStatus status = handle.getStatus();
 
-    return new Poco::Dynamic::Var(objects);
+        Poco::DynamicStruct data;
+        data["name"] = status.getName();
+        data["progress"] = status.getProgress();
+        data["savePath"] = status.getSavePath();
+        data["downloadRate"] = status.getDownloadRate();
+        data["uploadRate"] = status.getUploadRate();
+        data["numPeers"] = status.getNumPeers();
+        data["numSeeds"] = status.getNumSeeds();
+
+        result[handle.getInfoHash()] = data;
+    }
+
+    return new Poco::Dynamic::Var(result);
 }

@@ -70,6 +70,7 @@ Task("Output")
         var pocoTemplate = "libs/hadouken.poco/win32/bin/Poco{0}{1}.dll";
         var pocoBinaries = new[]
         {
+            string.Format(pocoTemplate, "Crypto", pocoSuffix),
             string.Format(pocoTemplate, "Foundation", pocoSuffix),
             string.Format(pocoTemplate, "JSON", pocoSuffix),
             string.Format(pocoTemplate, "Net", pocoSuffix),

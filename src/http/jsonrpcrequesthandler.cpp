@@ -80,7 +80,15 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
 
         // Execute and write result.
         Poco::Dynamic::Var::Ptr result = rpcMethod->execute(params);
-        responseObject->insert("result", *result);
+
+        if (result.isNull())
+        {
+            responseObject->insert("result", Poco::Dynamic::Var());
+        }
+        else
+        {
+            responseObject->insert("result", *result);
+        }
 
         response.send() << responseObject->toString();
     }

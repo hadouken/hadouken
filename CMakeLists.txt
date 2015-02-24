@@ -54,12 +54,17 @@ add_executable(
     hadouken
     src/main.cpp
     src/bittorrent/session.cpp
+    src/bittorrent/torrenthandle.cpp
+    src/bittorrent/torrentstatus.cpp
     src/bittorrent/torrentsubsystem.cpp
     src/http/defaultrequesthandlerfactory.cpp
     src/http/jsonrpcrequesthandler.cpp
     src/http/httpsubsystem.cpp
+    src/http/websocketrequesthandler.cpp
     src/http/jsonrpc/sessionaddtorrentfilemethod.cpp
     src/http/jsonrpc/sessiongettorrentsmethod.cpp
+    src/http/jsonrpc/torrentpausemethod.cpp
+    src/http/jsonrpc/torrentresumemethod.cpp
 )
 
 target_link_libraries(

@@ -5,6 +5,7 @@
   <?define Lib_BoostDateTime  = "boost_date_time-vc120-mt-gd-1_57.dll" ?>
   <?define Lib_BoostSystem    = "boost_system-vc120-mt-gd-1_57.dll" ?>
   <?define Lib_BoostThread    = "boost_thread-vc120-mt-gd-1_57.dll" ?>
+  <?define Lib_PocoCrypto     = "PocoCryptod.dll" ?>
   <?define Lib_PocoFoundation = "PocoFoundationd.dll" ?>
   <?define Lib_PocoJSON       = "PocoJSONd.dll" ?>
   <?define Lib_PocoNet        = "PocoNetd.dll" ?>
@@ -16,6 +17,7 @@
   <?define Lib_BoostDateTime  = "boost_date_time-vc120-mt-1_57.dll" ?>
   <?define Lib_BoostSystem    = "boost_system-vc120-mt-1_57.dll" ?>
   <?define Lib_BoostThread    = "boost_thread-vc120-mt-1_57.dll" ?>
+  <?define Lib_PocoCrypto     = "PocoCrypto.dll" ?>
   <?define Lib_PocoFoundation = "PocoFoundation.dll" ?>
   <?define Lib_PocoJSON       = "PocoJSON.dll" ?>
   <?define Lib_PocoNet        = "PocoNet.dll" ?>
@@ -45,6 +47,10 @@
 
       <Component>
         <File Name="libeay32.dll" />
+      </Component>
+
+      <Component>
+        <File Name="$(var.Lib_PocoCrypto)" />
       </Component>
 
       <Component>

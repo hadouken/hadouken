@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <Hadouken/BitTorrent/AddTorrentParams.hpp>
+#include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/session.hpp>
@@ -213,6 +214,28 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
     sess_->async_add_torrent(p);
 
     return hash;
+}
+
+TorrentHandle Session::findTorrent(const std::string& infoHash) const
+{
+    libtorrent::sha1_hash hash;
+    libtorrent::from_hex(infoHash.c_str(), infoHash.size(), (char*)&hash[0]);
+    libtorrent::torrent_handle handle = sess_->find_torrent(hash);
+    
+    return TorrentHandle(handle);
+}
+
+std::vector<TorrentHandle> Session::getTorrents() const
+{
+    std::vector<libtorrent::torrent_handle> handles = sess_->get_torrents();
+    std::vector<TorrentHandle> th;
+
+    for (auto handle : handles)
+    {
+        th.push_back(TorrentHandle(handle));
+    }
+
+    return th;
 }
 
 void Session::saveSessionState()

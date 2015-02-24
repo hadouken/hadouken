@@ -7,6 +7,7 @@
 #include <Poco/Thread.h>
 #include <Poco/Util/LayeredConfiguration.h>
 #include <string>
+#include <vector>
 
 namespace libtorrent
 {
@@ -18,6 +19,7 @@ namespace Hadouken
     namespace BitTorrent
     {
         class AddTorrentParams;
+        struct TorrentHandle;
 
         class Session
         {
@@ -31,6 +33,10 @@ namespace Hadouken
             std::string addTorrentFile(Poco::Path& filePath, AddTorrentParams& params);
 
             std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
+
+            TorrentHandle findTorrent(const std::string& infoHash) const;
+
+            std::vector<TorrentHandle> getTorrents() const;
 
         protected:
             void loadSessionState();
