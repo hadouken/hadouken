@@ -16,7 +16,7 @@ const std::string& TorrentInfo::getComment() const
     return info_.comment();
 }
 
-FileStorage const& TorrentInfo::getFiles() const
+FileStorage const TorrentInfo::getFiles() const
 {
     return FileStorage(info_.files());
 }

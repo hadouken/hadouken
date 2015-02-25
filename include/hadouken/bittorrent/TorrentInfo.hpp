@@ -21,7 +21,7 @@ namespace Hadouken
 
             const std::string& getComment() const;
 
-            FileStorage const& getFiles() const;
+            FileStorage const getFiles() const;
 
             const std::string& getName() const;
 
