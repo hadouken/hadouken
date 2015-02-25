@@ -29,6 +29,7 @@ namespace Hadouken
 
         private:
             ExtensionLoader loader_;
+            std::vector<std::string> libs_;
         };
     }
 }

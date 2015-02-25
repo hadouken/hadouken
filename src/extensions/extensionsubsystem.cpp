@@ -21,6 +21,8 @@ void ExtensionSubsystem::initialize(Application& app)
         return;
     }
 
+    libs_.push_back(extName);
+
     ExtensionLoader::Iterator it(loader_.begin());
     ExtensionLoader::Iterator end(loader_.end());
 
@@ -34,12 +36,18 @@ void ExtensionSubsystem::initialize(Application& app)
         for (; itMan != endMan; ++itMan)
         {
             std::cout << itMan->name() << std::endl;
+
+            itMan->create()->load();
         }
     }
 }
 
 void ExtensionSubsystem::uninitialize()
 {
+    for (auto lib : libs_)
+    {
+        loader_.unloadLibrary(lib);
+    }
 }
 
 const char* ExtensionSubsystem::name() const
