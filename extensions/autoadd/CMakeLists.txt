@@ -5,8 +5,8 @@ project("autoadd")
 add_library(
     autoadd
     SHARED
-    extensions/autoadd/manifest.cpp
-    extensions/autoadd/autoaddextension.cpp
+    manifest.cpp
+    autoaddextension.cpp
 )
 
 target_link_libraries(

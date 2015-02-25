@@ -11,8 +11,7 @@ Task("Clean")
         CleanDirectories(new[]
         {
             "./bin",
-            "./build/Debug",
-            "./build/Release",
+            "./build/" + configuration,
             "./wixobj"
         });
     });

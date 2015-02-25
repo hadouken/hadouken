@@ -27,7 +27,7 @@ if(WIN32)
     )
 
     link_directories(
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/lib
+        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/lib/${BUILD_CONFIGURATION}
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/${BUILD_CONFIGURATION}/lib
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/lib
     )
@@ -97,4 +97,4 @@ target_link_libraries(
 )
 
 # Extensions
-include(${CMAKE_SOURCE_DIR}/extensions/autoadd/CMakeLists.txt)
+add_subdirectory(extensions/autoadd)
