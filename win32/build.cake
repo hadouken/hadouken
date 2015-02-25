@@ -31,12 +31,17 @@ Task("Generate-CMake-Project")
     .Does(() =>
     {
         CreateDirectory("build");
-        StartProcess("cmake",
+        var cmakeExitCode = StartProcess("cmake",
             new ProcessSettings
             {
                 Arguments = "../../ -DBUILD_CONFIGURATION=" + configuration,
                 WorkingDirectory = "./build"
             });
+
+        if(cmakeExitCode != 0)
+        {
+            throw new CakeException("CMake failed to execute.");
+        }
     });
 
 Task("Compile")
