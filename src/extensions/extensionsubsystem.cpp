@@ -6,18 +6,29 @@
 using namespace Hadouken::Extensions;
 using namespace Poco::Util;
 
+std::string librarySuffix()
+{
+#if defined(WIN32)
+    return ".dll";
+#elif defined(__APPLE__)
+    return ".dylib";
+#else
+    return ".so";
+#endif
+}
+
 void ExtensionSubsystem::initialize(Application& app)
 {
-    std::string extName = "autoadd";
-    extName += Poco::SharedLibrary::suffix();
+    std::string extName = "autoadd" + librarySuffix();
 
     try
     {
+        app.logger().information("Loading extension '%s'.", extName);
         loader_.loadLibrary(extName);
     }
     catch (Poco::Exception& loaderException)
     {
-        printf("%s\n", loaderException.what());
+        app.logger().error("%s", loaderException.displayText());
         return;
     }
 

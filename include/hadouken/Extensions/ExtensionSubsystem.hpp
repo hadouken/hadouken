@@ -3,6 +3,7 @@
 
 #include <Hadouken/Config.hpp>
 #include <Poco/ClassLoader.h>
+#include <Poco/Logger.h>
 #include <Poco/Manifest.h>
 #include <Poco/Util/Application.h>
 #include <Poco/Util/Subsystem.h>
