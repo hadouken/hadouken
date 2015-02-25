@@ -2,26 +2,27 @@
 
 #include <iostream>
 #include <Hadouken/Extensions/Extension.hpp>
-#include <Poco/ClassLoader.h>
-#include <Poco/Manifest.h>
 
 using namespace Hadouken::Extensions;
 using namespace Poco::Util;
 
-typedef Poco::ClassLoader<Extension> ExtensionLoader;
-typedef Poco::Manifest<Extension> ExtensionManifest;
-
 void ExtensionSubsystem::initialize(Application& app)
 {
-    ExtensionLoader loader;
-
     std::string extName = "autoadd";
     extName += Poco::SharedLibrary::suffix();
 
-    loader.loadLibrary(extName);
+    try
+    {
+        loader_.loadLibrary(extName);
+    }
+    catch (Poco::Exception& loaderException)
+    {
+        printf("%s\n", loaderException.what());
+        return;
+    }
 
-    ExtensionLoader::Iterator it(loader.begin());
-    ExtensionLoader::Iterator end(loader.end());
+    ExtensionLoader::Iterator it(loader_.begin());
+    ExtensionLoader::Iterator end(loader_.end());
 
     for (; it != end; ++it)
     {
