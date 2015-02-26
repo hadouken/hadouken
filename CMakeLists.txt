@@ -71,6 +71,7 @@ add_library(
     src/http/jsonrpc/sessiongettorrentsmethod.cpp
     src/http/jsonrpc/torrentgetfilesmethod.cpp
     src/http/jsonrpc/torrentgetpeersmethod.cpp
+    src/http/jsonrpc/torrentmovestoragemethod.cpp
     src/http/jsonrpc/torrentpausemethod.cpp
     src/http/jsonrpc/torrentresumemethod.cpp
 )

@@ -67,6 +67,11 @@ bool TorrentHandle::isValid() const
     return handle_.is_valid();
 }
 
+void TorrentHandle::moveStorage(const std::string& savePath) const
+{
+    handle_.move_storage(savePath);
+}
+
 void TorrentHandle::pause() const
 {
     handle_.pause();

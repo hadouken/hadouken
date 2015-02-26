@@ -8,6 +8,7 @@
 #include <Hadouken/Http/JsonRpc/SessionGetTorrentsMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentGetFilesMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentGetPeersMethod.hpp>
+#include <Hadouken/Http/JsonRpc/TorrentMoveStorageMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentPauseMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentResumeMethod.hpp>
 
@@ -25,6 +26,7 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory()
     methods_.insert(std::make_pair("session.getTorrents", new SessionGetTorrentsMethod()));
     methods_.insert(std::make_pair("torrent.getFiles", new TorrentGetFilesMethod()));
     methods_.insert(std::make_pair("torrent.getPeers", new TorrentGetPeersMethod()));
+    methods_.insert(std::make_pair("torrent.moveStorage", new TorrentMoveStorageMethod()));
     methods_.insert(std::make_pair("torrent.pause", new TorrentPauseMethod()));
     methods_.insert(std::make_pair("torrent.resume", new TorrentResumeMethod()));
 }

@@ -29,6 +29,8 @@ namespace Hadouken
             TorrentInfo getTorrentFile() const;
 
             bool isValid() const;
+
+            void moveStorage(const std::string& savePath) const;
             
             void pause() const;
 
