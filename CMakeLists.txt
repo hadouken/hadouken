@@ -66,6 +66,7 @@ add_library(
     src/http/jsonrpcrequesthandler.cpp
     src/http/httpsubsystem.cpp
     src/http/websocketrequesthandler.cpp
+    src/http/jsonrpc/coregetsysteminfomethod.cpp
     src/http/jsonrpc/sessionaddtorrentfilemethod.cpp
     src/http/jsonrpc/sessiongettorrentsmethod.cpp
     src/http/jsonrpc/torrentgetfilesmethod.cpp

@@ -58,10 +58,8 @@ TorrentStatus TorrentHandle::getStatus() const
 
 TorrentInfo TorrentHandle::getTorrentFile() const
 {
-    auto f = handle_.torrent_file();
-    auto a = f.detach();
-
-    return TorrentInfo(*a);
+    boost::intrusive_ptr<libtorrent::torrent_info const> info = handle_.torrent_file();
+    return TorrentInfo(info.detach());
 }
 
 bool TorrentHandle::isValid() const

@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_TORRENTINFO_HPP
 #define HADOUKEN_BITTORRENT_TORRENTINFO_HPP
 
+#include <memory>
 #include <string>
 
 namespace libtorrent
@@ -17,7 +18,8 @@ namespace Hadouken
         class TorrentInfo
         {
         public:
-            explicit TorrentInfo(const libtorrent::torrent_info& info);
+            explicit TorrentInfo(libtorrent::torrent_info const* info);
+            ~TorrentInfo();
 
             const std::string& getComment() const;
 
@@ -30,7 +32,7 @@ namespace Hadouken
             int getNumPieces() const;
 
         private:
-            const libtorrent::torrent_info& info_;
+            libtorrent::torrent_info const* info_;
         };
     }
 }
