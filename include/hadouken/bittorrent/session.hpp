@@ -12,6 +12,7 @@
 namespace libtorrent
 {
     class session;
+    class torrent_info;
 }
 
 namespace Hadouken
@@ -50,6 +51,8 @@ namespace Hadouken
             void saveResumeData();
 
             void readAlerts();
+
+            void saveTorrentInfo(const libtorrent::torrent_info& info);
 
             Poco::Path getDataPath();
 

@@ -7,6 +7,7 @@
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
+#include <libtorrent/create_torrent.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/version.hpp>
 #include <Poco/File.h>
@@ -121,16 +122,19 @@ void Session::loadResumeData()
     for (; it != torrent_files.end(); ++it)
     {
         Poco::Path torrent_file_path(it->path());
-        if (torrent_file_path.getExtension() != ".torrent") continue;
+        if (torrent_file_path.getExtension() != "torrent") continue;
 
         libtorrent::add_torrent_params params;
-        params.ti = new libtorrent::torrent_info(it->path());
+        libtorrent::error_code ec;
+        params.ti = new libtorrent::torrent_info(it->path(), ec);
 
-        if (!params.ti->is_valid())
+        if (ec)
         {
-            logger_.warning("File %s is not a valid torrent file.", it->path());
+            logger_.error("Could not load torrent '%s': %s", it->path(), ec.message());
             continue;
         }
+
+        logger_.information("Loading torrent '%s'.", params.ti->name());
 
         // Set defaults
         params.save_path = default_save_path_;
@@ -142,7 +146,7 @@ void Session::loadResumeData()
         {
             std::vector<char> resume_buffer((unsigned int)torrent_state_file.getSize());
 
-            std::ifstream state_stream(torrent_state_file.path());
+            std::ifstream state_stream(torrent_state_file.path(), std::ios::binary);
             state_stream.read(resume_buffer.data(), resume_buffer.size());
 
             params.resume_data = resume_buffer;
@@ -337,15 +341,13 @@ void Session::saveResumeData()
 
             std::string hash = libtorrent::to_hex(rd->handle.info_hash().to_string());
 
-            logger_.information("Saving state for %s.", hash);
+            logger_.information("Saving state for %s.", rd->handle.torrent_file()->name());
 
             // Path to state file
             Poco::Path torrent_state_path(torrents_path, hash + ".resume");
 
-            std::ofstream torrent_state_stream(torrent_state_path.toString());
+            std::ofstream torrent_state_stream(torrent_state_path.toString(), std::ios::binary);
             torrent_state_stream.write(out.data(), out.size());
-
-            logger_.information("State saved for %s (%z bytes).", hash, out.size());
         }
     }
 }
@@ -377,14 +379,64 @@ void Session::readAlerts()
             switch (a->type())
             {
             case libtorrent::torrent_added_alert::alert_type:
+            {
                 // save torrent file to state path if it doesn't
                 // already exist there. then publish an added event.
+                libtorrent::torrent_added_alert* added_alert = libtorrent::alert_cast<libtorrent::torrent_added_alert>(alert);
+                saveTorrentInfo(*added_alert->handle.torrent_file());
                 break;
+            }
+
+            case libtorrent::metadata_received_alert::alert_type:
+            {
+                libtorrent::metadata_received_alert* metadata_alert = libtorrent::alert_cast<libtorrent::metadata_received_alert>(alert);
+                saveTorrentInfo(*metadata_alert->handle.torrent_file());
+                break;
+            }
             }
         }
     }
 
     logger_.information("Shutting down read alerts thread.");
+}
+
+void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
+{
+    Poco::Path data_path = getDataPath();
+
+    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::File torrents_dir(torrents_path);
+
+    if (!torrents_dir.exists())
+    {
+        logger_.information("Creating torrents path " + torrents_dir.path());
+        torrents_dir.createDirectories();
+    }
+
+    if (!torrents_dir.isDirectory())
+    {
+        logger_.error("%s is not a directory.", torrents_dir.path());
+        return;
+    }
+
+    std::string hash = libtorrent::to_hex(info.info_hash().to_string());
+
+    // If the torrent file exists, do nothing.
+    Poco::Path torrent_file_path(torrents_path, hash + ".torrent");
+
+    if (Poco::File(torrent_file_path).exists())
+    {
+        return;
+    }
+
+    libtorrent::create_torrent creator(info);
+    libtorrent::entry ent = creator.generate();
+
+    std::vector<char> out;
+    libtorrent::bencode(std::back_inserter(out), ent);
+
+    std::ofstream torrent_state_stream(torrent_file_path.toString(), std::ios::binary);
+    torrent_state_stream.write(out.data(), out.size());
 }
 
 Poco::Path Session::getDataPath()
