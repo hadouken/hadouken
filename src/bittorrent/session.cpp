@@ -8,6 +8,7 @@
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/session.hpp>
+#include <libtorrent/version.hpp>
 #include <Poco/File.h>
 #include <Poco/Path.h>
 #include <Poco/Util/Application.h>
@@ -236,6 +237,11 @@ std::vector<TorrentHandle> Session::getTorrents() const
     }
 
     return th;
+}
+
+std::string Session::getLibtorrentVersion() const
+{
+    return std::string(LIBTORRENT_VERSION);
 }
 
 void Session::saveSessionState()

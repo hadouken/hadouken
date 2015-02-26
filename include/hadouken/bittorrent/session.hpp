@@ -38,6 +38,8 @@ namespace Hadouken
 
             std::vector<TorrentHandle> getTorrents() const;
 
+            std::string getLibtorrentVersion() const;
+
         protected:
             void loadSessionState();
             void loadResumeData();
