@@ -244,6 +244,11 @@ std::string Session::getLibtorrentVersion() const
     return std::string(LIBTORRENT_VERSION);
 }
 
+void Session::removeTorrent(const TorrentHandle& handle, int options) const
+{
+    sess_->remove_torrent(handle.handle_, options);
+}
+
 void Session::saveSessionState()
 {
     // Save session state

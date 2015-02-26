@@ -40,6 +40,8 @@ namespace Hadouken
 
             std::string getLibtorrentVersion() const;
 
+            void removeTorrent(const TorrentHandle& handle, int options = 0) const;
+
         protected:
             void loadSessionState();
             void loadResumeData();

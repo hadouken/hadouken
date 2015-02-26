@@ -9,11 +9,14 @@ namespace Hadouken
     namespace BitTorrent
     {
         struct PeerInfo;
+        class Session;
         class TorrentInfo;
         struct TorrentStatus;
 
         struct TorrentHandle
         {
+            friend class Session;
+
             explicit TorrentHandle(const libtorrent::torrent_handle& handle);
 
             void getFileProgress(std::vector<size_t>& progress) const;
