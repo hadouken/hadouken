@@ -1,6 +1,7 @@
 # Overview
 
-[![Build status](https://ci.appveyor.com/api/projects/status/yilo7st03s6me867?svg=true)](https://ci.appveyor.com/project/hadouken/hadouken-vnext)
+ * Windows: [![Build Status](https://builds.nullreferenceexception.se/app/rest/builds/buildType:id:hadouken_core_ContinuousWindows/statusIcon)](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousWindows&guest=1)
+ * Ubuntu: [![Build Status](https://builds.nullreferenceexception.se/app/rest/builds/buildType:id:hadouken_core_ContinuousUbuntu/statusIcon)](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousUbuntu&guest=1)
 
 Hadouken is a modern, open source, cross-platform BitTorrent client written in C++11. It is written using Poco and Rasterbar-libtorrent and designed to run headless as a native Linux daemon/Windows Service.
 
