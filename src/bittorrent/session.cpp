@@ -402,6 +402,11 @@ void Session::readAlerts()
 
 void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
 {
+    if (!info.is_valid())
+    {
+        return;
+    }
+
     Poco::Path data_path = getDataPath();
 
     Poco::Path torrents_path(data_path, "Torrents");
