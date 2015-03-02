@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <Hadouken/BitTorrent/AddTorrentParams.hpp>
+#include <Hadouken/BitTorrent/ProxySettings.hpp>
 #include <Hadouken/BitTorrent/SessionStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <libtorrent/alert_types.hpp>
@@ -162,7 +163,7 @@ void Session::unload()
     // Join the thread that reads alerts.
     read_alerts_ = false;
     read_alerts_thread_.join();
-
+    
     saveSessionState();
     saveResumeData();
 }
@@ -244,6 +245,11 @@ std::string Session::getLibtorrentVersion() const
     return std::string(LIBTORRENT_VERSION);
 }
 
+ProxySettings Session::getProxy() const
+{
+    return ProxySettings(sess_->proxy());
+}
+
 SessionStatus Session::getStatus() const
 {
     libtorrent::session_status status = sess_->status();
@@ -253,6 +259,11 @@ SessionStatus Session::getStatus() const
 void Session::removeTorrent(const TorrentHandle& handle, int options) const
 {
     sess_->remove_torrent(handle.handle_, options);
+}
+
+void Session::setProxy(ProxySettings& proxy)
+{
+    sess_->set_proxy(proxy.settings_);
 }
 
 void Session::saveSessionState()

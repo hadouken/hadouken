@@ -21,6 +21,7 @@ namespace Hadouken
     namespace BitTorrent
     {
         class AddTorrentParams;
+        struct ProxySettings;
         struct SessionStatus;
         struct TorrentHandle;
 
@@ -45,9 +46,13 @@ namespace Hadouken
 
             std::string getLibtorrentVersion() const;
 
+            ProxySettings getProxy() const;
+
             SessionStatus getStatus() const;
 
             void removeTorrent(const TorrentHandle& handle, int options = 0) const;
+
+            void setProxy(ProxySettings& proxy);
 
         protected:
             void loadSessionState();

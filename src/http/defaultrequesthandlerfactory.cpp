@@ -6,9 +6,11 @@
 #include <Hadouken/Http/JsonRpc/CoreGetSystemInfoMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionAddTorrentFileMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionAddTorrentUriMethod.hpp>
+#include <Hadouken/Http/JsonRpc/SessionGetProxyMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionGetStatusMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionGetTorrentsMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionRemoveTorrentMethod.hpp>
+#include <Hadouken/Http/JsonRpc/SessionSetProxyMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentGetFilesMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentGetPeersMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentMoveStorageMethod.hpp>
@@ -27,9 +29,11 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory()
     methods_.insert(std::make_pair("core.getSystemInfo", new CoreGetSystemInfoMethod()));
     methods_.insert(std::make_pair("session.addTorrentFile", new SessionAddTorrentFileMethod()));
     methods_.insert(std::make_pair("session.addTorrentUri", new SessionAddTorrentUriMethod()));
+    methods_.insert(std::make_pair("session.getProxy", new SessionGetProxyMethod()));
     methods_.insert(std::make_pair("session.getStatus", new SessionGetStatusMethod()));
     methods_.insert(std::make_pair("session.getTorrents", new SessionGetTorrentsMethod()));
     methods_.insert(std::make_pair("session.removeTorrent", new SessionRemoveTorrentMethod()));
+    methods_.insert(std::make_pair("session.setProxy", new SessionSetProxyMethod()));
     methods_.insert(std::make_pair("torrent.getFiles", new TorrentGetFilesMethod()));
     methods_.insert(std::make_pair("torrent.getPeers", new TorrentGetPeersMethod()));
     methods_.insert(std::make_pair("torrent.moveStorage", new TorrentMoveStorageMethod()));

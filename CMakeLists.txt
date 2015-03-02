@@ -56,6 +56,7 @@ add_library(
     src/bittorrent/fileentry.cpp
     src/bittorrent/filestorage.cpp
     src/bittorrent/peerinfo.cpp
+    src/bittorrent/proxysettings.cpp
     src/bittorrent/session.cpp
     src/bittorrent/sessionstatus.cpp
     src/bittorrent/torrentinfo.cpp
@@ -70,9 +71,11 @@ add_library(
     src/http/jsonrpc/coregetsysteminfomethod.cpp
     src/http/jsonrpc/sessionaddtorrentfilemethod.cpp
     src/http/jsonrpc/sessionaddtorrenturimethod.cpp
+    src/http/jsonrpc/sessiongetproxymethod.cpp
     src/http/jsonrpc/sessiongetstatusmethod.cpp
     src/http/jsonrpc/sessiongettorrentsmethod.cpp
     src/http/jsonrpc/sessionremovetorrentmethod.cpp
+    src/http/jsonrpc/sessionsetproxymethod.cpp
     src/http/jsonrpc/torrentgetfilesmethod.cpp
     src/http/jsonrpc/torrentgetpeersmethod.cpp
     src/http/jsonrpc/torrentmovestoragemethod.cpp
