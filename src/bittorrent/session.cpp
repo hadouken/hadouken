@@ -186,30 +186,11 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
         return nullptr;
     }
 
-    libtorrent::add_torrent_params p;
+    libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 
-    if (!params.savePath.isDirectory())
-    {
-        p.save_path = default_save_path_;
-    }
-    else
+    if (params.savePath.isDirectory())
     {
         p.save_path = params.savePath.toString();
-    }
-
-    /*
-    Set storage mode. This is configured in the properties
-    and defaults to sparse files.
-    */
-
-    if (config_.has("bittorrent.storage_allocate")
-        && config_.getBool("bittorrent.storage_allocate"))
-    {
-        p.storage_mode = libtorrent::storage_mode_allocate;
-    }
-    else
-    {
-        p.storage_mode = libtorrent::storage_mode_sparse;
     }
     
     p.ti = new libtorrent::torrent_info(le);
@@ -219,6 +200,20 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
     sess_->async_add_torrent(p);
 
     return hash;
+}
+
+void Session::addTorrentUri(std::string& uri, AddTorrentParams& params)
+{
+    libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
+
+    if (params.savePath.isDirectory())
+    {
+        p.save_path = params.savePath.toString();
+    }
+
+    p.url = uri;
+
+    sess_->async_add_torrent(p);
 }
 
 TorrentHandle Session::findTorrent(const std::string& infoHash) const
@@ -383,7 +378,10 @@ void Session::readAlerts()
                 // save torrent file to state path if it doesn't
                 // already exist there. then publish an added event.
                 libtorrent::torrent_added_alert* added_alert = libtorrent::alert_cast<libtorrent::torrent_added_alert>(alert);
-                saveTorrentInfo(*added_alert->handle.torrent_file());
+                if (added_alert->handle.torrent_file())
+                {
+                    saveTorrentInfo(*added_alert->handle.torrent_file());
+                }
                 break;
             }
 
@@ -442,6 +440,29 @@ void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
 
     std::ofstream torrent_state_stream(torrent_file_path.toString(), std::ios::binary);
     torrent_state_stream.write(out.data(), out.size());
+}
+
+libtorrent::add_torrent_params Session::getDefaultAddTorrentParams()
+{
+    libtorrent::add_torrent_params p;
+    p.save_path = default_save_path_;
+
+    /*
+    Set storage mode. This is configured in the properties
+    and defaults to sparse files.
+    */
+
+    if (config_.has("bittorrent.storage_allocate")
+        && config_.getBool("bittorrent.storage_allocate"))
+    {
+        p.storage_mode = libtorrent::storage_mode_allocate;
+    }
+    else
+    {
+        p.storage_mode = libtorrent::storage_mode_sparse;
+    }
+
+    return p;
 }
 
 Poco::Path Session::getDataPath()

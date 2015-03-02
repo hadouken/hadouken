@@ -68,6 +68,7 @@ add_library(
     src/http/websocketrequesthandler.cpp
     src/http/jsonrpc/coregetsysteminfomethod.cpp
     src/http/jsonrpc/sessionaddtorrentfilemethod.cpp
+    src/http/jsonrpc/sessionaddtorrenturimethod.cpp
     src/http/jsonrpc/sessiongettorrentsmethod.cpp
     src/http/jsonrpc/sessionremovetorrentmethod.cpp
     src/http/jsonrpc/torrentgetfilesmethod.cpp

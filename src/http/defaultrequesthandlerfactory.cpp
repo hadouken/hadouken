@@ -5,6 +5,7 @@
 
 #include <Hadouken/Http/JsonRpc/CoreGetSystemInfoMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionAddTorrentFileMethod.hpp>
+#include <Hadouken/Http/JsonRpc/SessionAddTorrentUriMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionGetTorrentsMethod.hpp>
 #include <Hadouken/Http/JsonRpc/SessionRemoveTorrentMethod.hpp>
 #include <Hadouken/Http/JsonRpc/TorrentGetFilesMethod.hpp>
@@ -24,6 +25,7 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory()
 {
     methods_.insert(std::make_pair("core.getSystemInfo", new CoreGetSystemInfoMethod()));
     methods_.insert(std::make_pair("session.addTorrentFile", new SessionAddTorrentFileMethod()));
+    methods_.insert(std::make_pair("session.addTorrentUri", new SessionAddTorrentUriMethod()));
     methods_.insert(std::make_pair("session.getTorrents", new SessionGetTorrentsMethod()));
     methods_.insert(std::make_pair("session.removeTorrent", new SessionRemoveTorrentMethod()));
     methods_.insert(std::make_pair("torrent.getFiles", new TorrentGetFilesMethod()));

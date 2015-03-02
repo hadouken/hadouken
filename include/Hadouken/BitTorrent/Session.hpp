@@ -11,6 +11,7 @@
 
 namespace libtorrent
 {
+    struct add_torrent_params;
     class session;
     class torrent_info;
 }
@@ -35,6 +36,8 @@ namespace Hadouken
 
             std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
 
+            void addTorrentUri(std::string& uri, AddTorrentParams& params);
+
             TorrentHandle findTorrent(const std::string& infoHash) const;
 
             std::vector<TorrentHandle> getTorrents() const;
@@ -54,6 +57,7 @@ namespace Hadouken
 
             void saveTorrentInfo(const libtorrent::torrent_info& info);
 
+            libtorrent::add_torrent_params getDefaultAddTorrentParams();
             Poco::Path getDataPath();
 
         private:
