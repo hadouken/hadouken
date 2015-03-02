@@ -1,6 +1,8 @@
 #ifndef HADOUKEN_BITTORRENT_FILESTORAGE_HPP
 #define HADOUKEN_BITTORRENT_FILESTORAGE_HPP
 
+#include <cstddef>
+
 namespace libtorrent
 {
     class file_storage;
