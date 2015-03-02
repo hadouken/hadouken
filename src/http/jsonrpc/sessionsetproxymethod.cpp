@@ -32,15 +32,16 @@ Poco::Dynamic::Var::Ptr SessionSetProxyMethod::execute(const Array::Ptr& params)
     Poco::Dynamic::Var proxyPtr = params->get(0);
     Object::Ptr proxy = proxyPtr.extract<Object::Ptr>();
 
-    ProxySettings p;
+    Application& app = Application::instance();
+    Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
+    ProxySettings p = sess.getProxy();
+
     if (proxy->has("host")) { p.setHost(proxy->getValue<std::string>("host")); }
     if (proxy->has("port")) { p.setPort(proxy->getValue<uint16_t>("port")); }
     if (proxy->has("type")) { p.setType((ProxySettings::ProxyType)proxy->getValue<int>("type")); }
     if (proxy->has("userName")) { p.setUserName(proxy->getValue<std::string>("userName")); }
     if (proxy->has("password")) { p.setPassword(proxy->getValue<std::string>("password")); }
-
-    Application& app = Application::instance();
-    Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
+    
     sess.setProxy(p);
 
     return new Poco::Dynamic::Var(true);
