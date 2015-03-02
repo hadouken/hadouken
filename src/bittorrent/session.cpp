@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <Hadouken/BitTorrent/AddTorrentParams.hpp>
+#include <Hadouken/BitTorrent/SessionStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
@@ -241,6 +242,12 @@ std::vector<TorrentHandle> Session::getTorrents() const
 std::string Session::getLibtorrentVersion() const
 {
     return std::string(LIBTORRENT_VERSION);
+}
+
+SessionStatus Session::getStatus() const
+{
+    libtorrent::session_status status = sess_->status();
+    return SessionStatus(status);
 }
 
 void Session::removeTorrent(const TorrentHandle& handle, int options) const
