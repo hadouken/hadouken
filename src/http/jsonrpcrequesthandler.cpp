@@ -10,6 +10,16 @@ using namespace Hadouken::Http::JsonRpc;
 using namespace Poco::JSON;
 using namespace Poco::Net;
 
+Poco::DynamicStruct::Ptr createErrorResponse(int code, std::string message, std::string data)
+{
+    Poco::DynamicStruct::Ptr error = new Poco::DynamicStruct();
+    error->insert("code", code);
+    error->insert("message", message);
+    error->insert("data", data);
+
+    return error;
+}
+
 JsonRpcRequestHandler::JsonRpcRequestHandler(std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*>& methods)
     : methods_(methods)
 {
@@ -51,19 +61,33 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     // Validate "jsonrpc"
     if (!requestObject->has("jsonrpc"))
     {
-        // Invalid JSONRPC request. Return error.
+        responseObject->insert("error", *createErrorResponse(-32600,
+           "Invalid Request",
+           "Missing \"jsonrpc\" field in request object."));
+
+        response.send() << responseObject->toString();
         return;
     }
 
     if (!requestObject->has("id"))
     {
         // Invalid JSONRPC request. Return error.
+        responseObject->insert("error", *createErrorResponse(-32600,
+            "Invalid Request",
+            "Missing \"id\" field in request object."));
+
+        response.send() << responseObject->toString();
         return;
     }
 
     if (!requestObject->isArray("params"))
     {
         // We currently do not support named parameters.
+        responseObject->insert("error", *createErrorResponse(-32600,
+            "Invalid Request",
+            "The \"params\" field must be an array."));
+
+        response.send() << responseObject->toString();
         return;
     }
 
