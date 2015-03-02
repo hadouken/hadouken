@@ -1,5 +1,6 @@
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 
+#include <boost/intrusive_ptr.hpp>
 #include <Hadouken/BitTorrent/PeerInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
