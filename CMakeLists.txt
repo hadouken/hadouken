@@ -34,7 +34,7 @@ if(WIN32)
 else()
     set(LIBBOOST boost_system)
     set(LIBTORRENT libtorrent-rasterbar.so)
-    set(LIBPOCO libPocoFoundation.so libPocoJSON.so libPocoNet.so libPocoUtil.so)
+    set(LIBPOCO libPocoFoundation.so libPocoJSON.so libPocoNet.so libPocoNetSSL.so libPocoUtil.so)
     set(PTHREAD pthread)
 
     add_compile_options(-std=c++0x)
