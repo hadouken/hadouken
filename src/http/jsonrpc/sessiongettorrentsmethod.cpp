@@ -39,6 +39,7 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
 
         Poco::DynamicStruct data;
         data["name"] = status.getName();
+        data["infoHash"] = status.getInfoHash();
         data["progress"] = status.getProgress();
         data["savePath"] = status.getSavePath();
         data["downloadRate"] = status.getDownloadRate();
