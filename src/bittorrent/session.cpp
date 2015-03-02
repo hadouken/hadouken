@@ -202,7 +202,7 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
     return hash;
 }
 
-void Session::addTorrentUri(std::string& uri, AddTorrentParams& params)
+void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
 {
     libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 

@@ -36,7 +36,7 @@ namespace Hadouken
 
             std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
 
-            void addTorrentUri(std::string& uri, AddTorrentParams& params);
+            void addTorrentUri(std::string uri, AddTorrentParams& params);
 
             TorrentHandle findTorrent(const std::string& infoHash) const;
 
