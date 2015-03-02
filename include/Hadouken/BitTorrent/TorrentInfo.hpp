@@ -18,7 +18,7 @@ namespace Hadouken
         class TorrentInfo
         {
         public:
-            explicit TorrentInfo(libtorrent::torrent_info const* info);
+            explicit TorrentInfo(const libtorrent::torrent_info& info);
             ~TorrentInfo();
 
             const std::string& getComment() const;
@@ -32,7 +32,7 @@ namespace Hadouken
             int getNumPieces() const;
 
         private:
-            libtorrent::torrent_info const* info_;
+            std::shared_ptr<libtorrent::torrent_info> info_;
         };
     }
 }

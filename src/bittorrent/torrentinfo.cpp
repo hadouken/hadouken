@@ -6,14 +6,13 @@
 
 using namespace Hadouken::BitTorrent;
 
-TorrentInfo::TorrentInfo(libtorrent::torrent_info const* info)
+TorrentInfo::TorrentInfo(const libtorrent::torrent_info& info)
+    : info_(new libtorrent::torrent_info(info))
 {
-    info_ = info;
 }
 
 TorrentInfo::~TorrentInfo()
 {
-    delete info_;
 }
 
 const std::string& TorrentInfo::getComment() const

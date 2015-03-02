@@ -1,6 +1,5 @@
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 
-#include <boost/intrusive_ptr.hpp>
 #include <Hadouken/BitTorrent/PeerInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
@@ -60,7 +59,7 @@ TorrentStatus TorrentHandle::getStatus() const
 TorrentInfo TorrentHandle::getTorrentFile() const
 {
     boost::intrusive_ptr<libtorrent::torrent_info const> info = handle_.torrent_file();
-    return TorrentInfo(info.detach());
+    return TorrentInfo(*info);
 }
 
 bool TorrentHandle::isValid() const
