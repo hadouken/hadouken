@@ -11,6 +11,8 @@ namespace Hadouken
 {
     namespace Http
     {
+        class WebSocketConnectionManager;
+
         class DefaultRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory
         {
         public:
@@ -21,6 +23,7 @@ namespace Hadouken
 
         private:
             std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*> methods_;
+            WebSocketConnectionManager* wsConnectionManager_;
         };
     }
 }

@@ -1,5 +1,6 @@
 #include <Hadouken/Http/WebSocketRequestHandler.hpp>
 
+#include <Hadouken/Http/WebSocketConnectionManager.hpp>
 #include <Poco/Net/HTTPServerResponse.h>
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Net/NetException.h>
@@ -10,6 +11,11 @@ using namespace Hadouken::Http;
 using namespace Poco::Net;
 using namespace Poco::Util;
 
+WebSocketRequestHandler::WebSocketRequestHandler(WebSocketConnectionManager& connectionManager)
+    : connectionManager_(connectionManager)
+{
+}
+
 void WebSocketRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response)
 {
     Application& app = Application::instance();
@@ -19,6 +25,8 @@ void WebSocketRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServ
         WebSocket ws(request, response);
         app.logger().information("WebSocket connection established.");
 
+        connectionManager_.connect(ws);
+
         char buffer[1024];
         int flags;
         int n;
@@ -26,11 +34,10 @@ void WebSocketRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServ
         do
         {
             n = ws.receiveFrame(buffer, sizeof(buffer), flags);
-            app.logger().information(Poco::format("Frame received (length=%d, flags=0x%x).", n, unsigned(flags)));
-
-            ws.sendFrame(buffer, n, flags);
         }
         while (n > 0 || (flags & WebSocket::FRAME_OP_BITMASK) != WebSocket::FRAME_OP_CLOSE);
+
+        connectionManager_.disconnect(ws);
 
         app.logger().information("WebSocket connection closed.");
     }

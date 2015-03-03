@@ -1,6 +1,7 @@
 #include <Hadouken/Http/DefaultRequestHandlerFactory.hpp>
 
 #include <Hadouken/Http/JsonRpcRequestHandler.hpp>
+#include <Hadouken/Http/WebSocketConnectionManager.hpp>
 #include <Hadouken/Http/WebSocketRequestHandler.hpp>
 
 #include <Hadouken/Http/JsonRpc/CoreGetSystemInfoMethod.hpp>
@@ -39,10 +40,14 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory()
     methods_.insert(std::make_pair("torrent.moveStorage", new TorrentMoveStorageMethod()));
     methods_.insert(std::make_pair("torrent.pause", new TorrentPauseMethod()));
     methods_.insert(std::make_pair("torrent.resume", new TorrentResumeMethod()));
+
+    wsConnectionManager_ = new WebSocketConnectionManager();
 }
 
 DefaultRequestHandlerFactory::~DefaultRequestHandlerFactory()
 {
+    delete wsConnectionManager_;
+
     // Delete all registered RPC methods. 
     for (auto item : methods_)
     {
@@ -62,7 +67,7 @@ HTTPRequestHandler* DefaultRequestHandlerFactory::createRequestHandler(const HTT
         && request.find("Upgrade") != request.end()
         && Poco::icompare(request["Upgrade"], "websocket") == 0)
     {
-        return new WebSocketRequestHandler();
+        return new WebSocketRequestHandler(*wsConnectionManager_);
     }
 
     return 0;

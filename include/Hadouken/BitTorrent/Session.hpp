@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_SESSION_HPP
 #define HADOUKEN_BITTORRENT_SESSION_HPP
 
+#include <Poco/BasicEvent.h>
 #include <Poco/Logger.h>
 #include <Poco/Path.h>
 #include <Poco/RunnableAdapter.h>
@@ -53,6 +54,10 @@ namespace Hadouken
             void removeTorrent(const TorrentHandle& handle, int options = 0) const;
 
             void setProxy(ProxySettings& proxy);
+
+            Poco::BasicEvent<TorrentHandle> onTorrentAdded;
+
+            Poco::BasicEvent<std::string> onTorrentRemoved;
 
         protected:
             void loadSessionState();

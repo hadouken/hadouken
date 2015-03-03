@@ -367,6 +367,8 @@ void Session::saveResumeData()
 
 void Session::readAlerts()
 {
+    using namespace libtorrent;
+
     // If you really want to have verbose output
 
     bool traceAlerts = (config_.hasProperty("bittorrent.trace_alerts")
@@ -374,10 +376,10 @@ void Session::readAlerts()
 
     while (read_alerts_)
     {
-        const libtorrent::alert* alert = sess_->wait_for_alert(libtorrent::seconds(1));
-        if (!alert) continue;
+        const alert* found_alert = sess_->wait_for_alert(seconds(1));
+        if (!found_alert) continue;
 
-        std::deque<libtorrent::alert*> alerts;
+        std::deque<alert*> alerts;
         sess_->pop_alerts(&alerts);
 
         for (auto &alert : alerts)
@@ -391,21 +393,32 @@ void Session::readAlerts()
 
             switch (a->type())
             {
-            case libtorrent::torrent_added_alert::alert_type:
+            case torrent_added_alert::alert_type:
             {
                 // save torrent file to state path if it doesn't
                 // already exist there. then publish an added event.
-                libtorrent::torrent_added_alert* added_alert = libtorrent::alert_cast<libtorrent::torrent_added_alert>(alert);
+                torrent_added_alert* added_alert = alert_cast<torrent_added_alert>(alert);
                 if (added_alert->handle.torrent_file())
                 {
                     saveTorrentInfo(*added_alert->handle.torrent_file());
                 }
+
+                onTorrentAdded.notifyAsync(this, TorrentHandle(added_alert->handle));
                 break;
             }
 
-            case libtorrent::metadata_received_alert::alert_type:
+            case torrent_removed_alert::alert_type:
             {
-                libtorrent::metadata_received_alert* metadata_alert = libtorrent::alert_cast<libtorrent::metadata_received_alert>(alert);
+                torrent_removed_alert* removed_alert = alert_cast<torrent_removed_alert>(alert);
+                std::string hash = to_hex(removed_alert->info_hash.to_string());
+                // TODO: remove torrent and state file
+                onTorrentRemoved.notifyAsync(this, hash);
+                break;
+            }
+
+            case metadata_received_alert::alert_type:
+            {
+                metadata_received_alert* metadata_alert = alert_cast<metadata_received_alert>(alert);
                 saveTorrentInfo(*metadata_alert->handle.torrent_file());
                 break;
             }

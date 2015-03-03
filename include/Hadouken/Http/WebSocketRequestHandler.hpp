@@ -9,10 +9,17 @@ namespace Hadouken
 {
     namespace Http
     {
+        class WebSocketConnectionManager;
+
         class WebSocketRequestHandler : public HTTPRequestHandler
         {
         public:
+            WebSocketRequestHandler(WebSocketConnectionManager& connectionManager);
+            
             void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
+
+        private:
+            WebSocketConnectionManager& connectionManager_;
         };
     }
 }
