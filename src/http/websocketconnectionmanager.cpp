@@ -88,7 +88,7 @@ void WebSocketConnectionManager::onTorrentRemoved(const void* sender, std::strin
     sendMessage(ev.toString());
 }
 
-void WebSocketConnectionManager::sendMessage(std::string& message)
+void WebSocketConnectionManager::sendMessage(std::string message)
 {
     Poco::Mutex::ScopedLock lock(socketsMutex_);
 

@@ -27,7 +27,7 @@ namespace Hadouken
             void onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
             void onTorrentRemoved(const void* sender, std::string& infoHash);
 
-            void sendMessage(std::string& message);
+            void sendMessage(std::string message);
 
         private:
             Poco::Mutex socketsMutex_;
