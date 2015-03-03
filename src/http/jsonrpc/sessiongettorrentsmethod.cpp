@@ -1,6 +1,7 @@
 #include <Hadouken/Http/JsonRpc/SessionGetTorrentsMethod.hpp>
 
 #include <Hadouken/BitTorrent/Session.hpp>
+#include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
@@ -35,6 +36,7 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
 
     for (auto handle : handles)
     {
+        TorrentInfo info = handle.getTorrentFile();
         TorrentStatus status = handle.getStatus();
 
         Poco::DynamicStruct data;
@@ -46,6 +48,8 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
         data["uploadRate"] = status.getUploadRate();
         data["numPeers"] = status.getNumPeers();
         data["numSeeds"] = status.getNumSeeds();
+        data["totalSize"] = info.getTotalSize();
+        data["state"] = (int)status.getState();
 
         result[handle.getInfoHash()] = data;
     }

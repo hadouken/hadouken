@@ -8,7 +8,7 @@ namespace Hadouken
 {
     namespace BitTorrent
     {
-        class TorrentHandle;
+        struct TorrentHandle;
     }
 
     namespace Http

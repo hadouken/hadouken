@@ -31,6 +31,8 @@ namespace Hadouken
 
             int getNumPieces() const;
 
+            size_t getTotalSize() const;
+
         private:
             std::shared_ptr<libtorrent::torrent_info> info_;
         };
