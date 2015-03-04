@@ -13,6 +13,7 @@ class HadoukenApplication : public ServerApplication
 {
 public:
     HadoukenApplication()
+        : logger_(Poco::Logger::get("hadouken"))
     {
         addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
         addSubsystem(new Hadouken::Http::HttpSubsystem());
@@ -43,12 +44,12 @@ protected:
 
             if (Poco::File(configPath).exists())
             {
-                app.logger().information("Loading service configuration from '%s'.", configPath);
+                logger_.information("Loading service configuration from '%s'.", configPath);
                 loadConfiguration(configPath);
             }
             else
             {
-                app.logger().warning("Could not find configuration file '%s'.", configPath);
+                logger_.warning("Could not find configuration file '%s'.", configPath);
             }
         }
     }
@@ -66,6 +67,9 @@ protected:
         waitForTerminationRequest();
         return Application::EXIT_OK;
     }
+
+private:
+    Poco::Logger& logger_;
 };
 
 POCO_SERVER_MAIN(HadoukenApplication)

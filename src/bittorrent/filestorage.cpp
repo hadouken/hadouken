@@ -25,7 +25,7 @@ int FileStorage::getNumPieces() const
     return storage_.num_pieces();
 }
 
-size_t FileStorage::getTotalSize() const
+uint64_t FileStorage::getTotalSize() const
 {
     return storage_.total_size();
 }

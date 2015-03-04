@@ -1,7 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_FILESTORAGE_HPP
 #define HADOUKEN_BITTORRENT_FILESTORAGE_HPP
 
-#include <cstddef>
+#include <cstdint>
 
 namespace libtorrent
 {
@@ -25,7 +25,7 @@ namespace Hadouken
 
             int getNumPieces() const;
 
-            size_t getTotalSize() const;
+            uint64_t getTotalSize() const;
 
         private:
             const libtorrent::file_storage& storage_;

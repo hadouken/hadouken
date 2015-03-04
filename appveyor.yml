@@ -1,6 +1,0 @@
-# Build script
-build_script:
-  - cmd: powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\win32\build.ps1
-
-# Tests
-test: off

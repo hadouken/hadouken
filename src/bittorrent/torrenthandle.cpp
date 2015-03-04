@@ -14,7 +14,7 @@ TorrentHandle::TorrentHandle(const libtorrent::torrent_handle& handle)
 {
 }
 
-void TorrentHandle::getFileProgress(std::vector<size_t>& progress) const
+void TorrentHandle::getFileProgress(std::vector<int64_t>& progress) const
 {
     std::vector<libtorrent::size_type> p;
     handle_.file_progress(p);

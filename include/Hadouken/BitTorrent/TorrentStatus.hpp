@@ -34,11 +34,11 @@ namespace Hadouken
 
             int getActiveTime() const;
 
-            int getAddedTime() const;
+            time_t getAddedTime() const;
 
-            size_t getAllTimeDownload() const;
+            uint64_t getAllTimeDownload() const;
 
-            size_t getAllTimeUpload() const;
+            uint64_t getAllTimeUpload() const;
 
             Poco::Timespan getAnnounceInterval() const;
 

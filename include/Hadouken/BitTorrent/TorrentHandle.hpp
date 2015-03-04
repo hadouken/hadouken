@@ -19,7 +19,7 @@ namespace Hadouken
 
             explicit TorrentHandle(const libtorrent::torrent_handle& handle);
 
-            void getFileProgress(std::vector<size_t>& progress) const;
+            void getFileProgress(std::vector<int64_t>& progress) const;
 
             std::string getInfoHash() const;
 

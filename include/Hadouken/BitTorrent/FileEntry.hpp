@@ -16,9 +16,9 @@ namespace Hadouken
 
             std::string getSymlinkPath() const;
 
-            size_t getOffset() const;
+            uint64_t getOffset() const;
 
-            size_t getSize() const;
+            uint64_t getSize() const;
 
 
         private:

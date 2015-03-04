@@ -4,6 +4,7 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
+var version = File.ReadAllText("../VERSION");
 
 Task("Clean")
     .Does(() =>
@@ -34,7 +35,7 @@ Task("Generate-CMake-Project")
         var cmakeExitCode = StartProcess("cmake",
             new ProcessSettings
             {
-                Arguments = "../../ -DBUILD_CONFIGURATION=" + configuration,
+                Arguments = "../../",
                 WorkingDirectory = "./build"
             });
 
@@ -66,7 +67,7 @@ Task("Output")
 
         // Copy OpenSSL binaries.
         CopyFiles(
-            GetFiles("libs/hadouken.openssl/win32/" + configuration + "/bin/*.dll"),
+            GetFiles("libs/hadouken.openssl/win32/bin/" + configuration + "/*.dll"),
             "build/" + configuration);
 
         // Copy Poco binaries.
@@ -94,7 +95,7 @@ Task("Create-Zip-Package")
     .Does(() =>
     {
         var suffix = (configuration == "Release" ? string.Empty : "-debug");
-        Zip("./build/" + configuration, "bin/hadouken-win32" + suffix + ".zip");
+        Zip("./build/" + configuration, "bin/hadouken-" + version + "-win32" + suffix + ".zip");
     });
 
 Task("Create-Msi-Package")
@@ -109,7 +110,7 @@ Task("Create-Msi-Package")
             {
                 { "BinDir",       "./build/" + configuration },
                 { "BuildConfiguration", configuration },
-                { "BuildVersion", "0.0.0" }
+                { "BuildVersion", version }
             },
             Extensions = new[] { "WixFirewallExtension" },
             OutputDirectory = "./wixobj",
@@ -119,7 +120,7 @@ Task("Create-Msi-Package")
         WiXLight("./wixobj/*.wixobj", new LightSettings
         {
             Extensions = new[] { "WixUtilExtension", "WixUIExtension", "WixFirewallExtension" },
-            OutputFile = "./bin/hadouken-win32" + suffix + ".msi",
+            OutputFile = "./bin/hadouken-" + version + "-win32" + suffix + ".msi",
             ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe"
         });
     });

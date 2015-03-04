@@ -19,12 +19,12 @@ std::string FileEntry::getSymlinkPath() const
     return entry_.symlink_path;
 }
 
-size_t FileEntry::getOffset() const
+uint64_t FileEntry::getOffset() const
 {
     return entry_.offset;
 }
 
-size_t FileEntry::getSize() const
+uint64_t FileEntry::getSize() const
 {
     return entry_.size;
 }

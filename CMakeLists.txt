@@ -2,12 +2,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project("hadouken")
 
-if(NOT BUILD_CONFIGURATION)
-    set(BUILD_CONFIGURATION "release")
-endif()
-
-message("Build configuration: ${BUILD_CONFIGURATION}")
-
 if(WIN32)
     set(LIBTORRENT torrent.lib)
 
@@ -22,13 +16,13 @@ if(WIN32)
 
     include_directories(
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/include
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/${BUILD_CONFIGURATION}/include
+        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/include
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/include
     )
 
     link_directories(
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/lib/${BUILD_CONFIGURATION}
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/${BUILD_CONFIGURATION}/lib
+        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/lib
+        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/lib
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/lib
     )
 else()
@@ -40,48 +34,47 @@ else()
     add_compile_options(-std=c++0x)
 endif()
 
+# Get our version number
+file (STRINGS "${CMAKE_SOURCE_DIR}/VERSION" VERSION)
+
+# Get the current working branch
+execute_process(
+  COMMAND git rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_BRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest abbreviated commit hash of the working branch
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Generate version.hpp
+configure_file("${CMAKE_SOURCE_DIR}/src/version.cpp.in" "${CMAKE_SOURCE_DIR}/src/version.cpp" @ONLY)
+
 add_definitions(
     -DBOOST_ASIO_SEPARATE_COMPILATION
     -DBOOST_ALL_DYN_LINK
     -DTORRENT_NO_DEPRECATE
+    -DTORRENT_USE_OPENSSL
 )
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
+# Get sources for hadouken (except main.cpp)
+file(GLOB_RECURSE HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+list(REMOVE_ITEM  HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
+
 add_library(
     hadouken
     SHARED
-    src/bittorrent/fileentry.cpp
-    src/bittorrent/filestorage.cpp
-    src/bittorrent/peerinfo.cpp
-    src/bittorrent/proxysettings.cpp
-    src/bittorrent/session.cpp
-    src/bittorrent/sessionstatus.cpp
-    src/bittorrent/torrentinfo.cpp
-    src/bittorrent/torrenthandle.cpp
-    src/bittorrent/torrentstatus.cpp
-    src/bittorrent/torrentsubsystem.cpp
-    src/extensions/extensionsubsystem.cpp
-    src/http/defaultrequesthandlerfactory.cpp
-    src/http/jsonrpcrequesthandler.cpp
-    src/http/httpsubsystem.cpp
-    src/http/websocketconnectionmanager.cpp
-    src/http/websocketrequesthandler.cpp
-    src/http/jsonrpc/coregetsysteminfomethod.cpp
-    src/http/jsonrpc/sessionaddtorrentfilemethod.cpp
-    src/http/jsonrpc/sessionaddtorrenturimethod.cpp
-    src/http/jsonrpc/sessiongetproxymethod.cpp
-    src/http/jsonrpc/sessiongetstatusmethod.cpp
-    src/http/jsonrpc/sessiongettorrentsmethod.cpp
-    src/http/jsonrpc/sessionremovetorrentmethod.cpp
-    src/http/jsonrpc/sessionsetproxymethod.cpp
-    src/http/jsonrpc/torrentgetfilesmethod.cpp
-    src/http/jsonrpc/torrentgetpeersmethod.cpp
-    src/http/jsonrpc/torrentmovestoragemethod.cpp
-    src/http/jsonrpc/torrentpausemethod.cpp
-    src/http/jsonrpc/torrentresumemethod.cpp
+    ${HADOUKEN_SOURCES}
 )
 
 add_executable(

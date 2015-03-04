@@ -1,0 +1,18 @@
+#include <Hadouken/Version.hpp>
+
+using namespace Hadouken;
+
+std::string Version::GIT_BRANCH()
+{
+    return "@GIT_BRANCH@";
+}
+
+std::string Version::GIT_COMMIT_HASH()
+{
+    return "@GIT_COMMIT_HASH@";
+}
+
+std::string Version::VERSION()
+{
+    return "@VERSION@";
+}

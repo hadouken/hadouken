@@ -34,7 +34,7 @@ Poco::Dynamic::Var::Ptr TorrentGetFilesMethod::execute(const Array::Ptr& params)
     TorrentInfo info = handle.getTorrentFile();
     FileStorage files = info.getFiles();
     
-    std::vector<size_t> progress;
+    std::vector<int64_t> progress;
     handle.getFileProgress(progress);
 
     Poco::Dynamic::Array result;

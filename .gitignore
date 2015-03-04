@@ -3,3 +3,5 @@ win32/build
 win32/libs
 win32/tools/Cake
 win32/wixobj
+
+src/version.cpp

@@ -15,17 +15,17 @@ int TorrentStatus::getActiveTime() const
     return status_.active_time;
 }
 
-int TorrentStatus::getAddedTime() const
+time_t TorrentStatus::getAddedTime() const
 {
     return status_.added_time;
 }
 
-size_t TorrentStatus::getAllTimeDownload() const
+uint64_t TorrentStatus::getAllTimeDownload() const
 {
     return status_.all_time_download;
 }
 
-size_t TorrentStatus::getAllTimeUpload() const
+uint64_t TorrentStatus::getAllTimeUpload() const
 {
     return status_.all_time_upload;
 }

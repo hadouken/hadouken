@@ -40,7 +40,7 @@ int TorrentInfo::getNumPieces() const
     return info_->num_pieces();
 }
 
-size_t TorrentInfo::getTotalSize() const
+uint64_t TorrentInfo::getTotalSize() const
 {
     return info_->total_size();
 }

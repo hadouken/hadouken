@@ -21,6 +21,9 @@ namespace Hadouken
 
         class ExtensionSubsystem : public Subsystem
         {
+        public:
+            HDKN_EXPORT ExtensionSubsystem();
+            
         protected:
             HDKN_EXPORT void initialize(Application& app);
 
@@ -29,6 +32,7 @@ namespace Hadouken
             HDKN_EXPORT const char* name() const;
 
         private:
+            Poco::Logger& logger_;
             ExtensionLoader loader_;
             std::vector<std::string> libs_;
         };

@@ -5,7 +5,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product
     Id="*"
-    Name="Hadouken"
+    Name="Hadouken $(var.BuildVersion)"
     Manufacturer="Viktor Elofsson - viktorelofsson.se"
     Version="$(var.BuildVersion)"
     UpgradeCode="f37e1bf1-cbf8-4a28-92c2-f3f07ea79b8f"
