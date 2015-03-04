@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?define IsWin64 = "no" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+    Id="*"
+    Name="Hadouken $(var.BuildVersion)"
+    Manufacturer="Viktor Elofsson - viktorelofsson.se"
+    Version="$(var.BuildVersion)"
+    UpgradeCode="f37e1bf1-cbf8-4a28-92c2-f3f07ea79b8f"
+    Language="1033"
+    Codepage="1252">
+
+    <Package Id="*" InstallScope="perMachine" Compressed="yes" />
+
+    <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
+    
+    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading."
+                  Schedule="afterInstallInitialize" />
+
+    <!-- Directory -->
+    <DirectoryRef Id="TARGETDIR" />
+
+    <!-- Features -->
+    <Feature Id="Complete" Level="1" Title="Hadouken" Description="The Hadouken BitTorrent client.">
+      <ComponentGroupRef Id="CoreComponents" />
+      <ComponentGroupRef Id="ServiceComponents" />
+
+      <Feature Id="FirewallException" Title="Windows Firewall Exception" Description="Add an exception for Hadouken in the Windows firewall." Level="1">
+        <ComponentGroupRef Id="FirewallComponents" />
+      </Feature>
+    </Feature>
+
+    <!-- Search for Visual C++ redist 2013 -->
+    <Property Id="VCREDIST">
+      <RegistrySearch Id="SearchVCRedistRegistry"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x86"
+                      Name="Installed"
+                      Win64="$(var.IsWin64)" />
+    </Property>
+
+    <Condition Message="Hadouken requires the Visual C++ 2013 (x86) redistributable package.">
+      <![CDATA[(Installed OR VCREDIST)]]>
+    </Condition>
+
+    <!-- Search for installation directory in registry -->
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
+    </Property>
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <!-- The UI parts -->
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+  </Product>
+</Wix>
