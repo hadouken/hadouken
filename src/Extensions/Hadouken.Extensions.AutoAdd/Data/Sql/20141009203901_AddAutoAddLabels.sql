@@ -1,1 +1,0 @@
-ALTER TABLE AutoAdd_Folder ADD COLUMN Label TEXT;
