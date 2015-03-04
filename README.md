@@ -5,20 +5,37 @@
 
 Hadouken is a modern, open source, cross-platform BitTorrent client written in C++11. It is written using Poco and Rasterbar-libtorrent and designed to run headless as a native Linux daemon/Windows Service.
 
+## Getting started
+
+*Hadouken is currently moving from C# to C++ and therefore no binaries for v5 are available. To get binaries, you need to build Hadouken. See below for instructions.*
+
+# For developers
+
+If you're interested in contributing, we recommend reading through the [contribution guidelines](CONTRIBUTING.md).
+
+For further documentation regarding plugins or the JSONRPC API, please refer to [the wiki](https://github.com/hadouken/hadouken/wiki).
+
 ## Building
 
-The following will get you started building Hadouken for various platforms. This is currently the only way of getting binaries for different platforms and will be until development has stabilized.
-
-*Hadouken uses CMake to generate makefiles for different platforms. Make sure CMake (>= 2.8) is installed and in your path.*
+Depending on your platform (Windows/Linux), Hadouken have different prerequisites. Common for all platforms is CMake, so make sure you have CMake (>= v2.8) installed and available in your path.
 
 ### Windows
 
-Running the build script in a clean repository will install dependencies and build Hadouken in debug configuration.
+Building on Windows requires Visual Studio 2013. Dependencies will be pulled from NuGet at build time.
 
 ```posh
 PS> .\win32\build.ps1
 ```
 
+This will build and package Hadouken as well as output .zip and .msi files in the `.\win32\bin` folder.
+
 ### Linux
 
-*TODO*
+Building on Linux (Ubuntu) requires `libssl-dev`, `libboost-system-dev`, and then you need to manually compile both Rasterbar-libtorrent (>= v1.0.3) and Poco (>= v1.6.0)
+
+Next, run,
+
+```bash
+$ mkdir cmake-build && cd cmake-build
+$ cmake .. && make
+```
