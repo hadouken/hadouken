@@ -37,10 +37,17 @@ Poco::Dynamic::Var::Ptr TorrentGetPeersMethod::execute(const Array::Ptr& params)
     for (PeerInfo peer : peers)
     {
         Poco::DynamicStruct obj;
-        obj["ip"] = peer.getRemoteAddress().toString();
+        obj["country"] = peer.getCountry();
+        obj["ip"] = peer.getRemoteAddress().host().toString();
+        obj["port"] = peer.getRemoteAddress().port();
+        obj["connectionType"] = (int)peer.getConnectionType();
+        obj["flags"] = 0;
         obj["client"] = peer.getClient();
+        obj["progress"] = peer.getProgress();
         obj["downloadRate"] = peer.getDownSpeed();
         obj["uploadRate"] = peer.getUpSpeed();
+        obj["downloadedBytes"] = peer.getDownloadedBytes();
+        obj["uploadedBytes"] = peer.getUploadedBytes();
 
         result.push_back(obj);
     }

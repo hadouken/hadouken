@@ -49,8 +49,10 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     }
     */
 
-    // Set common parameters, like content type.
+    // Set common parameters, like content type and CORS
     response.setContentType("application/json");
+    response.add("Access-Control-Allow-Origin", "*");
+    response.add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     Parser parser;
     Poco::Dynamic::Var result = parser.parse(request.stream());

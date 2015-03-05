@@ -14,9 +14,34 @@ std::string PeerInfo::getClient() const
     return info_.client;
 }
 
+PeerInfo::ConnectionType PeerInfo::getConnectionType() const
+{
+    return (PeerInfo::ConnectionType)(int)info_.connection_type;
+}
+
+std::string PeerInfo::getCountry() const
+{
+    return std::string(info_.country, 2);
+}
+
+uint64_t PeerInfo::getDownloadedBytes() const
+{
+    return info_.total_download;
+}
+
 int PeerInfo::getDownSpeed() const
 {
     return info_.down_speed;
+}
+
+float PeerInfo::getProgress() const
+{
+    return info_.progress;
+}
+
+uint64_t PeerInfo::getUploadedBytes() const
+{
+    return info_.total_upload;
 }
 
 int PeerInfo::getUpSpeed() const

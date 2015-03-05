@@ -11,17 +11,30 @@ namespace Hadouken
     {
         struct PeerInfo
         {
+            enum ConnectionType
+            {
+                StandardBitTorrent = 0,
+                WebSeed = 1,
+                HttpSeed = 2
+            };
+
             PeerInfo(const libtorrent::peer_info& info);
 
             std::string getClient() const;
+
+            ConnectionType getConnectionType() const;
+
+            std::string getCountry() const;
 
             int getDownSpeed() const;
 
             Poco::Net::SocketAddress getRemoteAddress() const;
 
-            int getPayloadDownSpeed() const;
+            float getProgress() const;
 
-            int getPayloadUpSpeed() const;
+            uint64_t getDownloadedBytes() const;
+
+            uint64_t getUploadedBytes() const;
 
             int getUpSpeed() const;
 
