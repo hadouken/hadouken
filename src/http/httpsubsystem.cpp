@@ -21,15 +21,16 @@ void HttpSubsystem::initialize(Application& app)
         port_ = app.config().getInt("http.port");
     }
 
-    if (app.config().hasProperty("http.enable_ssl")
-        && app.config().getBool("http.enable_ssl"))
+    if (app.config().hasProperty("http.ssl.enabled")
+        && app.config().getBool("http.ssl.enabled"))
     {
         Poco::Net::SecureServerSocket secureSocket(port_);
-        server_ = new Poco::Net::HTTPServer(new DefaultRequestHandlerFactory(), secureSocket, new Poco::Net::HTTPServerParams);
+
+        server_ = new Poco::Net::HTTPServer(new DefaultRequestHandlerFactory(app.config()), secureSocket, new Poco::Net::HTTPServerParams);
     }
     else
     {
-        server_ = new Poco::Net::HTTPServer(new DefaultRequestHandlerFactory(), port_);
+        server_ = new Poco::Net::HTTPServer(new DefaultRequestHandlerFactory(app.config()), port_);
     }
 
     server_->start();

@@ -2,8 +2,14 @@
 
 #include <Poco/JSON/ParseHandler.h>
 #include <Poco/JSON/Parser.h>
+#include <Poco/Net/SecureStreamSocket.h>
+#include <Poco/Net/HTTPBasicCredentials.h>
 #include <Poco/Net/HTTPServerResponse.h>
 #include <Poco/Net/HTTPServerRequest.h>
+#include <Poco/Net/HTTPServerRequestImpl.h>
+#include <Poco/Net/X509Certificate.h>
+
+#include <openssl/x509.h>
 
 using namespace Hadouken::Http;
 using namespace Hadouken::Http::JsonRpc;
@@ -20,8 +26,9 @@ Poco::DynamicStruct::Ptr createErrorResponse(int code, std::string message, std:
     return error;
 }
 
-JsonRpcRequestHandler::JsonRpcRequestHandler(std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*>& methods)
-    : methods_(methods)
+JsonRpcRequestHandler::JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config, std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*>& methods)
+    : config_(config),
+      methods_(methods)
 {
 }
 
@@ -49,10 +56,23 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     }
     */
 
-    // Set common parameters, like content type and CORS
-    response.setContentType("application/json");
     response.add("Access-Control-Allow-Origin", "*");
     response.add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    
+
+    if (!isValidRequest(request))
+    {
+        response.setStatusAndReason(HTTPServerResponse::HTTP_UNAUTHORIZED, "Unauthorized");
+
+        Poco::DynamicStruct::Ptr unauthObj = new Poco::DynamicStruct();
+        unauthObj->insert("error", "Unauthorized request.");
+
+        response.send() << unauthObj->toString();
+        return;
+    }
+
+    response.setContentType("application/json");
 
     Parser parser;
     Poco::Dynamic::Var result = parser.parse(request.stream());
@@ -122,4 +142,69 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     {
         response.send() << "Not OK!";
     }
+}
+
+bool JsonRpcRequestHandler::isValidRequest(HTTPServerRequest& request) const
+{
+    if (!config_.hasProperty("http.auth.enabled")
+        || !config_.getBool("http.auth.enabled"))
+    {
+        return true;
+    }
+
+    // If we get here, auth is enabled. Check credentials.
+    if (!request.hasCredentials())
+    {
+        return false;
+    }
+
+    std::string scheme;
+    std::string authInfo;
+    request.getCredentials(scheme, authInfo);
+
+    std::string authType = config_.getString("http.auth.type");
+
+    if (Poco::icompare(authType, "Basic") == 0)
+    {
+        std::string userName = config_.getString("http.auth.basic.userName");
+        std::string password = config_.getString("http.auth.basic.password");
+
+        Poco::Net::HTTPBasicCredentials credentials(request);
+
+        if (userName.compare(credentials.getUsername()) == 0
+            && password.compare(credentials.getPassword()) == 0)
+        {
+            return true;
+        }
+    }
+    else if (Poco::icompare(authType, "Token") == 0)
+    {
+        std::string token = config_.getString("http.auth.token");
+
+        if (token.compare(authInfo) == 0)
+        {
+            return true;
+        }
+    }
+    else if (Poco::icompare(authType, "Certificate") == 0)
+    {
+        // For this to be a valid authType, we need to run SSL.
+        if (!config_.hasProperty("http.ssl.enabled")
+            && !config_.getBool("http.ssl.enabled"))
+        {
+            // Log error
+            return false;
+        }
+
+        SecureStreamSocket secureSocket = static_cast<HTTPServerRequestImpl&>(request).socket();
+
+        if (!secureSocket.havePeerCertificate())
+        {
+            return false;
+        }
+
+        // TODO: Validate peer certificate
+    }
+
+    return false;
 }
