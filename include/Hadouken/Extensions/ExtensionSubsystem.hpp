@@ -32,6 +32,7 @@ namespace Hadouken
             HDKN_EXPORT const char* name() const;
 
         private:
+            std::string getLibrarySuffix();
             void loadExtension(std::string extensionName, AbstractConfiguration& config);
 
             Poco::Logger& logger_;

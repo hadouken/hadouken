@@ -24,7 +24,7 @@ void AutoAddExtension::load(AbstractConfiguration& config)
     for (int i = 0; i < std::numeric_limits<int>::max(); i++)
     {
         std::string index = std::to_string(i);
-        std::string query = "plugins.autoadd.config.folders[" + index + "]";
+        std::string query = "plugins.autoadd.folders[" + index + "]";
 
         try
         {

@@ -21,7 +21,7 @@ void AutoMoveExtension::load(AbstractConfiguration& config)
     for (int i = 0; i < std::numeric_limits<int>::max(); i++)
     {
         std::string index = std::to_string(i);
-        std::string query = "plugins.automove.config.rules[" + index + "]";
+        std::string query = "plugins.automove.rules[" + index + "]";
 
         try
         {

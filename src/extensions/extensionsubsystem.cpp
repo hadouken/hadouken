@@ -13,22 +13,6 @@ ExtensionSubsystem::ExtensionSubsystem()
 
 void ExtensionSubsystem::initialize(Application& app)
 {
-    /*
-    std::string extName = "autoadd" + librarySuffix();
-
-    try
-    {
-        std::string foo = app.config().getString("foo[3]");
-        logger_.information(foo);
-    }
-    catch (Poco::Exception& exc)
-    {
-        logger_.error("Error");
-    }
-    
-    return;
-    */
-
     Poco::Util::AbstractConfiguration::Keys keys;
     app.config().keys("plugins", keys);
 
@@ -75,23 +59,34 @@ const char* ExtensionSubsystem::name() const
 
 void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfiguration& config)
 {
-    if (!config.hasProperty("libraryPath"))
+    // Only load extensions which are excplicitly enabled, eg. "enabled": true.
+
+    if (!config.hasProperty("enabled")
+        || !config.getBool("enabled"))
     {
-        logger_.error("Invalid configuration for extension '%s': Missing 'libraryPath' property.", extensionName);
         return;
     }
 
-    std::string libraryPath = config.getString("libraryPath");
+    std::string libraryPath = extensionName + getLibrarySuffix();
 
     try
     {
-        logger_.information("Loading extension '%s' from '%s'.", extensionName, libraryPath);
         loader_.loadLibrary(libraryPath);
-
         libs_.push_back(libraryPath);
     }
     catch (Poco::Exception& loaderException)
     {
         logger_.error("%s", loaderException.displayText());
     }
+}
+
+std::string ExtensionSubsystem::getLibrarySuffix()
+{
+#if defined(WIN32)
+    return ".dll";
+#elif defined(__APPLE__)
+    return ".dylib";
+#else
+    return ".so";
+#endif
 }
