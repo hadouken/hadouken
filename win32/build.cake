@@ -11,7 +11,7 @@ Task("Clean")
     {
         CleanDirectories(new[]
         {
-            "./bin",
+            "./build/bin/" + configuration,
             "./build/" + configuration,
             "./wixobj"
         });
@@ -63,12 +63,12 @@ Task("Output")
         // Copy Boost and libtorrent binaries.
         CopyFiles(
             GetFiles("libs/hadouken.libtorrent/win32/bin/" + configuration + "/*.dll"),
-            "build/" + configuration);
+            "build/bin/" + configuration);
 
         // Copy OpenSSL binaries.
         CopyFiles(
             GetFiles("libs/hadouken.openssl/win32/bin/" + configuration + "/*.dll"),
-            "build/" + configuration);
+            "build/bin/" + configuration);
 
         // Copy Poco binaries.
         var pocoSuffix = (configuration == "Release" ? string.Empty : "d");
@@ -86,7 +86,7 @@ Task("Output")
 
         CopyFiles(
             pocoBinaries,
-            "build/" + configuration
+            "build/bin/" + configuration
         );
     });
 
@@ -95,7 +95,7 @@ Task("Create-Zip-Package")
     .Does(() =>
     {
         var suffix = (configuration == "Release" ? string.Empty : "-debug");
-        Zip("./build/" + configuration, "bin/hadouken-" + version + "-win32" + suffix + ".zip");
+        Zip("./build/bin/" + configuration, "build/bin/hadouken-" + version + "-win32" + suffix + ".zip");
     });
 
 Task("Create-Msi-Package")
@@ -108,19 +108,19 @@ Task("Create-Msi-Package")
         {
             Defines = new Dictionary<string, string>
             {
-                { "BinDir",       "./build/" + configuration },
+                { "BinDir",       "./build/bin/" + configuration },
                 { "BuildConfiguration", configuration },
                 { "BuildVersion", version }
             },
             Extensions = new[] { "WixFirewallExtension" },
-            OutputDirectory = "./wixobj",
+            OutputDirectory = "./build/wixobj",
             ToolPath = "./libs/WiX.Toolset/tools/wix/candle.exe"
         });
 
-        WiXLight("./wixobj/*.wixobj", new LightSettings
+        WiXLight("./build/wixobj/*.wixobj", new LightSettings
         {
             Extensions = new[] { "WixUtilExtension", "WixUIExtension", "WixFirewallExtension" },
-            OutputFile = "./bin/hadouken-" + version + "-win32" + suffix + ".msi",
+            OutputFile = "./build/bin/hadouken-" + version + "-win32" + suffix + ".msi",
             ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe"
         });
     });
