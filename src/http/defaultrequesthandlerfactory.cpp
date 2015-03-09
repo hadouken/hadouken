@@ -25,7 +25,8 @@ using namespace Hadouken::Http;
 using namespace Hadouken::Http::JsonRpc;
 using namespace Poco::Net;
 
-DefaultRequestHandlerFactory::DefaultRequestHandlerFactory()
+DefaultRequestHandlerFactory::DefaultRequestHandlerFactory(const Poco::Util::AbstractConfiguration& config)
+    : config_(config)
 {
     methods_.insert(std::make_pair("core.getSystemInfo", new CoreGetSystemInfoMethod()));
     methods_.insert(std::make_pair("session.addTorrentFile", new SessionAddTorrentFileMethod()));
@@ -60,7 +61,7 @@ HTTPRequestHandler* DefaultRequestHandlerFactory::createRequestHandler(const HTT
     if (request.getURI() == "/api"
         && request.getMethod() == "POST")
     {
-        return new JsonRpcRequestHandler(methods_);
+        return new JsonRpcRequestHandler(config_, methods_);
     }
 
     if (request.getURI() == "/events"

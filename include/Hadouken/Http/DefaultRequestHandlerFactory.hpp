@@ -6,6 +6,7 @@
 
 #include <Hadouken/Http/JsonRpc/RpcMethod.hpp>
 #include <Poco/Net/HTTPRequestHandlerFactory.h>
+#include <Poco/Util/AbstractConfiguration.h>
 
 namespace Hadouken
 {
@@ -16,12 +17,13 @@ namespace Hadouken
         class DefaultRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory
         {
         public:
-            DefaultRequestHandlerFactory();
+            DefaultRequestHandlerFactory(const Poco::Util::AbstractConfiguration& config);
             ~DefaultRequestHandlerFactory();
 
             Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request);
 
         private:
+            const Poco::Util::AbstractConfiguration& config_;
             std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*> methods_;
             WebSocketConnectionManager* wsConnectionManager_;
         };
