@@ -23,7 +23,7 @@ void AutoMoveExtension::load(AbstractConfiguration& config)
         std::string index = std::to_string(i);
         std::string query = "extensions.automove.rules[" + index + "]";
 
-        try
+        if (config.has(query))
         {
             AbstractConfiguration* ruleView = config.createView(query);
             std::string field = ruleView->getString("field");
@@ -33,7 +33,7 @@ void AutoMoveExtension::load(AbstractConfiguration& config)
             Rule r(field, std::regex(pattern), targetPath);
             rules_.push_back(r);
         }
-        catch (Poco::Exception)
+        else
         {
             break;
         }

@@ -26,7 +26,7 @@ void AutoAddExtension::load(AbstractConfiguration& config)
         std::string index = std::to_string(i);
         std::string query = "extensions.autoadd.folders[" + index + "]";
 
-        try
+        if (config.has(query))
         {
             AbstractConfiguration* folderView = config.createView(query);
             std::string sourcePath = folderView->getString("sourcePath");
@@ -35,13 +35,20 @@ void AutoAddExtension::load(AbstractConfiguration& config)
             Folder fold(sourcePath, std::regex(filePattern));
             folders_.push_back(fold);
         }
-        catch (Poco::Exception)
+        else
         {
             break;
         }
     }
 
-    logger_.information("AutoAdd loaded, monitoring %z folder(s).", folders_.size());
+    if (config.has("extensions.autoadd.interval"))
+    {
+        monitor_.setPeriodicInterval(config.getInt64("extensions.autoadd.interval"));
+    }
+
+    logger_.information("AutoAdd loaded, monitoring %z folder(s) with interval %ldms.",
+        folders_.size(),
+        monitor_.getPeriodicInterval());
 
     monitor_.start(Poco::TimerCallback<AutoAddExtension>(*this, &AutoAddExtension::monitor));
 }
@@ -53,7 +60,7 @@ void AutoAddExtension::unload()
 
 void AutoAddExtension::monitor(Poco::Timer& timer)
 {
-    logger_.debug("Checking folders.");
+    logger_.information("Checking folders.");
 
     Session& sess = Application::instance().getSubsystem<TorrentSubsystem>().getSession();
 
