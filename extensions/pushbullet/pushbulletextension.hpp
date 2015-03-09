@@ -27,6 +27,7 @@ namespace Pushbullet
         void unload();
 
     private:
+        bool isEventEnabled(std::string eventName);
         void onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
         void onTorrentFinished(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
 
@@ -35,6 +36,7 @@ namespace Pushbullet
         const Poco::URI pushesUrl_;
         Poco::Logger& logger_;
         std::string authToken_;
+        std::vector<std::string> events_;
     };
 }
 

@@ -26,9 +26,27 @@ PushbulletExtension::PushbulletExtension()
 
 void PushbulletExtension::load(AbstractConfiguration& config)
 {
-    if (config.hasProperty("plugins.pushbullet.config.token"))
+    if (config.hasProperty("extensions.pushbullet.token"))
     {
-        authToken_ = config.getString("plugins.pushbullet.config.token");
+        authToken_ = config.getString("extensions.pushbullet.token");
+
+        for (int i = 0; i < std::numeric_limits<int>::max(); i++)
+        {
+            std::string index = std::to_string(i);
+            std::string query = "extensions.pushbullet.enabledEvents[" + index + "]";
+
+            if (config.has(query))
+            {
+                std::string eventName = config.getString(query);
+                events_.push_back(eventName);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        logger_.information("Pushbullet extension loaded, %z enabled event(s).", events_.size());
     }
     else
     {
@@ -38,6 +56,11 @@ void PushbulletExtension::load(AbstractConfiguration& config)
     Session& sess = Application::instance().getSubsystem<TorrentSubsystem>().getSession();
     sess.onTorrentAdded += Poco::delegate(this, &PushbulletExtension::onTorrentAdded);
     sess.onTorrentFinished += Poco::delegate(this, &PushbulletExtension::onTorrentFinished);
+
+    if (isEventEnabled("hadouken.loaded"))
+    {
+        push("Hadouken loaded", "Hadouken loaded");
+    }
 }
 
 void PushbulletExtension::unload()
@@ -47,14 +70,23 @@ void PushbulletExtension::unload()
     sess.onTorrentFinished -= Poco::delegate(this, &PushbulletExtension::onTorrentFinished);
 }
 
+bool PushbulletExtension::isEventEnabled(std::string eventName)
+{
+    return (std::find(events_.begin(), events_.end(), eventName) != events_.end());
+}
+
 void PushbulletExtension::onTorrentAdded(const void* sender, TorrentHandle& handle)
 {
+    if (!isEventEnabled("torrent.added")) { return; }
+
     TorrentStatus status = handle.getStatus();
     push("Torrent added", "The torrent \"" + status.getName() + "\" has been added.");
 }
 
 void PushbulletExtension::onTorrentFinished(const void* sender, TorrentHandle& handle)
 {
+    if (!isEventEnabled("torrent.finished")) { return; }
+    
     TorrentStatus status = handle.getStatus();
     push("Torrent finished", "The torrent \"" + status.getName() + "\" has finished downloading.");
 }
@@ -80,7 +112,16 @@ void PushbulletExtension::push(std::string title, std::string body)
     form.set("body", body);
     form.set("type", "note");
     form.prepareSubmit(request);
-    form.write(session.sendRequest(request));
+
+    try
+    {
+        form.write(session.sendRequest(request));
+    }
+    catch (Poco::Exception& exception)
+    {
+        logger_.error("Could not write push notification request: %s.", exception.displayText());
+        return;
+    }
 
     HTTPResponse response;
     session.receiveResponse(response);
