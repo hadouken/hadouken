@@ -6,17 +6,6 @@
 using namespace Hadouken::Extensions;
 using namespace Poco::Util;
 
-std::string librarySuffix()
-{
-#if defined(WIN32)
-    return ".dll";
-#elif defined(__APPLE__)
-    return ".dylib";
-#else
-    return ".so";
-#endif
-}
-
 ExtensionSubsystem::ExtensionSubsystem()
     : logger_(Poco::Logger::get("hadouken.extensions"))
 {
@@ -24,40 +13,55 @@ ExtensionSubsystem::ExtensionSubsystem()
 
 void ExtensionSubsystem::initialize(Application& app)
 {
+    /*
     std::string extName = "autoadd" + librarySuffix();
 
     try
     {
-        logger_.information("Loading extension '%s'.", extName);
-        loader_.loadLibrary(extName);
+        std::string foo = app.config().getString("foo[3]");
+        logger_.information(foo);
     }
-    catch (Poco::Exception& loaderException)
+    catch (Poco::Exception& exc)
     {
-        logger_.error("%s", loaderException.displayText());
-        return;
+        logger_.error("Error");
+    }
+    
+    return;
+    */
+
+    Poco::Util::AbstractConfiguration::Keys keys;
+    app.config().keys("plugins", keys);
+
+    for (auto k : keys)
+    {
+        AbstractConfiguration* pluginConfig = app.config().createView("plugins." + k);
+        loadExtension(k, *pluginConfig);
     }
 
-    libs_.push_back(extName);
-
-    ExtensionLoader::Iterator it(loader_.begin());
-    ExtensionLoader::Iterator end(loader_.end());
-
-    for (; it != end; ++it)
+    for (auto extensionLoader : loader_)
     {
-        ExtensionManifest::Iterator itMan(it->second->begin());
-        ExtensionManifest::Iterator endMan(it->second->end());
+        logger_.information("Loading extensions from '%s'.", extensionLoader->first);
 
-        for (; itMan != endMan; ++itMan)
+        for (auto manifest : *extensionLoader->second)
         {
-            std::cout << itMan->name() << std::endl;
+            logger_.information("Found manifest '%s'", std::string(manifest->name()));
 
-            itMan->create()->load();
+            Extension* extension = manifest->create();
+            extension->load(app.config());
+
+            extensions_.push_back(extension);
         }
     }
 }
 
 void ExtensionSubsystem::uninitialize()
 {
+    for (auto ext : extensions_)
+    {
+        ext->unload();
+        delete ext;
+    }
+
     for (auto lib : libs_)
     {
         loader_.unloadLibrary(lib);
@@ -67,4 +71,27 @@ void ExtensionSubsystem::uninitialize()
 const char* ExtensionSubsystem::name() const
 {
     return "Extensions";
+}
+
+void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfiguration& config)
+{
+    if (!config.hasProperty("libraryPath"))
+    {
+        logger_.error("Invalid configuration for extension '%s': Missing 'libraryPath' property.", extensionName);
+        return;
+    }
+
+    std::string libraryPath = config.getString("libraryPath");
+
+    try
+    {
+        logger_.information("Loading extension '%s' from '%s'.", extensionName, libraryPath);
+        loader_.loadLibrary(libraryPath);
+
+        libs_.push_back(libraryPath);
+    }
+    catch (Poco::Exception& loaderException)
+    {
+        logger_.error("%s", loaderException.displayText());
+    }
 }

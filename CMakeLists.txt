@@ -101,3 +101,4 @@ target_link_libraries(
 
 # Extensions
 add_subdirectory(extensions/autoadd)
+add_subdirectory(extensions/automove)

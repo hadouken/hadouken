@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_TORRENTHANDLE_HPP
 #define HADOUKEN_BITTORRENT_TORRENTHANDLE_HPP
 
+#include <Hadouken/Config.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include <string>
 
@@ -21,19 +22,19 @@ namespace Hadouken
 
             void getFileProgress(std::vector<int64_t>& progress) const;
 
-            std::string getInfoHash() const;
+            HDKN_EXPORT std::string getInfoHash() const;
 
             void getPeerInfo(std::vector<PeerInfo>& peers) const;
 
             int getQueuePosition() const;
 
-            TorrentStatus getStatus() const;
+            HDKN_EXPORT TorrentStatus getStatus() const;
 
             TorrentInfo getTorrentFile() const;
 
             bool isValid() const;
 
-            void moveStorage(const std::string& savePath) const;
+            HDKN_EXPORT void moveStorage(const std::string& savePath) const;
             
             void pause() const;
 

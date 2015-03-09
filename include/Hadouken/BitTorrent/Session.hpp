@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_SESSION_HPP
 #define HADOUKEN_BITTORRENT_SESSION_HPP
 
+#include <Hadouken/Config.hpp>
 #include <Poco/BasicEvent.h>
 #include <Poco/Logger.h>
 #include <Poco/Path.h>
@@ -35,11 +36,11 @@ namespace Hadouken
             void load();
             void unload();
 
-            std::string addTorrentFile(Poco::Path& filePath, AddTorrentParams& params);
+            HDKN_EXPORT std::string addTorrentFile(Poco::Path& filePath, AddTorrentParams& params);
 
-            std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
+            HDKN_EXPORT std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
 
-            void addTorrentUri(std::string uri, AddTorrentParams& params);
+            HDKN_EXPORT void addTorrentUri(std::string uri, AddTorrentParams& params);
 
             TorrentHandle findTorrent(const std::string& infoHash) const;
 
@@ -56,6 +57,8 @@ namespace Hadouken
             void setProxy(ProxySettings& proxy);
 
             Poco::BasicEvent<TorrentHandle> onTorrentAdded;
+
+            Poco::BasicEvent<TorrentHandle> onTorrentFinished;
 
             Poco::BasicEvent<std::string> onTorrentRemoved;
 

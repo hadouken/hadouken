@@ -102,7 +102,7 @@ void Session::loadResumeData()
     // Load existing torrents
     Poco::Path data_path = getDataPath();
 
-    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::Path torrents_path(data_path, "torrents");
     Poco::File torrents_dir(torrents_path);
 
     if (!torrents_dir.exists())
@@ -190,7 +190,7 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
 
     libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 
-    if (params.savePath.isDirectory())
+    if (!params.savePath.toString().empty() && params.savePath.isDirectory())
     {
         p.save_path = params.savePath.toString();
     }
@@ -286,7 +286,7 @@ void Session::saveResumeData()
     // Save resume data
     Poco::Path data_path = getDataPath();
 
-    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::Path torrents_path(data_path, "torrents");
     Poco::File torrents_dir(torrents_path);
 
     if (!torrents_dir.exists())
@@ -407,6 +407,13 @@ void Session::readAlerts()
                 break;
             }
 
+            case torrent_finished_alert::alert_type:
+            {
+                torrent_finished_alert* finished_alert = alert_cast<torrent_finished_alert>(alert);
+                onTorrentFinished.notifyAsync(this, TorrentHandle(finished_alert->handle));
+                break;
+            }
+
             case torrent_removed_alert::alert_type:
             {
                 torrent_removed_alert* removed_alert = alert_cast<torrent_removed_alert>(alert);
@@ -438,7 +445,7 @@ void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
 
     Poco::Path data_path = getDataPath();
 
-    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::Path torrents_path(data_path, "torrents");
     Poco::File torrents_dir(torrents_path);
 
     if (!torrents_dir.exists())
