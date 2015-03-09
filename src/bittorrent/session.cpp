@@ -142,7 +142,7 @@ void Session::loadResumeData()
         params.save_path = default_save_path_;
 
         // Check if resume data exists
-        Poco::File torrent_state_file(torrent_file_path.setExtension(".resume"));
+        Poco::File torrent_state_file(torrent_file_path.setExtension("resume"));
 
         if (torrent_state_file.exists() && torrent_state_file.isFile())
         {
