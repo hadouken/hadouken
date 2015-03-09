@@ -14,11 +14,11 @@ ExtensionSubsystem::ExtensionSubsystem()
 void ExtensionSubsystem::initialize(Application& app)
 {
     Poco::Util::AbstractConfiguration::Keys keys;
-    app.config().keys("plugins", keys);
+    app.config().keys("extensions", keys);
 
     for (auto k : keys)
     {
-        AbstractConfiguration* pluginConfig = app.config().createView("plugins." + k);
+        AbstractConfiguration* pluginConfig = app.config().createView("extensions." + k);
         loadExtension(k, *pluginConfig);
     }
 
