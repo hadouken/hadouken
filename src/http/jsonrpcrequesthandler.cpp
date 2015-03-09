@@ -171,7 +171,7 @@ bool JsonRpcRequestHandler::isValidRequest(HTTPServerRequest& request) const
 
         Poco::Net::HTTPBasicCredentials credentials(request);
 
-        if (userName.compare(credentials.getUsername()) == 0
+        if (Poco::icompare(userName, credentials.getUsername()) == 0
             && password.compare(credentials.getPassword()) == 0)
         {
             return true;
