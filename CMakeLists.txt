@@ -34,6 +34,10 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/lib
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/lib
     )
+
+    # Make sure release builds have pdb files.
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}    /DEBUG /OPT:REF")
 else()
     set(LIBBOOST boost_system)
     set(LIBTORRENT libtorrent-rasterbar.so)
