@@ -23,13 +23,20 @@
     <DirectoryRef Id="TARGETDIR" />
 
     <!-- Features -->
-    <Feature Id="Complete" Level="1" Title="Hadouken" Description="The Hadouken BitTorrent client.">
+    <Feature Id="Complete"
+             Level="1"
+             Title="Hadouken"
+             Description="The Hadouken BitTorrent client."
+             Display="expand">
       <ComponentGroupRef Id="ConfigComponents" />
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="ExtensionComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
 
-      <Feature Id="FirewallException" Title="Windows Firewall Exception" Description="Add an exception for Hadouken in the Windows firewall." Level="1">
+      <Feature Id="FirewallException"
+               Title="Windows Firewall Exception"
+               Description="Add an exception for Hadouken in the Windows firewall."
+               Level="1">
         <ComponentGroupRef Id="FirewallComponents" />
       </Feature>
     </Feature>
@@ -50,7 +57,11 @@
 
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
+      <RegistrySearch Id="SearchInstallDirRegistry"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="Software\Hadouken"
+                      Name="InstallDir" />
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
@@ -58,5 +69,9 @@
     <!-- The UI parts -->
     <UIRef Id="WixUI_FeatureTree" />
     <UIRef Id="WixUI_ErrorProgressText" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="installer/media/banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="installer/media/dialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="../../../LICENSE.rtf" />
   </Product>
 </Wix>
