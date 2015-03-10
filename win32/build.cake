@@ -147,7 +147,8 @@ Task("Create-Msi-Package")
         {
             Extensions = new[] { "WixUtilExtension", "WixUIExtension", "WixFirewallExtension" },
             OutputFile = outDirectory + "/hadouken-" + version + "-win32.msi",
-            ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe"
+            ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe",
+            RawArguments = "-spdb"
         });
     });
 
@@ -165,17 +166,31 @@ Task("Generate-Checksum-File")
             checksums.Add(file.GetFilename().ToString(), hash.ToHex());
         }
 
-        var stream = File.OpenWrite(outDirectory + "/checksums.txt");
-        var writer = new StreamWriter(stream);
+        // Warning: poor mans JSON below. Don't hate.
 
-        foreach (var checksum in checksums)
+        var totalChecksums = checksums.Count();
+        var currentChecksum = 0;
+
+        using(var stream = File.OpenWrite(outDirectory + "/checksums.json"))
+        using(var writer = new StreamWriter(stream))
         {
-            writer.WriteLine("{0}: {1}", checksum.Key, checksum.Value);
-        }
+            writer.WriteLine("{");
 
-        writer.Flush();
-        writer.Close();
-        stream.Dispose();
+            foreach (var checksum in checksums)
+            {
+                currentChecksum += 1;
+                var lineSeparator = ",";
+
+                if (currentChecksum >= totalChecksums)
+                {
+                    lineSeparator = "";
+                }
+
+                writer.WriteLine("  \"{0}\": \"{1}\"{2}", checksum.Key, checksum.Value, lineSeparator);
+            }
+
+            writer.WriteLine("}");
+        }
     });
 
 Task("Default")
