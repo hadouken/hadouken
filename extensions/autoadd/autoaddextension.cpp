@@ -34,6 +34,24 @@ void AutoAddExtension::load(AbstractConfiguration& config)
             f.sourcePath = folderView->getString("sourcePath");
             f.filePattern = std::regex(folderView->getString("filePattern"));
 
+            if (folderView->has("tags"))
+            {
+                for (int j = 0; j < std::numeric_limits<int>::max(); j++)
+                {
+                    index = std::to_string(j);
+                    query = "tags[" + index + "]";
+
+                    if (folderView->has(query))
+                    {
+                        f.tags.push_back(folderView->getString(query));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
             folders_.push_back(f);
         }
         else
@@ -61,8 +79,6 @@ void AutoAddExtension::unload()
 
 void AutoAddExtension::monitor(Poco::Timer& timer)
 {
-    logger_.information("Checking folders.");
-
     Session& sess = Application::instance().getSubsystem<TorrentSubsystem>().getSession();
 
     for (Folder folder : folders_)
@@ -85,7 +101,7 @@ void AutoAddExtension::monitor(Poco::Timer& timer)
             }
 
             AddTorrentParams p;
-            p.tags.push_back("some tag");
+            p.tags = folder.tags;
 
             sess.addTorrentFile(filePath, p);
             file.remove();

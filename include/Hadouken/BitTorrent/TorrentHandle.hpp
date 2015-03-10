@@ -20,6 +20,10 @@ namespace Hadouken
 
             explicit TorrentHandle(const libtorrent::torrent_handle& handle);
 
+            TorrentHandle(const TorrentHandle& h);
+
+            TorrentHandle& operator=(const TorrentHandle&) = delete;
+
             void getFileProgress(std::vector<int64_t>& progress) const;
 
             HDKN_EXPORT std::string getInfoHash() const;
@@ -42,7 +46,7 @@ namespace Hadouken
 
             void addTag(std::string tag);
 
-            void getTags(std::vector<std::string> tags);
+            void getTags(std::vector<std::string>& tags) const;
 
             void removeTag(std::string tag);
 

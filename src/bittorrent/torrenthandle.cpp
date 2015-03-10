@@ -14,6 +14,12 @@ TorrentHandle::TorrentHandle(const libtorrent::torrent_handle& handle)
 {
 }
 
+TorrentHandle::TorrentHandle(const TorrentHandle& h)
+    : handle_(h.handle_),
+      tags_(h.tags_)
+{
+}
+
 void TorrentHandle::getFileProgress(std::vector<int64_t>& progress) const
 {
     std::vector<libtorrent::size_type> p;
@@ -88,11 +94,8 @@ void TorrentHandle::addTag(std::string tag)
     tags_.push_back(tag);
 }
 
-void TorrentHandle::getTags(std::vector<std::string> tags)
+void TorrentHandle::getTags(std::vector<std::string>& tags) const
 {
-    tags.empty();
-    tags.resize(tags_.size());
-
     for (std::string tag : tags_)
     {
         tags.push_back(tag);

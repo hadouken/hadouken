@@ -155,7 +155,6 @@ void Session::loadResumeData()
         }
 
         TorrentHandle handle(sess_->add_torrent(params));
-        torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
 
         if (params.resume_data.size() > 0)
         {
@@ -176,6 +175,8 @@ void Session::loadResumeData()
                 loadHadoukenState(handle, *hdkn);
             }
         }
+
+        torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
     }
 }
 
@@ -258,12 +259,13 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
     }
 
     TorrentHandle handle(sess_->add_torrent(p));
-    torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
 
     for (std::string tag : params.tags)
     {
         handle.addTag(tag);
     }
+
+    torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
 
     return handle.getInfoHash();
 }
@@ -493,16 +495,20 @@ void Session::readAlerts()
                 // save torrent file to state path if it doesn't
                 // already exist there. then publish an added event.
                 torrent_added_alert* added_alert = alert_cast<torrent_added_alert>(alert);
-                TorrentHandle handle(added_alert->handle);
-
-                torrents_.insert(std::make_pair(added_alert->handle.info_hash(), handle));
 
                 if (added_alert->handle.torrent_file())
                 {
                     saveTorrentInfo(*added_alert->handle.torrent_file());
                 }
 
-                onTorrentAdded.notifyAsync(this, handle);
+                if (torrents_.find(added_alert->handle.info_hash()) == torrents_.end())
+                {
+                    TorrentHandle handle(added_alert->handle);
+                    torrents_.insert(std::make_pair(added_alert->handle.info_hash(), handle));
+                }
+
+                onTorrentAdded(this, torrents_.at(added_alert->handle.info_hash()));
+                
                 break;
             }
 
