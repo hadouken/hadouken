@@ -28,7 +28,8 @@ Poco::Dynamic::Var::Ptr TorrentMoveStorageMethod::execute(const Array::Ptr& para
         }
 
         handle.moveStorage(savePath);
+        return new Poco::Dynamic::Var(true);
     }
 
-    return new Poco::Dynamic::Var(true);
+    return new Poco::Dynamic::Var(false);
 }
