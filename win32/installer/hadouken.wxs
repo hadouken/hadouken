@@ -24,7 +24,9 @@
 
     <!-- Features -->
     <Feature Id="Complete" Level="1" Title="Hadouken" Description="The Hadouken BitTorrent client.">
+      <ComponentGroupRef Id="ConfigComponents" />
       <ComponentGroupRef Id="CoreComponents" />
+      <ComponentGroupRef Id="ExtensionComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
 
       <Feature Id="FirewallException" Title="Windows Firewall Exception" Description="Add an exception for Hadouken in the Windows firewall." Level="1">

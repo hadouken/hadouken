@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="ExtensionComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+      <Component>
+        <File Name="autoadd.dll" />
+      </Component>
+
+      <Component>
+        <File Name="automove.dll" />
+      </Component>
+
+      <Component>
+        <File Name="pushbullet.dll" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

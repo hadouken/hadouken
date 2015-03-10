@@ -91,6 +91,7 @@ Task("Output")
 
         // Copy relevant dist files
         CopyFiles(new [] { "../dist/cacert.pem" }, "build/bin/" + configuration);
+        CopyFiles(new [] { "../dist/win32/hadoukend.json.template" }, "build/bin/" + configuration);
     });
 
 Task("Create-Zip-Package")

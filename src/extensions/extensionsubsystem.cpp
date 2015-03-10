@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <Hadouken/Extensions/Extension.hpp>
+#include <Hadouken/Platform.hpp>
+#include <Poco/File.h>
+#include <Poco/Path.h>
 
 using namespace Hadouken::Extensions;
 using namespace Poco::Util;
@@ -67,12 +70,15 @@ void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfig
         return;
     }
 
-    std::string libraryPath = extensionName + getLibrarySuffix();
+    std::string libraryName = extensionName + getLibrarySuffix();
+
+    Poco::Path applicationPath = Hadouken::Platform::getApplicationPath();
+    Poco::File libraryFile = Poco::Path(applicationPath, libraryName);
 
     try
     {
-        loader_.loadLibrary(libraryPath);
-        libs_.push_back(libraryPath);
+        loader_.loadLibrary(libraryFile.path());
+        libs_.push_back(libraryFile.path());
     }
     catch (Poco::Exception& loaderException)
     {
