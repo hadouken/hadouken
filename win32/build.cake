@@ -7,6 +7,7 @@ var configuration = Argument("configuration", "Release");
 var version = File.ReadAllText("../VERSION");
 var binDirectory = "./build/bin/" + configuration;
 var outDirectory = "./build/out/" + configuration;
+var gitRev = "<norev>";
 
 Task("Clean")
     .Does(() =>
@@ -18,6 +19,25 @@ Task("Clean")
             "./build/" + configuration,
             "./wixobj"
         });
+    });
+
+Task("Prepare")
+    .Does(() =>
+    {
+        IEnumerable<string> output;
+
+        var exitCode = StartProcess("git",
+            new ProcessSettings
+            {
+                Arguments = "log -1 --format=%h",
+                RedirectStandardOutput = true
+            },
+            out output);
+
+        if (exitCode == 0)
+        {
+            gitRev = output.First();
+        }
     });
 
 Task("Restore-NuGet-Packages")
@@ -136,7 +156,8 @@ Task("Create-Msi-Package")
             {
                 { "BinDir",             binDirectory },
                 { "BuildConfiguration", configuration },
-                { "BuildVersion",       version }
+                { "BuildVersion",       version },
+                { "GitRevision",        gitRev }
             },
             Extensions = new[] { "WixFirewallExtension" },
             OutputDirectory = "./build/wixobj",
@@ -148,7 +169,7 @@ Task("Create-Msi-Package")
             Extensions = new[] { "WixUtilExtension", "WixUIExtension", "WixFirewallExtension" },
             OutputFile = outDirectory + "/hadouken-" + version + "-win32.msi",
             ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe",
-            RawArguments = "-spdb"
+            RawArguments = "-spdb -loc \"installer/hadouken.en-us.wxl\""
         });
     });
 
@@ -195,6 +216,7 @@ Task("Generate-Checksum-File")
 
 Task("Default")
     .IsDependentOn("Clean")
+    .IsDependentOn("Prepare")
     .IsDependentOn("Output")
     .IsDependentOn("Create-Zip-Package")
     .IsDependentOn("Create-Pdb-Package")

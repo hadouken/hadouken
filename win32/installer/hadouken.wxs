@@ -5,7 +5,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product
     Id="*"
-    Name="Hadouken $(var.BuildVersion)"
+    Name="Hadouken"
     Manufacturer="Viktor Elofsson - viktorelofsson.se"
     Version="$(var.BuildVersion)"
     UpgradeCode="f37e1bf1-cbf8-4a28-92c2-f3f07ea79b8f"
@@ -65,6 +65,9 @@
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <Property Id="HDKN_BUILDVERSION" Value="$(var.BuildVersion)" />
+    <Property Id="HDKN_GITREV" Value="$(var.GitRevision)" />
 
     <!-- The UI parts -->
     <UIRef Id="WixUI_FeatureTree" />
