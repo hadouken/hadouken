@@ -14,7 +14,10 @@
 namespace libtorrent
 {
     struct add_torrent_params;
+    class entry;
+    struct lazy_entry;
     class session;
+    class sha1_hash;
     class torrent_info;
 }
 
@@ -65,9 +68,11 @@ namespace Hadouken
         protected:
             void loadSessionState();
             void loadResumeData();
+            void loadHadoukenState(TorrentHandle& handle, const libtorrent::lazy_entry& entry);
 
             void saveSessionState();
             void saveResumeData();
+            void saveHadoukenState(TorrentHandle& handle, libtorrent::entry& entry);
 
             void readAlerts();
 
@@ -77,6 +82,8 @@ namespace Hadouken
             Poco::Path getDataPath();
 
         private:
+            std::map<libtorrent::sha1_hash, TorrentHandle> torrents_;
+
             Poco::Logger& logger_;
             const Poco::Util::LayeredConfiguration& config_;
             libtorrent::session* sess_;

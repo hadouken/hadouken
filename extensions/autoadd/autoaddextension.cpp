@@ -29,11 +29,12 @@ void AutoAddExtension::load(AbstractConfiguration& config)
         if (config.has(query))
         {
             AbstractConfiguration* folderView = config.createView(query);
-            std::string sourcePath = folderView->getString("sourcePath");
-            std::string filePattern = folderView->getString("filePattern");
 
-            Folder fold(sourcePath, std::regex(filePattern));
-            folders_.push_back(fold);
+            Folder f;
+            f.sourcePath = folderView->getString("sourcePath");
+            f.filePattern = std::regex(folderView->getString("filePattern"));
+
+            folders_.push_back(f);
         }
         else
         {
@@ -66,7 +67,7 @@ void AutoAddExtension::monitor(Poco::Timer& timer)
 
     for (Folder folder : folders_)
     {
-        Poco::Path sourcePath(folder.getSourcePath());
+        Poco::Path sourcePath(folder.sourcePath);
         Poco::File sourceDir(sourcePath);
 
         if (!sourceDir.exists()) { continue; }
@@ -78,12 +79,15 @@ void AutoAddExtension::monitor(Poco::Timer& timer)
         {
             Poco::Path filePath(file.path());
 
-            if (!std::regex_match(filePath.getFileName(), folder.getFilePattern()))
+            if (!std::regex_match(filePath.getFileName(), folder.filePattern))
             {
                 continue;
             }
 
-            sess.addTorrentFile(filePath, AddTorrentParams());
+            AddTorrentParams p;
+            p.tags.push_back("some tag");
+
+            sess.addTorrentFile(filePath, p);
             file.remove();
         }
     }

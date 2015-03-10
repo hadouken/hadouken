@@ -3,30 +3,15 @@
 
 #include <regex>
 #include <string>
+#include <vector>
 
 namespace AutoAdd
 {
     struct Folder
     {
-        Folder(std::string sourcePath, std::regex filePattern)
-        {
-            sourcePath_ = sourcePath;
-            filePattern_ = filePattern;
-        }
-
-        std::string getSourcePath()
-        {
-            return sourcePath_;
-        }
-
-        std::regex getFilePattern()
-        {
-            return filePattern_;
-        }
-
-    private:
-        std::string sourcePath_;
-        std::regex filePattern_;
+        std::string sourcePath;
+        std::regex filePattern;
+        std::vector<std::string> tags;
     };
 }
 

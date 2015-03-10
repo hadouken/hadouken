@@ -81,3 +81,38 @@ void TorrentHandle::resume() const
 {
     handle_.resume();
 }
+
+void TorrentHandle::addTag(std::string tag)
+{
+    if (hasTag(tag)) return;
+    tags_.push_back(tag);
+}
+
+void TorrentHandle::getTags(std::vector<std::string> tags)
+{
+    tags.empty();
+    tags.resize(tags_.size());
+
+    for (std::string tag : tags_)
+    {
+        tags.push_back(tag);
+    }
+}
+
+void TorrentHandle::removeTag(std::string tag)
+{
+    if (!hasTag(tag)) return;
+
+    std::vector<std::string>::iterator finder = std::find(tags_.begin(), tags_.end(), tag);
+
+    if (finder != tags_.end())
+    {
+        tags_.erase(finder);
+    }
+}
+
+bool TorrentHandle::hasTag(std::string tag)
+{
+    std::vector<std::string>::iterator finder = std::find(tags_.begin(), tags_.end(), tag);
+    return (finder != tags_.end());
+}

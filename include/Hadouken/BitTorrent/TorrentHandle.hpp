@@ -40,8 +40,17 @@ namespace Hadouken
 
             void resume() const;
 
+            void addTag(std::string tag);
+
+            void getTags(std::vector<std::string> tags);
+
+            void removeTag(std::string tag);
+
+            bool hasTag(std::string tag);
+
         private:
             const libtorrent::torrent_handle handle_;
+            std::vector<std::string> tags_;
         };
     }
 }
