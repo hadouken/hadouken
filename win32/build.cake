@@ -88,6 +88,9 @@ Task("Output")
             pocoBinaries,
             "build/bin/" + configuration
         );
+
+        // Copy relevant dist files
+        CopyFiles(new [] { "../dist/cacert.pem" }, "build/bin/" + configuration);
     });
 
 Task("Create-Zip-Package")
