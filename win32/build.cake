@@ -7,7 +7,14 @@ var configuration = Argument("configuration", "Release");
 var version = File.ReadAllText("../VERSION");
 var binDirectory = "./build/bin/" + configuration;
 var outDirectory = "./build/out/" + configuration;
-var gitRev = "<norev>";
+
+var gitRev = EnvironmentVariable("BUILD_VCS_NUMBER");
+
+// Shorten gitRev
+if (!string.IsNullOrEmpty(gitRev) && gitRev.Length > 7)
+{
+    gitRev = gitRev.Substring(0, 7);
+}
 
 Task("Clean")
     .Does(() =>
@@ -21,7 +28,9 @@ Task("Clean")
         });
     });
 
-Task("Prepare")
+Task("Get-Git-Revision")
+    .WithCriteria(() => string.IsNullOrEmpty(gitRev))
+    .OnError(exception => { gitRev = "<norev>"; })
     .Does(() =>
     {
         IEnumerable<string> output;
@@ -71,6 +80,7 @@ Task("Generate-CMake-Project")
 Task("Compile")
     .IsDependentOn("Restore-NuGet-Packages")
     .IsDependentOn("Generate-CMake-Project")
+    .IsDependentOn("Get-Git-Revision")
     .Does(() =>
     {
         MSBuild("./build/hadouken.sln", s =>
@@ -216,7 +226,7 @@ Task("Generate-Checksum-File")
 
 Task("Default")
     .IsDependentOn("Clean")
-    .IsDependentOn("Prepare")
+    .IsDependentOn("Compile")
     .IsDependentOn("Output")
     .IsDependentOn("Create-Zip-Package")
     .IsDependentOn("Create-Pdb-Package")
