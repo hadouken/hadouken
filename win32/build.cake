@@ -179,7 +179,7 @@ Task("Create-Msi-Package")
             Extensions = new[] { "WixUtilExtension", "WixUIExtension", "WixFirewallExtension" },
             OutputFile = outDirectory + "/hadouken-" + version + "-win32.msi",
             ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe",
-            RawArguments = "-spdb -loc \"installer/hadouken.en-us.wxl\""
+            RawArguments = "-spdb -loc \"installer/lang/en-us.wxl\""
         });
     });
 

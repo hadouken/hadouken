@@ -3,20 +3,19 @@
 <?define IsWin64 = "no" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product
-    Id="*"
-    Name="Hadouken"
-    Manufacturer="Viktor Elofsson - viktorelofsson.se"
-    Version="$(var.BuildVersion)"
-    UpgradeCode="f37e1bf1-cbf8-4a28-92c2-f3f07ea79b8f"
-    Language="1033"
-    Codepage="1252">
+  <Product Id="*"
+           Name="Hadouken"
+           Manufacturer="Viktor Elofsson and contributors."
+           Version="$(var.BuildVersion)"
+           UpgradeCode="248297a1-a2f4-4d0e-94f5-0d363e0b8e5f"
+           Language="1033"
+           Codepage="1252">
 
     <Package Id="*" InstallScope="perMachine" Compressed="yes" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
-    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading."
+    <MajorUpgrade DowngradeErrorMessage="!(loc.NoDowngrading)"
                   Schedule="afterInstallInitialize" />
 
     <!-- Directory -->
@@ -51,7 +50,7 @@
                       Win64="$(var.IsWin64)" />
     </Property>
 
-    <Condition Message="Hadouken requires the Visual C++ 2013 (x86) redistributable package.">
+    <Condition Message="!(loc.VCRedistRequired)">
       <![CDATA[(Installed OR VCREDIST)]]>
     </Condition>
 
