@@ -102,7 +102,7 @@ void Session::loadResumeData()
     // Load existing torrents
     Poco::Path data_path = getDataPath();
 
-    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::Path torrents_path(data_path, "torrents");
     Poco::File torrents_dir(torrents_path);
 
     if (!torrents_dir.exists())
@@ -142,7 +142,7 @@ void Session::loadResumeData()
         params.save_path = default_save_path_;
 
         // Check if resume data exists
-        Poco::File torrent_state_file(torrent_file_path.setExtension(".resume"));
+        Poco::File torrent_state_file(torrent_file_path.setExtension("resume"));
 
         if (torrent_state_file.exists() && torrent_state_file.isFile())
         {
@@ -154,7 +154,62 @@ void Session::loadResumeData()
             params.resume_data = resume_buffer;
         }
 
-        sess_->async_add_torrent(params);
+        TorrentHandle handle(sess_->add_torrent(params));
+
+        if (params.resume_data.size() > 0)
+        {
+            libtorrent::lazy_entry state;
+            libtorrent::error_code ec;
+            libtorrent::lazy_bdecode(&params.resume_data[0], &params.resume_data[0] + params.resume_data.size(), state, ec);
+
+            if (ec)
+            {
+                logger_.error("Could not load Hadouken-specific state: %s.", ec.message());
+                return;
+            }
+
+            const libtorrent::lazy_entry* hdkn = state.dict_find_dict("hdkn");
+            
+            if (hdkn)
+            {
+                loadHadoukenState(handle, *hdkn);
+            }
+        }
+
+        torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
+    }
+}
+
+void Session::loadHadoukenState(TorrentHandle& handle, const libtorrent::lazy_entry& entry)
+{
+    if (entry.type() != libtorrent::lazy_entry::entry_type_t::dict_t)
+    {
+        logger_.error("Hadouken-specific state was not of the correct 'dict' type.");
+        return;
+    }
+
+    int64_t stateVersion = entry.dict_find_int_value("hadouken-state-version", -1);
+
+    if (stateVersion < 0)
+    {
+        logger_.error("Could not read state version. Found %ld.", stateVersion);
+        return;
+    }
+
+    if (stateVersion != 1)
+    {
+        logger_.error("State version is not correct. Should be 1 but found %ld.", stateVersion);
+        return;
+    }
+
+    const libtorrent::lazy_entry* tagsList = entry.dict_find_list("tags");
+
+    if (tagsList)
+    {
+        for (int i = 0; i < tagsList->list_size(); i++)
+        {
+            handle.addTag(tagsList->list_string_value_at(i));
+        }
     }
 }
 
@@ -185,23 +240,34 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
     if (ec)
     {
         logger_.error("Error when bdecoding torrent: %s", ec.message());
-        return nullptr;
+        return std::string();
     }
 
     libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 
-    if (params.savePath.isDirectory())
+    if (!params.savePath.toString().empty() && params.savePath.isDirectory())
     {
         p.save_path = params.savePath.toString();
     }
     
     p.ti = new libtorrent::torrent_info(le);
 
-    std::string hash = libtorrent::to_hex(p.ti->info_hash().to_string());
+    if (torrents_.find(p.ti->info_hash()) != torrents_.end())
+    {
+        logger_.error("Torrent '%s' already exist in session.", p.ti->name());
+        return std::string();
+    }
 
-    sess_->async_add_torrent(p);
+    TorrentHandle handle(sess_->add_torrent(p));
 
-    return hash;
+    for (std::string tag : params.tags)
+    {
+        handle.addTag(tag);
+    }
+
+    torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
+
+    return handle.getInfoHash();
 }
 
 void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
@@ -222,19 +288,17 @@ TorrentHandle Session::findTorrent(const std::string& infoHash) const
 {
     libtorrent::sha1_hash hash;
     libtorrent::from_hex(infoHash.c_str(), infoHash.size(), (char*)&hash[0]);
-    libtorrent::torrent_handle handle = sess_->find_torrent(hash);
-    
-    return TorrentHandle(handle);
+
+    return torrents_.at(hash);
 }
 
 std::vector<TorrentHandle> Session::getTorrents() const
 {
-    std::vector<libtorrent::torrent_handle> handles = sess_->get_torrents();
     std::vector<TorrentHandle> th;
 
-    for (auto handle : handles)
+    for (std::pair<libtorrent::sha1_hash, TorrentHandle> pair : torrents_)
     {
-        th.push_back(TorrentHandle(handle));
+        th.push_back(pair.second);
     }
 
     return th;
@@ -286,7 +350,7 @@ void Session::saveResumeData()
     // Save resume data
     Poco::Path data_path = getDataPath();
 
-    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::Path torrents_path(data_path, "torrents");
     Poco::File torrents_dir(torrents_path);
 
     if (!torrents_dir.exists())
@@ -349,20 +413,53 @@ void Session::saveResumeData()
             --num;
             if (!rd->resume_data) continue;
 
+            // Save any specific Hadouken state (labels, tags, etc)
+            libtorrent::entry hdkn(libtorrent::entry::data_type::dictionary_t);
+            saveHadoukenState(torrents_.at(rd->handle.info_hash()), hdkn);
+            rd->resume_data->dict().insert(std::make_pair("hdkn", hdkn));
+
             std::vector<char> out;
             libtorrent::bencode(std::back_inserter(out), *rd->resume_data);
-
-            std::string hash = libtorrent::to_hex(rd->handle.info_hash().to_string());
 
             logger_.information("Saving state for %s.", rd->handle.torrent_file()->name());
 
             // Path to state file
+            std::string hash = libtorrent::to_hex(rd->handle.info_hash().to_string());
             Poco::Path torrent_state_path(torrents_path, hash + ".resume");
 
             std::ofstream torrent_state_stream(torrent_state_path.toString(), std::ios::binary);
             torrent_state_stream.write(out.data(), out.size());
         }
     }
+}
+
+void Session::saveHadoukenState(TorrentHandle& handle, libtorrent::entry& entry)
+{
+    if (!handle.isValid())
+    {
+        logger_.error("Invalid torrent handle.");
+        return;
+    }
+
+    if (entry.type() != libtorrent::entry::data_type::dictionary_t)
+    {
+        logger_.error("Can only save Hadouken state to a dictionary.");
+        return;
+    }
+
+    entry.dict().insert(std::make_pair("hadouken-state-version", 1));
+
+    libtorrent::entry tagsList(libtorrent::entry::data_type::list_t);
+    
+    std::vector<std::string> tags;
+    handle.getTags(tags);
+
+    for (std::string tag : tags)
+    {
+        tagsList.list().push_back(tag);
+    }
+
+    entry.dict().insert(std::make_pair("tags", tagsList));
 }
 
 void Session::readAlerts()
@@ -398,20 +495,38 @@ void Session::readAlerts()
                 // save torrent file to state path if it doesn't
                 // already exist there. then publish an added event.
                 torrent_added_alert* added_alert = alert_cast<torrent_added_alert>(alert);
+
                 if (added_alert->handle.torrent_file())
                 {
                     saveTorrentInfo(*added_alert->handle.torrent_file());
                 }
 
-                onTorrentAdded.notifyAsync(this, TorrentHandle(added_alert->handle));
+                if (torrents_.find(added_alert->handle.info_hash()) == torrents_.end())
+                {
+                    TorrentHandle handle(added_alert->handle);
+                    torrents_.insert(std::make_pair(added_alert->handle.info_hash(), handle));
+                }
+
+                onTorrentAdded(this, torrents_.at(added_alert->handle.info_hash()));
+                
+                break;
+            }
+
+            case torrent_finished_alert::alert_type:
+            {
+                torrent_finished_alert* finished_alert = alert_cast<torrent_finished_alert>(alert);
+                onTorrentFinished.notifyAsync(this, TorrentHandle(finished_alert->handle));
                 break;
             }
 
             case torrent_removed_alert::alert_type:
             {
                 torrent_removed_alert* removed_alert = alert_cast<torrent_removed_alert>(alert);
-                std::string hash = to_hex(removed_alert->info_hash.to_string());
+                torrents_.erase(removed_alert->info_hash);
+
                 // TODO: remove torrent and state file
+
+                std::string hash = to_hex(removed_alert->info_hash.to_string());
                 onTorrentRemoved.notifyAsync(this, hash);
                 break;
             }
@@ -438,7 +553,7 @@ void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
 
     Poco::Path data_path = getDataPath();
 
-    Poco::Path torrents_path(data_path, "Torrents");
+    Poco::Path torrents_path(data_path, "torrents");
     Poco::File torrents_dir(torrents_path);
 
     if (!torrents_dir.exists())

@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project("hadouken")
 
+# Put the libaries and binaries that get built into directories at the
+# top of the build tree rather than in hard-to-find leaf
+# directories. This simplifies manual testing and the use of the build
+# tree rather than installed Boost libraries.
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# Windows DLLs are "runtime" for CMake. Output them to "bin" like the Visual Studio projects do.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 if(WIN32)
     set(LIBTORRENT torrent.lib)
 
@@ -25,6 +34,10 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/lib
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/lib
     )
+
+    # Make sure release builds have pdb files.
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}    /DEBUG /OPT:REF")
 else()
     set(LIBBOOST boost_system)
     set(LIBTORRENT libtorrent-rasterbar.so)
@@ -101,3 +114,5 @@ target_link_libraries(
 
 # Extensions
 add_subdirectory(extensions/autoadd)
+add_subdirectory(extensions/automove)
+add_subdirectory(extensions/pushbullet)

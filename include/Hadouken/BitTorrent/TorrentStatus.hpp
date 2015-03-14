@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_TORRENTSTATUS_HPP
 #define HADOUKEN_BITTORRENT_TORRENTSTATUS_HPP
 
+#include <Hadouken/Config.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include <Poco/Timespan.h>
 #include <Poco/Timestamp.h>
@@ -82,7 +83,7 @@ namespace Hadouken
 
             int getListSeeds() const;
 
-            std::string getName() const;
+            HDKN_EXPORT std::string getName() const;
 
             bool getNeedSaveResume() const;
 

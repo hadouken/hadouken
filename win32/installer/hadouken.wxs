@@ -3,31 +3,39 @@
 <?define IsWin64 = "no" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product
-    Id="*"
-    Name="Hadouken $(var.BuildVersion)"
-    Manufacturer="Viktor Elofsson - viktorelofsson.se"
-    Version="$(var.BuildVersion)"
-    UpgradeCode="f37e1bf1-cbf8-4a28-92c2-f3f07ea79b8f"
-    Language="1033"
-    Codepage="1252">
+  <Product Id="*"
+           Name="Hadouken"
+           Manufacturer="Viktor Elofsson and contributors."
+           Version="$(var.BuildVersion)"
+           UpgradeCode="248297a1-a2f4-4d0e-94f5-0d363e0b8e5f"
+           Language="1033"
+           Codepage="1252">
 
     <Package Id="*" InstallScope="perMachine" Compressed="yes" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
-    <MajorUpgrade DowngradeErrorMessage="Installer does not support downgrading."
+    <MajorUpgrade DowngradeErrorMessage="!(loc.NoDowngrading)"
                   Schedule="afterInstallInitialize" />
 
     <!-- Directory -->
     <DirectoryRef Id="TARGETDIR" />
 
     <!-- Features -->
-    <Feature Id="Complete" Level="1" Title="Hadouken" Description="The Hadouken BitTorrent client.">
+    <Feature Id="Complete"
+             Level="1"
+             Title="Hadouken"
+             Description="The Hadouken BitTorrent client."
+             Display="expand">
+      <ComponentGroupRef Id="ConfigComponents" />
       <ComponentGroupRef Id="CoreComponents" />
+      <ComponentGroupRef Id="ExtensionComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
 
-      <Feature Id="FirewallException" Title="Windows Firewall Exception" Description="Add an exception for Hadouken in the Windows firewall." Level="1">
+      <Feature Id="FirewallException"
+               Title="Windows Firewall Exception"
+               Description="Add an exception for Hadouken in the Windows firewall."
+               Level="1">
         <ComponentGroupRef Id="FirewallComponents" />
       </Feature>
     </Feature>
@@ -42,19 +50,30 @@
                       Win64="$(var.IsWin64)" />
     </Property>
 
-    <Condition Message="Hadouken requires the Visual C++ 2013 (x86) redistributable package.">
+    <Condition Message="!(loc.VCRedistRequired)">
       <![CDATA[(Installed OR VCREDIST)]]>
     </Condition>
 
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="SearchInstallDirRegistry" Type="raw" Root="HKLM" Key="Software\Hadouken" Name="InstallDir" />
+      <RegistrySearch Id="SearchInstallDirRegistry"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="Software\Hadouken"
+                      Name="InstallDir" />
     </Property>
     
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
+    <Property Id="HDKN_BUILDVERSION" Value="$(var.BuildVersion)" />
+    <Property Id="HDKN_GITREV" Value="$(var.GitRevision)" />
+
     <!-- The UI parts -->
     <UIRef Id="WixUI_FeatureTree" />
     <UIRef Id="WixUI_ErrorProgressText" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="installer/media/banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="installer/media/dialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="../../../LICENSE.rtf" />
   </Product>
 </Wix>

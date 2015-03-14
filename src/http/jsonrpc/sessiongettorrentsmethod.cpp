@@ -51,6 +51,17 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
         data["totalSize"] = info.getTotalSize();
         data["state"] = (int)status.getState();
 
+        Poco::Dynamic::Array tags;
+        std::vector<std::string> t;
+        handle.getTags(t);
+
+        for (std::string tag : t)
+        {
+            tags.push_back(tag);
+        }
+
+        data["tags"] = tags;
+
         result[handle.getInfoHash()] = data;
     }
 

@@ -18,7 +18,7 @@ namespace Hadouken
         public:
             HDKN_EXPORT TorrentSubsystem() {}
 
-            Session& getSession();
+            HDKN_EXPORT Session& getSession();
 
         protected:
             HDKN_EXPORT void initialize(Application& app);

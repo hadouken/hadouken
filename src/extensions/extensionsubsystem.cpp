@@ -2,20 +2,12 @@
 
 #include <iostream>
 #include <Hadouken/Extensions/Extension.hpp>
+#include <Hadouken/Platform.hpp>
+#include <Poco/File.h>
+#include <Poco/Path.h>
 
 using namespace Hadouken::Extensions;
 using namespace Poco::Util;
-
-std::string librarySuffix()
-{
-#if defined(WIN32)
-    return ".dll";
-#elif defined(__APPLE__)
-    return ".dylib";
-#else
-    return ".so";
-#endif
-}
 
 ExtensionSubsystem::ExtensionSubsystem()
     : logger_(Poco::Logger::get("hadouken.extensions"))
@@ -24,40 +16,39 @@ ExtensionSubsystem::ExtensionSubsystem()
 
 void ExtensionSubsystem::initialize(Application& app)
 {
-    std::string extName = "autoadd" + librarySuffix();
+    Poco::Util::AbstractConfiguration::Keys keys;
+    app.config().keys("extensions", keys);
 
-    try
+    for (auto k : keys)
     {
-        logger_.information("Loading extension '%s'.", extName);
-        loader_.loadLibrary(extName);
-    }
-    catch (Poco::Exception& loaderException)
-    {
-        logger_.error("%s", loaderException.displayText());
-        return;
+        AbstractConfiguration* pluginConfig = app.config().createView("extensions." + k);
+        loadExtension(k, *pluginConfig);
     }
 
-    libs_.push_back(extName);
-
-    ExtensionLoader::Iterator it(loader_.begin());
-    ExtensionLoader::Iterator end(loader_.end());
-
-    for (; it != end; ++it)
+    for (auto extensionLoader : loader_)
     {
-        ExtensionManifest::Iterator itMan(it->second->begin());
-        ExtensionManifest::Iterator endMan(it->second->end());
+        logger_.information("Loading extensions from '%s'.", extensionLoader->first);
 
-        for (; itMan != endMan; ++itMan)
+        for (auto manifest : *extensionLoader->second)
         {
-            std::cout << itMan->name() << std::endl;
+            logger_.information("Found manifest '%s'", std::string(manifest->name()));
 
-            itMan->create()->load();
+            Extension* extension = manifest->create();
+            extension->load(app.config());
+
+            extensions_.push_back(extension);
         }
     }
 }
 
 void ExtensionSubsystem::uninitialize()
 {
+    for (auto ext : extensions_)
+    {
+        ext->unload();
+        delete ext;
+    }
+
     for (auto lib : libs_)
     {
         loader_.unloadLibrary(lib);
@@ -67,4 +58,41 @@ void ExtensionSubsystem::uninitialize()
 const char* ExtensionSubsystem::name() const
 {
     return "Extensions";
+}
+
+void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfiguration& config)
+{
+    // Only load extensions which are excplicitly enabled, eg. "enabled": true.
+
+    if (!config.hasProperty("enabled")
+        || !config.getBool("enabled"))
+    {
+        return;
+    }
+
+    std::string libraryName = extensionName + getLibrarySuffix();
+
+    Poco::Path applicationPath = Hadouken::Platform::getApplicationPath();
+    Poco::File libraryFile = Poco::Path(applicationPath, libraryName);
+
+    try
+    {
+        loader_.loadLibrary(libraryFile.path());
+        libs_.push_back(libraryFile.path());
+    }
+    catch (Poco::Exception& loaderException)
+    {
+        logger_.error("%s", loaderException.displayText());
+    }
+}
+
+std::string ExtensionSubsystem::getLibrarySuffix()
+{
+#if defined(WIN32)
+    return ".dll";
+#elif defined(__APPLE__)
+    return ".dylib";
+#else
+    return ".so";
+#endif
 }

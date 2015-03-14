@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_BITTORRENT_SESSION_HPP
 #define HADOUKEN_BITTORRENT_SESSION_HPP
 
+#include <Hadouken/Config.hpp>
 #include <Poco/BasicEvent.h>
 #include <Poco/Logger.h>
 #include <Poco/Path.h>
@@ -13,7 +14,10 @@
 namespace libtorrent
 {
     struct add_torrent_params;
+    class entry;
+    struct lazy_entry;
     class session;
+    class sha1_hash;
     class torrent_info;
 }
 
@@ -35,11 +39,11 @@ namespace Hadouken
             void load();
             void unload();
 
-            std::string addTorrentFile(Poco::Path& filePath, AddTorrentParams& params);
+            HDKN_EXPORT std::string addTorrentFile(Poco::Path& filePath, AddTorrentParams& params);
 
-            std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
+            HDKN_EXPORT std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
 
-            void addTorrentUri(std::string uri, AddTorrentParams& params);
+            HDKN_EXPORT void addTorrentUri(std::string uri, AddTorrentParams& params);
 
             TorrentHandle findTorrent(const std::string& infoHash) const;
 
@@ -57,14 +61,18 @@ namespace Hadouken
 
             Poco::BasicEvent<TorrentHandle> onTorrentAdded;
 
+            Poco::BasicEvent<TorrentHandle> onTorrentFinished;
+
             Poco::BasicEvent<std::string> onTorrentRemoved;
 
         protected:
             void loadSessionState();
             void loadResumeData();
+            void loadHadoukenState(TorrentHandle& handle, const libtorrent::lazy_entry& entry);
 
             void saveSessionState();
             void saveResumeData();
+            void saveHadoukenState(TorrentHandle& handle, libtorrent::entry& entry);
 
             void readAlerts();
 
@@ -74,6 +82,8 @@ namespace Hadouken
             Poco::Path getDataPath();
 
         private:
+            std::map<libtorrent::sha1_hash, TorrentHandle> torrents_;
+
             Poco::Logger& logger_;
             const Poco::Util::LayeredConfiguration& config_;
             libtorrent::session* sess_;

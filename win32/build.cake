@@ -5,16 +5,48 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var version = File.ReadAllText("../VERSION");
+var binDirectory = "./build/bin/" + configuration;
+var outDirectory = "./build/out/" + configuration;
+
+var gitRev = EnvironmentVariable("BUILD_VCS_NUMBER");
+
+// Shorten gitRev
+if (!string.IsNullOrEmpty(gitRev) && gitRev.Length > 7)
+{
+    gitRev = gitRev.Substring(0, 7);
+}
 
 Task("Clean")
     .Does(() =>
     {
         CleanDirectories(new[]
         {
-            "./bin",
+            binDirectory,
+            outDirectory,
             "./build/" + configuration,
             "./wixobj"
         });
+    });
+
+Task("Get-Git-Revision")
+    .WithCriteria(() => string.IsNullOrEmpty(gitRev))
+    .OnError(exception => { gitRev = "<norev>"; })
+    .Does(() =>
+    {
+        IEnumerable<string> output;
+
+        var exitCode = StartProcess("git",
+            new ProcessSettings
+            {
+                Arguments = "log -1 --format=%h",
+                RedirectStandardOutput = true
+            },
+            out output);
+
+        if (exitCode == 0)
+        {
+            gitRev = output.First();
+        }
     });
 
 Task("Restore-NuGet-Packages")
@@ -48,6 +80,7 @@ Task("Generate-CMake-Project")
 Task("Compile")
     .IsDependentOn("Restore-NuGet-Packages")
     .IsDependentOn("Generate-CMake-Project")
+    .IsDependentOn("Get-Git-Revision")
     .Does(() =>
     {
         MSBuild("./build/hadouken.sln", s =>
@@ -63,12 +96,12 @@ Task("Output")
         // Copy Boost and libtorrent binaries.
         CopyFiles(
             GetFiles("libs/hadouken.libtorrent/win32/bin/" + configuration + "/*.dll"),
-            "build/" + configuration);
+            binDirectory);
 
         // Copy OpenSSL binaries.
         CopyFiles(
             GetFiles("libs/hadouken.openssl/win32/bin/" + configuration + "/*.dll"),
-            "build/" + configuration);
+            binDirectory);
 
         // Copy Poco binaries.
         var pocoSuffix = (configuration == "Release" ? string.Empty : "d");
@@ -86,50 +119,119 @@ Task("Output")
 
         CopyFiles(
             pocoBinaries,
-            "build/" + configuration
+            binDirectory
         );
+
+        // Copy relevant dist files
+        var distFiles = new []
+        {
+            "../dist/cacert.pem",
+            "../dist/win32/hadoukend.json.template"
+        };
+
+        CopyFiles(distFiles, binDirectory);
     });
 
 Task("Create-Zip-Package")
     .IsDependentOn("Output")
     .Does(() =>
     {
-        var suffix = (configuration == "Release" ? string.Empty : "-debug");
-        Zip("./build/" + configuration, "bin/hadouken-" + version + "-win32" + suffix + ".zip");
+        IEnumerable<FilePath> files = GetFiles(binDirectory + "/*.dll");
+        files = files.Union(GetFiles(binDirectory + "/*.exe"));
+        files = files.Union(GetFiles(binDirectory + "/*.template"));
+
+        Zip(binDirectory,
+            outDirectory + "/hadouken-" + version + "-win32.zip",
+            files);
+    });
+
+Task("Create-Pdb-Package")
+    .IsDependentOn("Output")
+    .Does(() =>
+    {
+        var pdbFiles = GetFiles(binDirectory + "/*.pdb");
+
+        Zip(binDirectory,
+            outDirectory + "/hadouken-" + version + "-win32.symbols.zip",
+            pdbFiles);
     });
 
 Task("Create-Msi-Package")
     .IsDependentOn("Output")
     .Does(() =>
     {
-        var suffix = (configuration == "Release" ? string.Empty : "-debug");
-
         WiXCandle("./installer/*.wxs", new CandleSettings
         {
             Defines = new Dictionary<string, string>
             {
-                { "BinDir",       "./build/" + configuration },
+                { "BinDir",             binDirectory },
                 { "BuildConfiguration", configuration },
-                { "BuildVersion", version }
+                { "BuildVersion",       version },
+                { "GitRevision",        gitRev }
             },
             Extensions = new[] { "WixFirewallExtension" },
-            OutputDirectory = "./wixobj",
+            OutputDirectory = "./build/wixobj",
             ToolPath = "./libs/WiX.Toolset/tools/wix/candle.exe"
         });
 
-        WiXLight("./wixobj/*.wixobj", new LightSettings
+        WiXLight("./build/wixobj/*.wixobj", new LightSettings
         {
             Extensions = new[] { "WixUtilExtension", "WixUIExtension", "WixFirewallExtension" },
-            OutputFile = "./bin/hadouken-" + version + "-win32" + suffix + ".msi",
-            ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe"
+            OutputFile = outDirectory + "/hadouken-" + version + "-win32.msi",
+            ToolPath = "./libs/WiX.Toolset/tools/wix/light.exe",
+            RawArguments = "-spdb -loc \"installer/lang/en-us.wxl\""
         });
+    });
+
+Task("Generate-Checksum-File")
+    .IsDependentOn("Create-Zip-Package")
+    .IsDependentOn("Create-Pdb-Package")
+    .IsDependentOn("Create-Msi-Package")
+    .Does(() =>
+    {
+        var checksums = new Dictionary<string, string>();
+
+        foreach (var file in GetFiles(outDirectory + "/*.*"))
+        {
+            var hash = CalculateFileHash(file);
+            checksums.Add(file.GetFilename().ToString(), hash.ToHex());
+        }
+
+        // Warning: poor mans JSON below. Don't hate.
+
+        var totalChecksums = checksums.Count();
+        var currentChecksum = 0;
+
+        using(var stream = File.OpenWrite(outDirectory + "/checksums.json"))
+        using(var writer = new StreamWriter(stream))
+        {
+            writer.WriteLine("{");
+
+            foreach (var checksum in checksums)
+            {
+                currentChecksum += 1;
+                var lineSeparator = ",";
+
+                if (currentChecksum >= totalChecksums)
+                {
+                    lineSeparator = "";
+                }
+
+                writer.WriteLine("  \"{0}\": \"{1}\"{2}", checksum.Key, checksum.Value, lineSeparator);
+            }
+
+            writer.WriteLine("}");
+        }
     });
 
 Task("Default")
     .IsDependentOn("Clean")
+    .IsDependentOn("Compile")
     .IsDependentOn("Output")
     .IsDependentOn("Create-Zip-Package")
-    .IsDependentOn("Create-Msi-Package");
+    .IsDependentOn("Create-Pdb-Package")
+    .IsDependentOn("Create-Msi-Package")
+    .IsDependentOn("Generate-Checksum-File");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION

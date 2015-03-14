@@ -46,6 +46,10 @@
       </Component>
 
       <Component>
+        <File Name="cacert.pem" />
+      </Component>
+
+      <Component>
         <File Name="hadouken.dll" />
       </Component>
 
