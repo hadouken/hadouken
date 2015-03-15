@@ -7,19 +7,25 @@ Hadouken is a modern, open source, cross-platform BitTorrent client written in C
 
 ## Getting started
 
-*Hadouken is currently moving from C# to C++ and therefore no binaries for v5 are available. To get binaries, you need to build Hadouken. See below for instructions.*
+*We are currently moving from C# to C++ and therefore only Windows beta builds are available. These can be found on [the build server](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousWindows&guest=1).*
 
-# For developers
+ * Download the latest MSI installer.
+ * Install with your preferred settings.
+ * Go to [remote.hdkn.net](http://remote.hdkn.net) and finish the configuration.
+
+The source code for [remote.hdkn.net](http://remote.hdkn.net) is [available on GitHub](https://github.com/hadouken/remote) and anyone can host their own remote.
+
+## For developers
 
 If you're interested in contributing, we recommend reading through the [contribution guidelines](CONTRIBUTING.md).
 
 For further documentation regarding plugins or the JSONRPC API, please refer to [the wiki](https://github.com/hadouken/hadouken/wiki).
 
-## Building
+### Building
 
 Depending on your platform (Windows/Linux), Hadouken have different prerequisites. Common for all platforms is CMake, so make sure you have CMake (>= v2.8) installed and available in your path.
 
-### Windows
+#### Windows
 
 Building on Windows requires Visual Studio 2013. Dependencies will be pulled from NuGet at build time.
 
@@ -29,7 +35,7 @@ PS> .\win32\build.ps1
 
 This will build and package Hadouken as well as output .zip and .msi files in the `.\win32\bin` folder.
 
-### Linux
+#### Linux
 
 Building on Linux (Ubuntu) requires `libssl-dev`, `libboost-system-dev`, and then you need to manually compile both Rasterbar-libtorrent (>= v1.0.3) and Poco (>= v1.6.0)
 
