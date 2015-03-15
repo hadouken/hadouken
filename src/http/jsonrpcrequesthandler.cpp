@@ -149,7 +149,8 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
 bool JsonRpcRequestHandler::isValidRequest(HTTPServerRequest& request) const
 {
     // Check if auth type is set to None.
-    if (Poco::icompare(config_.getString("http.auth.type"), "none") == 0)
+    if (!config_.has("http.auth.type")
+        || Poco::icompare(config_.getString("http.auth.type"), "none") == 0)
     {
         return true;
     }
