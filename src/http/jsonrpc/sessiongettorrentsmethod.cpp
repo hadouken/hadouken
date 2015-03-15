@@ -46,10 +46,19 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
         data["savePath"] = status.getSavePath();
         data["downloadRate"] = status.getDownloadRate();
         data["uploadRate"] = status.getUploadRate();
+        data["downloadedBytes"] = status.getTotalDownload();
+        data["downloadedBytesTotal"] = status.getAllTimeDownload();
+        data["uploadedBytes"] = status.getTotalUpload();
+        data["uploadedBytesTotal"] = status.getAllTimeUpload();
         data["numPeers"] = status.getNumPeers();
         data["numSeeds"] = status.getNumSeeds();
         data["totalSize"] = info.getTotalSize();
         data["state"] = (int)status.getState();
+        data["isFinished"] = status.isFinished();
+        data["isMovingStorage"] = status.isMovingStorage();
+        data["isPaused"] = status.isPaused();
+        data["isSeeding"] = status.isSeeding();
+        data["isSequentialDownload"] = status.isSequentialDownload();
 
         Poco::Dynamic::Array tags;
         std::vector<std::string> t;

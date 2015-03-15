@@ -125,6 +125,10 @@ namespace Hadouken
 
             State getState() const;
 
+            uint64_t getTotalDownload() const;
+
+            uint64_t getTotalUpload() const;
+
             int getUploadRate() const;
 
             bool isAutoManaged() const;

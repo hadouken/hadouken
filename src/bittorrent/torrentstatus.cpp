@@ -225,6 +225,16 @@ TorrentStatus::State TorrentStatus::getState() const
     return (TorrentStatus::State)(int)status_.state;
 }
 
+uint64_t TorrentStatus::getTotalDownload() const
+{
+    return status_.total_download;
+}
+
+uint64_t TorrentStatus::getTotalUpload() const
+{
+    return status_.total_upload;
+}
+
 int TorrentStatus::getUploadRate() const
 {
     return status_.upload_rate;
