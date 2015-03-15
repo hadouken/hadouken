@@ -82,6 +82,7 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
         data["isPaused"] = status.isPaused();
         data["isSeeding"] = status.isSeeding();
         data["isSequentialDownload"] = status.isSequentialDownload();
+        data["queuePosition"] = status.getQueuePosition();
 
         Poco::Dynamic::Array tags;
         std::vector<std::string> t;
