@@ -80,11 +80,17 @@ void TorrentHandle::moveStorage(const std::string& savePath) const
 
 void TorrentHandle::pause() const
 {
+    if (handle_.status(0x0).paused) {
+        return;
+    }
+
+    handle_.auto_managed(false);
     handle_.pause();
 }
 
 void TorrentHandle::resume() const
 {
+    handle_.auto_managed(true);
     handle_.resume();
 }
 
