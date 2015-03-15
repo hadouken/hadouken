@@ -75,12 +75,12 @@ Task("Prepare-Version-Suffix")
         {
             GitBranch = RunCommand("git", "rev-parse --abbrev-ref HEAD");        
         }
-        
+
         if (GitBranch == "master") return;
 
         if (!string.IsNullOrEmpty(BuildNumber))
         {
-            VersionSuffix = "-build." + BuildNumber;
+            VersionSuffix = "-build" + BuildNumber;
         }
         else
         {
