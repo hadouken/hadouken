@@ -15,7 +15,7 @@ using namespace Poco::Util;
 Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& params)
 {
     /*
-    Return all torrents in this session in a dictionary where the torrents info
+    Return torrents in this session as a dictionary where the torrents info
     hash is key.
 
     {
@@ -26,15 +26,38 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
 
       ...
     }
+
+    The input to this method is either an empty array [] which means that all
+    torrents should be returned. If the array is non-empty, the elements of
+    that array are hex-encoded info hashes telling which torrents to return.
     */
     
     Application& app = Application::instance();
     Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
 
-    std::vector<TorrentHandle> handles = sess.getTorrents();
+    std::vector<TorrentHandle> handles;
+
+    if (params->size() > 0)
+    {
+        for (Poco::Dynamic::Var item : *params)
+        {
+            std::string hash = item.extract<std::string>();
+            TorrentHandle foundHandle = sess.findTorrent(hash);
+
+            if (foundHandle.isValid())
+            {
+                handles.push_back(foundHandle);
+            }
+        }
+    }
+    else
+    {
+        handles = sess.getTorrents();
+    }
+
     Poco::DynamicStruct result;
 
-    for (auto handle : handles)
+    for (TorrentHandle handle : handles)
     {
         TorrentInfo info = handle.getTorrentFile();
         TorrentStatus status = handle.getStatus();

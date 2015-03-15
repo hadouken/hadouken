@@ -289,6 +289,12 @@ TorrentHandle Session::findTorrent(const std::string& infoHash) const
     libtorrent::sha1_hash hash;
     libtorrent::from_hex(infoHash.c_str(), infoHash.size(), (char*)&hash[0]);
 
+    if (torrents_.find(hash) == torrents_.end())
+    {
+        libtorrent::torrent_handle invalidHandle;
+        return TorrentHandle(invalidHandle);
+    }
+
     return torrents_.at(hash);
 }
 
