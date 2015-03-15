@@ -33,7 +33,7 @@ Building on Windows requires Visual Studio 2013. Dependencies will be pulled fro
 PS> .\win32\build.ps1
 ```
 
-This will build and package Hadouken as well as output .zip and .msi files in the `.\win32\bin` folder.
+This will build and package Hadouken as well as output .zip and .msi files in the `.\win32\build\out\Release` folder.
 
 #### Linux
 
