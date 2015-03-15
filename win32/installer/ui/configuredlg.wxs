@@ -73,15 +73,18 @@
 
                 <Control Id="Next" Type="PushButton" X="236" Y="245" Width="56" Height="17" Default="yes" Text="Next">
                     <!-- Replace \ with / in path properties -->
-                    <Publish Property="STRING_VALUE_FROM" Value="[HDKN_BITTORRENT_SAVE_PATH]" Order="1">1</Publish>
                     <Publish Property="STRING_REPLACE_FROM" Value="\" Order="1">1</Publish>
                     <Publish Property="STRING_REPLACE_TO" Value="/" Order="1">1</Publish>
+
+                    <!-- Save path -->
+                    <Publish Property="STRING_VALUE_FROM" Value="[HDKN_BITTORRENT_SAVE_PATH]" Order="1">1</Publish>
                     <Publish Event="DoAction" Value="StringReplace1" Order="2">1</Publish>
                     <Publish Property="HDKN_BITTORRENT_SAVE_PATH_REPLACED" Value="[STRING_VALUE_TO]" Order="3">1</Publish>
 
-                    <Publish Property="STRING_VALUE_FROM" Value="[HDKNDATA]" Order="1">1</Publish>
-                    <Publish Event="DoAction" Value="StringReplace2" Order="2">1</Publish>
-                    <Publish Property="HDKN_DATA_PATH" Value="[STRING_VALUE_TO]" Order="3">1</Publish>
+                    <!-- Data path -->
+                    <Publish Property="STRING_VALUE_FROM" Value="[HDKNDATA]" Order="4">1</Publish>
+                    <Publish Event="DoAction" Value="StringReplace2" Order="5">1</Publish>
+                    <Publish Property="HDKN_DATA_PATH" Value="[STRING_VALUE_TO]" Order="6">1</Publish>
 
                     <Publish Event="NewDialog" Value="CustomizeDlg">1</Publish>
                 </Control>
