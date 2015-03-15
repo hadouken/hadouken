@@ -80,6 +80,7 @@ namespace Hadouken
 
             libtorrent::add_torrent_params getDefaultAddTorrentParams();
             Poco::Path getDataPath();
+            Poco::Path getTorrentsPath();
 
         private:
             std::map<libtorrent::sha1_hash, TorrentHandle> torrents_;

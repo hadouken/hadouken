@@ -59,7 +59,7 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
 
     for (TorrentHandle handle : handles)
     {
-        TorrentInfo info = handle.getTorrentFile();
+        std::unique_ptr<TorrentInfo> info = handle.getTorrentFile();
         TorrentStatus status = handle.getStatus();
 
         Poco::DynamicStruct data;
@@ -75,7 +75,14 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
         data["uploadedBytesTotal"] = status.getAllTimeUpload();
         data["numPeers"] = status.getNumPeers();
         data["numSeeds"] = status.getNumSeeds();
-        data["totalSize"] = info.getTotalSize();
+
+        if (info) {
+            data["totalSize"] = info->getTotalSize();
+        }
+        else {
+            data["totalSize"] = -1;
+        }
+
         data["state"] = (int)status.getState();
         data["isFinished"] = status.isFinished();
         data["isMovingStorage"] = status.isMovingStorage();

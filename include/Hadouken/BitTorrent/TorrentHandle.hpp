@@ -34,7 +34,7 @@ namespace Hadouken
 
             HDKN_EXPORT TorrentStatus getStatus() const;
 
-            TorrentInfo getTorrentFile() const;
+            std::unique_ptr<TorrentInfo> getTorrentFile() const;
 
             bool isValid() const;
 

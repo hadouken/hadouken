@@ -9,7 +9,7 @@ var Configuration = Argument("configuration", "Release");
 
 // VERSION INFORMATION
 var BuildNumber = EnvironmentVariable("BUILD_NUMBER");
-var Version = File.ReadAllText("../VERSION");
+var Version = System.IO.File.ReadAllText("../VERSION");
 var VersionSuffix = "";
 
 // VARIOUS DIRECTORIES
@@ -248,7 +248,7 @@ Task("Create-Chocolatey-Package")
                               .WithToken("Version", Version)
                               .ToString();
 
-        File.WriteAllText("./chocolatey/tools/chocolateyInstall.ps1", transformed);
+        System.IO.File.WriteAllText("./chocolatey/tools/chocolateyInstall.ps1", transformed);
 
         var packSettings = new NuGetPackSettings
         {
@@ -274,7 +274,7 @@ Task("Generate-Checksum-File")
             checksums.Add(file.GetFilename().ToString(), hash.ToHex());
         }
 
-        File.WriteAllText(OutputDirectory + "/checksums.json", ToJson(checksums));
+        System.IO.File.WriteAllText(OutputDirectory + "/checksums.json", ToJson(checksums));
     });
 
 Task("Publish-Release")
@@ -314,7 +314,7 @@ Task("Publish-Release")
 
                 var fileName = System.IO.Path.GetFileName(file);
                 var uploadUrl = uploadUrlTemplate.Replace("{?name}", "?name=" + fileName);
-                var uploadResponse = client.UploadData(uploadUrl, File.ReadAllBytes(file));
+                var uploadResponse = client.UploadData(uploadUrl, System.IO.File.ReadAllBytes(file));
                 
                 Information("File {0} published to GitHub.", fileName);
             }

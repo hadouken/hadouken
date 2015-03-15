@@ -274,7 +274,7 @@ void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
 {
     libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 
-    if (params.savePath.isDirectory())
+    if (!params.savePath.toString().empty() && params.savePath.isDirectory())
     {
         p.save_path = params.savePath.toString();
     }
@@ -353,25 +353,10 @@ void Session::saveSessionState()
 
 void Session::saveResumeData()
 {
-    // Save resume data
-    Poco::Path data_path = getDataPath();
-
-    Poco::Path torrents_path(data_path, "torrents");
-    Poco::File torrents_dir(torrents_path);
-
-    if (!torrents_dir.exists())
-    {
-        logger_.information("Creating torrents path " + torrents_dir.path());
-        torrents_dir.createDirectories();
-    }
-
-    if (!torrents_dir.isDirectory())
-    {
-        logger_.error("%s is not a directory.", torrents_dir.path());
-        return;
-    }
-
     sess_->pause();
+
+    Poco::Path torrents_path = getTorrentsPath();
+    if (torrents_path.toString().empty()) { return; }
 
     int num = 0;
 
@@ -530,10 +515,35 @@ void Session::readAlerts()
                 torrent_removed_alert* removed_alert = alert_cast<torrent_removed_alert>(alert);
                 torrents_.erase(removed_alert->info_hash);
 
-                // TODO: remove torrent and state file
-
                 std::string hash = to_hex(removed_alert->info_hash.to_string());
+
+                // TODO: remove torrent and state file
+                Poco::Path torrents_path = getTorrentsPath();
+
+                if (!torrents_path.toString().empty())
+                {
+                    Poco::Path torrent_file_path(torrents_path, hash + ".torrent");
+                    Poco::File torrent_file(torrent_file_path);
+                    if (torrent_file.exists()) { torrent_file.remove(); }
+
+                    Poco::Path resume_file_path(torrents_path, hash + ".resume");
+                    Poco::File resume_file(resume_file_path);
+                    if (resume_file.exists()) { resume_file.remove(); }
+                }
+
                 onTorrentRemoved.notifyAsync(this, hash);
+                break;
+            }
+
+            case torrent_update_alert::alert_type:
+            {
+                // A torrent downloaded from a URL has changed its info hash.
+                torrent_update_alert* update_alert = alert_cast<torrent_update_alert>(alert);
+
+                TorrentHandle handle = torrents_.at(update_alert->old_ih);
+                torrents_.erase(update_alert->old_ih);
+                torrents_.insert(std::make_pair(update_alert->new_ih, handle));
+
                 break;
             }
 
@@ -641,4 +651,26 @@ Poco::Path Session::getDataPath()
     }
 
     return data_path;
+}
+
+Poco::Path Session::getTorrentsPath()
+{
+    Poco::Path data_path = getDataPath();
+
+    Poco::Path torrents_path(data_path, "torrents");
+    Poco::File torrents_dir(torrents_path);
+
+    if (!torrents_dir.exists())
+    {
+        logger_.information("Creating torrents path " + torrents_dir.path());
+        torrents_dir.createDirectories();
+    }
+
+    if (!torrents_dir.isDirectory())
+    {
+        logger_.error("%s is not a directory.", torrents_dir.path());
+        return Poco::Path();
+    }
+
+    return torrents_path;
 }

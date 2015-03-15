@@ -62,10 +62,15 @@ TorrentStatus TorrentHandle::getStatus() const
     return TorrentStatus(status);
 }
 
-TorrentInfo TorrentHandle::getTorrentFile() const
+std::unique_ptr<TorrentInfo> TorrentHandle::getTorrentFile() const
 {
-    boost::intrusive_ptr<libtorrent::torrent_info const> info = handle_.torrent_file();
-    return TorrentInfo(*info);
+    if (handle_.torrent_file())
+    {
+        boost::intrusive_ptr<libtorrent::torrent_info const> info = handle_.torrent_file();
+        return std::unique_ptr<TorrentInfo>(new TorrentInfo(*info));
+    }
+
+    return std::unique_ptr<TorrentInfo>();
 }
 
 bool TorrentHandle::isValid() const
