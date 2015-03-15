@@ -71,7 +71,11 @@ Task("Prepare-Version-Suffix")
     .WithCriteria(() => GitBranch != "master")
     .Does(() =>
     {
-        GitBranch = RunCommand("git", "rev-parse --abbrev-ref HEAD");
+        if(string.IsNullOrEmpty(GitBranch))
+        {
+            GitBranch = RunCommand("git", "rev-parse --abbrev-ref HEAD");        
+        }
+        
         if (GitBranch == "master") return;
 
         if (!string.IsNullOrEmpty(BuildNumber))
