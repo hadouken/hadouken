@@ -114,7 +114,7 @@ Task("Generate-CMake-Project")
         var cmakeExitCode = StartProcess("cmake",
             new ProcessSettings
             {
-                Arguments = "../../",
+                Arguments = "../../ -G \"Visual Studio 12\" -T \"v120\"",
                 WorkingDirectory = "./build"
             });
 
