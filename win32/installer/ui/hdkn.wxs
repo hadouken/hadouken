@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+First-time install dialog sequence:
+ - WelcomeDlg
+ - ConfigureDlg
+ - CustomizeDlg
+ - ProgressDlg
+-->
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <Binary Id="HdknUI_Ico_Info"   SourceFile="installer/media/information.ico" />
+        <Binary Id="HdknUI_Bmp_Banner" SourceFile="installer/media/banner.bmp" />
+
+        <!-- msiext tools -->
+        <Binary Id="StringTools" SourceFile="tools/msiext-1.4/CustomActions/StringTools.dll" />
+        <CustomAction Id="StringReplace1" BinaryKey="StringTools" DllEntry="String_Replace" Execute="immediate" Return="check" />
+        <CustomAction Id="StringReplace2" BinaryKey="StringTools" DllEntry="String_Replace" Execute="immediate" Return="check" />
+
+        <WixVariable Id="HdknUILicenseRtf" Value="../../../LICENSE.rtf" />
+
+        <UI Id="HdknUI">
+            <Property Id="DefaultUIFont">DlgFont8</Property>
+      
+            <TextStyle Id="DlgFont8" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="14" />
+
+            <DialogRef Id="WelcomeDlg" />
+            <DialogRef Id="UpgradeDlg" />
+            <DialogRef Id="ConfigureDlg" />
+            <DialogRef Id="CustomizeDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="UserExit" />
+
+            <Publish Dialog="WelcomeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="ConfigureDlg">1</Publish>
+
+            <Publish Dialog="ConfigureDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+
+            <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="ConfigureDlg">1</Publish>
+
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+
+            <InstallUISequence>
+                <Show Dialog="WelcomeDlg" After="CostFinalize">NOT WIX_UPGRADE_DETECTED AND NOT Installed</Show>
+                <Show Dialog="UpgradeDlg" After="CostFinalize">WIX_UPGRADE_DETECTED</Show>
+
+                <Show Dialog="ProgressDlg" Before="ExecuteAction" />
+                
+                <Show Dialog="ExitDialog" OnExit="success" Overridable="yes" />
+                <Show Dialog="FatalError" OnExit="error" Overridable="yes" />
+                <Show Dialog="UserExit" OnExit="cancel" Overridable="yes" />
+            </InstallUISequence>
+
+            <AdminUISequence>
+                <Show Dialog="ExitDialog" OnExit="success" Overridable="yes" />
+                <Show Dialog="FatalError" OnExit="error" Overridable="yes" />
+                <Show Dialog="UserExit" OnExit="cancel" Overridable="yes" />
+            </AdminUISequence>
+        </UI>
+    </Fragment>
+</Wix>

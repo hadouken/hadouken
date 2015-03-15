@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:SystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+  <Fragment>
+    <ComponentGroup Id="ConfigComponents" Directory="HDKNDATA">
+      <Component>
+        <Condition>NOT WIX_UPGRADE_DETECTED AND NOT Installed</Condition>
+
+        <File Id="ConfigTemplate" Name="config.json.template" Source="$(var.BinDir)\hadoukend.json.template" />
+
+        <SystemTools:TemplateFile Id="ProcessConfigTemplate" Source="[#ConfigTemplate]" Target="[HDKNDATA]\config.json" ExecuteOnInstall="yes">
+          <SystemTools:TemplateFileProperty Id="BITTORRENT_SAVE_PATH_prop" Name="BITTORRENT_SAVE_PATH" Value="[HDKN_BITTORRENT_SAVE_PATH_REPLACED]" />
+          <SystemTools:TemplateFileProperty Id="DATA_PATH_prop" Name="DATA_PATH" Value="[HDKN_DATA_PATH]" />
+          <SystemTools:TemplateFileProperty Id="HTTP_PORT_prop" Name="HTTP_PORT" Value="[HDKN_HTTP_PORT]" />
+          <SystemTools:TemplateFileProperty Id="HTTP_AUTH_TYPE_prop" Name="HTTP_AUTH_TYPE" Value="[HDKN_HTTP_AUTH]" />
+          <SystemTools:TemplateFileProperty Id="HTTP_AUTH_TOKEN_prop" Name="HTTP_AUTH_TOKEN" Value="[HDKN_HTTP_TOKEN]" />
+          <SystemTools:TemplateFileProperty Id="HTTP_AUTH_BASIC_USERNAME_prop" Name="HTTP_AUTH_BASIC_USERNAME" Value="[HDKN_HTTP_BASIC_USERNAME]" />
+          <SystemTools:TemplateFileProperty Id="HTTP_AUTH_BASIC_PASSWORD_prop" Name="HTTP_AUTH_BASIC_PASSWORD" Value="[HDKN_HTTP_BASIC_PASSWORD]" />
+        </SystemTools:TemplateFile>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

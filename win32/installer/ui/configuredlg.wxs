@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>      
+            <Dialog Id="ConfigureDlg" Width="370" Height="270" Title="[ProductName] [Setup]" NoMinimize="yes">
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="HdknUI_Bmp_Banner" />
+
+                <Control Id="Title" Type="Text" X="10" Y="12" Width="200" Height="20" Transparent="yes" NoPrefix="yes" Text="{\DlgTitleFont}Configuration" />
+
+                <!-- BitTorrent settings -->
+                <Control Id="BitTorrent" Type="GroupBox" X="10" Y="50" Width="350" Height="40" Text="BitTorrent settings" />
+
+                <Control Id="DefaultSavePathTitle" Type="Text" X="17" Y="70" Width="100" Height="12" Text="Default download path" />
+
+                <Control Id="DefaultSavePath" Type="Edit" X="122" Y="67" Width="232" Height="18" Property="HDKN_BITTORRENT_SAVE_PATH" />
+
+                <!-- HTTP settings -->
+                <Control Id="Http" Type="GroupBox" X="10" Y="100" Width="350" Height="103" Text="HTTP settings" />
+
+                <Control Id="PortTitle" Type="Text" X="17" Y="120" Width="80" Height="12" Text="Port" />
+
+                <Control Id="Port" Type="Edit" X="122" Y="117" Width="45" Height="18" Property="HDKN_HTTP_PORT" />
+
+                <Control Id="AuthTitle" Type="Text" X="17" Y="139" Width="80" Height="12" Text="Authentication" />
+
+                <Control Id="AuthGroup" Type="RadioButtonGroup" X="122" Y="136" Width="200" Height="18" Property="HDKN_HTTP_AUTH">
+                    <RadioButtonGroup Property="HDKN_HTTP_AUTH">
+                        <RadioButton Value="none" Text="None" X="0" Y="0" Width="40" Height="18" />
+                        <RadioButton Value="basic" Text="Basic" X="50" Y="0" Width="40" Height="18" />
+                        <RadioButton Value="token" Text="Token" X="100" Y="0" Width="40" Height="18" />
+                    </RadioButtonGroup>
+                </Control>
+
+                <Control Id="TokenTitle" Type="Text" X="17" Y="161" Width="80" Height="12" Text="Token">
+                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "token"]]></Condition>
+                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "token"]]></Condition>
+                </Control>
+
+                <Control Id="Token" Type="Edit" X="122" Y="158" Width="140" Height="18" Property="HDKN_HTTP_TOKEN">
+                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "token"]]></Condition>
+                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "token"]]></Condition>
+                </Control>
+
+                <Control Id="BasicUserTitle" Type="Text" X="17" Y="161" Width="80" Height="12" Text="Username">
+                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
+                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
+                </Control>
+
+                <Control Id="BasicUser" Type="Edit" X="122" Y="158" Width="100" Height="18" Property="HDKN_HTTP_BASIC_USERNAME">
+                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
+                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
+                </Control>
+
+                <Control Id="BasicPassTitle" Type="Text" X="17" Y="183" Width="80" Height="12" Text="Password">
+                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
+                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
+                </Control>
+
+                <Control Id="BasicPass" Type="Edit" Password="yes" X="122"  Y="180" Width="100" Height="18" Property="HDKN_HTTP_BASIC_PASSWORD">
+                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
+                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
+                </Control>
+
+                <!-- Version and revision -->
+                <Control Id="Version" Type="Text" X="10" Y="248" Width="100" Height="17" Disabled="yes" NoPrefix="yes" Text="v$(var.BuildVersion) (rev: $(var.GitCommitish))" />
+
+                <!-- Buttons -->
+                <Control Id="Back" Type="PushButton" X="180" Y="245" Width="56" Height="17" Text="Back" />
+
+                <Control Id="Next" Type="PushButton" X="236" Y="245" Width="56" Height="17" Default="yes" Text="Next">
+                    <!-- Replace \ with / in path properties -->
+                    <Publish Property="STRING_VALUE_FROM" Value="[HDKN_BITTORRENT_SAVE_PATH]" Order="1">1</Publish>
+                    <Publish Property="STRING_REPLACE_FROM" Value="\" Order="1">1</Publish>
+                    <Publish Property="STRING_REPLACE_TO" Value="/" Order="1">1</Publish>
+                    <Publish Event="DoAction" Value="StringReplace1" Order="2">1</Publish>
+                    <Publish Property="HDKN_BITTORRENT_SAVE_PATH_REPLACED" Value="[STRING_VALUE_TO]" Order="3">1</Publish>
+
+                    <Publish Property="STRING_VALUE_FROM" Value="[HDKNDATA]" Order="1">1</Publish>
+                    <Publish Event="DoAction" Value="StringReplace2" Order="2">1</Publish>
+                    <Publish Property="HDKN_DATA_PATH" Value="[STRING_VALUE_TO]" Order="3">1</Publish>
+
+                    <Publish Event="NewDialog" Value="CustomizeDlg">1</Publish>
+                </Control>
+
+                <Control Id="Cancel" Type="PushButton" X="304" Y="245" Width="56" Height="17" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Wix>

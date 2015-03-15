@@ -58,8 +58,7 @@ DefaultRequestHandlerFactory::~DefaultRequestHandlerFactory()
 
 HTTPRequestHandler* DefaultRequestHandlerFactory::createRequestHandler(const HTTPServerRequest& request)
 {
-    if (request.getURI() == "/api"
-        && request.getMethod() == "POST")
+    if (request.getURI() == "/api")
     {
         return new JsonRpcRequestHandler(config_, methods_);
     }

@@ -16,11 +16,7 @@
                         Interactive="no"
                         ErrorControl="normal" />
 
-        <!-- Start service on installation -->
-        <ServiceControl Id="StartService" Start="install" Name="Hadouken" Wait="yes" />
-        
-        <!-- Stop and remove service on uninstallation -->
-        <ServiceControl Id="StopService" Stop="both" Name="Hadouken" Wait="yes" Remove="uninstall" />
+        <ServiceControl Id="ServiceController" Start="install" Stop="both" Remove="uninstall" Name="Hadouken" Wait="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

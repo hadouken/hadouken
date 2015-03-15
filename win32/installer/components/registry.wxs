@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="RegistryComponents" Directory="INSTALLDIR">
+      <Component>
+        <RegistryKey Root="HKLM" Key="Software\Hadouken">
+          <RegistryValue Type="string" Name="InstallDir" Value="[INSTALLDIR]"/>
+        </RegistryKey>
+      </Component>
+
+      <Component>
+        <RegistryKey Root="HKLM" Key="Software\Hadouken">
+          <RegistryValue Type="string" Name="Version" Value="[HDKN_BUILDVERSION]"/>
+        </RegistryKey>
+      </Component>
+
+      <Component>
+        <RegistryKey Root="HKLM" Key="Software\Hadouken">
+          <RegistryValue Type="string" Name="GitRevision" Value="[HDKN_GITREV]"/>
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

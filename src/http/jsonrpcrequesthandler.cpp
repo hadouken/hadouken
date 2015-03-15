@@ -57,9 +57,13 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     */
 
     response.add("Access-Control-Allow-Origin", "*");
-    response.add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
+    response.add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    response.setContentType("application/json");
     
+    if (request.getMethod() == "OPTIONS") {
+        response.send() << "{ \"status\": \"OK\" }";
+        return;
+    }
 
     if (!isValidRequest(request))
     {
@@ -71,8 +75,6 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
         response.send() << unauthObj->toString();
         return;
     }
-
-    response.setContentType("application/json");
 
     Parser parser;
     Poco::Dynamic::Var result = parser.parse(request.stream());
@@ -146,8 +148,8 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
 
 bool JsonRpcRequestHandler::isValidRequest(HTTPServerRequest& request) const
 {
-    if (!config_.hasProperty("http.auth.enabled")
-        || !config_.getBool("http.auth.enabled"))
+    // Check if auth type is set to None.
+    if (Poco::icompare(config_.getString("http.auth.type"), "none") == 0)
     {
         return true;
     }

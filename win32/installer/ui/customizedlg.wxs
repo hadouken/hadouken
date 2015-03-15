@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>      
+            <Dialog Id="CustomizeDlg" Width="370" Height="270" Title="[ProductName] [Setup]" NoMinimize="yes">
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="HdknUI_Bmp_Banner" />
+
+                <Control Id="Title" Type="Text" X="10" Y="12" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\DlgTitleFont}Customize features" />
+
+                <!-- Feature tree -->
+                <Control Id="Tree" Type="SelectionTree" X="10" Y="50" Width="350" Height="115" Property="_BrowseProperty" Sunken="yes" TabSkip="no" Text="Feature tree" />
+
+                <!-- Item description -->
+                <Control Id="Box" Type="GroupBox" X="10" Y="170" Width="350" Height="60" />
+
+                <Control Id="ItemDescription" Type="Text" X="20" Y="180" Width="330" Height="40" Text="asdf">
+                    <Subscribe Event="SelectionDescription" Attribute="Text" />
+                </Control>
+
+                <!-- Version and revision -->
+                <Control Id="Version" Type="Text" X="10" Y="248" Width="100" Height="17" Disabled="yes" NoPrefix="yes" Text="v$(var.BuildVersion) (rev: $(var.GitCommitish))" />
+
+                <!-- Buttons -->
+                <Control Id="Back" Type="PushButton" X="180" Y="245" Width="56" Height="17" Text="Back" />
+
+                <!-- The different install buttons -->
+                <Control Id="Install" Type="PushButton" ElevationShield="yes" X="236" Y="245" Width="56" Height="17" Default="yes" Text="Install">
+                    <Condition Action="show">NOT Installed AND ALLUSERS</Condition>
+                    <Condition Action="enable">NOT Installed</Condition>
+                    <Condition Action="default">NOT Installed</Condition>
+
+                    <Publish Event="EndDialog" Value="Return"><![CDATA[OutOfDiskSpace <> 1]]></Publish>
+                </Control>
+
+                <Control Id="Cancel" Type="PushButton" X="304" Y="245" Width="56" Height="17" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Wix>

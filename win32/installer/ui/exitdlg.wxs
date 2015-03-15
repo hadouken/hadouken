@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>      
+            <Dialog Id="ExitDialog" Width="370" Height="270" Title="[ProductName]">
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="HdknUI_Bmp_Banner" />
+
+                <Control Id="Title" Type="Text" X="10" Y="12" Width="200" Height="20" Transparent="yes" NoPrefix="yes" Text="{\DlgTitleFont}Installation complete" />
+
+                <Control Id="DescriptionInstalled" Type="Text" X="10" Y="50" Width="350" Height="45" Transparent="yes" NoPrefix="yes" Text="Hadouken installed successfully.">
+                    <Condition Action="show">NOT WIX_UPGRADE_DETECTED AND NOT Installed</Condition>
+                    <Condition Action="hide">WIX_UPGRADE_DETECTED</Condition>
+                </Control>
+
+                <Control Id="OpenRemote" Type="CheckBox" X="10" Y="110" Width="220" Height="40" Hidden="yes" Property="HDKN_OPEN_REMOTE" CheckBoxValue="1" Text="Open 'remote.hdkn.net' when I click 'Finish'.">
+                    <Condition Action="show">NOT WIX_UPGRADE_DETECTED AND NOT Installed</Condition>
+                </Control>
+
+                <Control Id="DescriptionUpgraded" Type="Text" X="10" Y="50" Width="350" Height="45" Transparent="yes" NoPrefix="yes" Text="Hadouken upgraded successfully.">
+                    <Condition Action="hide">NOT WIX_UPGRADE_DETECTED AND NOT Installed</Condition>
+                    <Condition Action="show">WIX_UPGRADE_DETECTED</Condition>
+                </Control>
+
+                <!-- Version and revision -->
+                <Control Id="Version" Type="Text" X="10" Y="248" Width="100" Height="17" Disabled="yes" NoPrefix="yes" Text="v$(var.BuildVersion) (rev: $(var.GitCommitish))" />
+
+                <!-- Buttons -->
+                <Control Id="Back" Type="PushButton" X="180" Y="245" Width="56" Height="17" Text="Back" Disabled="yes" />
+
+                <Control Id="Finish" Type="PushButton" X="236" Y="245" Width="56" Height="17" Default="yes" Text="Finish">
+                    <Publish Event="DoAction" Value="LaunchApplication"><![CDATA[HDKN_OPEN_REMOTE = "1" AND NOT WIX_UPGRADE_DETECTED AND NOT Installed]]></Publish>
+                </Control>
+
+                <Control Id="Cancel" Type="PushButton" X="304" Y="245" Width="56" Height="17" Text="Cancel" Disabled="yes" />
+            </Dialog>
+        </UI>
+
+        <Property Id="WixShellExecTarget" Value="http://remote.hdkn.net/#/configure" />
+        <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    </Fragment>
+</Wix>

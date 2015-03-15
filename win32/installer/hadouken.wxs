@@ -11,7 +11,7 @@
            Language="1033"
            Codepage="1252">
 
-    <Package Id="*" InstallScope="perMachine" Compressed="yes" />
+    <Package Id="*" InstallerVersion="405" InstallScope="perMachine" Compressed="yes" />
 
     <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" />
     
@@ -31,6 +31,8 @@
       <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="ExtensionComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
+      <ComponentGroupRef Id="RegistryComponents" />
+      <MergeRef Id="VCRedist" />
 
       <Feature Id="FirewallException"
                Title="Windows Firewall Exception"
@@ -40,40 +42,47 @@
       </Feature>
     </Feature>
 
-    <!-- Search for Visual C++ redist 2013 -->
-    <Property Id="VCREDIST">
-      <RegistrySearch Id="SearchVCRedistRegistry"
-                      Type="raw"
-                      Root="HKLM"
-                      Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x86"
-                      Name="Installed"
-                      Win64="$(var.IsWin64)" />
-    </Property>
-
-    <Condition Message="!(loc.VCRedistRequired)">
-      <![CDATA[(Installed OR VCREDIST)]]>
-    </Condition>
-
     <!-- Search for installation directory in registry -->
     <Property Id="INSTALLDIR">
       <RegistrySearch Id="SearchInstallDirRegistry"
                       Type="raw"
                       Root="HKLM"
                       Key="Software\Hadouken"
-                      Name="InstallDir" />
+                      Name="InstallDir"
+                      Win64="$(var.IsWin64)" />
+    </Property>
+
+    <Property Id="PREV_VERSION">
+      <RegistrySearch Id="SearchPrevVersionRegistry"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="Software\Hadouken"
+                      Name="Version"
+                      Win64="$(var.IsWin64)" />
+    </Property>
+
+    <Property Id="PREV_GITREV">
+      <RegistrySearch Id="SearchPrevGitRevRegistry"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="Software\Hadouken"
+                      Name="GitCommitish"
+                      Win64="$(var.IsWin64)" />
     </Property>
     
+    <Icon Id="icon.ico" SourceFile="installer/media/hadouken.ico"/>
+    
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable"/>
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
     <Property Id="HDKN_BUILDVERSION" Value="$(var.BuildVersion)" />
-    <Property Id="HDKN_GITREV" Value="$(var.GitRevision)" />
+    <Property Id="HDKN_GITREV" Value="$(var.GitCommitish)" />
+    <Property Id="HDKN_HTTP_AUTH" Value="none" />
+    <Property Id="HDKN_HTTP_PORT" Value="7070" />
 
-    <!-- The UI parts -->
-    <UIRef Id="WixUI_FeatureTree" />
-    <UIRef Id="WixUI_ErrorProgressText" />
+    <SetProperty Id="HDKN_BITTORRENT_SAVE_PATH" Value="[%USERPROFILE]\Downloads" Before="CostFinalize" /> 
 
-    <WixVariable Id="WixUIBannerBmp" Value="installer/media/banner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="installer/media/dialog.bmp" />
-    <WixVariable Id="WixUILicenseRtf" Value="../../../LICENSE.rtf" />
+    <UIRef Id="HdknUI" />    
   </Product>
 </Wix>

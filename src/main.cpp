@@ -37,9 +37,8 @@ protected:
         }
 
         // If we run as a service (ie. config has property application.runAsService)
-        // and we are on Windows. If the file C:/ProgramData/Hadouken/config.json.template
-        // exists, and not C:/ProgramData/Hadouken/config.json, we copy the template
-        // file to "config.json" and then load it.
+        // and we are on Windows, load the C:/ProgramData/Hadouken/config.json
+        // configuration file. It should've been put there by the installer.
 
         Poco::Path dataPath = Hadouken::Platform::getApplicationDataPath();
         
@@ -54,34 +53,12 @@ protected:
 
         if (configFile.exists())
         {
-            logger_.information("Config file already exists at '%s'. Not copying template.", configFile.path());
             loadConfiguration(configFile.path());
-            return;
         }
-
-        Poco::Path templatePath(dataPath, "config.json.template");
-        Poco::File templateFile(templatePath);
-
-        if (!templateFile.exists())
+        else
         {
-            logger_.error("Config template file '%s' does not exist.", templateFile.path());
-            return;
+            logger_.error("No config file found at '%s'.", configFile.path());
         }
-
-        logger_.information("Copying template '%s' to '%s'.", templateFile.path(), configFile.path());
-
-        try
-        {
-            templateFile.copyTo(configFile.path());
-        }
-        catch (Poco::Exception& exception)
-        {
-            logger_.error("Could not copy config template: %s.", exception.displayText());
-            return;
-        }
-
-        // Load the configuration.
-        loadConfiguration(configFile.path());
     }
 #endif
 

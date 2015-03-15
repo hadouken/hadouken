@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
+
+<package>
+  <metadata>
+    <id>hadouken</id>
+    <title>Hadouken</title>
+    <version>$version$</version>
+    <authors>Viktor Elofsson and contributors.</authors>
+    <owners>Viktor Elofsson</owners>
+    <summary>A headless BitTorrent client running as a Windows Service.</summary>
+    <description>Hadouken is a headless BitTorrent client written in C++11. It runs as a Windows Service and has awesome plugin support.</description>
+    <projectUrl>https://github.com/hadouken/hadouken</projectUrl>
+    <tags>Hadouken BitTorrent Headless</tags>
+    <copyright></copyright>
+    <licenseUrl>https://raw.githubusercontent.com/hadouken/hadouken/develop/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <iconUrl>https://cdn.rawgit.com/hadouken/hadouken/a7d3c020ea799a8498c9ed2a2c7ac9000662a566/src/Web/img/logo256.png</iconUrl>
+    <releaseNotes></releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

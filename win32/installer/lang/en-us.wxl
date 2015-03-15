@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <WixLocalization Culture="en-us" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
-  <String Id="WelcomeDlgTitle">{\WixUI_Font_Bigger}Hadouken [HDKN_BUILDVERSION] (rev: [HDKN_GITREV])</String>
-
   <String Id="NoDowngrading">This installer does not support downgrading.</String>
   <String Id="VCRedistRequired">Hadouken requires the Visual C++ 2013 (x86) redistributable package.</String>
 </WixLocalization>

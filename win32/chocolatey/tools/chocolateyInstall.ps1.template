@@ -1,0 +1,32 @@
+$packageName    = "hadouken"
+%packageFile    = "%{File}"
+$packageVersion = "%{Version}"
+
+$installerType = "msi"
+$url = "https://github.com/hadouken/hadouken/releases/download/v$packageVersion/$packageFile"
+$checksum = ""
+$silentArgs = "/quiet"
+$validExitCodes = @(0,3010)
+
+# Default install variables below
+
+$STATE_PATH               = (Join-Path $Env:ProgramData "Hadouken").Replace("\", "/")
+$DEFAULT_SAVE_PATH        = (Join-Path $Env:USERPROFILE "Downloads").Replace("\", "/")
+$HTTP_PORT                = 7070
+$HTTP_AUTH_TYPE           = "token"
+$HTTP_AUTH_TOKEN          = [Guid]::NewGuid().ToString()
+
+Install-ChocolateyPackage $packageName $installerType "$silentArgs HDKN_DATA_PATH=""$STATE_PATH"" HDKN_BITTORRENT_SAVE_PATH_REPLACED=""$DEFAULT_SAVE_PATH""" $url -validExitCodes $validExitCodes
+
+Write-Host "Configuration ($(Join-Path $STATE_PATH config.json)):"
+Write-Host " - HTTP listen port: $HTTP_PORT"
+Write-Host " - HTTP auth type: $HTTP_AUTH_TYPE"
+
+if ($HTTP_AUTH_TYPE -eq "token") {
+    Write-Host " - HTTP auth token: '$HTTP_AUTH_TOKEN'"
+}
+
+Write-Host " - Downloads path: $DEFAULT_SAVE_PATH"
+Write-Host "Hadouken is headless and does not provide a GUI. To interact with"
+Write-Host "your Hadouken instance - visit http://remote.hdkn.net. *Please note"
+Write-Host "the HTTP auth token as you will need it.*"
