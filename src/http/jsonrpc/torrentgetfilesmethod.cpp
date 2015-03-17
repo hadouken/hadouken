@@ -35,14 +35,13 @@ Poco::Dynamic::Var::Ptr TorrentGetFilesMethod::execute(const Array::Ptr& params)
     Poco::Dynamic::Array result;
 
     if (!info) {
-        return new Poco::Dynamic::Var(result);
+        return nullptr;
     }
 
     FileStorage files = info->getFiles();
     
     std::vector<int64_t> progress;
     handle.getFileProgress(progress);
-
     
     for (int i = 0; i < files.getNumFiles(); i++)
     {
