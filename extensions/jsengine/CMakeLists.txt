@@ -5,9 +5,10 @@ project("jsengine")
 add_library(
     jsengine
     SHARED
+    duktape.c
     manifest.cpp
     jsengineextension.cpp
-    duktape.c
+    mod_fs.cpp
 )
 
 target_link_libraries(

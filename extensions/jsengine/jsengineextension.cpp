@@ -1,23 +1,8 @@
 #include "jsengineextension.hpp"
+#include "mod_fs.hpp"
 
 using namespace JsEngine;
 using namespace Poco::Util;
-
-static const duk_number_list_entry my_module_consts[] = {
-    { "FLAG_FOO", (double)(1 << 0) },
-    { NULL, 0.0 }
-};
-
-duk_ret_t dukopen_bittorrent(duk_context* ctx)
-{
-    int n = duk_get_top(ctx);
-    int type = duk_get_type(ctx, 1);
-    duk_push_object(ctx);
-
-    duk_put_number_list(ctx, -1, my_module_consts);
-    
-    return 1;
-}
 
 duk_ret_t requireNative(duk_context* ctx)
 {
@@ -33,8 +18,13 @@ duk_ret_t requireNative(duk_context* ctx)
 
     if (moduleName == "bittorrent")
     {
-        duk_push_c_function(ctx, dukopen_bittorrent, 0);
-        duk_call(ctx, 0);
+        return 0;
+    }
+    else if (moduleName == "fs")
+    {
+        duk_push_c_function(ctx, dukopen_fs, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
 
         return 1;
     }
