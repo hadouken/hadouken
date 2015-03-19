@@ -41,25 +41,36 @@ void JsEngineExtension::load(AbstractConfiguration& config)
 {
     ctx_ = duk_create_heap_default();
 
-    if (!ctx_) {
+    if (!ctx_)
+    {
         logger_.error("Could not create Duktape heap.");
         return;
     }
 
-    if (!config.has("extensions.jsengine.script")) {
+    if (!config.has("extensions.jsengine.path"))
+    {
+        logger_.error("No path defined for JsEngine.");
+        return;
+    }
+
+    if (!config.has("extensions.jsengine.script"))
+    {
         logger_.error("No script file defined for JsEngine.");
         return;
     }
 
+    std::string path = config.getString("extensions.jsengine.path");
     std::string script = config.getString("extensions.jsengine.script");
+
+    std::string scriptFile = path + "/" + script;
 
     // Add functions
     duk_push_global_object(ctx_);
     duk_push_c_function(ctx_, requireNative, DUK_VARARGS);
     duk_put_prop_string(ctx_, -2, "requireNative");
-    duk_pop(ctx_);
 
-    if (duk_peval_file(ctx_, script.c_str()) != 0) {
+    if (duk_peval_file(ctx_, scriptFile.c_str()) != 0)
+    {
         std::string error(duk_safe_to_string(ctx_, -1));
         logger_.error("Could not evaluate script file: %s", error);
         return;

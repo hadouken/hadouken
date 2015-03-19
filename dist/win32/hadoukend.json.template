@@ -19,6 +19,13 @@
             "enabled": false
         },
 
+        "jsengine":
+        {
+            "enabled": false,
+            "path": "${dataPath}/js",
+            "script": "hadouken.js"
+        },
+
         "pushbullet":
         {
             "enabled": false,

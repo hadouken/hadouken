@@ -2,8 +2,11 @@
 
 #include <Poco/File.h>
 #include <Poco/Path.h>
+#include <Poco/Util/Application.h>
 #include <fstream>
 #include <sstream>
+
+using namespace Poco::Util;
 
 duk_ret_t fs_getFiles(duk_context*);
 duk_ret_t fs_readFile(duk_context*);
@@ -19,14 +22,24 @@ duk_ret_t fs_getFiles(duk_context* ctx)
     int argCount = duk_get_top(ctx);
     std::string inputPath(duk_get_string(ctx, 0));
     
-    Poco::File p(inputPath);
-    std::vector<Poco::File> files;
+    Poco::Path fp(inputPath);
+
+    if (fp.isRelative())
+    {
+        Application& app = Application::instance();
+        std::string scriptPath = app.config().getString("extensions.jsengine.path");
+
+        fp.makeAbsolute(scriptPath);
+    }
+
+    Poco::File p(fp);
 
     if (!p.exists())
     {
         return 0;
     }
 
+    std::vector<Poco::File> files;
     p.list(files);
     std::vector<Poco::File>::iterator it = files.begin(); 
 
