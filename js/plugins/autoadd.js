@@ -1,11 +1,11 @@
 var session = require("bittorrent").session;
-var config  = require("config");
+//var config  = require("config");
 var fs      = require("fs");
 
 var timer   = null;
 
 function checkFolders() {
-    var folders = config["extensions.autoadd.folders"];
+    var folders = config.get("extensions.autoadd.folders");
 
     if(!folders || !folders.length || folders.length === 0) {
         return;

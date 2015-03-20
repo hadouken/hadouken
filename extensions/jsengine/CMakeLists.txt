@@ -8,6 +8,8 @@ add_library(
     duktape.c
     manifest.cpp
     jsengineextension.cpp
+    mod_bittorrent.cpp
+    mod_config.cpp
     mod_fs.cpp
 )
 

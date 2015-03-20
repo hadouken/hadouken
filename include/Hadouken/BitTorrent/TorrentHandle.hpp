@@ -18,11 +18,11 @@ namespace Hadouken
         {
             friend class Session;
 
-            explicit TorrentHandle(const libtorrent::torrent_handle& handle);
+            HDKN_EXPORT explicit TorrentHandle(const libtorrent::torrent_handle& handle);
 
-            TorrentHandle(const TorrentHandle& h);
+            HDKN_EXPORT TorrentHandle(const TorrentHandle& h);
 
-            TorrentHandle& operator=(const TorrentHandle&) = delete;
+            HDKN_EXPORT TorrentHandle& operator=(const TorrentHandle&) = delete;
 
             void getFileProgress(std::vector<int64_t>& progress) const;
 
@@ -36,13 +36,13 @@ namespace Hadouken
 
             std::unique_ptr<TorrentInfo> getTorrentFile() const;
 
-            bool isValid() const;
+            HDKN_EXPORT bool isValid() const;
 
             HDKN_EXPORT void moveStorage(const std::string& savePath) const;
             
-            void pause() const;
+            HDKN_EXPORT void pause() const;
 
-            void resume() const;
+            HDKN_EXPORT void resume() const;
 
             void addTag(std::string tag);
 

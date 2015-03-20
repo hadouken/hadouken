@@ -1,4 +1,9 @@
 
+EventEmitter = {};
+EventEmitter.on = function() {
+    print("HEHEH");
+};
+
 (function() {
     if (typeof String.prototype.endsWith !== 'function') {
         String.prototype.endsWith = function(suffix) {
@@ -12,18 +17,32 @@
             "fs"
         ];
 
+        var found = false;
         var src;
 
         if(nativeModules.indexOf(id) > -1) {
             requireNative(id, require, exports, module);
-        } else {
-            var fs = require("fs", require, exports, module);
+            found = true;
 
-            if(!id.endsWith(".js")) {
-                id = id + ".js";
+            if(id === "fs") {
+                return src;
             }
+        }
 
-            src = fs.readFile(id);
+        var fs = require("fs", require, exports, module);
+
+        if(!id.endsWith(".js")) {
+            id = id + ".js";
+        }
+
+        src = fs.readFile(id);
+
+        if(typeof src === "string") {
+            found = true;
+        }
+
+        if(!found) {
+            throw new Error("Module not found: " + id);
         }
 
         return src;

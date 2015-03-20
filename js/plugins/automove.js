@@ -1,5 +1,5 @@
 var session = require("bittorrent").session;
-var config  = require("config");
+//var config  = require("config");
 
 function getField(fieldName, torrent) {
     if(fieldName === "name") {
@@ -10,7 +10,7 @@ function getField(fieldName, torrent) {
 }
 
 function torrentFinished(torrent) {
-    var rules = config["extensions.automove.rules"];
+    var rules = config.get("extensions.automove.rules");
     
     if(!rules || !rules.length || rules.length === 0) {
         return;

@@ -7,6 +7,14 @@
 
 #include "duktape.h"
 
+namespace Hadouken
+{
+    namespace BitTorrent
+    {
+        struct TorrentHandle;
+    }
+}
+
 namespace JsEngine
 {
     class JsEngineExtension : public Hadouken::Extensions::Extension
@@ -19,6 +27,8 @@ namespace JsEngine
         void unload();
 
     private:
+        void onTorrentCompleted(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+
         Poco::Logger& logger_;
         duk_context* ctx_;
     };

@@ -33,115 +33,115 @@ namespace Hadouken
 
             TorrentStatus(const libtorrent::torrent_status& status);
 
-            int getActiveTime() const;
+            HDKN_EXPORT int getActiveTime() const;
 
-            time_t getAddedTime() const;
+            HDKN_EXPORT time_t getAddedTime() const;
 
-            uint64_t getAllTimeDownload() const;
+            HDKN_EXPORT uint64_t getAllTimeDownload() const;
 
-            uint64_t getAllTimeUpload() const;
+            HDKN_EXPORT uint64_t getAllTimeUpload() const;
 
-            Poco::Timespan getAnnounceInterval() const;
+            HDKN_EXPORT Poco::Timespan getAnnounceInterval() const;
 
-            int getBlockSize() const;
+            HDKN_EXPORT int getBlockSize() const;
 
-            Poco::Timestamp getCompletedTime() const;
+            HDKN_EXPORT Poco::Timestamp getCompletedTime() const;
 
-            int getConnectionsLimit() const;
+            HDKN_EXPORT int getConnectionsLimit() const;
 
-            int getConnectCandidates() const;
+            HDKN_EXPORT int getConnectCandidates() const;
 
-            std::string getCurrentTracker() const;
+            HDKN_EXPORT std::string getCurrentTracker() const;
 
-            float getDistributedCopies() const;
+            HDKN_EXPORT float getDistributedCopies() const;
 
-            int getDownloadPayloadRate() const;
+            HDKN_EXPORT int getDownloadPayloadRate() const;
 
-            int getDownloadRate() const;
+            HDKN_EXPORT int getDownloadRate() const;
 
-            int getDownBandwidthQueue() const;
+            HDKN_EXPORT int getDownBandwidthQueue() const;
 
-            std::string getError() const;
+            HDKN_EXPORT std::string getError() const;
 
-            Poco::Timestamp getFinishedTime() const;
+            HDKN_EXPORT Poco::Timestamp getFinishedTime() const;
 
-            TorrentHandle getHandle() const;
+            HDKN_EXPORT TorrentHandle getHandle() const;
 
-            bool hasIncoming() const;
+            HDKN_EXPORT bool hasIncoming() const;
 
-            bool hasMetadata() const;
+            HDKN_EXPORT bool hasMetadata() const;
 
-            std::string getInfoHash() const;
+            HDKN_EXPORT std::string getInfoHash() const;
 
-            bool getIpFilterApplies() const;
+            HDKN_EXPORT bool getIpFilterApplies() const;
 
-            Poco::Timespan getLastScrape() const;
+            HDKN_EXPORT Poco::Timespan getLastScrape() const;
 
-            Poco::Timestamp getLastSeenComplete() const;
+            HDKN_EXPORT Poco::Timestamp getLastSeenComplete() const;
 
-            int getListPeers() const;
+            HDKN_EXPORT int getListPeers() const;
 
-            int getListSeeds() const;
+            HDKN_EXPORT int getListSeeds() const;
 
             HDKN_EXPORT std::string getName() const;
 
-            bool getNeedSaveResume() const;
+            HDKN_EXPORT bool getNeedSaveResume() const;
 
-            Poco::Timespan getNextAnnounce() const;
+            HDKN_EXPORT Poco::Timespan getNextAnnounce() const;
 
-            int getNumComplete() const;
+            HDKN_EXPORT int getNumComplete() const;
 
-            int getNumConnections() const;
+            HDKN_EXPORT int getNumConnections() const;
 
-            int getNumIncomplete() const;
+            HDKN_EXPORT int getNumIncomplete() const;
 
-            int getNumPeers() const;
+            HDKN_EXPORT int getNumPeers() const;
 
-            int getNumPieces() const;
+            HDKN_EXPORT int getNumPieces() const;
 
-            int getNumSeeds() const;
+            HDKN_EXPORT int getNumSeeds() const;
 
-            int getNumUploads() const;
+            HDKN_EXPORT int getNumUploads() const;
 
             // TODO Bitfield getPieces const;
 
-            int getPriority() const;
+            HDKN_EXPORT int getPriority() const;
 
-            float getProgress() const;
+            HDKN_EXPORT float getProgress() const;
 
-            int getQueuePosition() const;
+            HDKN_EXPORT int getQueuePosition() const;
 
-            std::string getSavePath() const;
+            HDKN_EXPORT std::string getSavePath() const;
 
-            Poco::Timespan getSeedingTime() const;
+            HDKN_EXPORT Poco::Timespan getSeedingTime() const;
 
             // TODO seed mode
 
-            int getSeedRank() const;
+            HDKN_EXPORT int getSeedRank() const;
 
             // TODO share mode
 
-            int getSparseRegions() const;
+            HDKN_EXPORT int getSparseRegions() const;
 
-            State getState() const;
+            HDKN_EXPORT State getState() const;
 
-            uint64_t getTotalDownload() const;
+            HDKN_EXPORT uint64_t getTotalDownload() const;
 
-            uint64_t getTotalUpload() const;
+            HDKN_EXPORT uint64_t getTotalUpload() const;
 
-            int getUploadRate() const;
+            HDKN_EXPORT int getUploadRate() const;
 
-            bool isAutoManaged() const;
+            HDKN_EXPORT bool isAutoManaged() const;
 
-            bool isFinished() const;
+            HDKN_EXPORT bool isFinished() const;
 
-            bool isMovingStorage() const;
+            HDKN_EXPORT bool isMovingStorage() const;
 
-            bool isPaused() const;
+            HDKN_EXPORT bool isPaused() const;
 
-            bool isSeeding() const;
+            HDKN_EXPORT bool isSeeding() const;
 
-            bool isSequentialDownload() const;
+            HDKN_EXPORT bool isSequentialDownload() const;
 
         private:
             const libtorrent::torrent_status status_;

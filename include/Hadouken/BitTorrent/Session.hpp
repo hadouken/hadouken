@@ -47,9 +47,9 @@ namespace Hadouken
 
             TorrentHandle findTorrent(const std::string& infoHash) const;
 
-            std::vector<TorrentHandle> getTorrents() const;
+            HDKN_EXPORT std::vector<TorrentHandle> getTorrents() const;
 
-            std::string getLibtorrentVersion() const;
+            HDKN_EXPORT std::string getLibtorrentVersion() const;
 
             ProxySettings getProxy() const;
 

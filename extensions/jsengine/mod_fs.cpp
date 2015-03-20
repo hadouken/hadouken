@@ -62,7 +62,17 @@ duk_ret_t fs_readFile(duk_context* ctx)
     int argCount = duk_get_top(ctx);
     std::string inputPath(duk_get_string(ctx, 0));
 
-    Poco::File p(inputPath);
+    Poco::Path fp(inputPath);
+
+    if (fp.isRelative())
+    {
+        Application& app = Application::instance();
+        std::string scriptPath = app.config().getString("extensions.jsengine.path");
+
+        fp.makeAbsolute(scriptPath);
+    }
+
+    Poco::File p(fp);
 
     if (p.exists())
     {

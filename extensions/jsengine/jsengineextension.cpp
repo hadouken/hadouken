@@ -1,6 +1,15 @@
 #include "jsengineextension.hpp"
+#include "mod_bittorrent.hpp"
+#include "mod_config.hpp"
 #include "mod_fs.hpp"
 
+#include <Hadouken/BitTorrent/Session.hpp>
+#include <Hadouken/BitTorrent/TorrentHandle.hpp>
+#include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
+#include <Poco/Delegate.h>
+#include <Poco/Util/Application.h>
+
+using namespace Hadouken::BitTorrent;
 using namespace JsEngine;
 using namespace Poco::Util;
 
@@ -18,7 +27,19 @@ duk_ret_t requireNative(duk_context* ctx)
 
     if (moduleName == "bittorrent")
     {
-        return 0;
+        duk_push_c_function(ctx, dukopen_bittorrent, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
+
+        return 1;
+    }
+    else if (moduleName == "config")
+    {
+        duk_push_c_function(ctx, dukopen_config, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
+
+        return 1;
     }
     else if (moduleName == "fs")
     {
@@ -29,6 +50,12 @@ duk_ret_t requireNative(duk_context* ctx)
         return 1;
     }
 
+    return 0;
+}
+
+duk_ret_t setInterval(duk_context* ctx)
+{
+    int argCount = duk_get_top(ctx);
     return 0;
 }
 
@@ -64,10 +91,14 @@ void JsEngineExtension::load(AbstractConfiguration& config)
 
     std::string scriptFile = path + "/" + script;
 
-    // Add functions
     duk_push_global_object(ctx_);
+
+    // Add functions
     duk_push_c_function(ctx_, requireNative, DUK_VARARGS);
     duk_put_prop_string(ctx_, -2, "requireNative");
+
+    duk_push_c_function(ctx_, setInterval, 2);
+    duk_put_prop_string(ctx_, -2, "setInterval");
 
     if (duk_peval_file(ctx_, scriptFile.c_str()) != 0)
     {
@@ -78,9 +109,22 @@ void JsEngineExtension::load(AbstractConfiguration& config)
 
     // Ignore result
     duk_pop(ctx_);
+
+    // Hook up events
+    Application& app = Application::instance();
+    Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
+    sess.onTorrentAdded += Poco::delegate(this, &JsEngineExtension::onTorrentCompleted);
 }
 
 void JsEngineExtension::unload()
 {
     duk_destroy_heap(ctx_);
 }
+
+void JsEngineExtension::onTorrentCompleted(const void* sender, TorrentHandle& handle)
+{
+    duk_push_global_object(ctx_);
+
+    duk_pop(ctx_);
+}
+
