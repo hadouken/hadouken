@@ -2,11 +2,13 @@
 #include "mod_bittorrent.hpp"
 #include "mod_config.hpp"
 #include "mod_fs.hpp"
+#include "timer.hpp"
 
 #include <Hadouken/BitTorrent/Session.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Poco/Delegate.h>
+#include <Poco/Clock.h>
 #include <Poco/Util/Application.h>
 
 using namespace Hadouken::BitTorrent;
@@ -53,26 +55,63 @@ duk_ret_t requireNative(duk_context* ctx)
     return 0;
 }
 
-duk_ret_t setInterval(duk_context* ctx)
-{
-    int argCount = duk_get_top(ctx);
-    return 0;
-}
-
 JsEngineExtension::JsEngineExtension()
-    : logger_(Poco::Logger::get("jsengine.jsengineextension"))
+    : logger_(Poco::Logger::get("jsengine.jsengineextension")),
+      run_adapter_(*this, &JsEngineExtension::run)
 {
 }
 
 void JsEngineExtension::load(AbstractConfiguration& config)
 {
-    ctx_ = duk_create_heap_default();
+    is_running_ = true;
+    run_thread_.start(run_adapter_);
+}
 
-    if (!ctx_)
+void JsEngineExtension::unload()
+{
+    is_running_ = false;
+    run_thread_.join();
+}
+
+void JsEngineExtension::run()
+{
+    duk_context* ctx = duk_create_heap_default();
+
+    if (!ctx)
     {
         logger_.error("Could not create Duktape heap.");
         return;
     }
+
+    initContext(ctx);
+    Timer::init(ctx);
+
+    runScript(ctx);
+
+    uint32_t msgTO = 0x7FFFFFFF;
+    Poco::Clock timerClock;
+
+    while (is_running_)
+    {
+        Timer::run(ctx, timerClock, &msgTO);
+        uint32_t sleep = std::min((uint32_t)100, msgTO);
+        Poco::Thread::sleep(sleep);
+    }
+
+    duk_destroy_heap(ctx);
+}
+
+void JsEngineExtension::initContext(duk_context* ctx)
+{
+    // Add functions
+    duk_push_c_function(ctx, requireNative, DUK_VARARGS);
+    duk_put_global_string(ctx, "requireNative");
+}
+
+void JsEngineExtension::runScript(duk_context* ctx)
+{
+    Application& app = Application::instance();
+    AbstractConfiguration& config = app.config();
 
     if (!config.has("extensions.jsengine.path"))
     {
@@ -88,43 +127,14 @@ void JsEngineExtension::load(AbstractConfiguration& config)
 
     std::string path = config.getString("extensions.jsengine.path");
     std::string script = config.getString("extensions.jsengine.script");
-
     std::string scriptFile = path + "/" + script;
 
-    duk_push_global_object(ctx_);
-
-    // Add functions
-    duk_push_c_function(ctx_, requireNative, DUK_VARARGS);
-    duk_put_prop_string(ctx_, -2, "requireNative");
-
-    duk_push_c_function(ctx_, setInterval, 2);
-    duk_put_prop_string(ctx_, -2, "setInterval");
-
-    if (duk_peval_file(ctx_, scriptFile.c_str()) != 0)
+    if (duk_peval_file(ctx, scriptFile.c_str()) != 0)
     {
-        std::string error(duk_safe_to_string(ctx_, -1));
+        std::string error(duk_safe_to_string(ctx, -1));
         logger_.error("Could not evaluate script file: %s", error);
-        return;
     }
 
     // Ignore result
-    duk_pop(ctx_);
-
-    // Hook up events
-    Application& app = Application::instance();
-    Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
-    sess.onTorrentAdded += Poco::delegate(this, &JsEngineExtension::onTorrentCompleted);
+    duk_pop(ctx);
 }
-
-void JsEngineExtension::unload()
-{
-    duk_destroy_heap(ctx_);
-}
-
-void JsEngineExtension::onTorrentCompleted(const void* sender, TorrentHandle& handle)
-{
-    duk_push_global_object(ctx_);
-
-    duk_pop(ctx_);
-}
-

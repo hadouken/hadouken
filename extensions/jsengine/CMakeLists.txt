@@ -11,6 +11,7 @@ add_library(
     mod_bittorrent.cpp
     mod_config.cpp
     mod_fs.cpp
+    timer.cpp
 )
 
 target_link_libraries(

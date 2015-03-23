@@ -1,8 +1,10 @@
-#ifndef PUSHBULLET_PUSHBULLETEXTENSION_HPP
-#define PUSHBULLET_PUSHBULLETEXTENSION_HPP
+#ifndef JSENGINE_JSENGINEEXTENSION_HPP
+#define JSENGINE_JSENGINEEXTENSION_HPP
 
 #include <Hadouken/Extensions/Extension.hpp>
 #include <Poco/Logger.h>
+#include <Poco/RunnableAdapter.h>
+#include <Poco/Thread.h>
 #include <Poco/Util/AbstractConfiguration.h>
 
 #include "duktape.h"
@@ -27,10 +29,14 @@ namespace JsEngine
         void unload();
 
     private:
-        void onTorrentCompleted(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+        void run();
+        void initContext(duk_context* ctx);
+        void runScript(duk_context* ctx);
 
+        bool is_running_;
+        Poco::RunnableAdapter<JsEngineExtension> run_adapter_;
+        Poco::Thread run_thread_;
         Poco::Logger& logger_;
-        duk_context* ctx_;
     };
 }
 

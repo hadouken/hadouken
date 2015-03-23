@@ -9,62 +9,7 @@
 using namespace Hadouken::BitTorrent;
 using namespace Poco::Util;
 
-duk_ret_t session_getTorrents(duk_context*);
-
-duk_ret_t handle_move(duk_context*);
-duk_ret_t handle_pause(duk_context*);
-duk_ret_t handle_resume(duk_context*);
-duk_ret_t handle_finalizer(duk_context*);
-
-static const duk_function_list_entry session_funcs[] = {
-    { "getTorrents", session_getTorrents, 0 },
-    { NULL, NULL, 0 }
-};
-
-static const duk_function_list_entry handle_funcs[] = {
-    { "move", handle_move, 1 },
-    { "pause", handle_pause, 0 },
-    { "resume", handle_resume, 0 },
-    { NULL, NULL, 0 }
-};
-
-void push_torrent_handle(TorrentHandle& handle, duk_context* ctx)
-{
-    TorrentStatus status = handle.getStatus();
-
-    duk_idx_t handleIndex = duk_push_object(ctx);
-    duk_put_function_list(ctx, handleIndex, handle_funcs);
-
-    duk_push_pointer(ctx, new TorrentHandle(handle));
-    duk_put_prop_string(ctx, handleIndex, "\xff" "handle");
-
-    duk_push_string(ctx, handle.getInfoHash().c_str());
-    duk_put_prop_string(ctx, handleIndex, "infoHash");
-
-    duk_push_string(ctx, status.getName().c_str());
-    duk_put_prop_string(ctx, handleIndex, "name");
-
-    duk_push_number(ctx, status.getProgress());
-    duk_put_prop_string(ctx, handleIndex, "progress");
-
-    duk_push_string(ctx, status.getSavePath().c_str());
-    duk_put_prop_string(ctx, handleIndex, "savePath");
-
-    duk_push_int(ctx, status.getDownloadRate());
-    duk_put_prop_string(ctx, handleIndex, "downloadRate");
-
-    duk_push_int(ctx, status.getUploadRate());
-    duk_put_prop_string(ctx, handleIndex, "uploadRate");
-
-    duk_push_number(ctx, status.getTotalDownload());
-    duk_put_prop_string(ctx, handleIndex, "downloadedBytes");
-
-    duk_push_number(ctx, status.getTotalUpload());
-    duk_put_prop_string(ctx, handleIndex, "uploadedBytes");
-
-    duk_push_c_function(ctx, handle_finalizer, 1);
-    duk_set_finalizer(ctx, -2);
-}
+void push_torrent_handle(TorrentHandle& handle, duk_context* ctx);
 
 duk_ret_t session_getTorrents(duk_context* ctx)
 {
@@ -166,6 +111,56 @@ duk_ret_t handle_finalizer(duk_context* ctx)
     }
 
     return 0;
+}
+
+static const duk_function_list_entry session_funcs[] = {
+    { "getTorrents", session_getTorrents, 0 },
+    { NULL, NULL, 0 }
+};
+
+static const duk_function_list_entry handle_funcs[] = {
+    { "move", handle_move, 1 },
+    { "pause", handle_pause, 0 },
+    { "resume", handle_resume, 0 },
+    { NULL, NULL, 0 }
+};
+
+void push_torrent_handle(TorrentHandle& handle, duk_context* ctx)
+{
+    TorrentStatus status = handle.getStatus();
+
+    duk_idx_t handleIndex = duk_push_object(ctx);
+    duk_put_function_list(ctx, handleIndex, handle_funcs);
+
+    duk_push_pointer(ctx, new TorrentHandle(handle));
+    duk_put_prop_string(ctx, handleIndex, "\xff" "handle");
+
+    duk_push_string(ctx, handle.getInfoHash().c_str());
+    duk_put_prop_string(ctx, handleIndex, "infoHash");
+
+    duk_push_string(ctx, status.getName().c_str());
+    duk_put_prop_string(ctx, handleIndex, "name");
+
+    duk_push_number(ctx, status.getProgress());
+    duk_put_prop_string(ctx, handleIndex, "progress");
+
+    duk_push_string(ctx, status.getSavePath().c_str());
+    duk_put_prop_string(ctx, handleIndex, "savePath");
+
+    duk_push_int(ctx, status.getDownloadRate());
+    duk_put_prop_string(ctx, handleIndex, "downloadRate");
+
+    duk_push_int(ctx, status.getUploadRate());
+    duk_put_prop_string(ctx, handleIndex, "uploadRate");
+
+    duk_push_number(ctx, status.getTotalDownload());
+    duk_put_prop_string(ctx, handleIndex, "downloadedBytes");
+
+    duk_push_number(ctx, status.getTotalUpload());
+    duk_put_prop_string(ctx, handleIndex, "uploadedBytes");
+
+    duk_push_c_function(ctx, handle_finalizer, 1);
+    duk_set_finalizer(ctx, -2);
 }
 
 namespace JsEngine

@@ -4,6 +4,8 @@ var fs      = require("fs");
 
 var timer   = null;
 
+function hw() { print("Helo"); }
+
 function checkFolders() {
     var folders = config.get("extensions.autoadd.folders");
 
@@ -29,7 +31,7 @@ function checkFolders() {
 }
 
 exports.load = function() {
-    timer = setInterval(checkFolders, 5000);
+    timer = setInterval(hw, 5000);
 }
 
 exports.unload = function() {
