@@ -14,6 +14,7 @@ EventEmitter.on = function() {
     Duktape.modSearch = function(id, require, exports, module) {
         var nativeModules = [
             "bittorrent",
+            "config",
             "fs"
         ];
 

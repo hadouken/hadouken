@@ -16,6 +16,12 @@
 
 #include "timer.hpp"
 
+#define TRUE  1
+#define FALSE 0
+#undef  min
+
+#include <algorithm>
+
 using namespace JsEngine;
 
 typedef struct _HDKN_TIMER {
@@ -309,7 +315,7 @@ void Timer::run(duk_context* ctx, Poco::Clock& timerClock, uint32_t* currentTO)
                 // Call the timer function
                 if (duk_pcall(ctx, 0) != DUK_EXEC_SUCCESS)
                 {
-                    //AJS_ConsoleSignalError(ctx);
+                    printf("%s\n", duk_to_string(ctx, -1));
                 }
                 
                 duk_pop(ctx); // return value
@@ -321,14 +327,10 @@ void Timer::run(duk_context* ctx, Poco::Clock& timerClock, uint32_t* currentTO)
         }
     }
 
-    /*
-    * Pop timer funcs array
-    */
+    // Pop timer funcs array
     duk_pop(ctx);
     
-    /*
-    * Reload the timer state and calculate the new deadline.
-    */
+    // Reload the timer state and calculate the new deadline.
     timers = static_cast<HDKN_TIMER*>(duk_get_buffer(ctx, -1, &numTimers));
     numTimers = numTimers / sizeof(HDKN_TIMER);
     deadline = 0xFFFFFFFF;
@@ -337,7 +339,7 @@ void Timer::run(duk_context* ctx, Poco::Clock& timerClock, uint32_t* currentTO)
     {
         if (timers[timerEntry].id != 0)
         {
-            deadline = min(timers[timerEntry].countDown, deadline);
+            deadline = std::min(timers[timerEntry].countDown, deadline);
         }
     }
 

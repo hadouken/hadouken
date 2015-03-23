@@ -19,8 +19,8 @@ static const duk_function_list_entry fs_funcs[] = {
 
 duk_ret_t fs_getFiles(duk_context* ctx)
 {
-    int argCount = duk_get_top(ctx);
-    std::string inputPath(duk_get_string(ctx, 0));
+    const char* rawInputPath = duk_require_string(ctx, 0);
+    std::string inputPath(rawInputPath);
     
     Poco::Path fp(inputPath);
 

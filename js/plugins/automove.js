@@ -1,5 +1,5 @@
 var session = require("bittorrent").session;
-//var config  = require("config");
+var config  = require("config");
 
 function getField(fieldName, torrent) {
     if(fieldName === "name") {
