@@ -10,7 +10,7 @@ function getField(fieldName, torrent) {
 }
 
 function torrentFinished(torrent) {
-    var rules = config.get("extensions.automove.rules");
+    var rules = config.get("automove.rules");
     
     if(!rules || !rules.length || rules.length === 0) {
         return;

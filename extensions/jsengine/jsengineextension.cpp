@@ -6,6 +6,7 @@
 
 #include <Hadouken/BitTorrent/Session.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
+#include <Hadouken/BitTorrent/TorrentStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Poco/Delegate.h>
 #include <Poco/Clock.h>
@@ -68,6 +69,7 @@ void JsEngineExtension::load(AbstractConfiguration& config)
 
     // Hook up event handlers
     sess.onTorrentAdded += Poco::delegate(this, &JsEngineExtension::onTorrentAdded);
+    sess.onTorrentFinished += Poco::delegate(this, &JsEngineExtension::onTorrentFinished);
 
     is_running_ = true;
     run_thread_.start(run_adapter_);
@@ -80,6 +82,7 @@ void JsEngineExtension::unload()
 
     // Tear down event handlers
     sess.onTorrentAdded -= Poco::delegate(this, &JsEngineExtension::onTorrentAdded);
+    sess.onTorrentFinished -= Poco::delegate(this, &JsEngineExtension::onTorrentFinished);
 
     is_running_ = false;
     run_thread_.join();
@@ -105,8 +108,8 @@ void JsEngineExtension::run()
 
     while (is_running_)
     {
-        Timer::run(ctx, timerClock, &msgTO);
         fireEvents(ctx);
+        Timer::run(ctx, timerClock, &msgTO);
 
         uint32_t sleep = std::min((uint32_t)100, msgTO);
         Poco::Thread::sleep(sleep);
@@ -174,9 +177,20 @@ void JsEngineExtension::fireEvents(duk_context* ctx)
 
                 duk_push_string(ctx, data.first.c_str());
 
-                if (duk_pcall_method(ctx, 1) != DUK_EXEC_SUCCESS)
+                if ((data.first == "torrent.added" || data.first == "torrent.finished") && data.second)
                 {
-                    logger_.error("Could not fire events.");
+                    TorrentHandle* handle = static_cast<TorrentHandle*>(data.second);
+                    BitTorrent::setTorrentHandleObject(ctx, *handle);
+                }
+                else
+                {
+                    duk_push_null(ctx);
+                }
+
+                if (duk_pcall_method(ctx, 2) != DUK_EXEC_SUCCESS)
+                {
+                    std::string error(duk_safe_to_string(ctx, -1));
+                    logger_.error("Could not fire event: %s", error);
                 }
 
                 event_data_.pop();
@@ -191,5 +205,13 @@ void JsEngineExtension::onTorrentAdded(const void* sender, TorrentHandle& handle
     Poco::Mutex::ScopedLock lock(event_mutex_);
 
     std::string eventName = "torrent.added";
+    event_data_.push(std::make_pair(eventName, &handle));
+}
+
+void JsEngineExtension::onTorrentFinished(const void* sender, TorrentHandle& handle)
+{
+    Poco::Mutex::ScopedLock lock(event_mutex_);
+
+    std::string eventName = "torrent.finished";
     event_data_.push(std::make_pair(eventName, &handle));
 }

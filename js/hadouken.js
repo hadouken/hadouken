@@ -1,17 +1,42 @@
-
+/*
+Event emitter. This should probably be moved elsewhere.
+*/
 EventEmitter = {};
+EventEmitter.callbacks = {};
 
-EventEmitter.emit = function(name) {
-    print("Event: " + name);
-};
+EventEmitter.emit = function(eventName, eventData) {
+    print(JSON.stringify(arguments));
 
-(function() {
-    if (typeof String.prototype.endsWith !== 'function') {
-        String.prototype.endsWith = function(suffix) {
-            return this.indexOf(suffix, this.length - suffix.length) !== -1;
-        };
+    var callbacks = EventEmitter.callbacks[eventName];
+
+    if(!callbacks) {
+        return;
     }
 
+    for(var i = 0; i < callbacks.length; i++) {
+        callbacks[i](eventData);
+    }
+};
+
+EventEmitter.register = function(eventName, callback) {
+    if(!EventEmitter.callbacks[eventName]) {
+        EventEmitter.callbacks[eventName] = [];
+    }
+
+    EventEmitter.callbacks[eventName].push(callback);
+};
+
+/*
+General nice-to-have functions.
+*/
+if (typeof String.prototype.endsWith !== "function") {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
+// Do our stuff
+(function() {
     Duktape.modSearch = function(id, require, exports, module) {
         var nativeModules = [
             "bittorrent",

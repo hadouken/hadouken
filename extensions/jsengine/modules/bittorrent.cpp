@@ -7,6 +7,11 @@
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Poco/Util/Application.h>
 
+#define DUK_READONLY_PROPERTY(ctx, index, name, func) \
+    duk_push_string(ctx, #name); \
+    duk_push_c_function(ctx, func, 0); \
+    duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_ENUMERABLE | DUK_DEFPROP_ENUMERABLE);
+
 using namespace JsEngine::Modules;
 using namespace Hadouken::BitTorrent;
 using namespace Poco::Util;
@@ -75,7 +80,8 @@ duk_ret_t BitTorrent::handleGetQueuePosition(duk_context* ctx)
 duk_ret_t BitTorrent::handleGetStatus(duk_context* ctx)
 {
     TorrentHandle* handle = getTorrentHandleFromThis(ctx);
-    setTorrentStatusObject(ctx, handle->getStatus());
+    TorrentStatus status = handle->getStatus();
+    setTorrentStatusObject(ctx, status);
     return 1;
 }
 
@@ -319,11 +325,6 @@ TorrentStatus* BitTorrent::getTorrentStatusFromThis(duk_context* ctx)
     duk_pop(ctx);
     return 0;
 }
-
-#define DUK_READONLY_PROPERTY(ctx, index, name, func) \
-    duk_push_string(ctx, ##name); \
-    duk_push_c_function(ctx, func, 0); \
-    duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER);
 
 void BitTorrent::setTorrentHandleObject(duk_context* ctx, TorrentHandle& handle)
 {

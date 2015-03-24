@@ -39,6 +39,7 @@ namespace JsEngine
         void fireEvents(duk_context* ctx);
 
         void onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+        void onTorrentFinished(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
 
         bool is_running_;
         Poco::RunnableAdapter<JsEngineExtension> run_adapter_;

@@ -23,6 +23,7 @@ namespace JsEngine
         {
         public:
             static duk_ret_t init(duk_context* ctx);
+            static void setTorrentHandleObject(duk_context* ctx, Hadouken::BitTorrent::TorrentHandle& handle);
 
         private:
             static duk_ret_t handleFinalizer(duk_context* ctx);
@@ -49,7 +50,6 @@ namespace JsEngine
             static Hadouken::BitTorrent::Session* getSessionFromThis(duk_context* ctx);
             static Hadouken::BitTorrent::TorrentHandle* getTorrentHandleFromThis(duk_context* ctx);
             static Hadouken::BitTorrent::TorrentStatus* getTorrentStatusFromThis(duk_context* ctx);
-            static void setTorrentHandleObject(duk_context* ctx, Hadouken::BitTorrent::TorrentHandle& handle);
             static void setTorrentStatusObject(duk_context* ctx, Hadouken::BitTorrent::TorrentStatus& status);
 
             static const duk_function_list_entry handle_functions_[];

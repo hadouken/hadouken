@@ -2,7 +2,9 @@ var session = require("bittorrent").session;
 var config  = require("config");
 var fs      = require("fs");
 
-var timer   = null;
+// Local variables
+var timer           = null;
+var defaultInterval = 5000;
 
 function checkFolders() {
     var folders = config.get("autoadd.folders");
@@ -22,14 +24,22 @@ function checkFolders() {
         for(var j = 0; j < files.length; j++) {
             var file = files[j];
 
-            session.addTorrentFile(file, { savePath: folder.savePath });
+            if(!file.endsWith(".torrent")) {
+                continue;
+            }
+
+            var params = {};
+            if(folder.savePath) params.savePath = folder.savePath;
+
+            session.addTorrentFile(file, params);
             fs.removeFile(file);
         }
     }
 }
 
 exports.load = function() {
-    timer = setInterval(checkFolders, 5000);
+    var interval = config.get("autoadd.interval") || defaultInterval;
+    timer = setInterval(checkFolders, interval);
 }
 
 exports.unload = function() {

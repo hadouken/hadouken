@@ -12,7 +12,7 @@ namespace Hadouken
         class AddTorrentParams
         {
         public:
-            Poco::Path savePath;
+            std::string savePath;
 
             std::vector<std::string> tags;
         };

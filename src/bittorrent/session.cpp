@@ -138,8 +138,6 @@ void Session::loadResumeData()
 
         logger_.information("Loading torrent '%s'.", params.ti->name());
 
-        // Set defaults
-        params.save_path = default_save_path_;
 
         // Check if resume data exists
         Poco::File torrent_state_file(torrent_file_path.setExtension("resume"));
@@ -152,6 +150,21 @@ void Session::loadResumeData()
             state_stream.read(resume_buffer.data(), resume_buffer.size());
 
             params.resume_data = resume_buffer;
+
+            // Load save path from resume data
+            libtorrent::lazy_entry state;
+            libtorrent::error_code ec;
+            libtorrent::lazy_bdecode(&params.resume_data[0], &params.resume_data[0] + params.resume_data.size(), state, ec);
+
+            if (!ec)
+            {
+                params.save_path = state.dict_find_string_value("save_path");
+            }
+        }
+        else
+        {
+            // Set defaults
+            params.save_path = default_save_path_;
         }
 
         TorrentHandle handle(sess_->add_torrent(params));
@@ -245,9 +258,9 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
 
     libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 
-    if (!params.savePath.toString().empty() && params.savePath.isDirectory())
+    if (!params.savePath.empty())
     {
-        p.save_path = params.savePath.toString();
+        p.save_path = params.savePath;
     }
     
     p.ti = new libtorrent::torrent_info(le);
@@ -274,9 +287,9 @@ void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
 {
     libtorrent::add_torrent_params p = getDefaultAddTorrentParams();
 
-    if (!params.savePath.toString().empty() && params.savePath.isDirectory())
+    if (!params.savePath.empty())
     {
-        p.save_path = params.savePath.toString();
+        p.save_path = params.savePath;
     }
 
     p.url = uri;
