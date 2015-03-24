@@ -1,4 +1,4 @@
-#include "mod_config.hpp"
+#include "config.hpp"
 
 #include <Hadouken/Platform.hpp>
 #include <Poco/File.h>

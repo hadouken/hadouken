@@ -8,10 +8,10 @@ add_library(
     duktape.c
     manifest.cpp
     jsengineextension.cpp
-    mod_bittorrent.cpp
-    mod_config.cpp
-    mod_fs.cpp
     timer.cpp
+    modules/bittorrent.cpp
+    modules/config.cpp
+    modules/fs.cpp
 )
 
 target_link_libraries(

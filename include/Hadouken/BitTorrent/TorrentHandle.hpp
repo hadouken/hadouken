@@ -30,7 +30,7 @@ namespace Hadouken
 
             void getPeerInfo(std::vector<PeerInfo>& peers) const;
 
-            int getQueuePosition() const;
+            HDKN_EXPORT int getQueuePosition() const;
 
             HDKN_EXPORT TorrentStatus getStatus() const;
 

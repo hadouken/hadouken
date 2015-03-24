@@ -1,7 +1,7 @@
 #include "jsengineextension.hpp"
-#include "mod_bittorrent.hpp"
-#include "mod_config.hpp"
-#include "mod_fs.hpp"
+#include "modules/bittorrent.hpp"
+#include "modules/config.hpp"
+#include "modules/fs.hpp"
 #include "timer.hpp"
 
 #include <Hadouken/BitTorrent/Session.hpp>
@@ -9,27 +9,27 @@
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Poco/Delegate.h>
 #include <Poco/Clock.h>
+#include <Poco/ScopedLock.h>
 #include <Poco/Util/Application.h>
 
 using namespace Hadouken::BitTorrent;
 using namespace JsEngine;
+using namespace JsEngine::Modules;
 using namespace Poco::Util;
 
 duk_ret_t requireNative(duk_context* ctx)
 {
-    int argCount = duk_get_top(ctx);
-
     // arg0: id
     // arg1: require
     // arg2: exports
     // arg3: module
 
-    const char* mod = duk_get_string(ctx, 0);
+    const char* mod = duk_require_string(ctx, 0);
     std::string moduleName(mod);
 
     if (moduleName == "bittorrent")
     {
-        duk_push_c_function(ctx, dukopen_bittorrent, 1);
+        duk_push_c_function(ctx, BitTorrent::init, 1);
         duk_dup(ctx, 2);
         duk_call(ctx, 1);
 
@@ -45,7 +45,7 @@ duk_ret_t requireNative(duk_context* ctx)
     }
     else if (moduleName == "fs")
     {
-        duk_push_c_function(ctx, dukopen_fs, 1);
+        duk_push_c_function(ctx, FileSystem::init, 1);
         duk_dup(ctx, 2);
         duk_call(ctx, 1);
 
@@ -63,12 +63,24 @@ JsEngineExtension::JsEngineExtension()
 
 void JsEngineExtension::load(AbstractConfiguration& config)
 {
+    Application& app = Application::instance();
+    Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
+
+    // Hook up event handlers
+    sess.onTorrentAdded += Poco::delegate(this, &JsEngineExtension::onTorrentAdded);
+
     is_running_ = true;
     run_thread_.start(run_adapter_);
 }
 
 void JsEngineExtension::unload()
 {
+    Application& app = Application::instance();
+    Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
+
+    // Tear down event handlers
+    sess.onTorrentAdded -= Poco::delegate(this, &JsEngineExtension::onTorrentAdded);
+
     is_running_ = false;
     run_thread_.join();
 }
@@ -94,6 +106,8 @@ void JsEngineExtension::run()
     while (is_running_)
     {
         Timer::run(ctx, timerClock, &msgTO);
+        fireEvents(ctx);
+
         uint32_t sleep = std::min((uint32_t)100, msgTO);
         Poco::Thread::sleep(sleep);
     }
@@ -137,4 +151,45 @@ void JsEngineExtension::runScript(duk_context* ctx)
 
     // Ignore result
     duk_pop(ctx);
+}
+
+void JsEngineExtension::fireEvents(duk_context* ctx)
+{
+    Poco::Mutex::ScopedLock lock(event_mutex_);
+
+    if (event_data_.empty()) return;
+
+    if (duk_get_global_string(ctx, "EventEmitter"))
+    {
+        duk_idx_t evIdx = duk_get_top_index(ctx);
+        duk_get_prop_string(ctx, evIdx, "emit");
+
+        if (duk_is_callable(ctx, -1))
+        {
+            duk_dup(ctx, evIdx);
+
+            for (int i = 0; i < event_data_.size(); i++)
+            {
+                event_t data = event_data_.front();
+
+                duk_push_string(ctx, data.first.c_str());
+
+                if (duk_pcall_method(ctx, 1) != DUK_EXEC_SUCCESS)
+                {
+                    logger_.error("Could not fire events.");
+                }
+
+                event_data_.pop();
+                duk_pop(ctx);
+            }
+        }
+    }
+}
+
+void JsEngineExtension::onTorrentAdded(const void* sender, TorrentHandle& handle)
+{
+    Poco::Mutex::ScopedLock lock(event_mutex_);
+
+    std::string eventName = "torrent.added";
+    event_data_.push(std::make_pair(eventName, &handle));
 }

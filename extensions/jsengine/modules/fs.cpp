@@ -1,4 +1,4 @@
-#include "mod_fs.hpp"
+#include "fs.hpp"
 
 #include <Poco/File.h>
 #include <Poco/Path.h>
@@ -6,22 +6,20 @@
 #include <fstream>
 #include <sstream>
 
+using namespace JsEngine::Modules;
 using namespace Poco::Util;
 
-duk_ret_t fs_getFiles(duk_context*);
-duk_ret_t fs_readFile(duk_context*);
+duk_ret_t FileSystem::init(duk_context* ctx)
+{
+    duk_put_function_list(ctx, 0 /* export */, functions_);
+    return 0;
+}
 
-static const duk_function_list_entry fs_funcs[] = {
-    { "getFiles", fs_getFiles, 1 },
-    { "readFile", fs_readFile, 1 },
-    { NULL, NULL, 0 }
-};
-
-duk_ret_t fs_getFiles(duk_context* ctx)
+duk_ret_t FileSystem::getFiles(duk_context* ctx)
 {
     const char* rawInputPath = duk_require_string(ctx, 0);
     std::string inputPath(rawInputPath);
-    
+
     Poco::Path fp(inputPath);
 
     if (fp.isRelative())
@@ -41,7 +39,7 @@ duk_ret_t fs_getFiles(duk_context* ctx)
 
     std::vector<Poco::File> files;
     p.list(files);
-    std::vector<Poco::File>::iterator it = files.begin(); 
+    std::vector<Poco::File>::iterator it = files.begin();
 
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
@@ -57,12 +55,10 @@ duk_ret_t fs_getFiles(duk_context* ctx)
     return 1;
 }
 
-duk_ret_t fs_readFile(duk_context* ctx)
+duk_ret_t FileSystem::readFile(duk_context* ctx)
 {
-    int argCount = duk_get_top(ctx);
-    std::string inputPath(duk_get_string(ctx, 0));
-
-    Poco::Path fp(inputPath);
+    const char* rawPath = duk_require_string(ctx, 0);
+    Poco::Path fp(rawPath);
 
     if (fp.isRelative())
     {
@@ -91,11 +87,29 @@ duk_ret_t fs_readFile(duk_context* ctx)
     return 0;
 }
 
-namespace JsEngine
+duk_ret_t FileSystem::removeFile(duk_context* ctx)
 {
-    duk_ret_t dukopen_fs(duk_context* ctx)
+    const char* rawPath = duk_require_string(ctx, 0);
+    Poco::File file(rawPath);
+
+    if (file.exists())
     {
-        duk_put_function_list(ctx, 0 /* export */, fs_funcs);
-        return 0;
+        file.remove();
+        duk_push_true(ctx);
     }
+    else
+    {
+        duk_push_false(ctx);
+    }
+
+    return 1;
 }
+
+const duk_function_list_entry FileSystem::functions_[] = {
+    { "getFiles",   FileSystem::getFiles,   1 },
+    { "readFile",   FileSystem::readFile,   1 },
+    { "removeFile", FileSystem::removeFile, 1 },
+    { NULL, NULL, 0 }
+};
+
+

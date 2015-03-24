@@ -5,7 +5,7 @@ var fs      = require("fs");
 var timer   = null;
 
 function checkFolders() {
-    var folders = config.get("extensions.autoadd.folders");
+    var folders = config.get("autoadd.folders");
 
     if(!folders || !folders.length || folders.length === 0) {
         return;
@@ -13,7 +13,7 @@ function checkFolders() {
 
     for(var i = 0; i < folders.length; i++) {
         var folder = folders[i];
-        var files  = fs.getFiles(folder);
+        var files  = fs.getFiles(folder.path);
 
         if(!files || !files.length || files.length === 0) {
             continue;
@@ -22,7 +22,7 @@ function checkFolders() {
         for(var j = 0; j < files.length; j++) {
             var file = files[j];
 
-            session.addTorrent(file, { savePath: folder.savePath });
+            session.addTorrentFile(file, { savePath: folder.savePath });
             fs.removeFile(file);
         }
     }

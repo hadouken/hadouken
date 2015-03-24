@@ -1,7 +1,8 @@
 
 EventEmitter = {};
-EventEmitter.on = function() {
-    print("HEHEH");
+
+EventEmitter.emit = function(name) {
+    print("Event: " + name);
 };
 
 (function() {
