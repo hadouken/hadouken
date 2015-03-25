@@ -92,6 +92,32 @@ void Session::load()
             }
         }
     }
+
+    // Set proxy if one is configured.
+    if (app.config().has("bittorrent.proxy"))
+    {
+        AbstractConfiguration* proxyView = app.config().createView("bittorrent.proxy");
+
+        libtorrent::proxy_settings proxy = sess_->proxy();
+
+        std::string type = proxyView->getString("type");
+        if (type == "none") proxy.type = libtorrent::proxy_settings::proxy_type::none;
+        if (type == "socks4") proxy.type = libtorrent::proxy_settings::proxy_type::socks4;
+        if (type == "socks5") proxy.type = libtorrent::proxy_settings::proxy_type::socks5;
+        if (type == "socks5_pw") proxy.type = libtorrent::proxy_settings::proxy_type::socks5_pw;
+        if (type == "http") proxy.type = libtorrent::proxy_settings::proxy_type::http;
+        if (type == "http_pw") proxy.type = libtorrent::proxy_settings::proxy_type::http_pw;
+        if (type == "i2p_proxy") proxy.type = libtorrent::proxy_settings::proxy_type::i2p_proxy;
+
+        if (proxyView->has("hostname")) proxy.hostname = proxyView->getString("hostname");
+        if (proxyView->has("password")) proxy.password = proxyView->getString("password");
+        if (proxyView->has("port")) proxy.port = proxyView->getInt("port");
+        if (proxyView->has("proxyHostnames")) proxy.proxy_hostnames = proxyView->getBool("proxyHostnames");
+        if (proxyView->has("proxyPeerConnections")) proxy.proxy_peer_connections = proxyView->getBool("proxyPeerConnections");
+        if (proxyView->has("username")) proxy.username = proxyView->getString("username");
+
+        sess_->set_proxy(proxy);
+    }
 }
 
 void Session::loadSessionState()
