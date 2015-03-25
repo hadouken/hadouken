@@ -58,6 +58,15 @@ void Session::load()
     sess_->add_extension(&libtorrent::create_ut_metadata_plugin);
     sess_->add_extension(&libtorrent::create_ut_pex_plugin);
 
+    // Set session settings
+    libtorrent::session_settings settings = sess_->settings();
+    settings.auto_scrape_min_interval = 60 * 15; // 15 minutes
+    settings.auto_scrape_interval = 60 * 20; // 20 minutes
+    settings.lazy_bitfields = true;
+    settings.stop_tracker_timeout = 1;
+    settings.upnp_ignore_nonrouters = true;
+    sess_->set_settings(settings);
+
     loadSessionState();
     loadResumeData();
 
