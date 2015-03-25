@@ -593,8 +593,6 @@ void Session::readAlerts()
                 torrents_.erase(removed_alert->info_hash);
 
                 std::string hash = to_hex(removed_alert->info_hash.to_string());
-
-                // TODO: remove torrent and state file
                 Poco::Path torrents_path = getTorrentsPath();
 
                 if (!torrents_path.toString().empty())
