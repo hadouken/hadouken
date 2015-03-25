@@ -12,6 +12,10 @@
       </Component>
 
       <Component>
+        <File Name="jsengine.dll" />
+      </Component>
+
+      <Component>
         <File Name="launcher.dll" />
       </Component>
 
