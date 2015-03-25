@@ -27,6 +27,11 @@
             "password": "",
             "proxyHostnames": true,
             "proxyPeerConnections": true
+        },
+
+        "storage":
+        {
+            "sparse": true
         }
     },
 
