@@ -4,7 +4,19 @@
     "bittorrent":
     {
         "default_save_path": "[BITTORRENT_SAVE_PATH]",
-        "state_path": "${dataPath}/state/"
+        "state_path": "${dataPath}/state/",
+
+        "dht":
+        {
+            "enabled": true,
+            "routers":
+            [
+                [ "router.bittorrent.com",  6881 ],
+                [ "router.utorrent.com",    6881 ],
+                [ "dht.transmissionbt.com", 6881 ],
+                [ "dht.aelitis.com",        6881 ]
+            ]
+        }
     },
 
     "extensions":

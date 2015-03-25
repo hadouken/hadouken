@@ -10,6 +10,10 @@
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/create_torrent.hpp>
+#include <libtorrent/extensions/lt_trackers.hpp>
+#include <libtorrent/extensions/smart_ban.hpp>
+#include <libtorrent/extensions/ut_metadata.hpp>
+#include <libtorrent/extensions/ut_pex.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/version.hpp>
 #include <Poco/File.h>
@@ -34,7 +38,9 @@ Session::Session(const Poco::Util::LayeredConfiguration& config)
         default_save_path_ = ".";
     }
 
-    sess_ = new libtorrent::session();
+    // Use the default LT fingerprint.
+    libtorrent::fingerprint fingerprint("LT", LIBTORRENT_VERSION_MAJOR, LIBTORRENT_VERSION_MINOR, 0, 0);
+    sess_ = new libtorrent::session(fingerprint, 0);
 }
 
 Session::~Session()
@@ -46,6 +52,12 @@ void Session::load()
 {
     Application& app = Application::instance();
 
+    // Add default extensions.
+    sess_->add_extension(&libtorrent::create_lt_trackers_plugin);
+    sess_->add_extension(&libtorrent::create_smart_ban_plugin);
+    sess_->add_extension(&libtorrent::create_ut_metadata_plugin);
+    sess_->add_extension(&libtorrent::create_ut_pex_plugin);
+
     loadSessionState();
     loadResumeData();
 
@@ -54,6 +66,32 @@ void Session::load()
     // Start alert reader thread
     read_alerts_ = true;
     read_alerts_thread_.start(read_alerts_runner_);
+
+    // Start DHT if enabled
+    if (app.config().has("bittorrent.dht.enabled")
+        && app.config().getBool("bittorrent.dht.enabled"))
+    {
+        sess_->start_dht();
+
+        for (int i = 0; i < std::numeric_limits<int>::max(); i++)
+        {
+            std::string index = std::to_string(i);
+            std::string query = "bittorrent.dht.routers[" + index + "]";
+
+            if (app.config().has(query))
+            {
+                AbstractConfiguration* routerView = app.config().createView(query);
+                std::string url = routerView->getString("[0]");
+                int port = routerView->getInt("[1]");
+
+                sess_->add_dht_router(std::make_pair(url, port));
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
 }
 
 void Session::loadSessionState()
