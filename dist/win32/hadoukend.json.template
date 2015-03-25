@@ -54,6 +54,11 @@
             "script": "hadouken.js"
         },
 
+        "launcher":
+        {
+            "enabled": false
+        },
+
         "pushbullet":
         {
             "enabled": false,
