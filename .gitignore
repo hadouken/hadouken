@@ -1,3 +1,5 @@
+docs/build
+
 win32/bin
 win32/build
 win32/chocolatey/tools/chocolateyInstall.ps1
