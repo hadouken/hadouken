@@ -205,6 +205,8 @@ void Session::loadResumeData()
 
         libtorrent::add_torrent_params params;
         libtorrent::error_code ec;
+        params.flags |= libtorrent::add_torrent_params::flags_t::flag_use_resume_save_path;
+        params.save_path = default_save_path_;
         params.ti = new libtorrent::torrent_info(it->path(), ec);
 
         if (ec)
@@ -227,21 +229,6 @@ void Session::loadResumeData()
             state_stream.read(resume_buffer.data(), resume_buffer.size());
 
             params.resume_data = resume_buffer;
-
-            // Load save path from resume data
-            libtorrent::lazy_entry state;
-            libtorrent::error_code ec;
-            libtorrent::lazy_bdecode(&params.resume_data[0], &params.resume_data[0] + params.resume_data.size(), state, ec);
-
-            if (!ec)
-            {
-                params.save_path = state.dict_find_string_value("save_path");
-            }
-        }
-        else
-        {
-            // Set defaults
-            params.save_path = default_save_path_;
         }
 
         TorrentHandle handle(sess_->add_torrent(params));
