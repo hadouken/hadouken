@@ -1,4 +1,6 @@
 #include "automoveextension.hpp"
+#include "patternfilter.hpp"
+#include "tagsfilter.hpp"
 
 #include <Hadouken/BitTorrent/Session.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
@@ -26,12 +28,42 @@ void AutoMoveExtension::load(AbstractConfiguration& config)
         if (config.has(query))
         {
             AbstractConfiguration* ruleView = config.createView(query);
-            std::string field = ruleView->getString("field");
-            std::string pattern = ruleView->getString("pattern");
-            std::string targetPath = ruleView->getString("targetPath");
 
-            Rule r(field, std::regex(pattern), targetPath);
-            rules_.push_back(r);
+            std::string path = ruleView->getString("path");
+            std::string filter = ruleView->getString("filter");
+
+            AbstractConfiguration* dataView = ruleView->createView("data");
+
+            if (filter == "pattern")
+            {
+                std::regex pattern(dataView->getString("pattern"));
+                std::string field = dataView->getString("field");
+
+                Rule rule(path, new PatternFilter(pattern, field));
+                rules_.push_back(rule);
+            }
+            else if (filter == "tags")
+            {
+                std::vector<std::string> tags;
+
+                for (int j = 0; j < std::numeric_limits<int>::max(); j++)
+                {
+                    index = std::to_string(j);
+                    std::string tagQuery = query + ".data[" + index + "]";
+
+                    if (config.has(tagQuery))
+                    {
+                        tags.push_back(config.getString(tagQuery));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                Rule rule(path, new TagsFilter(tags));
+                rules_.push_back(rule);
+            }
         }
         else
         {
@@ -55,27 +87,13 @@ void AutoMoveExtension::onTorrentCompleted(const void* sender, TorrentHandle& ha
 {
     for (Rule rule : rules_)
     {
-        std::string fieldValue = getFieldValue(handle, rule.getField());
-        if (fieldValue.empty()) { continue; }
-
-        if (!std::regex_match(fieldValue, rule.getPattern()))
+        if (!rule.filter->isMatch(handle))
         {
-            logger_.debug("Pattern '%s' did not match input '%s'.", rule.getPattern(), fieldValue);
             continue;
         }
 
-        // Matched and ready.
-        handle.moveStorage(rule.getTargetPath());
+        handle.moveStorage(rule.path);
+        break;
     }
 }
 
-std::string AutoMoveExtension::getFieldValue(TorrentHandle& handle, std::string fieldName)
-{
-    if (fieldName.compare("name") == 0)
-    {
-        TorrentStatus status = handle.getStatus();
-        return status.getName();
-    }
-
-    return std::string();
-}

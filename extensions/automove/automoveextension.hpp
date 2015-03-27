@@ -28,8 +28,6 @@ namespace AutoMove
         void unload();
 
     private:
-        std::string getFieldValue(Hadouken::BitTorrent::TorrentHandle& handle, std::string fieldName);
-
         void onTorrentCompleted(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
 
         Poco::Logger& logger_;

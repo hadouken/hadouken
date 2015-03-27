@@ -44,13 +44,13 @@ namespace Hadouken
 
             HDKN_EXPORT void resume() const;
 
-            void addTag(std::string tag);
+            HDKN_EXPORT void addTag(std::string tag);
 
-            void getTags(std::vector<std::string>& tags) const;
+            HDKN_EXPORT void getTags(std::vector<std::string>& tags) const;
 
-            void removeTag(std::string tag);
+            HDKN_EXPORT void removeTag(std::string tag);
 
-            bool hasTag(std::string tag);
+            HDKN_EXPORT bool hasTag(std::string tag);
 
         private:
             const libtorrent::torrent_handle handle_;

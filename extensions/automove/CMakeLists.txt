@@ -7,6 +7,8 @@ add_library(
     SHARED
     manifest.cpp
     automoveextension.cpp
+    patternfilter.cpp
+    tagsfilter.cpp
 )
 
 target_link_libraries(

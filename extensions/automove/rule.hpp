@@ -1,39 +1,24 @@
 #ifndef AUTOMOVE_RULE_HPP
 #define AUTOMOVE_RULE_HPP
 
+#include <memory>
 #include <regex>
 #include <string>
+
+#include "filter.hpp"
 
 namespace AutoMove
 {
     struct Rule
     {
-        Rule(std::string field, std::regex pattern, std::string targetPath)
+        Rule(std::string p, Filter* filter)
+            : filter(filter)
         {
-            field_ = field;
-            pattern_ = pattern;
-            targetPath_ = targetPath;
+            path = p;
         }
 
-        std::string getField() const
-        {
-            return field_;
-        }
-
-        std::regex getPattern() const
-        {
-            return pattern_;
-        }
-
-        std::string getTargetPath() const
-        {
-            return targetPath_;
-        }
-
-    private:
-        std::string field_;
-        std::regex pattern_;
-        std::string targetPath_;
+        std::string path;
+        std::shared_ptr<Filter> filter;
     };
 }
 

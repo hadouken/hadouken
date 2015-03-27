@@ -25,6 +25,9 @@ Extensions
    :maxdepth: 1
 
    configuration/autoadd
+   configuration/automove
+   configuration/launcher
+   configuration/pushbullet
 
 
 BitTorrent configuration
