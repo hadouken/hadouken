@@ -65,6 +65,10 @@ void Session::load()
     settings.lazy_bitfields = true;
     settings.stop_tracker_timeout = 1;
     settings.upnp_ignore_nonrouters = true;
+
+    // Anonymous mode
+    settings.anonymous_mode = config_.getBool("bittorrent.anonymousMode", false);
+
     sess_->set_settings(settings);
 
     loadSessionState();

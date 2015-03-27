@@ -6,6 +6,8 @@
         "default_save_path": "[BITTORRENT_SAVE_PATH]",
         "state_path": "${dataPath}/state/",
 
+        "anonymousMode": false,
+
         "dht":
         {
             "enabled": true,

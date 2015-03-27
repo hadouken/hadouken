@@ -33,6 +33,29 @@ Extensions
 BitTorrent configuration
 ------------------------
 
+Anonymous mode
+``````````````
+
+Activating anonymous mode will make Hadouken try to hide its identity to a
+certain degree. The peer ID will no longer include the fingerprint, the user
+agent when announcing to trackers will be an empty string. It will also try to
+not leak other identifying information, such as local listen ports, your IP,
+etc.
+
+.. note:: Activating anonymous mode may have an impact on your ability to
+          connect to private trackers, which uses the peer ID and user agent
+          to identify white-listed clients.
+
+.. code:: javascript
+
+  {
+    "bittorrent":
+    {
+      "anonymousMode": true
+    }
+  }
+
+
 Disabling DHT
 `````````````
 
