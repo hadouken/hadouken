@@ -72,3 +72,33 @@ Disabling DHT
   }
 
 .. note:: The `routers` are ignored if DHT is disabled.
+
+
+Storage allocation
+``````````````````
+
+There are two modes in which files can be allocated on disk, *full allocation*
+or *sparse allocation*. Sparse allocation is the recommended, and default,
+setting.
+
+* In sparse allocation mode, sparse files are used, and pieces are downloaded
+  directly where they belong.
+
+* In full allocation mode, the entire file is filled with zeros before anything
+  is downloaded. The files are allocated on demand, the first time anything is
+  written to them. This avoids heavily fragmented files.
+
+By setting the *sparse* flag to false, Hadouken will use full allocation.
+Changing this setting will only affect new torrents.
+
+.. code:: javascript
+
+  {
+    "bittorrent":
+    {
+      "storage":
+      {
+        "sparse": false
+      }
+    }
+  }
