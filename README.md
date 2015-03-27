@@ -1,5 +1,7 @@
 # Overview
 
+[![Join the chat at https://gitter.im/hadouken/hadouken](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hadouken/hadouken?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
  * Windows: [![Build Status](https://builds.nullreferenceexception.se/app/rest/builds/buildType:id:hadouken_core_ContinuousWindows/statusIcon)](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousWindows&guest=1)
  * Ubuntu: [![Build Status](https://builds.nullreferenceexception.se/app/rest/builds/buildType:id:hadouken_core_ContinuousUbuntu/statusIcon)](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousUbuntu&guest=1)
 
