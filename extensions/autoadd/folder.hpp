@@ -9,8 +9,9 @@ namespace AutoAdd
 {
     struct Folder
     {
-        std::string sourcePath;
-        std::regex filePattern;
+        std::string path;
+        std::regex pattern;
+        std::string savePath;
         std::vector<std::string> tags;
     };
 }

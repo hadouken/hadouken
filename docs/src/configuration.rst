@@ -18,6 +18,15 @@ See the list below for where your configuration file is.
              fail to start if :file:`config.json` contains invalid JSON.
 
 
+Extensions
+``````````
+
+.. toctree::
+   :maxdepth: 1
+
+   configuration/autoadd
+
+
 BitTorrent configuration
 ------------------------
 

@@ -30,9 +30,16 @@ void AutoAddExtension::load(AbstractConfiguration& config)
         {
             AbstractConfiguration* folderView = config.createView(query);
 
+            if (!folderView->has("path"))
+            {
+                logger_.error("Missing 'path' for AutoAdd item.");
+                continue;
+            }
+
             Folder f;
-            f.sourcePath = folderView->getString("sourcePath");
-            f.filePattern = std::regex(folderView->getString("filePattern"));
+            f.path = folderView->getString("path");
+            f.pattern = std::regex(folderView->getString("pattern", ".*\\.torrent$"));
+            f.savePath = folderView->getString("savePath", std::string());
 
             if (folderView->has("tags"))
             {
@@ -83,7 +90,7 @@ void AutoAddExtension::monitor(Poco::Timer& timer)
 
     for (Folder folder : folders_)
     {
-        Poco::Path sourcePath(folder.sourcePath);
+        Poco::Path sourcePath(folder.path);
         Poco::File sourceDir(sourcePath);
 
         if (!sourceDir.exists()) { continue; }
@@ -94,13 +101,15 @@ void AutoAddExtension::monitor(Poco::Timer& timer)
         for (Poco::File file : files)
         {
             Poco::Path filePath(file.path());
+            std::string fileName = filePath.getFileName();
 
-            if (!std::regex_match(filePath.getFileName(), folder.filePattern))
+            if (!std::regex_match(fileName, folder.pattern))
             {
                 continue;
             }
 
             AddTorrentParams p;
+            p.savePath = folder.savePath;
             p.tags = folder.tags;
 
             sess.addTorrentFile(filePath, p);
