@@ -21,7 +21,10 @@ Features
 * Highly configurable.
 * Low memory usage.
 * JSONRPC API over HTTP.
-* Extensions.
+* Automatically add torrents from user-configurable directories.
+* Move completed torrents based on user-configurable rules.
+* Send push notifications via Pushbullet.
+* Launch executables on various events, such as when a torrent finishes.
 
 
 Downloads
