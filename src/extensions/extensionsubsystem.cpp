@@ -70,7 +70,7 @@ void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfig
         return;
     }
 
-    std::string libraryName = extensionName + getLibrarySuffix();
+    std::string libraryName = getLibraryName(extensionName);
 
     Poco::Path applicationPath = Hadouken::Platform::getApplicationPath();
     Poco::File libraryFile = Poco::Path(applicationPath, libraryName);
@@ -86,13 +86,17 @@ void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfig
     }
 }
 
-std::string ExtensionSubsystem::getLibrarySuffix()
+std::string ExtensionSubsystem::getLibraryName(std::string extensionName)
 {
+    // Windows extensions are named, for example, autoadd.dll.
+    // However, building on Linux gives a filename of libautoadd.so.
+    // Adjust accordingly.
+
 #if defined(WIN32)
-    return ".dll";
+    return extensionName + ".dll";
 #elif defined(__APPLE__)
     return ".dylib";
 #else
-    return ".so";
+    return "lib" + extensionName + ".so";
 #endif
 }
