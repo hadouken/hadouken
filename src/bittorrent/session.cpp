@@ -692,11 +692,11 @@ libtorrent::add_torrent_params Session::getDefaultAddTorrentParams()
     if (config_.has("bittorrent.storage.sparse")
         && config_.getBool("bittorrent.storage.sparse"))
     {
-        p.storage_mode = libtorrent::storage_mode_sparse;
+        p.storage_mode = libtorrent::storage_mode_t::storage_mode_sparse;
     }
     else
     {
-        p.storage_mode = libtorrent::storage_mode_allocate;
+        p.storage_mode = libtorrent::storage_mode_t::storage_mode_allocate;
     }
 
     return p;
