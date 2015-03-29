@@ -34,6 +34,11 @@
         "storage":
         {
             "sparse": true
+        },
+
+        "upnp":
+        {
+            "enabled": true
         }
     },
 

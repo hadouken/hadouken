@@ -74,8 +74,7 @@ void Session::load()
     read_alerts_thread_.start(read_alerts_runner_);
 
     // Start DHT if enabled
-    if (app.config().has("bittorrent.dht.enabled")
-        && app.config().getBool("bittorrent.dht.enabled"))
+    if (config_.getBool("bittorrent.dht.enabled", true))
     {
         sess_->start_dht();
 
@@ -97,6 +96,15 @@ void Session::load()
                 break;
             }
         }
+    }
+
+    // Start UPnP/NAT-PMP if enabled
+    if (config_.getBool("bittorrent.upnp.enabled", true))
+    {
+        sess_->start_natpmp();
+        sess_->start_upnp();
+
+        // TODO: Add support for custom port mappings
     }
 
     // Set proxy if one is configured.
@@ -675,6 +683,7 @@ void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
 libtorrent::add_torrent_params Session::getDefaultAddTorrentParams()
 {
     libtorrent::add_torrent_params p;
+    p.flags |= libtorrent::add_torrent_params::flags_t::flag_use_resume_save_path;
     p.save_path = default_save_path_;
 
     /*
