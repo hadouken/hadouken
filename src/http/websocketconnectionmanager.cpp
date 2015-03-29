@@ -2,6 +2,7 @@
 
 #include <Hadouken/BitTorrent/Session.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
+#include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Poco/Delegate.h>
@@ -55,8 +56,9 @@ void WebSocketConnectionManager::disconnect(Poco::Net::WebSocket& webSocket)
     }
 }
 
-void WebSocketConnectionManager::onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle)
+void WebSocketConnectionManager::onTorrentAdded(const void* sender, TorrentHandle& handle)
 {
+    std::unique_ptr<TorrentInfo> info = handle.getTorrentFile();
     TorrentStatus status = handle.getStatus();
 
     Poco::DynamicStruct torrent;
@@ -66,8 +68,38 @@ void WebSocketConnectionManager::onTorrentAdded(const void* sender, Hadouken::Bi
     torrent["savePath"] = status.getSavePath();
     torrent["downloadRate"] = status.getDownloadRate();
     torrent["uploadRate"] = status.getUploadRate();
+    torrent["downloadedBytes"] = status.getTotalDownload();
+    torrent["downloadedBytesTotal"] = status.getAllTimeDownload();
+    torrent["uploadedBytes"] = status.getTotalUpload();
+    torrent["uploadedBytesTotal"] = status.getAllTimeUpload();
     torrent["numPeers"] = status.getNumPeers();
     torrent["numSeeds"] = status.getNumSeeds();
+
+    if (info) {
+        torrent["totalSize"] = info->getTotalSize();
+    }
+    else {
+        torrent["totalSize"] = -1;
+    }
+
+    torrent["state"] = (int)status.getState();
+    torrent["isFinished"] = status.isFinished();
+    torrent["isMovingStorage"] = status.isMovingStorage();
+    torrent["isPaused"] = status.isPaused();
+    torrent["isSeeding"] = status.isSeeding();
+    torrent["isSequentialDownload"] = status.isSequentialDownload();
+    torrent["queuePosition"] = status.getQueuePosition();
+
+    Poco::Dynamic::Array tags;
+    std::vector<std::string> t;
+    handle.getTags(t);
+
+    for (std::string tag : t)
+    {
+        tags.push_back(tag);
+    }
+
+    torrent["tags"] = tags;
 
     Poco::DynamicStruct ev;
     ev["event"] = "torrent.added";
