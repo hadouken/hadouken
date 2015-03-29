@@ -29,14 +29,7 @@ Session::Session(const Poco::Util::LayeredConfiguration& config)
       config_(config),
       read_alerts_runner_(*this, &Session::readAlerts)
 {
-    if (config_.has("bittorrent.default_save_path"))
-    {
-        default_save_path_ = config_.getString("bittorrent.default_save_path");
-    }
-    else
-    {
-        default_save_path_ = ".";
-    }
+    default_save_path_ = config_.getString("bittorrent.defaultSavePath", ".");
 
     // Use the default LT fingerprint.
     libtorrent::fingerprint fingerprint("LT", LIBTORRENT_VERSION_MAJOR, LIBTORRENT_VERSION_MINOR, 0, 0);
@@ -704,12 +697,7 @@ libtorrent::add_torrent_params Session::getDefaultAddTorrentParams()
 
 Poco::Path Session::getDataPath()
 {
-    std::string configured_data_path = "state";
-
-    if (config_.has("bittorrent.state_path"))
-    {
-        configured_data_path = config_.getString("bittorrent.state_path");
-    }
+    std::string configured_data_path = config_.getString("bittorrent.statePath", "state");
 
     // Save session state
     Poco::Path data_path(configured_data_path);
