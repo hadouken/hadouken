@@ -43,6 +43,7 @@ documentation for your specific platform.
 .. toctree::
    :maxdepth: 1
 
+   installing/ubuntu
    installing/windows
 
 
