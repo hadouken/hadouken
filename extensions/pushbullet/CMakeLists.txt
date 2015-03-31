@@ -13,3 +13,5 @@ target_link_libraries(
     pushbullet
     hadouken
 )
+
+install(TARGETS pushbullet DESTINATION lib/hadoukend)

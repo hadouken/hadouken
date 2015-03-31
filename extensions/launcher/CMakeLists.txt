@@ -13,3 +13,5 @@ target_link_libraries(
     launcher
     hadouken
 )
+
+install(TARGETS launcher DESTINATION lib/hadoukend)

@@ -18,3 +18,5 @@ target_link_libraries(
     jsengine
     hadouken
 )
+
+install(TARGETS jsengine DESTINATION lib/hadoukend)

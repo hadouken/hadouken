@@ -15,3 +15,5 @@ target_link_libraries(
     automove
     hadouken
 )
+
+install(TARGETS automove DESTINATION lib/hadoukend)

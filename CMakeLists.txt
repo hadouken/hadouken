@@ -45,6 +45,8 @@ else()
     set(PTHREAD pthread)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/hadoukend")
 endif()
 
 # Get our version number
@@ -111,6 +113,9 @@ target_link_libraries(
     ${LIBPOCO}
     ${PTHREAD}
 )
+
+install(TARGETS hadouken  DESTINATION lib/hadoukend)
+install(TARGETS hadoukend DESTINATION sbin)
 
 # Extensions
 add_subdirectory(extensions/autoadd)

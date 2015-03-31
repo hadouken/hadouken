@@ -13,3 +13,5 @@ target_link_libraries(
     autoadd
     hadouken
 )
+
+install(TARGETS autoadd DESTINATION lib/hadoukend)
