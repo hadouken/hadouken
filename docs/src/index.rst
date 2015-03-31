@@ -53,5 +53,6 @@ Documentation
 .. toctree::
    :maxdepth: 1
 
+   getting-started
    configuration
    jsonrpc
