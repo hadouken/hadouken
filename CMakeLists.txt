@@ -44,7 +44,7 @@ else()
     set(LIBPOCO libPocoFoundation.so libPocoJSON.so libPocoNet.so libPocoNetSSL.so libPocoUtil.so)
     set(PTHREAD pthread)
 
-    add_compile_options(-std=c++0x)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 # Get our version number
