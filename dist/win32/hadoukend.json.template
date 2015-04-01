@@ -94,6 +94,8 @@
 
         "port": [HTTP_PORT],
 
+        "root": "/",
+
         "ssl":
         {
             "enabled": false,

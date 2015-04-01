@@ -102,3 +102,79 @@ Changing this setting will only affect new torrents.
       }
     }
   }
+
+
+HTTP configuration
+------------------
+
+Authentication
+``````````````
+Hadouken supports three modes of authentication, *none*, *HTTP Basic* and
+*Token*. The installer supports the configuration of all three modes.
+
+To activate *Token* authentication, set the `auth` setting to *token* and
+then supply a token.
+
+.. code:: javascript
+
+  {
+    "http":
+    {
+      "auth": "token",
+      "token": "YOUR-TOKEN-HERE"
+    }
+  }
+
+To activate *HTTP Basic* authentication, set the `auth` setting to *basic* and
+then provide a username and password.
+
+.. code:: javascript
+
+  {
+    "http":
+    {
+      "auth": "basic",
+      "basic":
+      {
+        "userName": "YOUR-USERNAME",
+        "password": "YOUR-PASSWORD"
+      }
+    }
+  }
+
+
+Changing port
+`````````````
+
+By default, the HTTP server will listen on port *7070*. This can be changed
+from the installer or the configuration file. The example below will change
+the listen port to *8880*.
+
+.. code:: javascript
+
+  {
+    "http":
+    {
+      "port": 8880
+    }
+  }
+
+
+Custom root path
+````````````````
+
+To support advanced proxy scenarios, Hadouken supports customization of the
+root path for the HTTP server. The default behavior is to serve requests from
+the root `/`.
+
+The example below will change this to let you serve requests from `/hadouken`,
+which means you will reach the API at `/hadouken/api`.
+
+.. code:: javascript
+
+  {
+    "http":
+    {
+      "root": "/hadouken"
+    }
+  }

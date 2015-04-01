@@ -55,4 +55,3 @@ Documentation
 
    getting-started
    configuration
-   jsonrpc
