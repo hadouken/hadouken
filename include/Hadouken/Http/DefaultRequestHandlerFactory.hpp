@@ -25,6 +25,7 @@ namespace Hadouken
 
         private:
             const Poco::Util::AbstractConfiguration& config_;
+            std::string virtualPath_;
             std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*> methods_;
             std::unique_ptr<WebSocketConnectionManager> wsConnectionManager_;
         };

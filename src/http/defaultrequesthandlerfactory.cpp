@@ -43,6 +43,22 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory(const Poco::Util::Abs
     methods_.insert(std::make_pair("torrent.resume", new TorrentResumeMethod()));
 
     wsConnectionManager_ = std::unique_ptr<WebSocketConnectionManager>(new WebSocketConnectionManager());
+
+    // Set up virtual path. It should never be empty and it should
+    // always start and end with "/".
+
+    virtualPath_ = config.getString("http.root", "/");
+    if (virtualPath_.empty()) virtualPath_ = "/";
+
+    if (virtualPath_.at(0) != '/')
+    {
+        virtualPath_ = "/" + virtualPath_;
+    }
+
+    if (virtualPath_.at(virtualPath_.size() - 1) != '/')
+    {
+        virtualPath_ = virtualPath_ + "/";
+    }
 }
 
 DefaultRequestHandlerFactory::~DefaultRequestHandlerFactory()
@@ -56,12 +72,12 @@ DefaultRequestHandlerFactory::~DefaultRequestHandlerFactory()
 
 HTTPRequestHandler* DefaultRequestHandlerFactory::createRequestHandler(const HTTPServerRequest& request)
 {
-    if (request.getURI() == "/api")
+    if (request.getURI() == virtualPath_ + "api")
     {
         return new JsonRpcRequestHandler(config_, methods_);
     }
 
-    if (request.getURI() == "/events"
+    if (request.getURI() == virtualPath_ + "events"
         && request.find("Upgrade") != request.end()
         && Poco::icompare(request["Upgrade"], "websocket") == 0)
     {
