@@ -6,6 +6,8 @@
 #include <Poco/Util/Application.h>
 #include <Poco/Util/Subsystem.h>
 
+#include <memory>
+
 using namespace Poco::Util;
 
 namespace Hadouken
@@ -25,8 +27,10 @@ namespace Hadouken
             const char* name() const;
 
         private:
+            Poco::Net::ServerSocket getServerSocket(Application& app);
+
             int port_;
-            Poco::Net::HTTPServer* server_;
+            std::unique_ptr<Poco::Net::HTTPServer> server_;
         };
     }
 }

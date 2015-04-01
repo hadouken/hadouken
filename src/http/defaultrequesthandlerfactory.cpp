@@ -42,13 +42,11 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory(const Poco::Util::Abs
     methods_.insert(std::make_pair("torrent.pause", new TorrentPauseMethod()));
     methods_.insert(std::make_pair("torrent.resume", new TorrentResumeMethod()));
 
-    wsConnectionManager_ = new WebSocketConnectionManager();
+    wsConnectionManager_ = std::unique_ptr<WebSocketConnectionManager>(new WebSocketConnectionManager());
 }
 
 DefaultRequestHandlerFactory::~DefaultRequestHandlerFactory()
 {
-    delete wsConnectionManager_;
-
     // Delete all registered RPC methods. 
     for (auto item : methods_)
     {

@@ -5,6 +5,7 @@
 #include <Poco/Util/LayeredConfiguration.h>
 
 using namespace Hadouken::Http;
+using namespace Poco::Net;
 using namespace Poco::Util;
 
 HttpSubsystem::HttpSubsystem()
@@ -21,18 +22,19 @@ void HttpSubsystem::initialize(Application& app)
         port_ = app.config().getInt("http.port");
     }
 
-    if (app.config().hasProperty("http.ssl.enabled")
-        && app.config().getBool("http.ssl.enabled"))
-    {
-        Poco::Net::SecureServerSocket secureSocket(port_);
+    ServerSocket socket;
 
-        server_ = new Poco::Net::HTTPServer(new DefaultRequestHandlerFactory(app.config()), secureSocket, new Poco::Net::HTTPServerParams);
-    }
-    else
+    try
     {
-        server_ = new Poco::Net::HTTPServer(new DefaultRequestHandlerFactory(app.config()), port_);
+        socket = getServerSocket(app);
+    }
+    catch (Poco::Exception& ex)
+    {
+        app.logger().error("Could not bind to port %i: %s. HTTP server *not* available.", port_, ex.displayText());
+        return;
     }
 
+    server_ = std::unique_ptr<HTTPServer>(new HTTPServer(new DefaultRequestHandlerFactory(app.config()), socket, new HTTPServerParams));
     server_->start();
 
     app.logger().information("HTTP server started on port %i.", port_);
@@ -40,8 +42,11 @@ void HttpSubsystem::initialize(Application& app)
 
 void HttpSubsystem::uninitialize()
 {
-    server_->stop();
-    delete server_;
+    if (server_)
+    {
+        server_->stop();
+        server_.reset(nullptr);
+    }
 
     Poco::Net::uninitializeSSL();
 }
@@ -49,4 +54,16 @@ void HttpSubsystem::uninitialize()
 const char* HttpSubsystem::name() const
 {
     return "HTTP";
+}
+
+ServerSocket HttpSubsystem::getServerSocket(Application& app)
+{
+    if (app.config().getBool("http.ssl.enabled", false))
+    {
+        return SecureServerSocket(port_);
+    }
+    else
+    {
+        return ServerSocket(port_);
+    }
 }

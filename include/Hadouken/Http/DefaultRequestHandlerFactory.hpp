@@ -2,6 +2,7 @@
 #define HADOUKEN_HTTP_DEFAULTREQUESTHANDLERFACTORY_HPP
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <Hadouken/Http/JsonRpc/RpcMethod.hpp>
@@ -25,7 +26,7 @@ namespace Hadouken
         private:
             const Poco::Util::AbstractConfiguration& config_;
             std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*> methods_;
-            WebSocketConnectionManager* wsConnectionManager_;
+            std::unique_ptr<WebSocketConnectionManager> wsConnectionManager_;
         };
     }
 }
