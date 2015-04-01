@@ -24,6 +24,10 @@ Poco::Dynamic::Var::Ptr SessionGetStatusMethod::execute(const Array::Ptr& params
     result["allowedUploadSlots"] = status.getAllowedUploadSlots();
     result["dhtDownloadRate"] = status.getDhtDownloadRate();
     result["dhtNodes"] = status.getDhtNodes();
+    result["downloadRate"] = status.getDownloadRate();
+    result["totalDownloadedBytes"] = status.getTotalDownload();
+    result["totalUploadedBytes"] = status.getTotalUpload();
+    result["uploadRate"] = status.getUploadRate();
     result["hasIncomingConnections"] = status.hasIncomingConnections();
 
     return new Poco::Dynamic::Var(result);
