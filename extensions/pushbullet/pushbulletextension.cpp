@@ -75,19 +75,19 @@ bool PushbulletExtension::isEventEnabled(std::string eventName)
     return (std::find(events_.begin(), events_.end(), eventName) != events_.end());
 }
 
-void PushbulletExtension::onTorrentAdded(const void* sender, TorrentHandle& handle)
+void PushbulletExtension::onTorrentAdded(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     if (!isEventEnabled("torrent.added")) { return; }
 
-    TorrentStatus status = handle.getStatus();
+    TorrentStatus status = handle->getStatus();
     push("Torrent added", "The torrent \"" + status.getName() + "\" has been added.");
 }
 
-void PushbulletExtension::onTorrentFinished(const void* sender, TorrentHandle& handle)
+void PushbulletExtension::onTorrentFinished(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     if (!isEventEnabled("torrent.finished")) { return; }
     
-    TorrentStatus status = handle.getStatus();
+    TorrentStatus status = handle->getStatus();
     push("Torrent finished", "The torrent \"" + status.getName() + "\" has finished downloading.");
 }
 

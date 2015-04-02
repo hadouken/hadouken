@@ -35,16 +35,16 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
     Application& app = Application::instance();
     Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
 
-    std::vector<TorrentHandle> handles;
+    std::vector<std::shared_ptr<TorrentHandle>> handles;
 
     if (params->size() > 0)
     {
         for (Poco::Dynamic::Var item : *params)
         {
             std::string hash = item.extract<std::string>();
-            TorrentHandle foundHandle = sess.findTorrent(hash);
+            std::shared_ptr<TorrentHandle> foundHandle = sess.findTorrent(hash);
 
-            if (foundHandle.isValid())
+            if (foundHandle->isValid())
             {
                 handles.push_back(foundHandle);
             }
@@ -57,10 +57,10 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
 
     Poco::DynamicStruct result;
 
-    for (TorrentHandle handle : handles)
+    for (std::shared_ptr<TorrentHandle> handle : handles)
     {
-        std::unique_ptr<TorrentInfo> info = handle.getTorrentFile();
-        TorrentStatus status = handle.getStatus();
+        std::unique_ptr<TorrentInfo> info = handle->getTorrentFile();
+        TorrentStatus status = handle->getStatus();
 
         Poco::DynamicStruct data;
         data["name"] = status.getName();
@@ -90,19 +90,9 @@ Poco::Dynamic::Var::Ptr SessionGetTorrentsMethod::execute(const Array::Ptr& para
         data["isSeeding"] = status.isSeeding();
         data["isSequentialDownload"] = status.isSequentialDownload();
         data["queuePosition"] = status.getQueuePosition();
+        data["tags"] = handle->getTags();
 
-        Poco::Dynamic::Array tags;
-        std::vector<std::string> t;
-        handle.getTags(t);
-
-        for (std::string tag : t)
-        {
-            tags.push_back(tag);
-        }
-
-        data["tags"] = tags;
-
-        result[handle.getInfoHash()] = data;
+        result[handle->getInfoHash()] = data;
     }
 
     return new Poco::Dynamic::Var(result);

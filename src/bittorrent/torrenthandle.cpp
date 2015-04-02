@@ -105,12 +105,9 @@ void TorrentHandle::addTag(std::string tag)
     tags_.push_back(tag);
 }
 
-void TorrentHandle::getTags(std::vector<std::string>& tags) const
+std::vector<std::string> TorrentHandle::getTags() const
 {
-    for (std::string tag : tags_)
-    {
-        tags.push_back(tag);
-    }
+    return tags_;
 }
 
 void TorrentHandle::removeTag(std::string tag)

@@ -83,7 +83,7 @@ void AutoMoveExtension::unload()
     sess.onTorrentFinished -= Poco::delegate(this, &AutoMoveExtension::onTorrentCompleted);
 }
 
-void AutoMoveExtension::onTorrentCompleted(const void* sender, TorrentHandle& handle)
+void AutoMoveExtension::onTorrentCompleted(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     for (Rule rule : rules_)
     {
@@ -92,7 +92,7 @@ void AutoMoveExtension::onTorrentCompleted(const void* sender, TorrentHandle& ha
             continue;
         }
 
-        handle.moveStorage(rule.path);
+        handle->moveStorage(rule.path);
         break;
     }
 }

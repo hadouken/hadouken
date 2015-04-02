@@ -20,14 +20,14 @@ Poco::Dynamic::Var::Ptr TorrentMoveStorageMethod::execute(const Array::Ptr& para
         std::string hash = params->getElement<std::string>(0);
         std::string savePath = params->getElement<std::string>(1);
 
-        TorrentHandle handle = sess.findTorrent(hash);
+        std::shared_ptr<TorrentHandle> handle = sess.findTorrent(hash);
 
-        if (!handle.isValid())
+        if (!handle->isValid())
         {
             return new Poco::Dynamic::Var(false);
         }
 
-        handle.moveStorage(savePath);
+        handle->moveStorage(savePath);
         return new Poco::Dynamic::Var(true);
     }
 

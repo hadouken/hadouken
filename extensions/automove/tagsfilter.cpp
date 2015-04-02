@@ -6,11 +6,11 @@
 using namespace AutoMove;
 using namespace Hadouken::BitTorrent;
 
-bool TagsFilter::isMatch(TorrentHandle& handle)
+bool TagsFilter::isMatch(std::shared_ptr<TorrentHandle>& handle)
 {
     for (std::string tag : tags_)
     {
-        if (!handle.hasTag(tag))
+        if (!handle->hasTag(tag))
         {
             return false;
         }

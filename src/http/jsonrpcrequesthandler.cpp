@@ -26,7 +26,7 @@ Poco::DynamicStruct::Ptr createErrorResponse(int code, std::string message, std:
     return error;
 }
 
-JsonRpcRequestHandler::JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config, std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*>& methods)
+JsonRpcRequestHandler::JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config, std::map<std::string, std::shared_ptr<RpcMethod>>& methods)
     : config_(config),
       methods_(methods)
 {
@@ -124,7 +124,7 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     if (methods_.count(method) > 0)
     {
         Array::Ptr params = requestObject->getArray("params");
-        RpcMethod* rpcMethod = methods_.at(method);
+        std::shared_ptr<RpcMethod> rpcMethod = methods_.at(method);
 
         // Execute and write result.
         Poco::Dynamic::Var::Ptr result = rpcMethod->execute(params);

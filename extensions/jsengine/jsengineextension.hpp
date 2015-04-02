@@ -7,6 +7,8 @@
 #include <Poco/RunnableAdapter.h>
 #include <Poco/Thread.h>
 #include <Poco/Util/AbstractConfiguration.h>
+
+#include <memory>
 #include <queue>
 
 #include "duktape.h"
@@ -38,8 +40,8 @@ namespace JsEngine
         void runScript(duk_context* ctx);
         void fireEvents(duk_context* ctx);
 
-        void onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
-        void onTorrentFinished(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+        void onTorrentAdded(const void* sender, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
+        void onTorrentFinished(const void* sender, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
         bool is_running_;
         Poco::RunnableAdapter<JsEngineExtension> run_adapter_;

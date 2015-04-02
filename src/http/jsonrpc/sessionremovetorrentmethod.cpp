@@ -20,9 +20,9 @@ Poco::Dynamic::Var::Ptr SessionRemoveTorrentMethod::execute(const Array::Ptr& pa
         std::string hash = params->getElement<std::string>(0);
         int options = 0;
 
-        TorrentHandle handle = sess.findTorrent(hash);
+        std::shared_ptr<TorrentHandle> handle = sess.findTorrent(hash);
 
-        if (!handle.isValid())
+        if (!handle->isValid())
         {
             return new Poco::Dynamic::Var(false);
         }

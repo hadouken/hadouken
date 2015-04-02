@@ -16,7 +16,7 @@ namespace AutoMove
             tags_ = tags;
         }
 
-        bool isMatch(Hadouken::BitTorrent::TorrentHandle& handle);
+        bool isMatch(std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
     private:
         std::vector<std::string> tags_;

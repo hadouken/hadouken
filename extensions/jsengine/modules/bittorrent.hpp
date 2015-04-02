@@ -3,6 +3,7 @@
 
 #include "../duktape.h"
 
+#include <memory>
 #include <string>
 
 namespace Hadouken
@@ -23,7 +24,7 @@ namespace JsEngine
         {
         public:
             static duk_ret_t init(duk_context* ctx);
-            static void setTorrentHandleObject(duk_context* ctx, Hadouken::BitTorrent::TorrentHandle& handle);
+            static void setTorrentHandleObject(duk_context* ctx, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
         private:
             static duk_ret_t handleFinalizer(duk_context* ctx);

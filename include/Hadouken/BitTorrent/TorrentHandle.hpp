@@ -46,7 +46,7 @@ namespace Hadouken
 
             HDKN_EXPORT void addTag(std::string tag);
 
-            HDKN_EXPORT void getTags(std::vector<std::string>& tags) const;
+            HDKN_EXPORT std::vector<std::string> getTags() const;
 
             HDKN_EXPORT void removeTag(std::string tag);
 

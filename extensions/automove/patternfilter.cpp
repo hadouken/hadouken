@@ -6,7 +6,7 @@
 using namespace AutoMove;
 using namespace Hadouken::BitTorrent;
 
-bool PatternFilter::isMatch(TorrentHandle& handle)
+bool PatternFilter::isMatch(std::shared_ptr<TorrentHandle>& handle)
 {
     std::string fieldValue = getFieldValue(field_, handle);
 
@@ -18,9 +18,9 @@ bool PatternFilter::isMatch(TorrentHandle& handle)
     return std::regex_match(fieldValue, pattern_);
 }
 
-std::string PatternFilter::getFieldValue(std::string fieldName, TorrentHandle& handle)
+std::string PatternFilter::getFieldValue(std::string fieldName, std::shared_ptr<TorrentHandle>& handle)
 {
-    TorrentStatus status = handle.getStatus();
+    TorrentStatus status = handle->getStatus();
 
     if (fieldName == "name")
     {

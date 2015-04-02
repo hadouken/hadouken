@@ -30,8 +30,7 @@ protected:
     {
         std::string serviceKey = "application.runAsService";
 
-        if (!app.config().has(serviceKey)
-            || !app.config().getBool(serviceKey))
+        if (!app.config().getBool(serviceKey, false))
         {
             return;
         }

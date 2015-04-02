@@ -15,14 +15,14 @@ Poco::Dynamic::Var::Ptr TorrentPauseMethod::execute(const Array::Ptr& params)
     Application& app = Application::instance();
     Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
     
-    for (auto item : *params)
+    for (Poco::Dynamic::Var item : *params)
     {
         std::string hash = item.extract<std::string>();
-        TorrentHandle handle = sess.findTorrent(hash);
+        std::shared_ptr<TorrentHandle> handle = sess.findTorrent(hash);
 
-        if (handle.isValid())
+        if (handle && handle->isValid())
         {
-            handle.pause();
+            handle->pause();
         }
         else
         {

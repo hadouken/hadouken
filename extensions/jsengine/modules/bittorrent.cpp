@@ -195,11 +195,11 @@ duk_ret_t BitTorrent::sessionGetTorrents(duk_context* ctx)
         return 0;
     }
 
-    std::vector<TorrentHandle> handles = sess->getTorrents();
+    std::vector<std::shared_ptr<TorrentHandle>> handles = sess->getTorrents();
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
 
-    for (TorrentHandle handle : handles)
+    for (std::shared_ptr<TorrentHandle> handle : handles)
     {
         setTorrentHandleObject(ctx, handle);
         duk_put_prop_index(ctx, arrayIndex, i);
@@ -326,12 +326,12 @@ TorrentStatus* BitTorrent::getTorrentStatusFromThis(duk_context* ctx)
     return 0;
 }
 
-void BitTorrent::setTorrentHandleObject(duk_context* ctx, TorrentHandle& handle)
+void BitTorrent::setTorrentHandleObject(duk_context* ctx, std::shared_ptr<TorrentHandle>& handle)
 {
     duk_idx_t handleIndex = duk_push_object(ctx);
     duk_put_function_list(ctx, handleIndex, handle_functions_);
 
-    duk_push_pointer(ctx, new TorrentHandle(handle));
+    duk_push_pointer(ctx, new TorrentHandle(*handle));
     duk_put_prop_string(ctx, handleIndex, "\xff" "handle");
 
     DUK_READONLY_PROPERTY(ctx, handleIndex, "infoHash", BitTorrent::handleGetInfoHash);

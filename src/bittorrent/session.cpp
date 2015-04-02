@@ -24,7 +24,7 @@
 using namespace Hadouken::BitTorrent;
 using namespace Poco::Util;
 
-Session::Session(const Poco::Util::LayeredConfiguration& config)
+Session::Session(const Poco::Util::AbstractConfiguration& config)
     : logger_(Poco::Logger::get("hadouken.bittorrent.session")),
       config_(config),
       read_alerts_runner_(*this, &Session::readAlerts)
@@ -33,12 +33,11 @@ Session::Session(const Poco::Util::LayeredConfiguration& config)
 
     // Use the default LT fingerprint.
     libtorrent::fingerprint fingerprint("LT", LIBTORRENT_VERSION_MAJOR, LIBTORRENT_VERSION_MINOR, 0, 0);
-    sess_ = new libtorrent::session(fingerprint, 0);
+    sess_ = std::unique_ptr<libtorrent::session>(new libtorrent::session(fingerprint, 0));
 }
 
 Session::~Session()
 {
-    delete sess_;
 }
 
 void Session::load()
@@ -83,9 +82,10 @@ void Session::load()
             std::string index = std::to_string(i);
             std::string query = "bittorrent.dht.routers[" + index + "]";
 
-            if (app.config().has(query))
+            if (config_.has(query))
             {
-                AbstractConfiguration* routerView = app.config().createView(query);
+                const AbstractConfiguration* routerView = config_.createView(query);
+
                 std::string url = routerView->getString("[0]");
                 int port = routerView->getInt("[1]");
 
@@ -108,13 +108,13 @@ void Session::load()
     }
 
     // Set proxy if one is configured.
-    if (app.config().has("bittorrent.proxy"))
+    if (config_.has("bittorrent.proxy"))
     {
-        AbstractConfiguration* proxyView = app.config().createView("bittorrent.proxy");
+        const AbstractConfiguration* proxyView = config_.createView("bittorrent.proxy");
 
         libtorrent::proxy_settings proxy = sess_->proxy();
 
-        std::string type = proxyView->getString("type");
+        std::string type = proxyView->getString("type", "none");
         if (type == "none") proxy.type = libtorrent::proxy_settings::proxy_type::none;
         if (type == "socks4") proxy.type = libtorrent::proxy_settings::proxy_type::socks4;
         if (type == "socks5") proxy.type = libtorrent::proxy_settings::proxy_type::socks5;
@@ -123,12 +123,12 @@ void Session::load()
         if (type == "http_pw") proxy.type = libtorrent::proxy_settings::proxy_type::http_pw;
         if (type == "i2p_proxy") proxy.type = libtorrent::proxy_settings::proxy_type::i2p_proxy;
 
-        if (proxyView->has("hostname")) proxy.hostname = proxyView->getString("hostname");
-        if (proxyView->has("password")) proxy.password = proxyView->getString("password");
-        if (proxyView->has("port")) proxy.port = proxyView->getInt("port");
-        if (proxyView->has("proxyHostnames")) proxy.proxy_hostnames = proxyView->getBool("proxyHostnames");
-        if (proxyView->has("proxyPeerConnections")) proxy.proxy_peer_connections = proxyView->getBool("proxyPeerConnections");
-        if (proxyView->has("username")) proxy.username = proxyView->getString("username");
+        proxy.hostname = proxyView->getString("hostname", "");
+        proxy.password = proxyView->getString("password", "");
+        proxy.port = proxyView->getInt("port", 0);
+        proxy.proxy_hostnames = proxyView->getBool("proxyHostnames", true);
+        proxy.proxy_peer_connections = proxyView->getBool("proxyPeerConnections", true);
+        proxy.username = proxyView->getString("username", "");
 
         sess_->set_proxy(proxy);
     }
@@ -197,27 +197,25 @@ void Session::loadResumeData()
 
     std::vector<Poco::File> torrent_files;
     torrents_dir.list(torrent_files);
-    std::vector<Poco::File>::iterator it = torrent_files.begin();
 
-    for (; it != torrent_files.end(); ++it)
+    for (Poco::File file : torrent_files)
     {
-        Poco::Path torrent_file_path(it->path());
+        Poco::Path torrent_file_path(file.path());
         if (torrent_file_path.getExtension() != "torrent") continue;
 
-        libtorrent::add_torrent_params params;
-        libtorrent::error_code ec;
-        params.flags |= libtorrent::add_torrent_params::flags_t::flag_use_resume_save_path;
-        params.save_path = default_save_path_;
-        params.ti = new libtorrent::torrent_info(it->path(), ec);
+        libtorrent::add_torrent_params params = getDefaultAddTorrentParams();
 
-        if (ec)
+        try 
         {
-            logger_.error("Could not load torrent '%s': %s", it->path(), ec.message());
+            params.ti = new libtorrent::torrent_info(file.path());
+        }
+        catch (const libtorrent::libtorrent_exception& ex)
+        {
+            logger_.error("Could not load torrent '%s': %s", file, ex.error().message());
             continue;
         }
 
         logger_.information("Loading torrent '%s'.", params.ti->name());
-
 
         // Check if resume data exists
         Poco::File torrent_state_file(torrent_file_path.setExtension("resume"));
@@ -230,9 +228,11 @@ void Session::loadResumeData()
             state_stream.read(resume_buffer.data(), resume_buffer.size());
 
             params.resume_data = resume_buffer;
+
+            logger_.debug("Loaded resume data for '%s'.", params.ti->name());
         }
 
-        TorrentHandle handle(sess_->add_torrent(params));
+        std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sess_->add_torrent(params)));
 
         if (params.resume_data.size() > 0)
         {
@@ -254,11 +254,11 @@ void Session::loadResumeData()
             }
         }
 
-        torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
+        torrents_.insert(std::make_pair(handle->handle_.info_hash(), handle));
     }
 }
 
-void Session::loadHadoukenState(TorrentHandle& handle, const libtorrent::lazy_entry& entry)
+void Session::loadHadoukenState(std::shared_ptr<TorrentHandle>& handle, const libtorrent::lazy_entry& entry)
 {
     if (entry.type() != libtorrent::lazy_entry::entry_type_t::dict_t)
     {
@@ -280,13 +280,13 @@ void Session::loadHadoukenState(TorrentHandle& handle, const libtorrent::lazy_en
         return;
     }
 
-    const libtorrent::lazy_entry* tagsList = entry.dict_find_list("tags");
+    const libtorrent::lazy_entry* tags = entry.dict_find_list("tags");
 
-    if (tagsList)
+    if (tags)
     {
-        for (int i = 0; i < tagsList->list_size(); i++)
+        for (int i = 0; i < tags->list_size(); i++)
         {
-            handle.addTag(tagsList->list_string_value_at(i));
+            handle->addTag(tags->list_string_value_at(i));
         }
     }
 }
@@ -328,7 +328,15 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
         p.save_path = params.savePath;
     }
     
-    p.ti = new libtorrent::torrent_info(le);
+    try
+    {
+        p.ti = new libtorrent::torrent_info(le);
+    }
+    catch (const libtorrent::libtorrent_exception& ex)
+    {
+        logger_.error("Could not load torrent info from bencoded data: %s.", ex.error().message());
+        return std::string();
+    }
 
     if (torrents_.find(p.ti->info_hash()) != torrents_.end())
     {
@@ -336,16 +344,16 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
         return std::string();
     }
 
-    TorrentHandle handle(sess_->add_torrent(p));
+    std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sess_->add_torrent(p)));
 
     for (std::string tag : params.tags)
     {
-        handle.addTag(tag);
+        handle->addTag(tag);
     }
 
-    torrents_.insert(std::make_pair(handle.handle_.info_hash(), handle));
+    torrents_.insert(std::make_pair(handle->handle_.info_hash(), handle));
 
-    return handle.getInfoHash();
+    return handle->getInfoHash();
 }
 
 void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
@@ -362,25 +370,24 @@ void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
     sess_->async_add_torrent(p);
 }
 
-TorrentHandle Session::findTorrent(const std::string& infoHash) const
+std::shared_ptr<TorrentHandle> Session::findTorrent(const std::string& infoHash) const
 {
     libtorrent::sha1_hash hash;
     libtorrent::from_hex(infoHash.c_str(), infoHash.size(), (char*)&hash[0]);
 
     if (torrents_.find(hash) == torrents_.end())
     {
-        libtorrent::torrent_handle invalidHandle;
-        return TorrentHandle(invalidHandle);
+        return nullptr;
     }
 
     return torrents_.at(hash);
 }
 
-std::vector<TorrentHandle> Session::getTorrents() const
+std::vector<std::shared_ptr<TorrentHandle>> Session::getTorrents() const
 {
-    std::vector<TorrentHandle> th;
+    std::vector<std::shared_ptr<TorrentHandle>> th;
 
-    for (std::pair<libtorrent::sha1_hash, TorrentHandle> pair : torrents_)
+    for (std::pair<libtorrent::sha1_hash, std::shared_ptr<TorrentHandle>> pair : torrents_)
     {
         th.push_back(pair.second);
     }
@@ -404,9 +411,9 @@ SessionStatus Session::getStatus() const
     return SessionStatus(status);
 }
 
-void Session::removeTorrent(const TorrentHandle& handle, int options) const
+void Session::removeTorrent(const std::shared_ptr<TorrentHandle>& handle, int options) const
 {
-    sess_->remove_torrent(handle.handle_, options);
+    sess_->remove_torrent(handle->handle_, options);
 }
 
 void Session::setProxy(ProxySettings& proxy)
@@ -483,7 +490,7 @@ void Session::saveResumeData()
             if (!rd->resume_data) continue;
 
             // Save any specific Hadouken state (labels, tags, etc)
-            libtorrent::entry hdkn(libtorrent::entry::data_type::dictionary_t);
+            libtorrent::entry::dictionary_type hdkn;
             saveHadoukenState(torrents_.at(rd->handle.info_hash()), hdkn);
             rd->resume_data->dict().insert(std::make_pair("hdkn", hdkn));
 
@@ -502,43 +509,33 @@ void Session::saveResumeData()
     }
 }
 
-void Session::saveHadoukenState(TorrentHandle& handle, libtorrent::entry& entry)
+void Session::saveHadoukenState(std::shared_ptr<TorrentHandle>& handle, libtorrent::entry::dictionary_type& entry)
 {
-    if (!handle.isValid())
+    if (!handle->isValid())
     {
         logger_.error("Invalid torrent handle.");
         return;
     }
 
-    if (entry.type() != libtorrent::entry::data_type::dictionary_t)
-    {
-        logger_.error("Can only save Hadouken state to a dictionary.");
-        return;
-    }
+    entry.insert(std::make_pair("hadouken-state-version", 1));
 
-    entry.dict().insert(std::make_pair("hadouken-state-version", 1));
-
-    libtorrent::entry tagsList(libtorrent::entry::data_type::list_t);
+    libtorrent::entry::list_type tags;
     
-    std::vector<std::string> tags;
-    handle.getTags(tags);
-
-    for (std::string tag : tags)
+    for (std::string tag : handle->getTags())
     {
-        tagsList.list().push_back(tag);
+        tags.push_back(tag);
     }
 
-    entry.dict().insert(std::make_pair("tags", tagsList));
+    entry.insert(std::make_pair("tags", tags));
 }
 
 void Session::readAlerts()
 {
     using namespace libtorrent;
 
-    // If you really want to have verbose output
-
-    bool traceAlerts = (config_.hasProperty("bittorrent.trace_alerts")
-        && config_.getBool("bittorrent.trace_alerts"));
+    // Setting the following to true in the configuration will print all alerts
+    // to the trace log.
+    bool traceAlerts = config_.getBool("bittorrent.tracingEnabled", false);
 
     while (read_alerts_)
     {
@@ -572,7 +569,7 @@ void Session::readAlerts()
 
                 if (torrents_.find(added_alert->handle.info_hash()) == torrents_.end())
                 {
-                    TorrentHandle handle(added_alert->handle);
+                    std::shared_ptr<TorrentHandle> handle(new TorrentHandle(added_alert->handle));
                     torrents_.insert(std::make_pair(added_alert->handle.info_hash(), handle));
                 }
 
@@ -584,7 +581,10 @@ void Session::readAlerts()
             case torrent_finished_alert::alert_type:
             {
                 torrent_finished_alert* finished_alert = alert_cast<torrent_finished_alert>(alert);
-                onTorrentFinished.notifyAsync(this, TorrentHandle(finished_alert->handle));
+                std::shared_ptr<TorrentHandle> handle = torrents_.at(finished_alert->handle.info_hash());
+
+                onTorrentFinished.notifyAsync(this, handle);
+                
                 break;
             }
 
@@ -616,7 +616,7 @@ void Session::readAlerts()
                 // A torrent downloaded from a URL has changed its info hash.
                 torrent_update_alert* update_alert = alert_cast<torrent_update_alert>(alert);
 
-                TorrentHandle handle = torrents_.at(update_alert->old_ih);
+                std::shared_ptr<TorrentHandle> handle = torrents_.at(update_alert->old_ih);
                 torrents_.erase(update_alert->old_ih);
                 torrents_.insert(std::make_pair(update_alert->new_ih, handle));
 
@@ -643,23 +643,7 @@ void Session::saveTorrentInfo(const libtorrent::torrent_info& info)
         return;
     }
 
-    Poco::Path data_path = getDataPath();
-
-    Poco::Path torrents_path(data_path, "torrents");
-    Poco::File torrents_dir(torrents_path);
-
-    if (!torrents_dir.exists())
-    {
-        logger_.information("Creating torrents path " + torrents_dir.path());
-        torrents_dir.createDirectories();
-    }
-
-    if (!torrents_dir.isDirectory())
-    {
-        logger_.error("%s is not a directory.", torrents_dir.path());
-        return;
-    }
-
+    Poco::Path torrents_path = getTorrentsPath();
     std::string hash = libtorrent::to_hex(info.info_hash().to_string());
 
     // If the torrent file exists, do nothing.
@@ -691,8 +675,7 @@ libtorrent::add_torrent_params Session::getDefaultAddTorrentParams()
     and defaults to sparse files.
     */
 
-    if (config_.has("bittorrent.storage.sparse")
-        && config_.getBool("bittorrent.storage.sparse"))
+    if (config_.getBool("bittorrent.storage.sparse", true))
     {
         p.storage_mode = libtorrent::storage_mode_t::storage_mode_sparse;
     }
@@ -708,7 +691,6 @@ Poco::Path Session::getDataPath()
 {
     std::string configured_data_path = config_.getString("bittorrent.statePath", "state");
 
-    // Save session state
     Poco::Path data_path(configured_data_path);
     Poco::File data_dir(data_path);
 

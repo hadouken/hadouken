@@ -4,6 +4,8 @@
 #include <Poco/Mutex.h>
 #include <Poco/Net/WebSocket.h>
 
+#include <memory>
+
 namespace Hadouken
 {
     namespace BitTorrent
@@ -24,7 +26,7 @@ namespace Hadouken
             void disconnect(Poco::Net::WebSocket& webSocket);
 
         protected:
-            void onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+            void onTorrentAdded(const void* sender, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
             void onTorrentRemoved(const void* sender, std::string& infoHash);
 
             void sendMessage(std::string message);

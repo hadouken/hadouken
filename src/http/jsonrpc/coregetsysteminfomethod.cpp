@@ -21,7 +21,7 @@ Poco::Dynamic::Var::Ptr CoreGetSystemInfoMethod::execute(const Array::Ptr& param
 
     Poco::DynamicStruct versionsObj;
     versionsObj["libtorrent"] = sess.getLibtorrentVersion();
-    versionsObj["hadouken"] = Hadouken::Version::VERSION(); // TODO
+    versionsObj["hadouken"] = Hadouken::Version::VERSION();
 
     obj["versions"] = versionsObj;
 

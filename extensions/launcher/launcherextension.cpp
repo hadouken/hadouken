@@ -60,7 +60,7 @@ void LauncherExtension::unload()
     sess.onTorrentFinished -= Poco::delegate(this, &LauncherExtension::onTorrentCompleted);
 }
 
-void LauncherExtension::launch(const std::string& eventName, TorrentHandle& handle)
+void LauncherExtension::launch(const std::string& eventName, std::shared_ptr<TorrentHandle>& handle)
 {
     if (!launchers_.count(eventName))
     {
@@ -70,9 +70,9 @@ void LauncherExtension::launch(const std::string& eventName, TorrentHandle& hand
     std::vector<std::string> apps = launchers_.at(eventName);
 
     std::vector<std::string> args;
-    args.push_back(handle.getInfoHash());
-    args.push_back(handle.getStatus().getName());
-    args.push_back(handle.getStatus().getSavePath());
+    args.push_back(handle->getInfoHash());
+    args.push_back(handle->getStatus().getName());
+    args.push_back(handle->getStatus().getSavePath());
 
     for (std::string app : apps)
     {
@@ -86,12 +86,12 @@ void LauncherExtension::launch(const std::string& eventName, TorrentHandle& hand
     }
 }
 
-void LauncherExtension::onTorrentAdded(const void* sender, TorrentHandle& handle)
+void LauncherExtension::onTorrentAdded(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     launch("torrent.added", handle);
 }
 
-void LauncherExtension::onTorrentCompleted(const void* sender, TorrentHandle& handle)
+void LauncherExtension::onTorrentCompleted(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     launch("torrent.finished", handle);
 }

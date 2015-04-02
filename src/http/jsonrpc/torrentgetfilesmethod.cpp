@@ -24,14 +24,14 @@ Poco::Dynamic::Var::Ptr TorrentGetFilesMethod::execute(const Array::Ptr& params)
     }
 
     std::string hash = params->getElement<std::string>(0);
-    TorrentHandle handle = sess.findTorrent(hash);
+    std::shared_ptr<TorrentHandle> handle = sess.findTorrent(hash);
 
-    if (!handle.isValid())
+    if (!handle->isValid())
     {
         return nullptr;
     }
 
-    std::unique_ptr<TorrentInfo> info = handle.getTorrentFile();
+    std::unique_ptr<TorrentInfo> info = handle->getTorrentFile();
     Poco::Dynamic::Array result;
 
     if (!info) {
@@ -41,7 +41,7 @@ Poco::Dynamic::Var::Ptr TorrentGetFilesMethod::execute(const Array::Ptr& params)
     FileStorage files = info->getFiles();
     
     std::vector<int64_t> progress;
-    handle.getFileProgress(progress);
+    handle->getFileProgress(progress);
     
     for (int i = 0; i < files.getNumFiles(); i++)
     {

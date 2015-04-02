@@ -56,10 +56,10 @@ void WebSocketConnectionManager::disconnect(Poco::Net::WebSocket& webSocket)
     }
 }
 
-void WebSocketConnectionManager::onTorrentAdded(const void* sender, TorrentHandle& handle)
+void WebSocketConnectionManager::onTorrentAdded(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
-    std::unique_ptr<TorrentInfo> info = handle.getTorrentFile();
-    TorrentStatus status = handle.getStatus();
+    std::unique_ptr<TorrentInfo> info = handle->getTorrentFile();
+    TorrentStatus status = handle->getStatus();
 
     Poco::DynamicStruct torrent;
     torrent["name"] = status.getName();
@@ -89,17 +89,7 @@ void WebSocketConnectionManager::onTorrentAdded(const void* sender, TorrentHandl
     torrent["isSeeding"] = status.isSeeding();
     torrent["isSequentialDownload"] = status.isSequentialDownload();
     torrent["queuePosition"] = status.getQueuePosition();
-
-    Poco::Dynamic::Array tags;
-    std::vector<std::string> t;
-    handle.getTags(t);
-
-    for (std::string tag : t)
-    {
-        tags.push_back(tag);
-    }
-
-    torrent["tags"] = tags;
+    torrent["tags"] = handle->getTags();
 
     Poco::DynamicStruct ev;
     ev["event"] = "torrent.added";

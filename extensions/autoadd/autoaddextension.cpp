@@ -69,7 +69,7 @@ void AutoAddExtension::load(AbstractConfiguration& config)
 
     if (config.has("extensions.autoadd.interval"))
     {
-        monitor_.setPeriodicInterval(config.getInt64("extensions.autoadd.interval"));
+        monitor_.setPeriodicInterval((uint64_t)config.getInt64("extensions.autoadd.interval"));
     }
 
     logger_.information("AutoAdd loaded, monitoring %z folder(s) with interval %ldms.",

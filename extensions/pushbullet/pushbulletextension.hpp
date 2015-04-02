@@ -7,6 +7,8 @@
 #include <Poco/URI.h>
 #include <Poco/Util/AbstractConfiguration.h>
 
+#include <memory>
+
 namespace Hadouken
 {
     namespace BitTorrent
@@ -28,8 +30,8 @@ namespace Pushbullet
 
     private:
         bool isEventEnabled(std::string eventName);
-        void onTorrentAdded(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
-        void onTorrentFinished(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+        void onTorrentAdded(const void* sender, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
+        void onTorrentFinished(const void* sender, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
         void push(std::string title, std::string body);
 

@@ -28,19 +28,19 @@ using namespace Poco::Net;
 DefaultRequestHandlerFactory::DefaultRequestHandlerFactory(const Poco::Util::AbstractConfiguration& config)
     : config_(config)
 {
-    methods_.insert(std::make_pair("core.getSystemInfo", new CoreGetSystemInfoMethod()));
-    methods_.insert(std::make_pair("session.addTorrentFile", new SessionAddTorrentFileMethod()));
-    methods_.insert(std::make_pair("session.addTorrentUri", new SessionAddTorrentUriMethod()));
-    methods_.insert(std::make_pair("session.getProxy", new SessionGetProxyMethod()));
-    methods_.insert(std::make_pair("session.getStatus", new SessionGetStatusMethod()));
-    methods_.insert(std::make_pair("session.getTorrents", new SessionGetTorrentsMethod()));
-    methods_.insert(std::make_pair("session.removeTorrent", new SessionRemoveTorrentMethod()));
-    methods_.insert(std::make_pair("session.setProxy", new SessionSetProxyMethod()));
-    methods_.insert(std::make_pair("torrent.getFiles", new TorrentGetFilesMethod()));
-    methods_.insert(std::make_pair("torrent.getPeers", new TorrentGetPeersMethod()));
-    methods_.insert(std::make_pair("torrent.moveStorage", new TorrentMoveStorageMethod()));
-    methods_.insert(std::make_pair("torrent.pause", new TorrentPauseMethod()));
-    methods_.insert(std::make_pair("torrent.resume", new TorrentResumeMethod()));
+    methods_.insert(std::make_pair("core.getSystemInfo", std::shared_ptr<RpcMethod>(new CoreGetSystemInfoMethod())));
+    methods_.insert(std::make_pair("session.addTorrentFile", std::shared_ptr<RpcMethod>(new SessionAddTorrentFileMethod())));
+    methods_.insert(std::make_pair("session.addTorrentUri", std::shared_ptr<RpcMethod>(new SessionAddTorrentUriMethod())));
+    methods_.insert(std::make_pair("session.getProxy", std::shared_ptr<RpcMethod>(new SessionGetProxyMethod())));
+    methods_.insert(std::make_pair("session.getStatus", std::shared_ptr<RpcMethod>(new SessionGetStatusMethod())));
+    methods_.insert(std::make_pair("session.getTorrents", std::shared_ptr<RpcMethod>(new SessionGetTorrentsMethod())));
+    methods_.insert(std::make_pair("session.removeTorrent", std::shared_ptr<RpcMethod>(new SessionRemoveTorrentMethod())));
+    methods_.insert(std::make_pair("session.setProxy", std::shared_ptr<RpcMethod>(new SessionSetProxyMethod())));
+    methods_.insert(std::make_pair("torrent.getFiles", std::shared_ptr<RpcMethod>(new TorrentGetFilesMethod())));
+    methods_.insert(std::make_pair("torrent.getPeers", std::shared_ptr<RpcMethod>(new TorrentGetPeersMethod())));
+    methods_.insert(std::make_pair("torrent.moveStorage", std::shared_ptr<RpcMethod>(new TorrentMoveStorageMethod())));
+    methods_.insert(std::make_pair("torrent.pause", std::shared_ptr<RpcMethod>(new TorrentPauseMethod())));
+    methods_.insert(std::make_pair("torrent.resume", std::shared_ptr<RpcMethod>(new TorrentResumeMethod())));
 
     wsConnectionManager_ = std::unique_ptr<WebSocketConnectionManager>(new WebSocketConnectionManager());
 
@@ -58,15 +58,6 @@ DefaultRequestHandlerFactory::DefaultRequestHandlerFactory(const Poco::Util::Abs
     if (virtualPath_.at(virtualPath_.size() - 1) != '/')
     {
         virtualPath_ = virtualPath_ + "/";
-    }
-}
-
-DefaultRequestHandlerFactory::~DefaultRequestHandlerFactory()
-{
-    // Delete all registered RPC methods. 
-    for (auto item : methods_)
-    {
-        delete item.second;
     }
 }
 

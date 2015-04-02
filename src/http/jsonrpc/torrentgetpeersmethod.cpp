@@ -22,15 +22,15 @@ Poco::Dynamic::Var::Ptr TorrentGetPeersMethod::execute(const Array::Ptr& params)
     }
 
     std::string hash = params->getElement<std::string>(0);
-    TorrentHandle handle = sess.findTorrent(hash);
+    std::shared_ptr<TorrentHandle> handle = sess.findTorrent(hash);
 
-    if (!handle.isValid())
+    if (!handle->isValid())
     {
         return nullptr;
     }
 
     std::vector<PeerInfo> peers;
-    handle.getPeerInfo(peers);
+    handle->getPeerInfo(peers);
 
     Poco::Dynamic::Array result;
     

@@ -17,10 +17,10 @@ namespace AutoMove
             field_ = field;
         }
 
-        bool isMatch(Hadouken::BitTorrent::TorrentHandle& handle);
+        bool isMatch(std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
     private:
-        std::string getFieldValue(std::string fieldName, Hadouken::BitTorrent::TorrentHandle& handle);
+        std::string getFieldValue(std::string fieldName, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
         std::regex pattern_;
         std::string field_;

@@ -5,16 +5,20 @@
 #include <Poco/Net/HTTPRequestHandler.h>
 #include <Poco/Util/AbstractConfiguration.h>
 
+#include <memory>
+
 using namespace Poco::Net;
 
 namespace Hadouken
 {
     namespace Http
     {
+        using namespace Hadouken::Http::JsonRpc;
+
         class JsonRpcRequestHandler : public HTTPRequestHandler
         {
         public:
-            JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config, std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*>& methods);
+            JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config, std::map<std::string, std::shared_ptr<RpcMethod>>& methods);
 
             void handleRequest(HTTPServerRequest& request, HTTPServerResponse& response);
 
@@ -23,7 +27,7 @@ namespace Hadouken
 
         private:
             const Poco::Util::AbstractConfiguration& config_;
-            std::map<std::string, Hadouken::Http::JsonRpc::RpcMethod*> methods_;
+            std::map<std::string, std::shared_ptr<RpcMethod>>& methods_;
         };
     }
 }

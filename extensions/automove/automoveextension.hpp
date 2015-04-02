@@ -6,6 +6,8 @@
 #include "rule.hpp"
 #include <Poco/Logger.h>
 #include <Poco/Util/AbstractConfiguration.h>
+
+#include <memory>
 #include <vector>
 
 namespace Hadouken
@@ -28,7 +30,7 @@ namespace AutoMove
         void unload();
 
     private:
-        void onTorrentCompleted(const void* sender, Hadouken::BitTorrent::TorrentHandle& handle);
+        void onTorrentCompleted(const void* sender, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle>& handle);
 
         Poco::Logger& logger_;
         std::vector<Rule> rules_;

@@ -180,7 +180,7 @@ void JsEngineExtension::fireEvents(duk_context* ctx)
                 if ((data.first == "torrent.added" || data.first == "torrent.finished") && data.second)
                 {
                     TorrentHandle* handle = static_cast<TorrentHandle*>(data.second);
-                    BitTorrent::setTorrentHandleObject(ctx, *handle);
+                    BitTorrent::setTorrentHandleObject(ctx, std::shared_ptr<TorrentHandle>(handle));
                 }
                 else
                 {
@@ -200,7 +200,7 @@ void JsEngineExtension::fireEvents(duk_context* ctx)
     }
 }
 
-void JsEngineExtension::onTorrentAdded(const void* sender, TorrentHandle& handle)
+void JsEngineExtension::onTorrentAdded(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     Poco::Mutex::ScopedLock lock(event_mutex_);
 
@@ -208,7 +208,7 @@ void JsEngineExtension::onTorrentAdded(const void* sender, TorrentHandle& handle
     event_data_.push(std::make_pair(eventName, &handle));
 }
 
-void JsEngineExtension::onTorrentFinished(const void* sender, TorrentHandle& handle)
+void JsEngineExtension::onTorrentFinished(const void* sender, std::shared_ptr<TorrentHandle>& handle)
 {
     Poco::Mutex::ScopedLock lock(event_mutex_);
 

@@ -8,6 +8,7 @@ General header file for platform-specific functions.
 #include <Hadouken/Config.hpp>
 #include <Poco/Path.h>
 #include <string>
+#include <vector>
 
 namespace Hadouken
 {

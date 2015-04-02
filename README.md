@@ -1,6 +1,10 @@
 # Overview
 
-[![Join the chat at https://gitter.im/hadouken/hadouken](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hadouken/hadouken?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hadouken/hadouken)
+
+[![Hadouken documentation](https://readthedocs.org/projects/hadouken/badge/?version=latest)](http://docs.hdkn.net)
+
+**Build status**
 
  * Windows: [![Build Status](https://builds.nullreferenceexception.se/app/rest/builds/buildType:id:hadouken_core_ContinuousWindows/statusIcon)](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousWindows&guest=1)
  * Ubuntu: [![Build Status](https://builds.nullreferenceexception.se/app/rest/builds/buildType:id:hadouken_core_ContinuousUbuntu/statusIcon)](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousUbuntu&guest=1)
@@ -9,13 +13,7 @@ Hadouken is a modern, open source, cross-platform BitTorrent client written in C
 
 ## Getting started
 
-*We are currently moving from C# to C++ and therefore only Windows beta builds are available. These can be found on [the build server](https://builds.nullreferenceexception.se/viewType.html?buildTypeId=hadouken_core_ContinuousWindows&guest=1).*
-
- * Download the latest MSI installer.
- * Install with your preferred settings.
- * Go to [remote.hdkn.net](http://remote.hdkn.net) and finish the configuration.
-
-The source code for [remote.hdkn.net](http://remote.hdkn.net) is [available on GitHub](https://github.com/hadouken/remote) and anyone can host their own remote.
+Please refer to [the documentation](http://docs.hdkn.net).
 
 ## For developers
 
