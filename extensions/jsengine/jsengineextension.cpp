@@ -180,7 +180,9 @@ void JsEngineExtension::fireEvents(duk_context* ctx)
                 if ((data.first == "torrent.added" || data.first == "torrent.finished") && data.second)
                 {
                     TorrentHandle* handle = static_cast<TorrentHandle*>(data.second);
-                    BitTorrent::setTorrentHandleObject(ctx, std::shared_ptr<TorrentHandle>(handle));
+                    std::shared_ptr<TorrentHandle> handlePointer(handle);
+
+                    BitTorrent::setTorrentHandleObject(ctx, handlePointer);
                 }
                 else
                 {
