@@ -72,21 +72,7 @@ the latest code and build with *cmake*.
   $ cd cmake-build/
   $ cmake ..
   $ make
+  $ sudo make install
 
-After running these commands, you will have a binary, :file:`hadoukend` in the
-*bin* folder. All extensions are put in the *lib* folder.
+You will now have :file:`hadoukend` compiled and ready to run.
 
-
-Enabling extensions
-```````````````````
-
-Hadouken will look in the application directory for extensions, which means
-that :file:`libautoadd.so` must exist side-by-side with :file:`hadoukend` for
-it to be found.
-
-As an example, to enable *AutoAdd*, you must copy the file from the *lib*
-folder to the *bin* folder.
-
-.. code:: bash
-
-  $ cp lib/libautoadd.so bin/
