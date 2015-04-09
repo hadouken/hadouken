@@ -25,6 +25,19 @@ public:
     }
 
 protected:
+    void defineOptions(OptionSet& options)
+    {
+        ServerApplication::defineOptions(options);
+
+        // Add option for separate configuration file
+
+        Option config("config", "c", "Force configuration file.");
+        config.argument("a path to a configuration file");
+        config.binding("configFile");
+
+        options.addOption(config);
+    }
+
 #ifdef WIN32
     void loadServiceConfiguration(Application& app)
     {
@@ -64,6 +77,15 @@ protected:
     void initialize(Application& self)
     {
         loadConfiguration();
+
+        std::string configFile = self.config().getString("configFile", "");
+
+        if (!configFile.empty() && Poco::File(configFile).exists())
+        {
+            self.logger().information("Loading configuration from %s.", configFile);
+            loadConfiguration(configFile);
+        }
+
 #ifdef WIN32
         loadServiceConfiguration(self);
 #endif
