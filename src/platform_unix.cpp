@@ -8,7 +8,7 @@ using namespace Hadouken;
 Poco::Path Platform::getApplicationDataPath()
 {
     // TODO: do something useful.
-    return Poco::Path();
+    return Poco::Path("/etc/hadouken/");
 }
 
 Poco::Path Platform::getApplicationPath()

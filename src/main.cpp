@@ -31,17 +31,20 @@ protected:
 
         // Add option for separate configuration file
 
-        Option config("config", "c", "Force configuration file.");
+        Option config("config", "c");
         config.argument("a path to a configuration file");
         config.binding("configFile");
 
         options.addOption(config);
     }
 
-#ifdef WIN32
     void loadServiceConfiguration(Application& app)
     {
+#ifdef WIN32
         std::string serviceKey = "application.runAsService";
+#else
+        std::string serviceKey = "application.runAsDaemon";
+#endif
 
         if (!app.config().getBool(serviceKey, false))
         {
@@ -51,6 +54,10 @@ protected:
         // If we run as a service (ie. config has property application.runAsService)
         // and we are on Windows, load the C:/ProgramData/Hadouken/config.json
         // configuration file. It should've been put there by the installer.
+
+        // If we run as a daemon (ie. config has property application.runAsDaemon)
+        // and we are on Linux, load the /etc/hadouken/config.json configuration
+        // file.
 
         Poco::Path dataPath = Hadouken::Platform::getApplicationDataPath();
         
@@ -72,7 +79,6 @@ protected:
             logger_.error("No config file found at '%s'.", configFile.path());
         }
     }
-#endif
 
     void initialize(Application& self)
     {
@@ -85,10 +91,11 @@ protected:
             self.logger().information("Loading configuration from %s.", configFile);
             loadConfiguration(configFile);
         }
-
-#ifdef WIN32
-        loadServiceConfiguration(self);
-#endif
+        else
+        {
+            // Load default configuration file
+            loadServiceConfiguration(self);
+        }
 
         Application::initialize(self);
     }
