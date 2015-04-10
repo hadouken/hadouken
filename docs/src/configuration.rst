@@ -28,6 +28,7 @@ Extensions
    configuration/automove
    configuration/launcher
    configuration/pushbullet
+   configuration/pushover
 
 
 BitTorrent configuration

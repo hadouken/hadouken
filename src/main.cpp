@@ -30,12 +30,9 @@ protected:
         ServerApplication::defineOptions(options);
 
         // Add option for separate configuration file
-
-        Option config("config", "c");
-        config.argument("a path to a configuration file");
-        config.binding("configFile");
-
-        options.addOption(config);
+        options.addOption(Option("config", "c")
+            .argument("a path to a configuration file")
+            .binding("configFile"));
     }
 
     void loadServiceConfiguration(Application& app)
@@ -86,10 +83,17 @@ protected:
 
         std::string configFile = self.config().getString("configFile", "");
 
-        if (!configFile.empty() && Poco::File(configFile).exists())
+        if (!configFile.empty())
         {
-            self.logger().information("Loading configuration from %s.", configFile);
-            loadConfiguration(configFile);
+            if (Poco::File(configFile).exists())
+            {
+                self.logger().information("Loading configuration from %s.", configFile);
+                loadConfiguration(configFile);
+            }
+            else
+            {
+                self.logger().error("Configuration file %s does not exist.", configFile);
+            }
         }
         else
         {

@@ -40,7 +40,8 @@ Features
   torrents.
 * Move completed torrents matching specific regular expressions or having the
   correct set of tags.
-* Send push notifications to your devices `via Pushbullet <https://www.pushbullet.com>`_.
+* Send push notifications to your devices via `Pushbullet <https://www.pushbullet.com>`_
+  or `Pushover <https://pushover.net>`_.
 * Launch executables on various events, such as when a torrent finishes.
 * *Experimental* JavaScript extension exposing a Node-like API to enable
   developers to write extensions in JS.
