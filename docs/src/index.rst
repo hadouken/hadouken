@@ -76,4 +76,5 @@ Documentation
    :maxdepth: 1
 
    getting-started
+   migrating
    configuration
