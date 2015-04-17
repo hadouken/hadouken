@@ -43,42 +43,5 @@
         return src;
     };
 
-    var rpcMethods = {};
-
-    (function() {
-        var fs = require("fs");
-        var files = fs.getFiles("./rpc");
-
-        for(var i = 0; i < files.length; i++) {
-            var rpc = require(files[i]).rpc;
-
-            if(rpc.name && rpc.method) {
-                rpcMethods[rpc.name] = rpc.method;
-            }
-        }
-    })();
-
-    hadouken.rpc = function(request) {
-        var method = rpcMethods[request.method];
-        var response = {
-            id: request.id,
-            jsonrpc: "2.0"
-        };
-
-        if(method) {
-            if(request.params instanceof Array) {
-                response.result = method.apply(method, request.params);
-            } else {
-                response.result = method(request.params);
-            }
-        } else {
-            response.error = {
-                code: -32601,
-                message: "Method not found",
-                data: request.method
-            };
-        }
-
-        return response;
-    };
+    hadouken.rpc = require("rpc").handler;
 });

@@ -20,10 +20,10 @@ public:
     {
         setLogger(logger_);
 
-        addSubsystem(new Hadouken::Scripting::ScriptingSubsystem());
         addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
         addSubsystem(new Hadouken::Http::HttpSubsystem());
         addSubsystem(new Hadouken::Extensions::ExtensionSubsystem());
+        addSubsystem(new Hadouken::Scripting::ScriptingSubsystem());
     }
 
 protected:
