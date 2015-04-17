@@ -1,6 +1,7 @@
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Hadouken/Extensions/ExtensionSubsystem.hpp>
 #include <Hadouken/Http/HttpSubsystem.hpp>
+#include <Hadouken/Scripting/ScriptingSubsystem.hpp>
 #include <Hadouken/Platform.hpp>
 #include <Poco/File.h>
 #include <Poco/Path.h>
@@ -19,6 +20,7 @@ public:
     {
         setLogger(logger_);
 
+        addSubsystem(new Hadouken::Scripting::ScriptingSubsystem());
         addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
         addSubsystem(new Hadouken::Http::HttpSubsystem());
         addSubsystem(new Hadouken::Extensions::ExtensionSubsystem());

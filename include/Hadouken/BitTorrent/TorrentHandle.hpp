@@ -28,7 +28,7 @@ namespace Hadouken
 
             HDKN_EXPORT std::string getInfoHash() const;
 
-            void getPeerInfo(std::vector<PeerInfo>& peers) const;
+            HDKN_EXPORT std::vector<PeerInfo> getPeers() const;
 
             HDKN_EXPORT int getQueuePosition() const;
 

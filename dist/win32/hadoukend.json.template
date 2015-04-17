@@ -171,5 +171,11 @@
                 "name": "RejectCertificateHandler"
             }
         }
+    },
+
+    "scripting":
+    {
+        "path":   "${dataPath}/js",
+        "script": "hadouken.js"
     }
 }

@@ -1,46 +1,14 @@
-/*
-Event emitter. This should probably be moved elsewhere.
-*/
-EventEmitter = {};
-EventEmitter.callbacks = {};
-
-EventEmitter.emit = function(eventName, eventData) {
-    print(JSON.stringify(arguments));
-
-    var callbacks = EventEmitter.callbacks[eventName];
-
-    if(!callbacks) {
-        return;
+(function(hadouken) {
+    if (typeof String.prototype.endsWith !== "function") {
+        String.prototype.endsWith = function(suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
     }
 
-    for(var i = 0; i < callbacks.length; i++) {
-        callbacks[i](eventData);
-    }
-};
-
-EventEmitter.register = function(eventName, callback) {
-    if(!EventEmitter.callbacks[eventName]) {
-        EventEmitter.callbacks[eventName] = [];
-    }
-
-    EventEmitter.callbacks[eventName].push(callback);
-};
-
-/*
-General nice-to-have functions.
-*/
-if (typeof String.prototype.endsWith !== "function") {
-    String.prototype.endsWith = function(suffix) {
-        return this.indexOf(suffix, this.length - suffix.length) !== -1;
-    };
-}
-
-// Do our stuff
-(function() {
     Duktape.modSearch = function(id, require, exports, module) {
         var nativeModules = [
             "bittorrent",
-            "config",
+            "core",
             "fs"
         ];
 
@@ -75,31 +43,42 @@ if (typeof String.prototype.endsWith !== "function") {
         return src;
     };
 
-    /*
-    Load all files in the "./plugins" folder. Each plugin file
-    should export a "load" function and optionally an "unload"
-    function.
-    */
-    function loadPlugins(files) {
+    var rpcMethods = {};
+
+    (function() {
+        var fs = require("fs");
+        var files = fs.getFiles("./rpc");
+
         for(var i = 0; i < files.length; i++) {
-            var plugin = require(files[i]);
+            var rpc = require(files[i]).rpc;
 
-            if(!plugin.load || typeof plugin.load !== "function") {
-                alert(files[i] + " does not export a 'load' function.");
-                continue;
+            if(rpc.name && rpc.method) {
+                rpcMethods[rpc.name] = rpc.method;
             }
-
-            plugin.load();
         }
-    }
+    })();
 
-    var fs = require("fs");
-    var pluginFiles = fs.getFiles("./plugins");
+    hadouken.rpc = function(request) {
+        var method = rpcMethods[request.method];
+        var response = {
+            id: request.id,
+            jsonrpc: "2.0"
+        };
 
-    if(pluginFiles && pluginFiles.length > 0) {
-        loadPlugins(pluginFiles);
-    } else {
-        alert("No plugin files found.");
-    }
+        if(method) {
+            if(request.params instanceof Array) {
+                response.result = method.apply(method, request.params);
+            } else {
+                response.result = method(request.params);
+            }
+        } else {
+            response.error = {
+                code: -32601,
+                message: "Method not found",
+                data: request.method
+            };
+        }
 
-})();
+        return response;
+    };
+});

@@ -5,12 +5,11 @@
 #include <Poco/BasicEvent.h>
 #include <Poco/Logger.h>
 #include <Poco/Path.h>
-#include <Poco/RunnableAdapter.h>
-#include <Poco/Thread.h>
 #include <Poco/Util/LayeredConfiguration.h>
 
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace libtorrent
@@ -97,9 +96,8 @@ namespace Hadouken
             // default settings
             std::string default_save_path_;
             
-            bool read_alerts_;
-            Poco::RunnableAdapter<Session> read_alerts_runner_;
-            Poco::Thread read_alerts_thread_;
+            bool isRunning_;
+            std::thread alertReader_;
         };
     }
 }

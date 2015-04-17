@@ -1,5 +1,7 @@
 #include <Hadouken/Http/JsonRpcRequestHandler.hpp>
 
+#include <Hadouken/Scripting/ScriptingSubsystem.hpp>
+
 #include <Poco/JSON/ParseHandler.h>
 #include <Poco/JSON/Parser.h>
 #include <Poco/Net/SecureStreamSocket.h>
@@ -8,58 +10,25 @@
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Net/HTTPServerRequestImpl.h>
 #include <Poco/Net/X509Certificate.h>
-
-#include <openssl/x509.h>
+#include <Poco/Util/Application.h>
 
 using namespace Hadouken::Http;
-using namespace Hadouken::Http::JsonRpc;
+using namespace Hadouken::Scripting;
 using namespace Poco::JSON;
 using namespace Poco::Net;
+using namespace Poco::Util;
 
-Poco::DynamicStruct::Ptr createErrorResponse(int code, std::string message, std::string data)
-{
-    Poco::DynamicStruct::Ptr error = new Poco::DynamicStruct();
-    error->insert("code", code);
-    error->insert("message", message);
-    error->insert("data", data);
-
-    return error;
-}
-
-JsonRpcRequestHandler::JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config, std::map<std::string, std::shared_ptr<RpcMethod>>& methods)
-    : config_(config),
-      methods_(methods)
+JsonRpcRequestHandler::JsonRpcRequestHandler(const Poco::Util::AbstractConfiguration& config)
+    : config_(config)
 {
 }
 
 void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServerResponse& response)
 {
-    /*
-    Parse a JSONRPC request. A request looks like this,
-
-    {
-      "jsonrpc": "2.0",
-      "id": 123,
-      "method": "some.method",
-      "params": []
-    }
-
-    Currently, only positional parameters are supported. The specification also
-    mentions named parameters however this is not implemented yet.
-
-    The response should be
-
-    {
-      "jsonrpc": "2.0",
-      "id": 123,
-      "result": <result>
-    }
-    */
-
     response.add("Access-Control-Allow-Origin", "*");
     response.add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     response.setContentType("application/json");
-    
+
     if (request.getMethod() == "OPTIONS") {
         response.send() << "{ \"status\": \"OK\" }";
         return;
@@ -79,71 +48,8 @@ void JsonRpcRequestHandler::handleRequest(HTTPServerRequest& request, HTTPServer
     Parser parser;
     Poco::Dynamic::Var result = parser.parse(request.stream());
 
-    Object::Ptr requestObject = result.extract<Object::Ptr>();
-    Poco::DynamicStruct::Ptr responseObject = new Poco::DynamicStruct();
-
-    // Validate "jsonrpc"
-    if (!requestObject->has("jsonrpc"))
-    {
-        responseObject->insert("error", *createErrorResponse(-32600,
-           "Invalid Request",
-           "Missing \"jsonrpc\" field in request object."));
-
-        response.send() << responseObject->toString();
-        return;
-    }
-
-    if (!requestObject->has("id"))
-    {
-        // Invalid JSONRPC request. Return error.
-        responseObject->insert("error", *createErrorResponse(-32600,
-            "Invalid Request",
-            "Missing \"id\" field in request object."));
-
-        response.send() << responseObject->toString();
-        return;
-    }
-
-    if (!requestObject->isArray("params"))
-    {
-        // We currently do not support named parameters.
-        responseObject->insert("error", *createErrorResponse(-32600,
-            "Invalid Request",
-            "The \"params\" field must be an array."));
-
-        response.send() << responseObject->toString();
-        return;
-    }
-
-    // Set common properties on response object
-    responseObject->insert("jsonrpc", "2.0");
-    responseObject->insert("id", requestObject->get("id"));
-
-    std::string method = requestObject->getValue<std::string>("method");
-
-    if (methods_.count(method) > 0)
-    {
-        Array::Ptr params = requestObject->getArray("params");
-        std::shared_ptr<RpcMethod> rpcMethod = methods_.at(method);
-
-        // Execute and write result.
-        Poco::Dynamic::Var::Ptr result = rpcMethod->execute(params);
-
-        if (result.isNull())
-        {
-            responseObject->insert("result", Poco::Dynamic::Var());
-        }
-        else
-        {
-            responseObject->insert("result", *result);
-        }
-
-        response.send() << responseObject->toString();
-    }
-    else
-    {
-        response.send() << "Not OK!";
-    }
+    ScriptingSubsystem& scripting = Application::instance().getSubsystem<ScriptingSubsystem>();
+    response.send() << scripting.rpc(result.toString());
 }
 
 bool JsonRpcRequestHandler::isValidRequest(HTTPServerRequest& request) const

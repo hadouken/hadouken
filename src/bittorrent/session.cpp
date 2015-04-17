@@ -19,15 +19,13 @@
 #include <Poco/File.h>
 #include <Poco/Path.h>
 #include <Poco/Util/Application.h>
-#include <Poco/RunnableAdapter.h>
 
 using namespace Hadouken::BitTorrent;
 using namespace Poco::Util;
 
 Session::Session(const Poco::Util::AbstractConfiguration& config)
     : logger_(Poco::Logger::get("hadouken.bittorrent.session")),
-      config_(config),
-      read_alerts_runner_(*this, &Session::readAlerts)
+      config_(config)
 {
     default_save_path_ = config_.getString("bittorrent.defaultSavePath", ".");
 
@@ -67,10 +65,6 @@ void Session::load()
     loadResumeData();
 
     sess_->set_alert_mask(libtorrent::alert::all_categories);
-
-    // Start alert reader thread
-    read_alerts_ = true;
-    read_alerts_thread_.start(read_alerts_runner_);
 
     // Start DHT if enabled
     if (config_.getBool("bittorrent.dht.enabled", true))
@@ -132,6 +126,9 @@ void Session::load()
 
         sess_->set_proxy(proxy);
     }
+
+    isRunning_ = true;
+    alertReader_ = std::thread(std::bind(&Session::readAlerts, this));
 }
 
 void Session::loadSessionState()
@@ -294,8 +291,8 @@ void Session::loadHadoukenState(std::shared_ptr<TorrentHandle>& handle, const li
 void Session::unload()
 {
     // Join the thread that reads alerts.
-    read_alerts_ = false;
-    read_alerts_thread_.join();
+    isRunning_ = false;
+    alertReader_.join();
     
     saveSessionState();
     saveResumeData();
@@ -377,7 +374,7 @@ std::shared_ptr<TorrentHandle> Session::findTorrent(const std::string& infoHash)
 
     if (torrents_.find(hash) == torrents_.end())
     {
-        return nullptr;
+        return std::shared_ptr<TorrentHandle>();
     }
 
     return torrents_.at(hash);
@@ -537,7 +534,7 @@ void Session::readAlerts()
     // to the trace log.
     bool traceAlerts = config_.getBool("bittorrent.tracingEnabled", false);
 
-    while (read_alerts_)
+    while (isRunning_)
     {
         const alert* found_alert = sess_->wait_for_alert(seconds(1));
         if (!found_alert) continue;

@@ -12,15 +12,15 @@
       </Component>
 
       <Component>
-        <File Name="jsengine.dll" />
-      </Component>
-
-      <Component>
         <File Name="launcher.dll" />
       </Component>
 
       <Component>
         <File Name="pushbullet.dll" />
+      </Component>
+
+      <Component>
+        <File Name="pushover.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

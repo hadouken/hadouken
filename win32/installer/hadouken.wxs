@@ -32,6 +32,9 @@
       <ComponentGroupRef Id="ExtensionComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="RegistryComponents" />
+      <ComponentGroupRef Id="ScriptingComponents" />
+      <ComponentGroupRef Id="RpcScriptingComponents" />
+
       <MergeRef Id="VCRedist" />
 
       <Feature Id="FirewallException"

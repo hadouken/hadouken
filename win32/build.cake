@@ -61,6 +61,7 @@ Task("Clean")
         CleanDirectories(new[]
         {
             BinariesDirectory,
+            BinariesDirectory + "/js/rpc",
             OutputDirectory,
             "./build/" + Configuration,
             "./build/wixobj"
@@ -166,6 +167,10 @@ Task("Output")
             pocoBinaries,
             BinariesDirectory
         );
+
+        // Copy JS files
+        CopyFiles(GetFiles("../js/*.js"), BinariesDirectory + "/js");
+        CopyFiles(GetFiles("../js/rpc/*.js"), BinariesDirectory + "/js/rpc");
 
         // Copy relevant dist files
         var distFiles = new []

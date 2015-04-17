@@ -38,17 +38,19 @@ std::string TorrentHandle::getInfoHash() const
     return libtorrent::to_hex(handle_.info_hash().to_string());
 }
 
-void TorrentHandle::getPeerInfo(std::vector<PeerInfo>& peers) const
+std::vector<PeerInfo> TorrentHandle::getPeers() const
 {
     std::vector<libtorrent::peer_info> p;
     handle_.get_peer_info(p);
 
-    peers.empty();
+    std::vector<PeerInfo> result;
 
     for (libtorrent::peer_info inf : p)
     {
-        peers.push_back(PeerInfo(inf));
+        result.push_back(PeerInfo(inf));
     }
+
+    return result;
 }
 
 int TorrentHandle::getQueuePosition() const

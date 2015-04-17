@@ -84,6 +84,7 @@ include_directories(
 
 # Get sources for hadouken (except main.cpp)
 file(GLOB_RECURSE HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+list(APPEND       HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/scripting/duktape.c)
 list(REMOVE_ITEM  HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
 add_library(
@@ -120,7 +121,6 @@ install(TARGETS hadoukend DESTINATION sbin)
 # Extensions
 add_subdirectory(extensions/autoadd)
 add_subdirectory(extensions/automove)
-add_subdirectory(extensions/jsengine)
 add_subdirectory(extensions/launcher)
 add_subdirectory(extensions/pushbullet)
 add_subdirectory(extensions/pushover)

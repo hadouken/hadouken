@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <ComponentGroup Id="ScriptingComponents" Directory="JS_ROOT" Source="$(var.BinDir)\js\">
+      <Component>
+        <File Name="hadouken.js" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="RpcScriptingComponents" Directory="JS_RPC" Source="$(var.BinDir)\js\rpc\">
+      <Component>
+        <File Name="core_getSystemInfo.js" />
+      </Component>
+
+      <Component>
+        <File Name="session_addTorrentFile.js" />
+      </Component>
+
+      <Component>
+        <File Name="session_addTorrentUri.js" />
+      </Component>
+
+      <Component>
+        <File Name="session_getTorrents.js" />
+      </Component>
+
+      <Component>
+        <File Name="session_removeTorrent.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_getFiles.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_getPeers.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_moveStorage.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_pause.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_resume.js" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
