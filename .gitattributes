@@ -1,2 +1,2 @@
-extensions/jsengine/duktape.c linguist-vendored
-extensions/jsengine/duktape.h linguist-vendored
+src/scripting/duktape.c linguist-vendored
+src/scripting/duktape.h linguist-vendored
