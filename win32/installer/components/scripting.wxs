@@ -6,6 +6,10 @@
       <Component>
         <File Name="hadouken.js" />
       </Component>
+
+      <Component>
+        <File Name="rpc.js" />
+      </Component>
     </ComponentGroup>
 
     <ComponentGroup Id="RpcScriptingComponents" Directory="JS_RPC" Source="$(var.BinDir)\js\rpc\">

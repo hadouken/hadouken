@@ -13,8 +13,6 @@ var methods = {};
     }
 })();
 
-print("Found " + Object.keys(methods).length + " RPC method(s).");
-
 function handleRequest(request) {
     var method = methods[request.method];
     var response = {
