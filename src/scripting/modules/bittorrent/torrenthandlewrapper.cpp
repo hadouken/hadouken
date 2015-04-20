@@ -150,6 +150,6 @@ duk_ret_t TorrentHandleWrapper::pause(duk_context* ctx)
 duk_ret_t TorrentHandleWrapper::resume(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
-    handle->pause();
+    handle->resume();
     return 0;
 }
