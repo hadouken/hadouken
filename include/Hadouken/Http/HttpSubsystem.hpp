@@ -2,6 +2,7 @@
 #define HADOUKEN_HTTP_SUBSYSTEM_HPP
 
 #include <Hadouken/Config.hpp>
+#include <Poco/Logger.h>
 #include <Poco/Net/HTTPServer.h>
 #include <Poco/Util/Application.h>
 #include <Poco/Util/Subsystem.h>
@@ -28,7 +29,7 @@ namespace Hadouken
 
         private:
             Poco::Net::ServerSocket getServerSocket(Application& app);
-
+            Poco::Logger& logger_;
             int port_;
             std::unique_ptr<Poco::Net::HTTPServer> server_;
         };

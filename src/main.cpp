@@ -16,9 +16,8 @@ class HadoukenApplication : public ServerApplication
 {
 public:
     HadoukenApplication()
-        : logger_(Poco::Logger::get("hadouken"))
     {
-        setLogger(logger_);
+        Application::config().setString("application.logger", "hadouken");
 
         addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
         addSubsystem(new Hadouken::Http::HttpSubsystem());
@@ -62,7 +61,7 @@ protected:
         
         if (dataPath.toString().empty())
         {
-            logger_.error("Could not retrieve application data path.");
+            app.logger().error("Could not retrieve application data path.");
             return;
         }
 
@@ -75,7 +74,7 @@ protected:
         }
         else
         {
-            logger_.error("No config file found at '%s'.", configFile.path());
+            app.logger().error("No config file found at '%s'.", configFile.path());
         }
     }
 
@@ -111,9 +110,6 @@ protected:
         waitForTerminationRequest();
         return Application::EXIT_OK;
     }
-
-private:
-    Poco::Logger& logger_;
 };
 
 POCO_SERVER_MAIN(HadoukenApplication)

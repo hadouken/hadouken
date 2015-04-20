@@ -9,7 +9,8 @@ using namespace Poco::Net;
 using namespace Poco::Util;
 
 HttpSubsystem::HttpSubsystem()
-    : port_(7070)
+    : port_(7070),
+      logger_(Poco::Logger::get("hadouken.http"))
 {
 }
 
@@ -30,14 +31,14 @@ void HttpSubsystem::initialize(Application& app)
     }
     catch (Poco::Exception& ex)
     {
-        app.logger().error("Could not bind to port %i: %s. HTTP server *not* available.", port_, ex.displayText());
+        logger_.error("Could not bind to port %i: %s. HTTP server *not* available.", port_, ex.displayText());
         return;
     }
 
     server_ = std::unique_ptr<HTTPServer>(new HTTPServer(new DefaultRequestHandlerFactory(app.config()), socket, new HTTPServerParams));
     server_->start();
 
-    app.logger().information("HTTP server started on port %i.", port_);
+    logger_.information("HTTP server started on port %i.", port_);
 }
 
 void HttpSubsystem::uninitialize()
