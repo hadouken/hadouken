@@ -63,9 +63,7 @@ const char* ExtensionSubsystem::name() const
 void ExtensionSubsystem::loadExtension(std::string extensionName, AbstractConfiguration& config)
 {
     // Only load extensions which are excplicitly enabled, eg. "enabled": true.
-
-    if (!config.hasProperty("enabled")
-        || !config.getBool("enabled"))
+    if (!config.getBool("enabled", false))
     {
         return;
     }
