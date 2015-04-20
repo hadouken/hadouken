@@ -1,4 +1,9 @@
-var fs = require("fs");
+var logger = require("logger").get("rpc");
+var fs     = require("fs");
+
+/*
+Object hash containing all RPC methods.
+*/
 var methods = {};
 
 (function() {
@@ -12,6 +17,8 @@ var methods = {};
         }
     }
 })();
+
+logger.info("Found " + Object.keys(methods).length + " RPC method(s).");
 
 function handleRequest(request) {
     var method = methods[request.method];
@@ -38,6 +45,8 @@ function handleRequest(request) {
                 message: "Internal server error",
                 data: e
             };
+
+            logger.error("Error when executing RPC method '" + request.method + "': " + e);
         }
     } else {
         response.error = {
@@ -45,6 +54,8 @@ function handleRequest(request) {
             message: "Method not found",
             data: request.method
         };
+
+        logger.error("Method '" + request.method + "' not found.");
     }
 
     return response;

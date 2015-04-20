@@ -9,7 +9,8 @@
         var nativeModules = [
             "bittorrent",
             "core",
-            "fs"
+            "fs",
+            "logger"
         ];
 
         var found = false;
@@ -43,5 +44,13 @@
         return src;
     };
 
-    hadouken.rpc = require("rpc").handler;
+    (function() {
+        var logger = require("logger").get("hadouken");
+
+        try {
+            hadouken.rpc = require("rpc").handler;            
+        } catch(e) {
+            logger.error("Could not load RPC handler: " + e);
+        }
+    })();
 });
