@@ -51,8 +51,7 @@ duk_ret_t TorrentInfoWrapper::getFiles(duk_context* ctx)
     int i = 0;
 
     FileStorage fileStorage = info->getFiles();
-    std::vector<int64_t> progress;
-    handle->getFileProgress(progress);
+    std::vector<int64_t> progress = handle->getFileProgress();
 
     for (int i = 0; i < fileStorage.getNumFiles(); i++)
     {

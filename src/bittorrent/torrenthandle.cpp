@@ -20,17 +20,12 @@ TorrentHandle::TorrentHandle(const TorrentHandle& h)
 {
 }
 
-void TorrentHandle::getFileProgress(std::vector<int64_t>& progress) const
+std::vector<int64_t> TorrentHandle::getFileProgress() const
 {
     std::vector<libtorrent::size_type> p;
     handle_.file_progress(p);
 
-    progress.resize(p.size());
-
-    for (int i = 0; i < p.size(); i++)
-    {
-        progress[i] = p[i];
-    }
+    return p;
 }
 
 std::string TorrentHandle::getInfoHash() const

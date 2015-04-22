@@ -24,7 +24,7 @@ namespace Hadouken
 
             HDKN_EXPORT TorrentHandle& operator=(const TorrentHandle&) = delete;
 
-            void getFileProgress(std::vector<int64_t>& progress) const;
+            HDKN_EXPORT std::vector<int64_t> getFileProgress() const;
 
             HDKN_EXPORT std::string getInfoHash() const;
 
