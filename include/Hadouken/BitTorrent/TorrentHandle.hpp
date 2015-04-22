@@ -36,6 +36,8 @@ namespace Hadouken
 
             HDKN_EXPORT int getQueuePosition() const;
 
+            HDKN_EXPORT bool getResolveCountries() const;
+
             HDKN_EXPORT TorrentStatus getStatus() const;
 
             std::unique_ptr<TorrentInfo> getTorrentFile() const;
@@ -72,12 +74,14 @@ namespace Hadouken
 
             HDKN_EXPORT void setMaxUploads(int limit) const;
 
+            HDKN_EXPORT void setResolveCountries(bool value);
+
             HDKN_EXPORT void setUploadLimit(int limit) const;
 
             HDKN_EXPORT void setUploadMode(bool mode) const;
 
         private:
-            const libtorrent::torrent_handle handle_;
+            libtorrent::torrent_handle handle_;
             std::vector<std::string> tags_;
         };
     }

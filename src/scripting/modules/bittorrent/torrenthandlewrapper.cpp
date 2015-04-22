@@ -45,6 +45,7 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
     // read+write properties
     DUK_READWRITE_PROPERTY(ctx, handleIndex, maxConnections, TorrentHandleWrapper::getMaxConnections, TorrentHandleWrapper::setMaxConnections);
     DUK_READWRITE_PROPERTY(ctx, handleIndex, maxUploads, TorrentHandleWrapper::getMaxUploads, TorrentHandleWrapper::setMaxUploads);
+    DUK_READWRITE_PROPERTY(ctx, handleIndex, resolveCountries, TorrentHandleWrapper::getResolveCountries, TorrentHandleWrapper::setResolveCountries);
     DUK_READWRITE_PROPERTY(ctx, handleIndex, uploadMode, TorrentHandleWrapper::getUploadMode, TorrentHandleWrapper::setUploadMode);
     DUK_READWRITE_PROPERTY(ctx, handleIndex, uploadLimit, TorrentHandleWrapper::getUploadLimit, TorrentHandleWrapper::setUploadLimit);
 
@@ -198,6 +199,13 @@ duk_ret_t TorrentHandleWrapper::getMaxUploads(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t TorrentHandleWrapper::getResolveCountries(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_boolean(ctx, handle->getResolveCountries());
+    return 1;
+}
+
 duk_ret_t TorrentHandleWrapper::getUploadLimit(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
@@ -223,6 +231,13 @@ duk_ret_t TorrentHandleWrapper::setMaxUploads(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->setMaxUploads(duk_require_int(ctx, 0));
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::setResolveCountries(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->setResolveCountries(duk_require_boolean(ctx, 0) > 0 ? true : false);
     return 0;
 }
 

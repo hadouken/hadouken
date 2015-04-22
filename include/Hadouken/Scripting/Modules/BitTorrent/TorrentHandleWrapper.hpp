@@ -44,10 +44,12 @@ namespace Hadouken
 
                     static int getMaxConnections(void* ctx);
                     static int getMaxUploads(void* ctx);
+                    static int getResolveCountries(void* ctx);
                     static int getUploadLimit(void* ctx);
                     static int getUploadMode(void* ctx);
                     static int setMaxConnections(void* ctx);
                     static int setMaxUploads(void* ctx);
+                    static int setResolveCountries(void* ctx);
                     static int setUploadLimit(void* ctx);
                     static int setUploadMode(void* ctx);
                 };

@@ -11,10 +11,11 @@ exports.rpc = {
         }
 
         return {
-            maxConnections: torrent.maxConnections,
-            maxUploads:     torrent.maxUploads,
-            uploadLimit:    torrent.uploadLimit,
-            uploadMode:     torrent.uploadMode
+            maxConnections:   torrent.maxConnections,
+            maxUploads:       torrent.maxUploads,
+            resolveCountries: torrent.resolveCountries,
+            uploadLimit:      torrent.uploadLimit,
+            uploadMode:       torrent.uploadMode
         };
     }
 };

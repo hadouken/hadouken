@@ -68,6 +68,11 @@ int TorrentHandle::getQueuePosition() const
     return handle_.queue_position();
 }
 
+bool TorrentHandle::getResolveCountries() const
+{
+    return handle_.resolve_countries();
+}
+
 TorrentStatus TorrentHandle::getStatus() const
 {
     libtorrent::torrent_status status = handle_.status();
@@ -149,6 +154,11 @@ void TorrentHandle::setMaxConnections(int limit) const
 void TorrentHandle::setMaxUploads(int limit) const
 {
     handle_.set_max_uploads(limit);
+}
+
+void TorrentHandle::setResolveCountries(bool value)
+{
+    handle_.resolve_countries(value);
 }
 
 void TorrentHandle::setUploadLimit(int limit) const
