@@ -50,6 +50,10 @@
       </Component>
 
       <Component>
+        <File Name="torrent_getTrackers.js" />
+      </Component>
+
+      <Component>
         <File Name="torrent_queueBottom.js" />
       </Component>
 

@@ -9,6 +9,7 @@ namespace Hadouken
 {
     namespace BitTorrent
     {
+        struct AnnounceEntry;
         struct PeerInfo;
         class Session;
         class TorrentInfo;
@@ -40,7 +41,9 @@ namespace Hadouken
 
             HDKN_EXPORT TorrentStatus getStatus() const;
 
-            std::unique_ptr<TorrentInfo> getTorrentFile() const;
+            HDKN_EXPORT std::unique_ptr<TorrentInfo> getTorrentFile() const;
+
+            HDKN_EXPORT std::vector<AnnounceEntry> getTrackers() const;
 
             HDKN_EXPORT int getUploadLimit() const;
 

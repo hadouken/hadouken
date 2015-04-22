@@ -1,9 +1,11 @@
 #include <Hadouken/Scripting/Modules/BitTorrent/TorrentHandleWrapper.hpp>
 
+#include <Hadouken/BitTorrent/AnnounceEntry.hpp>
 #include <Hadouken/BitTorrent/PeerInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/AnnounceEntryWrapper.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/PeerInfoWrapper.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/TorrentInfoWrapper.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/TorrentStatusWrapper.hpp>
@@ -22,6 +24,7 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
         { "getPeers", TorrentHandleWrapper::getPeers, 0 },
         { "getStatus", TorrentHandleWrapper::getStatus, 0 },
         { "getTorrentInfo", TorrentHandleWrapper::getTorrentInfo, 0 },
+        { "getTrackers", TorrentHandleWrapper::getTrackers, 0 },
         { "moveStorage", TorrentHandleWrapper::moveStorage, 1 },
         { "pause", TorrentHandleWrapper::pause, 0 },
         { "queueBottom", TorrentHandleWrapper::queueBottom, 0 },
@@ -128,6 +131,24 @@ duk_ret_t TorrentHandleWrapper::getTorrentInfo(duk_context* ctx)
     else
     {
         duk_push_null(ctx);
+    }
+
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::getTrackers(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+
+    int arrayIndex = duk_push_array(ctx);
+    int i = 0;
+
+    for (AnnounceEntry entry : handle->getTrackers())
+    {
+        AnnounceEntryWrapper::initialize(ctx, entry);
+        duk_put_prop_index(ctx, arrayIndex, i);
+
+        ++i;
     }
 
     return 1;

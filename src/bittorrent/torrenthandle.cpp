@@ -1,5 +1,6 @@
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 
+#include <Hadouken/BitTorrent/AnnounceEntry.hpp>
 #include <Hadouken/BitTorrent/PeerInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
@@ -83,6 +84,18 @@ std::unique_ptr<TorrentInfo> TorrentHandle::getTorrentFile() const
     }
 
     return std::unique_ptr<TorrentInfo>();
+}
+
+std::vector<AnnounceEntry> TorrentHandle::getTrackers() const
+{
+    std::vector<AnnounceEntry> result;
+
+    for (libtorrent::announce_entry entry : handle_.trackers())
+    {
+        result.push_back(AnnounceEntry(entry));
+    }
+
+    return result;
 }
 
 int TorrentHandle::getUploadLimit() const

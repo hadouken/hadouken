@@ -33,6 +33,7 @@ namespace Hadouken
                     static int getStatus(void* ctx);
                     static int getTags(void* ctx);
                     static int getTorrentInfo(void* ctx);
+                    static int getTrackers(void* ctx);
                     static int moveStorage(void* ctx);
                     static int pause(void* ctx);
                     static int resume(void* ctx);
