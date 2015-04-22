@@ -16,8 +16,11 @@ void AnnounceEntryWrapper::initialize(duk_context* ctx, AnnounceEntry& announceE
     // Set internal pointer
     Common::setPointer<AnnounceEntry>(ctx, entryIndex, new AnnounceEntry(announceEntry));
 
-    DUK_READONLY_PROPERTY(ctx, entryIndex, message, AnnounceEntryWrapper::getMessage);
-    DUK_READONLY_PROPERTY(ctx, entryIndex, url, AnnounceEntryWrapper::getUrl);
+    DUK_READONLY_PROPERTY(ctx, entryIndex, isUpdating, getIsUpdating);
+    DUK_READONLY_PROPERTY(ctx, entryIndex, isVerified, getIsVerified);
+    DUK_READONLY_PROPERTY(ctx, entryIndex, message, getMessage);
+    DUK_READONLY_PROPERTY(ctx, entryIndex, tier, getTier);
+    DUK_READONLY_PROPERTY(ctx, entryIndex, url, getUrl);
 
     // Set finalizer
     duk_push_c_function(ctx, AnnounceEntryWrapper::finalize, 1);
@@ -30,10 +33,31 @@ duk_ret_t AnnounceEntryWrapper::finalize(duk_context* ctx)
     return 0;
 }
 
+duk_ret_t AnnounceEntryWrapper::getIsUpdating(duk_context* ctx)
+{
+    AnnounceEntry* entry = Common::getPointer<AnnounceEntry>(ctx);
+    duk_push_boolean(ctx, entry->isUpdating());
+    return 1;
+}
+
+duk_ret_t AnnounceEntryWrapper::getIsVerified(duk_context* ctx)
+{
+    AnnounceEntry* entry = Common::getPointer<AnnounceEntry>(ctx);
+    duk_push_boolean(ctx, entry->isVerified());
+    return 1;
+}
+
 duk_ret_t AnnounceEntryWrapper::getMessage(duk_context* ctx)
 {
     AnnounceEntry* entry = Common::getPointer<AnnounceEntry>(ctx);
     duk_push_string(ctx, entry->getMessage().c_str());
+    return 1;
+}
+
+duk_ret_t AnnounceEntryWrapper::getTier(duk_context* ctx)
+{
+    AnnounceEntry* entry = Common::getPointer<AnnounceEntry>(ctx);
+    duk_push_int(ctx, entry->getTier());
     return 1;
 }
 

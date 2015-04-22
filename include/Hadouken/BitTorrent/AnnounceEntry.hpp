@@ -21,9 +21,13 @@ namespace Hadouken
 
             HDKN_EXPORT std::string getMessage() const;
 
+            HDKN_EXPORT uint8_t getTier() const;
+
             HDKN_EXPORT std::string getUrl() const;
 
             HDKN_EXPORT bool isUpdating() const;
+
+            HDKN_EXPORT bool isVerified() const;
 
             HDKN_EXPORT void reset();
 

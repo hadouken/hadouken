@@ -16,8 +16,11 @@ exports.rpc = {
             var tracker = trackers[i];
 
             result.push({
-                message: tracker.message,
-                url:     tracker.url
+                isUpdating: tracker.isUpdating,
+                isVerified: tracker.isVerified,
+                message:    tracker.message,
+                tier:       tracker.tier,
+                url:        tracker.url
             });
         }
 

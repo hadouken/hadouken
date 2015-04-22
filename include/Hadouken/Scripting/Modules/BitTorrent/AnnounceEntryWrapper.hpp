@@ -25,7 +25,10 @@ namespace Hadouken
                 private:
                     static int finalize(void* ctx);
 
+                    static int getIsUpdating(void* ctx);
+                    static int getIsVerified(void* ctx);
                     static int getMessage(void* ctx);
+                    static int getTier(void* ctx);
                     static int getUrl(void* ctx);
                 };
             }
