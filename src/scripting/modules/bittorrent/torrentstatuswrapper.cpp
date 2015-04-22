@@ -11,7 +11,7 @@ using namespace Hadouken::Scripting::Modules::BitTorrent;
 
 const char* TorrentStatusWrapper::field = "\xff" "TorrentStatus";
 
-void TorrentStatusWrapper::initialize(duk_context* ctx, TorrentStatus& status)
+void TorrentStatusWrapper::initialize(duk_context* ctx, const TorrentStatus& status)
 {
     duk_idx_t statusIndex = duk_push_object(ctx);
 

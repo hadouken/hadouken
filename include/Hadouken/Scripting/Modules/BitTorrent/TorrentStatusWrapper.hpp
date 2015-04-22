@@ -22,7 +22,7 @@ namespace Hadouken
                 class TorrentStatusWrapper
                 {
                 public:
-                    static void initialize(void* ctx, Hadouken::BitTorrent::TorrentStatus& status);
+                    static void initialize(void* ctx, const Hadouken::BitTorrent::TorrentStatus& status);
 
                     static const char* field;
 
