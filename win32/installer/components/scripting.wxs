@@ -26,6 +26,10 @@
       </Component>
 
       <Component>
+        <File Name="session_getStatus.js" />
+      </Component>
+
+      <Component>
         <File Name="session_getTorrents.js" />
       </Component>
 

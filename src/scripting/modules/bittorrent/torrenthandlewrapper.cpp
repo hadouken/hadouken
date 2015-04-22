@@ -15,8 +15,6 @@ using namespace Hadouken::BitTorrent;
 using namespace Hadouken::Scripting::Modules;
 using namespace Hadouken::Scripting::Modules::BitTorrent;
 
-const char* TorrentHandleWrapper::field = "\xff" "TorrentHandle";
-
 void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle> handle)
 {
     duk_function_list_entry handleFunctions[] =
@@ -33,8 +31,7 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
     duk_idx_t handleIndex = duk_push_object(ctx);
     duk_put_function_list(ctx, handleIndex, handleFunctions);
 
-    duk_push_pointer(ctx, new TorrentHandle(*handle));
-    duk_put_prop_string(ctx, handleIndex, field);
+    Common::setPointer<TorrentHandle>(ctx, handleIndex, new TorrentHandle(*handle));
 
     DUK_READONLY_PROPERTY(ctx, handleIndex, infoHash, TorrentHandleWrapper::getInfoHash);
     DUK_READONLY_PROPERTY(ctx, handleIndex, queuePosition, TorrentHandleWrapper::getQueuePosition);
@@ -46,26 +43,20 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
 
 duk_ret_t TorrentHandleWrapper::finalize(duk_context* ctx)
 {
-    if (duk_get_prop_string(ctx, -1, field))
-    {
-        void* ptr = duk_get_pointer(ctx, -1);
-        TorrentHandle* handle = static_cast<TorrentHandle*>(ptr);
-        delete handle;
-    }
-
+    Common::finalize<TorrentHandle>(ctx);
     return 0;
 }
 
 duk_ret_t TorrentHandleWrapper::getInfoHash(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     duk_push_string(ctx, handle->getInfoHash().c_str());
     return 1;
 }
 
 duk_ret_t TorrentHandleWrapper::getPeers(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
 
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
@@ -83,21 +74,21 @@ duk_ret_t TorrentHandleWrapper::getPeers(duk_context* ctx)
 
 duk_ret_t TorrentHandleWrapper::getQueuePosition(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     duk_push_int(ctx, handle->getQueuePosition());
     return 1;
 }
 
 duk_ret_t TorrentHandleWrapper::getStatus(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     TorrentStatusWrapper::initialize(ctx, handle->getStatus());
     return 1;
 }
 
 duk_ret_t TorrentHandleWrapper::getTags(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
 
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
@@ -115,7 +106,7 @@ duk_ret_t TorrentHandleWrapper::getTags(duk_context* ctx)
 
 duk_ret_t TorrentHandleWrapper::getTorrentInfo(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     std::unique_ptr<TorrentInfo> info = handle->getTorrentFile();
 
     if (info)
@@ -134,7 +125,7 @@ duk_ret_t TorrentHandleWrapper::moveStorage(duk_context* ctx)
 {
     std::string path(duk_require_string(ctx, 0));
 
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->moveStorage(path);
 
     return 0;
@@ -142,14 +133,14 @@ duk_ret_t TorrentHandleWrapper::moveStorage(duk_context* ctx)
 
 duk_ret_t TorrentHandleWrapper::pause(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->pause();
     return 0;
 }
 
 duk_ret_t TorrentHandleWrapper::resume(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->resume();
     return 0;
 }

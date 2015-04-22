@@ -55,119 +55,119 @@ duk_ret_t TorrentStatusWrapper::finalize(duk_context* ctx)
 
 duk_ret_t TorrentStatusWrapper::getName(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_string(ctx, status->getName().c_str());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getProgress(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_number(ctx, status->getProgress());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getSavePath(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_string(ctx, status->getSavePath().c_str());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getDownloadRate(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_int(ctx, status->getDownloadRate());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getUploadRate(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_int(ctx, status->getUploadRate());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getDownloadedBytes(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_number(ctx, status->getTotalDownload());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getDownloadedBytesTotal(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_number(ctx, status->getAllTimeDownload());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getUploadedBytes(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_number(ctx, status->getTotalUpload());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getUploadedBytesTotal(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_number(ctx, status->getAllTimeUpload());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getNumPeers(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_int(ctx, status->getNumPeers());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getNumSeeds(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_int(ctx, status->getNumSeeds());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getState(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_int(ctx, status->getState());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::isFinished(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_boolean(ctx, status->isFinished());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::isMovingStorage(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_boolean(ctx, status->isMovingStorage());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::isPaused(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_boolean(ctx, status->isPaused());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::isSeeding(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_boolean(ctx, status->isSeeding());
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::isSequentialDownload(duk_context* ctx)
 {
-    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx, field);
+    TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
     duk_push_boolean(ctx, status->isSequentialDownload());
     return 1;
 }

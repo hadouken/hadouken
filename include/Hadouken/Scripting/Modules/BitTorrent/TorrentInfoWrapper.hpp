@@ -25,8 +25,6 @@ namespace Hadouken
                 public:
                     static void initialize(void* ctx, Hadouken::BitTorrent::TorrentHandle& handle, std::unique_ptr<Hadouken::BitTorrent::TorrentInfo> torrentInfo);
 
-                    static const char* field;
-
                 private:
                     static int finalize(void* ctx);
 

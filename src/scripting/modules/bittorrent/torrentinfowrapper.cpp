@@ -13,8 +13,6 @@ using namespace Hadouken::BitTorrent;
 using namespace Hadouken::Scripting::Modules;
 using namespace Hadouken::Scripting::Modules::BitTorrent;
 
-const char* TorrentInfoWrapper::field = "\xff" "TorrentInfo";
-
 void TorrentInfoWrapper::initialize(duk_context* ctx, TorrentHandle& handle, std::unique_ptr<TorrentInfo> info)
 {
     duk_function_list_entry functions[] =
@@ -26,13 +24,9 @@ void TorrentInfoWrapper::initialize(duk_context* ctx, TorrentHandle& handle, std
     duk_idx_t infoIndex = duk_push_object(ctx);
     duk_put_function_list(ctx, infoIndex, functions);
 
-    // Set handle pointer
-    duk_push_pointer(ctx, new TorrentHandle(handle));
-    duk_put_prop_string(ctx, infoIndex, TorrentHandleWrapper::field);
-
-    // Set info pointer
-    duk_push_pointer(ctx, info.release());
-    duk_put_prop_string(ctx, infoIndex, field);
+    // Set internal pointers
+    Common::setPointer<TorrentHandle>(ctx, infoIndex, new TorrentHandle(handle));
+    Common::setPointer<TorrentInfo>(ctx, infoIndex, info.release());
 
     DUK_READONLY_PROPERTY(ctx, infoIndex, totalSize, TorrentInfoWrapper::getTotalSize);
 
@@ -42,31 +36,16 @@ void TorrentInfoWrapper::initialize(duk_context* ctx, TorrentHandle& handle, std
 
 duk_ret_t TorrentInfoWrapper::finalize(duk_context* ctx)
 {
-    if (duk_get_prop_string(ctx, -1, TorrentHandleWrapper::field))
-    {
-        void* ptr = duk_get_pointer(ctx, -1);
-        TorrentHandle* handle = static_cast<TorrentHandle*>(ptr);
-        delete handle;
-
-        duk_pop(ctx);
-    }
-
-    if (duk_get_prop_string(ctx, -1, field))
-    {
-        void* ptr = duk_get_pointer(ctx, -1);
-        TorrentInfo* info = static_cast<TorrentInfo*>(ptr);
-        delete info;
-
-        duk_pop(ctx);
-    }
+    Common::finalize<TorrentHandle>(ctx);
+    Common::finalize<TorrentInfo>(ctx);
 
     return 0;
 }
 
 duk_ret_t TorrentInfoWrapper::getFiles(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx, TorrentHandleWrapper::field);
-    TorrentInfo* info = Common::getPointer<TorrentInfo>(ctx, field);
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    TorrentInfo* info = Common::getPointer<TorrentInfo>(ctx);
 
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
@@ -83,10 +62,10 @@ duk_ret_t TorrentInfoWrapper::getFiles(duk_context* ctx)
         duk_push_string(ctx, entry.getPath().c_str());
         duk_put_prop_string(ctx, entryIndex, "path");
 
-        duk_push_number(ctx, progress[i]);
+        duk_push_number(ctx, static_cast<duk_double_t>(progress[i]));
         duk_put_prop_string(ctx, entryIndex, "progress");
 
-        duk_push_number(ctx, entry.getSize());
+        duk_push_number(ctx, static_cast<duk_double_t>(entry.getSize()));
         duk_put_prop_string(ctx, entryIndex, "size");
 
         // Put entry object
@@ -98,7 +77,7 @@ duk_ret_t TorrentInfoWrapper::getFiles(duk_context* ctx)
 
 duk_ret_t TorrentInfoWrapper::getTotalSize(duk_context* ctx)
 {
-    TorrentInfo* info = Common::getPointer<TorrentInfo>(ctx, field);
-    duk_push_number(ctx, info->getTotalSize());
+    TorrentInfo* info = Common::getPointer<TorrentInfo>(ctx);
+    duk_push_number(ctx, static_cast<duk_double_t>(info->getTotalSize()));
     return 1;
 }

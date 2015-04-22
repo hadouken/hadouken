@@ -25,12 +25,11 @@ namespace Hadouken
                 public:
                     static void initialize(void* ctx, Hadouken::BitTorrent::Session& session);
 
-                    static const char* field;
-
                 private:
                     static int addTorrentFile(void* ctx);
                     static int addTorrentUri(void* ctx);
                     static int findTorrent(void* ctx);
+                    static int getStatus(void* ctx);
                     static int getTorrents(void* ctx);
                     static int removeTorrent(void* ctx);
                 };
