@@ -43,7 +43,10 @@ function handleRequest(request) {
             response.error = {
                 code: -32000,
                 message: "Internal server error",
-                data: e
+                data: {
+                    name: e.name,
+                    message: e.message
+                }
             };
 
             logger.error("Error when executing RPC method '" + request.method + "': " + e);

@@ -46,6 +46,26 @@
       </Component>
 
       <Component>
+        <File Name="torrent_getPreferences.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_queueBottom.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_queueDown.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_queueTop.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_queueUp.js" />
+      </Component>
+
+      <Component>
         <File Name="torrent_moveStorage.js" />
       </Component>
 
@@ -55,6 +75,10 @@
 
       <Component>
         <File Name="torrent_resume.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_setPreferences.js" />
       </Component>
     </ComponentGroup>
   </Fragment>

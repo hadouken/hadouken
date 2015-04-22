@@ -24,6 +24,10 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
         { "getTorrentInfo", TorrentHandleWrapper::getTorrentInfo, 0 },
         { "moveStorage", TorrentHandleWrapper::moveStorage, 1 },
         { "pause", TorrentHandleWrapper::pause, 0 },
+        { "queueBottom", TorrentHandleWrapper::queueBottom, 0 },
+        { "queueDown", TorrentHandleWrapper::queueDown, 0 },
+        { "queueTop", TorrentHandleWrapper::queueTop, 0 },
+        { "queueUp", TorrentHandleWrapper::queueUp, 0 },
         { "resume", TorrentHandleWrapper::resume, 0 },
         { NULL, NULL, 0 }
     };
@@ -33,9 +37,16 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
 
     Common::setPointer<TorrentHandle>(ctx, handleIndex, new TorrentHandle(*handle));
 
+    // read-only properties
     DUK_READONLY_PROPERTY(ctx, handleIndex, infoHash, TorrentHandleWrapper::getInfoHash);
     DUK_READONLY_PROPERTY(ctx, handleIndex, queuePosition, TorrentHandleWrapper::getQueuePosition);
     DUK_READONLY_PROPERTY(ctx, handleIndex, tags, TorrentHandleWrapper::getTags);
+
+    // read+write properties
+    DUK_READWRITE_PROPERTY(ctx, handleIndex, maxConnections, TorrentHandleWrapper::getMaxConnections, TorrentHandleWrapper::setMaxConnections);
+    DUK_READWRITE_PROPERTY(ctx, handleIndex, maxUploads, TorrentHandleWrapper::getMaxUploads, TorrentHandleWrapper::setMaxUploads);
+    DUK_READWRITE_PROPERTY(ctx, handleIndex, uploadMode, TorrentHandleWrapper::getUploadMode, TorrentHandleWrapper::setUploadMode);
+    DUK_READWRITE_PROPERTY(ctx, handleIndex, uploadLimit, TorrentHandleWrapper::getUploadLimit, TorrentHandleWrapper::setUploadLimit);
 
     duk_push_c_function(ctx, TorrentHandleWrapper::finalize, 1);
     duk_set_finalizer(ctx, -2);
@@ -138,9 +149,97 @@ duk_ret_t TorrentHandleWrapper::pause(duk_context* ctx)
     return 0;
 }
 
+duk_ret_t TorrentHandleWrapper::queueBottom(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->queueBottom();
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::queueDown(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->queueDown();
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::queueTop(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->queueTop();
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::queueUp(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->queueUp();
+    return 0;
+}
+
 duk_ret_t TorrentHandleWrapper::resume(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->resume();
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::getMaxConnections(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_int(ctx, handle->getMaxConnections());
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::getMaxUploads(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_int(ctx, handle->getMaxUploads());
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::getUploadLimit(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_int(ctx, handle->getUploadLimit());
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::getUploadMode(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_boolean(ctx, handle->getUploadMode());
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::setMaxConnections(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->setMaxConnections(duk_require_int(ctx, 0));
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::setMaxUploads(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->setMaxUploads(duk_require_int(ctx, 0));
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::setUploadLimit(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->setUploadLimit(duk_require_int(ctx, 0));
+
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::setUploadMode(duk_context* ctx)
+{
+    duk_bool_t uploadMode = duk_require_boolean(ctx, 0);
+    
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->setUploadMode(uploadMode > 0 ? true : false);
+
     return 0;
 }

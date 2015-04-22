@@ -36,6 +36,20 @@ namespace Hadouken
                     static int moveStorage(void* ctx);
                     static int pause(void* ctx);
                     static int resume(void* ctx);
+
+                    static int queueBottom(void* ctx);
+                    static int queueDown(void* ctx);
+                    static int queueTop(void* ctx);
+                    static int queueUp(void* ctx);
+
+                    static int getMaxConnections(void* ctx);
+                    static int getMaxUploads(void* ctx);
+                    static int getUploadLimit(void* ctx);
+                    static int getUploadMode(void* ctx);
+                    static int setMaxConnections(void* ctx);
+                    static int setMaxUploads(void* ctx);
+                    static int setUploadLimit(void* ctx);
+                    static int setUploadMode(void* ctx);
                 };
             }
         }

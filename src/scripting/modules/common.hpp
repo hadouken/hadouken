@@ -8,6 +8,12 @@
     duk_push_c_function(ctx, func, 0); \
     duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_ENUMERABLE | DUK_DEFPROP_ENUMERABLE);
 
+#define DUK_READWRITE_PROPERTY(ctx, index, name, getter, setter) \
+    duk_push_string(ctx, #name); \
+    duk_push_c_function(ctx, getter, 0); \
+    duk_push_c_function(ctx, setter, 1); \
+    duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_SETTER | DUK_DEFPROP_HAVE_ENUMERABLE | DUK_DEFPROP_ENUMERABLE);
+
 namespace Hadouken
 {
     namespace Scripting

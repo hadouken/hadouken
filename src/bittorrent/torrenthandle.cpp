@@ -38,6 +38,16 @@ std::string TorrentHandle::getInfoHash() const
     return libtorrent::to_hex(handle_.info_hash().to_string());
 }
 
+int TorrentHandle::getMaxConnections() const
+{
+    return handle_.max_connections();
+}
+
+int TorrentHandle::getMaxUploads() const
+{
+    return handle_.max_uploads();
+}
+
 std::vector<PeerInfo> TorrentHandle::getPeers() const
 {
     std::vector<libtorrent::peer_info> p;
@@ -75,6 +85,16 @@ std::unique_ptr<TorrentInfo> TorrentHandle::getTorrentFile() const
     return std::unique_ptr<TorrentInfo>();
 }
 
+int TorrentHandle::getUploadLimit() const
+{
+    return handle_.upload_limit();
+}
+
+bool TorrentHandle::getUploadMode() const
+{
+    return handle_.status().upload_mode;
+}
+
 bool TorrentHandle::isValid() const
 {
     return handle_.is_valid();
@@ -95,10 +115,50 @@ void TorrentHandle::pause() const
     handle_.pause();
 }
 
+void TorrentHandle::queueBottom() const
+{
+    handle_.queue_position_bottom();
+}
+
+void TorrentHandle::queueDown() const
+{
+    handle_.queue_position_down();
+}
+
+void TorrentHandle::queueTop() const
+{
+    handle_.queue_position_top();
+}
+
+void TorrentHandle::queueUp() const
+{
+    handle_.queue_position_up();
+}
+
 void TorrentHandle::resume() const
 {
     handle_.auto_managed(true);
     handle_.resume();
+}
+
+void TorrentHandle::setMaxConnections(int limit) const
+{
+    handle_.set_max_connections(limit);
+}
+
+void TorrentHandle::setMaxUploads(int limit) const
+{
+    handle_.set_max_uploads(limit);
+}
+
+void TorrentHandle::setUploadLimit(int limit) const
+{
+    handle_.set_upload_limit(limit);
+}
+
+void TorrentHandle::setUploadMode(bool mode) const
+{
+    handle_.set_upload_mode(mode);
 }
 
 void TorrentHandle::addTag(std::string tag)

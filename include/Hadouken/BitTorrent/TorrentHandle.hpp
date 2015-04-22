@@ -28,6 +28,10 @@ namespace Hadouken
 
             HDKN_EXPORT std::string getInfoHash() const;
 
+            HDKN_EXPORT int getMaxConnections() const;
+
+            HDKN_EXPORT int getMaxUploads() const;
+
             HDKN_EXPORT std::vector<PeerInfo> getPeers() const;
 
             HDKN_EXPORT int getQueuePosition() const;
@@ -35,6 +39,10 @@ namespace Hadouken
             HDKN_EXPORT TorrentStatus getStatus() const;
 
             std::unique_ptr<TorrentInfo> getTorrentFile() const;
+
+            HDKN_EXPORT int getUploadLimit() const;
+
+            HDKN_EXPORT bool getUploadMode() const;
 
             HDKN_EXPORT bool isValid() const;
 
@@ -51,6 +59,22 @@ namespace Hadouken
             HDKN_EXPORT void removeTag(std::string tag);
 
             HDKN_EXPORT bool hasTag(std::string tag);
+
+            HDKN_EXPORT void queueBottom() const;
+
+            HDKN_EXPORT void queueDown() const;
+
+            HDKN_EXPORT void queueTop() const;
+
+            HDKN_EXPORT void queueUp() const;
+
+            HDKN_EXPORT void setMaxConnections(int limit) const;
+
+            HDKN_EXPORT void setMaxUploads(int limit) const;
+
+            HDKN_EXPORT void setUploadLimit(int limit) const;
+
+            HDKN_EXPORT void setUploadMode(bool mode) const;
 
         private:
             const libtorrent::torrent_handle handle_;
