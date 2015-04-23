@@ -4,12 +4,12 @@
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
 
-var Target = Argument("target", "Default");
+var Target        = Argument("target", "Default");
 var Configuration = Argument("configuration", "Release");
 
 // VERSION INFORMATION
-var BuildNumber = EnvironmentVariable("BUILD_NUMBER");
-var Version = System.IO.File.ReadAllText("../VERSION");
+var BuildNumber   = EnvironmentVariable("BUILD_NUMBER");
+var Version       = System.IO.File.ReadAllText("../VERSION");
 var VersionSuffix = "";
 
 // VARIOUS DIRECTORIES
@@ -169,7 +169,7 @@ Task("Output")
         );
 
         // Copy JS files
-        CopyFiles(GetFiles("../js/*.js"), BinariesDirectory + "/js");
+        CopyFiles(GetFiles("../js/*.js"),     BinariesDirectory + "/js");
         CopyFiles(GetFiles("../js/rpc/*.js"), BinariesDirectory + "/js/rpc");
 
         // Copy relevant dist files
@@ -189,6 +189,8 @@ Task("Create-Zip-Package")
         IEnumerable<FilePath> files = GetFiles(BinariesDirectory + "/*.dll");
         files = files.Union(GetFiles(BinariesDirectory + "/*.exe"));
         files = files.Union(GetFiles(BinariesDirectory + "/*.template"));
+        files = files.Union(GetFiles(BinariesDirectory + "/js/*.js"));
+        files = files.Union(GetFiles(BinariesDirectory + "/js/rpc/*.js"));
 
         Zip(BinariesDirectory,
             OutputDirectory + "/hadouken-" + Version + VersionSuffix + ".zip",
