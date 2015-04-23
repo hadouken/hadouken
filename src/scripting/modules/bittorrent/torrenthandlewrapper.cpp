@@ -19,46 +19,62 @@ using namespace Hadouken::Scripting::Modules::BitTorrent;
 
 void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle> handle)
 {
-    duk_function_list_entry handleFunctions[] =
+    duk_function_list_entry functions[] =
     {
-        { "getPeers", TorrentHandleWrapper::getPeers, 0 },
-        { "getStatus", TorrentHandleWrapper::getStatus, 0 },
-        { "getTorrentInfo", TorrentHandleWrapper::getTorrentInfo, 0 },
-        { "getTrackers", TorrentHandleWrapper::getTrackers, 0 },
-        { "moveStorage", TorrentHandleWrapper::moveStorage, 1 },
-        { "pause", TorrentHandleWrapper::pause, 0 },
-        { "queueBottom", TorrentHandleWrapper::queueBottom, 0 },
-        { "queueDown", TorrentHandleWrapper::queueDown, 0 },
-        { "queueTop", TorrentHandleWrapper::queueTop, 0 },
-        { "queueUp", TorrentHandleWrapper::queueUp, 0 },
-        { "resume", TorrentHandleWrapper::resume, 0 },
-        { NULL, NULL, 0 }
+        { "clearError",     clearError,     0 },
+        { "forceRecheck",   forceRecheck,   0 },
+        { "getPeers",       getPeers,       0 },
+        { "getStatus",      getStatus,      0 },
+        { "getTorrentInfo", getTorrentInfo, 0 },
+        { "getTrackers",    getTrackers,    0 },
+        { "moveStorage",    moveStorage,    1 },
+        { "pause",          pause,          0 },
+        { "queueBottom",    queueBottom,    0 },
+        { "queueDown",      queueDown,      0 },
+        { "queueTop",       queueTop,       0 },
+        { "queueUp",        queueUp,        0 },
+        { "renameFile",     renameFile,     2 },
+        { "resume",         resume,         0 },
+        { NULL,             NULL,           0 }
     };
 
-    duk_idx_t handleIndex = duk_push_object(ctx);
-    duk_put_function_list(ctx, handleIndex, handleFunctions);
+    duk_idx_t idx = duk_push_object(ctx);
+    duk_put_function_list(ctx, idx, functions);
 
-    Common::setPointer<TorrentHandle>(ctx, handleIndex, new TorrentHandle(*handle));
+    Common::setPointer<TorrentHandle>(ctx, idx, new TorrentHandle(*handle));
 
     // read-only properties
-    DUK_READONLY_PROPERTY(ctx, handleIndex, infoHash, TorrentHandleWrapper::getInfoHash);
-    DUK_READONLY_PROPERTY(ctx, handleIndex, queuePosition, TorrentHandleWrapper::getQueuePosition);
-    DUK_READONLY_PROPERTY(ctx, handleIndex, tags, TorrentHandleWrapper::getTags);
+    DUK_READONLY_PROPERTY(ctx, idx, infoHash, getInfoHash);
+    DUK_READONLY_PROPERTY(ctx, idx, queuePosition, getQueuePosition);
+    DUK_READONLY_PROPERTY(ctx, idx, tags, getTags);
 
     // read+write properties
-    DUK_READWRITE_PROPERTY(ctx, handleIndex, maxConnections, TorrentHandleWrapper::getMaxConnections, TorrentHandleWrapper::setMaxConnections);
-    DUK_READWRITE_PROPERTY(ctx, handleIndex, maxUploads, TorrentHandleWrapper::getMaxUploads, TorrentHandleWrapper::setMaxUploads);
-    DUK_READWRITE_PROPERTY(ctx, handleIndex, resolveCountries, TorrentHandleWrapper::getResolveCountries, TorrentHandleWrapper::setResolveCountries);
-    DUK_READWRITE_PROPERTY(ctx, handleIndex, uploadMode, TorrentHandleWrapper::getUploadMode, TorrentHandleWrapper::setUploadMode);
-    DUK_READWRITE_PROPERTY(ctx, handleIndex, uploadLimit, TorrentHandleWrapper::getUploadLimit, TorrentHandleWrapper::setUploadLimit);
+    DUK_READWRITE_PROPERTY(ctx, idx, maxConnections, getMaxConnections, setMaxConnections);
+    DUK_READWRITE_PROPERTY(ctx, idx, maxUploads, getMaxUploads, setMaxUploads);
+    DUK_READWRITE_PROPERTY(ctx, idx, resolveCountries, getResolveCountries, setResolveCountries);
+    DUK_READWRITE_PROPERTY(ctx, idx, sequentialDownload, getSequentialDownload, setSequentialDownload);
+    DUK_READWRITE_PROPERTY(ctx, idx, uploadMode, getUploadMode, setUploadMode);
+    DUK_READWRITE_PROPERTY(ctx, idx, uploadLimit, getUploadLimit, setUploadLimit);
 
-    duk_push_c_function(ctx, TorrentHandleWrapper::finalize, 1);
+    duk_push_c_function(ctx, finalize, 1);
     duk_set_finalizer(ctx, -2);
 }
 
 duk_ret_t TorrentHandleWrapper::finalize(duk_context* ctx)
 {
     Common::finalize<TorrentHandle>(ctx);
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::clearError(duk_context* ctx)
+{
+    Common::getPointer<TorrentHandle>(ctx)->clearError();
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::forceRecheck(duk_context* ctx)
+{
+    Common::getPointer<TorrentHandle>(ctx)->forceRecheck();
     return 0;
 }
 
@@ -199,6 +215,16 @@ duk_ret_t TorrentHandleWrapper::queueUp(duk_context* ctx)
     return 0;
 }
 
+duk_ret_t TorrentHandleWrapper::renameFile(duk_context* ctx)
+{
+    duk_int_t fileIndex = duk_require_int(ctx, 0);
+    const char* name = duk_require_string(ctx, 1);
+
+    Common::getPointer<TorrentHandle>(ctx)->renameFile(fileIndex, std::string(name));
+
+    return 0;
+}
+
 duk_ret_t TorrentHandleWrapper::resume(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
@@ -224,6 +250,13 @@ duk_ret_t TorrentHandleWrapper::getResolveCountries(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     duk_push_boolean(ctx, handle->getResolveCountries());
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::getSequentialDownload(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_boolean(ctx, handle->getStatus().isSequentialDownload());
     return 1;
 }
 
@@ -259,6 +292,13 @@ duk_ret_t TorrentHandleWrapper::setResolveCountries(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->setResolveCountries(duk_require_boolean(ctx, 0) > 0 ? true : false);
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::setSequentialDownload(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    handle->setSequentialDownload(duk_require_boolean(ctx, 0) > 0 ? true : false);
     return 0;
 }
 

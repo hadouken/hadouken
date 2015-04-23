@@ -91,28 +91,28 @@ duk_ret_t TorrentStatusWrapper::getUploadRate(duk_context* ctx)
 duk_ret_t TorrentStatusWrapper::getDownloadedBytes(duk_context* ctx)
 {
     TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
-    duk_push_number(ctx, status->getTotalDownload());
+    duk_push_number(ctx, static_cast<duk_double_t>(status->getTotalDownload()));
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getDownloadedBytesTotal(duk_context* ctx)
 {
     TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
-    duk_push_number(ctx, status->getAllTimeDownload());
+    duk_push_number(ctx, static_cast<duk_double_t>(status->getAllTimeDownload()));
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getUploadedBytes(duk_context* ctx)
 {
     TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
-    duk_push_number(ctx, status->getTotalUpload());
+    duk_push_number(ctx, static_cast<duk_double_t>(status->getTotalUpload()));
     return 1;
 }
 
 duk_ret_t TorrentStatusWrapper::getUploadedBytesTotal(duk_context* ctx)
 {
     TorrentStatus* status = Common::getPointer<TorrentStatus>(ctx);
-    duk_push_number(ctx, status->getAllTimeUpload());
+    duk_push_number(ctx, static_cast<duk_double_t>(status->getAllTimeUpload()));
     return 1;
 }
 

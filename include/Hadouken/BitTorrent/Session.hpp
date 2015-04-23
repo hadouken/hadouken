@@ -51,6 +51,10 @@ namespace Hadouken
 
             std::shared_ptr<TorrentHandle> findTorrent(const std::string& infoHash) const;
 
+            HDKN_EXPORT uint16_t getListenPort() const;
+
+            HDKN_EXPORT uint16_t getSslListenPort() const;
+
             HDKN_EXPORT std::vector<std::shared_ptr<TorrentHandle>> getTorrents() const;
 
             HDKN_EXPORT std::string getLibtorrentVersion() const;
@@ -59,7 +63,15 @@ namespace Hadouken
 
             SessionStatus getStatus() const;
 
+            HDKN_EXPORT bool isListening() const;
+
+            HDKN_EXPORT bool isPaused() const;
+
+            HDKN_EXPORT void pause();
+
             void removeTorrent(const std::shared_ptr<TorrentHandle>& handle, int options = 0) const;
+
+            HDKN_EXPORT void resume();
 
             void setProxy(ProxySettings& proxy);
 

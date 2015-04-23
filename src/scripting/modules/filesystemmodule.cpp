@@ -82,7 +82,7 @@ duk_ret_t FileSystemModule::readFile(duk_context* ctx)
     if (p.exists())
     {
         std::ifstream reader(p.path(), std::ios::binary);
-        std::stringstream ss;;
+        std::stringstream ss;
 
         std::copy(
             std::istreambuf_iterator<char>(reader),

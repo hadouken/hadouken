@@ -7,6 +7,14 @@ Object hash containing all RPC methods.
 var methods = {};
 
 (function() {
+    function introspect() {
+        return Object.keys(methods);
+    }
+
+    methods["core.introspect"] = introspect;
+})();
+
+(function() {
     var files = fs.getFiles("./rpc");
 
     for(var i = 0; i < files.length; i++) {

@@ -380,6 +380,16 @@ std::shared_ptr<TorrentHandle> Session::findTorrent(const std::string& infoHash)
     return torrents_.at(hash);
 }
 
+uint16_t Session::getListenPort() const
+{
+    return sess_->listen_port();
+}
+
+uint16_t Session::getSslListenPort() const
+{
+    return sess_->ssl_listen_port();
+}
+
 std::vector<std::shared_ptr<TorrentHandle>> Session::getTorrents() const
 {
     std::vector<std::shared_ptr<TorrentHandle>> th;
@@ -408,9 +418,29 @@ SessionStatus Session::getStatus() const
     return SessionStatus(status);
 }
 
+bool Session::isListening() const
+{
+    return sess_->is_listening();
+}
+
+bool Session::isPaused() const
+{
+    return sess_->is_paused();
+}
+
+void Session::pause()
+{
+    sess_->pause();
+}
+
 void Session::removeTorrent(const std::shared_ptr<TorrentHandle>& handle, int options) const
 {
     sess_->remove_torrent(handle->handle_, options);
+}
+
+void Session::resume()
+{
+    sess_->resume();
 }
 
 void Session::setProxy(ProxySettings& proxy)

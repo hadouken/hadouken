@@ -23,15 +23,22 @@ void SessionWrapper::initialize(duk_context* ctx, Session& session)
     duk_push_string(ctx, session.getLibtorrentVersion().c_str());
     duk_put_prop_string(ctx, sessionIndex, "LIBTORRENT_VERSION");
 
+    DUK_READONLY_PROPERTY(ctx, sessionIndex, isListening, isListening);
+    DUK_READONLY_PROPERTY(ctx, sessionIndex, isPaused, isPaused);
+    DUK_READONLY_PROPERTY(ctx, sessionIndex, listenPort, getListenPort);
+    DUK_READONLY_PROPERTY(ctx, sessionIndex, sslListenPort, getSslListenPort);
+
     // Session functions
     duk_function_list_entry functions[] =
     {
-        { "addTorrentFile", SessionWrapper::addTorrentFile, 2 },
-        { "addTorrentUri", SessionWrapper::addTorrentUri, 2 },
-        { "findTorrent", SessionWrapper::findTorrent, 1 },
-        { "getStatus", SessionWrapper::getStatus, 0 },
-        { "getTorrents", SessionWrapper::getTorrents, 0 },
-        { "removeTorrent", SessionWrapper::removeTorrent, 2 },
+        { "addTorrentFile", addTorrentFile, 2 },
+        { "addTorrentUri",  addTorrentUri,  2 },
+        { "findTorrent",    findTorrent,    1 },
+        { "getStatus",      getStatus,      0 },
+        { "getTorrents",    getTorrents,    0 },
+        { "pause",          pause,          0 },
+        { "removeTorrent",  removeTorrent,  2 },
+        { "resume",         resume,         0 },
         { NULL, NULL, 0 }
     };
 
@@ -98,6 +105,20 @@ duk_ret_t SessionWrapper::findTorrent(duk_context* ctx)
         duk_push_null(ctx);
     }
 
+    return 1;
+}
+
+duk_ret_t SessionWrapper::getListenPort(duk_context* ctx)
+{
+    Session* sess = Common::getPointer<Session>(ctx);
+    duk_push_int(ctx, sess->getListenPort());
+    return 1;
+}
+
+duk_ret_t SessionWrapper::getSslListenPort(duk_context* ctx)
+{
+    Session* sess = Common::getPointer<Session>(ctx);
+    duk_push_int(ctx, sess->getSslListenPort());
     return 1;
 }
 
@@ -173,6 +194,26 @@ duk_ret_t SessionWrapper::getTorrents(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t SessionWrapper::isListening(duk_context* ctx)
+{
+    Session* sess = Common::getPointer<Session>(ctx);
+    duk_push_boolean(ctx, sess->isListening());
+    return 1;
+}
+
+duk_ret_t SessionWrapper::isPaused(duk_context* ctx)
+{
+    Session* sess = Common::getPointer<Session>(ctx);
+    duk_push_boolean(ctx, sess->isPaused());
+    return 1;
+}
+
+duk_ret_t SessionWrapper::pause(duk_context* ctx)
+{
+    Common::getPointer<Session>(ctx)->pause();
+    return 0;
+}
+
 duk_ret_t SessionWrapper::removeTorrent(duk_context* ctx)
 {
     std::string infoHash(duk_require_string(ctx, 0));
@@ -192,4 +233,10 @@ duk_ret_t SessionWrapper::removeTorrent(duk_context* ctx)
     }
 
     return 1;
+}
+
+duk_ret_t SessionWrapper::resume(duk_context* ctx)
+{
+    Common::getPointer<Session>(ctx)->resume();
+    return 0;
 }

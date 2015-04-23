@@ -14,6 +14,10 @@
 
     <ComponentGroup Id="RpcScriptingComponents" Directory="JS_RPC" Source="$(var.BinDir)\js\rpc\">
       <Component>
+        <File Name="config_get.js" />
+      </Component>
+
+      <Component>
         <File Name="core_getSystemInfo.js" />
       </Component>
 
@@ -34,7 +38,23 @@
       </Component>
 
       <Component>
+        <File Name="session_pause.js" />
+      </Component>
+
+      <Component>
         <File Name="session_removeTorrent.js" />
+      </Component>
+
+      <Component>
+        <File Name="session_resume.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_clearError.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_forceRecheck.js" />
       </Component>
 
       <Component>
@@ -75,6 +95,10 @@
 
       <Component>
         <File Name="torrent_pause.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_renameFile.js" />
       </Component>
 
       <Component>

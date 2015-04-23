@@ -8,6 +8,7 @@
     Duktape.modSearch = function(id, require, exports, module) {
         var nativeModules = [
             "bittorrent",
+            "config",
             "core",
             "fs",
             "logger"

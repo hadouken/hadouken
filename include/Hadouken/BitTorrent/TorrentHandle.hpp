@@ -25,6 +25,10 @@ namespace Hadouken
 
             HDKN_EXPORT TorrentHandle& operator=(const TorrentHandle&) = delete;
 
+            HDKN_EXPORT void clearError() const;
+
+            HDKN_EXPORT void forceRecheck() const;
+
             HDKN_EXPORT std::vector<int64_t> getFileProgress() const;
 
             HDKN_EXPORT std::string getInfoHash() const;
@@ -55,6 +59,8 @@ namespace Hadouken
             
             HDKN_EXPORT void pause() const;
 
+            HDKN_EXPORT void renameFile(int index, std::string const& name) const;
+
             HDKN_EXPORT void resume() const;
 
             HDKN_EXPORT void addTag(std::string tag);
@@ -78,6 +84,8 @@ namespace Hadouken
             HDKN_EXPORT void setMaxUploads(int limit) const;
 
             HDKN_EXPORT void setResolveCountries(bool value);
+
+            HDKN_EXPORT void setSequentialDownload(bool value) const;
 
             HDKN_EXPORT void setUploadLimit(int limit) const;
 

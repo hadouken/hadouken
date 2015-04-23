@@ -1,6 +1,7 @@
 #include <Hadouken/Scripting/ScriptingSubsystem.hpp>
 
 #include <Hadouken/Scripting/Modules/BitTorrentModule.hpp>
+#include <Hadouken/Scripting/Modules/ConfigModule.hpp>
 #include <Hadouken/Scripting/Modules/CoreModule.hpp>
 #include <Hadouken/Scripting/Modules/FileSystemModule.hpp>
 #include <Hadouken/Scripting/Modules/LoggerModule.hpp>
@@ -164,6 +165,14 @@ duk_ret_t ScriptingSubsystem::requireNative(duk_context* ctx)
     else if (strcmp("logger", moduleName) == 0)
     {
         duk_push_c_function(ctx, &Modules::LoggerModule::initialize, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
+
+        return 1;
+    }
+    else if (strcmp("config", moduleName) == 0)
+    {
+        duk_push_c_function(ctx, &Modules::ConfigModule::initialize, 1);
         duk_dup(ctx, 2);
         duk_call(ctx, 1);
 

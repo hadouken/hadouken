@@ -27,6 +27,8 @@ namespace Hadouken
                 private:
                     static int finalize(void* ctx);
 
+                    static int clearError(void* ctx);
+                    static int forceRecheck(void* ctx);
                     static int getInfoHash(void* ctx);
                     static int getPeers(void* ctx);
                     static int getQueuePosition(void* ctx);
@@ -36,6 +38,7 @@ namespace Hadouken
                     static int getTrackers(void* ctx);
                     static int moveStorage(void* ctx);
                     static int pause(void* ctx);
+                    static int renameFile(void* ctx);
                     static int resume(void* ctx);
 
                     static int queueBottom(void* ctx);
@@ -46,11 +49,13 @@ namespace Hadouken
                     static int getMaxConnections(void* ctx);
                     static int getMaxUploads(void* ctx);
                     static int getResolveCountries(void* ctx);
+                    static int getSequentialDownload(void* ctx);
                     static int getUploadLimit(void* ctx);
                     static int getUploadMode(void* ctx);
                     static int setMaxConnections(void* ctx);
                     static int setMaxUploads(void* ctx);
                     static int setResolveCountries(void* ctx);
+                    static int setSequentialDownload(void* ctx);
                     static int setUploadLimit(void* ctx);
                     static int setUploadMode(void* ctx);
                 };

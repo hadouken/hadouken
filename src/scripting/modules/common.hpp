@@ -26,9 +26,7 @@ namespace Hadouken
                 template<typename T>
                 static void finalize(duk_context* ctx)
                 {
-                    std::string fieldName(typeid(T).name());
-
-                    if (duk_get_prop_string(ctx, -1, std::string("\xff" + fieldName).c_str()))
+                    if (duk_get_prop_string(ctx, -1, getFieldName<T>().c_str()))
                     {
                         delete static_cast<T*>(duk_get_pointer(ctx, -1));
                         duk_pop(ctx);
@@ -41,9 +39,8 @@ namespace Hadouken
                     duk_push_this(ctx);
 
                     T* res = 0;
-                    std::string fieldName(typeid(T).name());
 
-                    if (duk_get_prop_string(ctx, -1, std::string("\xff" + fieldName).c_str()))
+                    if (duk_get_prop_string(ctx, -1, getFieldName<T>().c_str()))
                     {
                         res = static_cast<T*>(duk_get_pointer(ctx, -1));
                         duk_pop(ctx);
@@ -56,10 +53,16 @@ namespace Hadouken
                 template<typename T>
                 static void setPointer(duk_context* ctx, duk_idx_t idx, T* ptr)
                 {
-                    std::string fieldName(typeid(T).name());
-
                     duk_push_pointer(ctx, ptr);
-                    duk_put_prop_string(ctx, idx, std::string("\xff" + fieldName).c_str());
+                    duk_put_prop_string(ctx, idx, getFieldName<T>().c_str());
+                }
+
+            private:
+                template<typename T>
+                static std::string getFieldName()
+                {
+                    std::string typeName(typeid(T).name());
+                    return std::string("\xff" + typeName);
                 }
             };
         }

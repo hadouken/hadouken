@@ -21,6 +21,16 @@ TorrentHandle::TorrentHandle(const TorrentHandle& h)
 {
 }
 
+void TorrentHandle::clearError() const
+{
+    handle_.clear_error();
+}
+
+void TorrentHandle::forceRecheck() const
+{
+    handle_.force_recheck();
+}
+
 std::vector<int64_t> TorrentHandle::getFileProgress() const
 {
     std::vector<libtorrent::size_type> p;
@@ -128,6 +138,11 @@ void TorrentHandle::pause() const
     handle_.pause();
 }
 
+void TorrentHandle::renameFile(int index, std::string const& name) const
+{
+    handle_.rename_file(index, name);
+}
+
 void TorrentHandle::queueBottom() const
 {
     handle_.queue_position_bottom();
@@ -167,6 +182,11 @@ void TorrentHandle::setMaxUploads(int limit) const
 void TorrentHandle::setResolveCountries(bool value)
 {
     handle_.resolve_countries(value);
+}
+
+void TorrentHandle::setSequentialDownload(bool value) const
+{
+    handle_.set_sequential_download(value);
 }
 
 void TorrentHandle::setUploadLimit(int limit) const

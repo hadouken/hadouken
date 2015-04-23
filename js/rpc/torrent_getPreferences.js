@@ -1,5 +1,4 @@
 var session = require("bittorrent").session;
-var core    = require("core");
 
 exports.rpc = {
     name: "torrent.getPreferences",
@@ -11,11 +10,12 @@ exports.rpc = {
         }
 
         return {
-            maxConnections:   torrent.maxConnections,
-            maxUploads:       torrent.maxUploads,
-            resolveCountries: torrent.resolveCountries,
-            uploadLimit:      torrent.uploadLimit,
-            uploadMode:       torrent.uploadMode
+            maxConnections:     torrent.maxConnections,
+            maxUploads:         torrent.maxUploads,
+            resolveCountries:   torrent.resolveCountries,
+            sequentialDownload: torrent.sequentialDownload,
+            uploadLimit:        torrent.uploadLimit,
+            uploadMode:         torrent.uploadMode
         };
     }
 };
