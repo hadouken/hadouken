@@ -50,14 +50,13 @@ duk_ret_t FileSystemModule::getFiles(duk_context* ctx)
 
     std::vector<Poco::File> files;
     p.list(files);
-    std::vector<Poco::File>::iterator it = files.begin();
 
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
 
-    for (; it != files.end(); ++it)
+    for (Poco::File file : files)
     {
-        duk_push_string(ctx, it->path().c_str());
+        duk_push_string(ctx, file.path().c_str());
         duk_put_prop_index(ctx, arrayIndex, i);
 
         ++i;
