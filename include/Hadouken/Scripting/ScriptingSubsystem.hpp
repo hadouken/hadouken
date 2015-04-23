@@ -21,6 +21,10 @@ namespace Hadouken
 
             HDKN_EXPORT std::string rpc(std::string request);
 
+            HDKN_EXPORT std::string getScriptPath();
+
+            HDKN_EXPORT std::string getScript();
+
         protected:
             void initialize(Application& app);
 

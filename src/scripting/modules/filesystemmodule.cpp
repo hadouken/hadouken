@@ -2,12 +2,14 @@
 
 #include <fstream>
 #include <sstream>
+#include <Hadouken/Scripting/ScriptingSubsystem.hpp>
 #include <Poco/File.h>
 #include <Poco/Path.h>
 #include <Poco/Util/Application.h>
 
 #include "../duktape.h"
 
+using namespace Hadouken::Scripting;
 using namespace Hadouken::Scripting::Modules;
 using namespace Poco::Util;
 
@@ -34,7 +36,7 @@ duk_ret_t FileSystemModule::getFiles(duk_context* ctx)
     if (fp.isRelative())
     {
         Application& app = Application::instance();
-        std::string scriptPath = app.config().getString("scripting.path");
+        std::string scriptPath = app.getSubsystem<ScriptingSubsystem>().getScriptPath();
 
         fp.makeAbsolute(scriptPath);
     }
@@ -72,7 +74,7 @@ duk_ret_t FileSystemModule::readFile(duk_context* ctx)
     if (fp.isRelative())
     {
         Application& app = Application::instance();
-        std::string scriptPath = app.config().getString("scripting.path");
+        std::string scriptPath = app.getSubsystem<ScriptingSubsystem>().getScriptPath();
 
         fp.makeAbsolute(scriptPath);
     }

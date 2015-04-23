@@ -5,6 +5,7 @@
 #include <Hadouken/Scripting/Modules/CoreModule.hpp>
 #include <Hadouken/Scripting/Modules/FileSystemModule.hpp>
 #include <Hadouken/Scripting/Modules/LoggerModule.hpp>
+#include <Poco/File.h>
 
 #include "duktape.h"
 
@@ -12,7 +13,8 @@ using namespace Hadouken::Scripting;
 using namespace Poco::Util;
 
 ScriptingSubsystem::ScriptingSubsystem()
-    : logger_(Poco::Logger::get("hadouken.scripting"))
+    : logger_(Poco::Logger::get("hadouken.scripting")),
+    ctx_(NULL)
 {
 }
 
@@ -20,12 +22,13 @@ void ScriptingSubsystem::initialize(Application& app)
 {
     AbstractConfiguration& config = app.config();
 
-    std::string path = config.getString("scripting.path", "");
-    std::string script = config.getString("scripting.script", "");
+    std::string path = getScriptPath();
+    std::string script = getScript();
+    Poco::Path scriptPath(path ,script);
 
-    if (path.empty() || script.empty())
+    if (!Poco::File(scriptPath).exists())
     {
-        logger_.fatal("Scripting subsystem missing path to JS files and a boot script. Please set 'scripting.path' and 'scripting.script'.");
+        logger_.fatal("Scripting subsystem cannot find script '%s'.", scriptPath.toString());
         return;
     }
 
@@ -37,9 +40,7 @@ void ScriptingSubsystem::initialize(Application& app)
 
     duk_idx_t idx = duk_push_object(ctx_);
 
-    std::string scriptFile = path + "/" + script;
-
-    if (duk_peval_file(ctx_, scriptFile.c_str()) != 0)
+    if (duk_peval_file(ctx_, scriptPath.toString().c_str()) != 0)
     {
         std::string error(duk_safe_to_string(ctx_, -1));
         logger_.error("Could not evaluate script file: %s", error);
@@ -76,7 +77,10 @@ void ScriptingSubsystem::initialize(Application& app)
 
 void ScriptingSubsystem::uninitialize()
 {
-    duk_destroy_heap(ctx_);
+    if (ctx_)
+    {
+        duk_destroy_heap(ctx_);
+    }
 }
 
 std::string ScriptingSubsystem::rpc(std::string request)
@@ -127,6 +131,25 @@ std::string ScriptingSubsystem::rpc(std::string request)
     duk_pop(ctx_);
 
     return result;
+}
+
+std::string ScriptingSubsystem::getScriptPath()
+{
+    Application& app = Application::instance();
+    Poco::Path scriptPath = app.config().getString("scripting.path", "./js");
+
+    if (scriptPath.isRelative())
+    {
+        scriptPath.makeAbsolute();
+    }
+
+    return scriptPath.toString();
+}
+
+std::string ScriptingSubsystem::getScript()
+{
+    Application& app = Application::instance();
+    return app.config().getString("scripting.script", "hadouken.js");
 }
 
 const char* ScriptingSubsystem::name() const
