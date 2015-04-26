@@ -45,28 +45,27 @@ duk_ret_t HttpModule::post(duk_context* ctx)
 
     HTTPRequest request(HTTPRequest::HTTP_POST, url.getPathAndQuery());
 
-    // get headers
-    // TODO: we should iterate over all properties on the object and add key values
     if (duk_has_prop_string(ctx, 2, "headers"))
     {
         duk_get_prop_string(ctx, 2, "headers");
+        duk_enum(ctx, -1, DUK_ENUM_OWN_PROPERTIES_ONLY);
 
-        if (duk_has_prop_string(ctx, -1, "Authorization"))
+        std::vector<std::string> keys;
+
+        while (duk_next(ctx, -1, 0))
         {
-            duk_get_prop_string(ctx, -1, "Authorization");
-
-            std::string auth(duk_get_string(ctx, -1));
-            request.add("Authorization", auth);
-
+            keys.push_back(duk_get_string(ctx, -1));
             duk_pop(ctx);
         }
 
-        if (duk_has_prop_string(ctx, -1, "Content-Type"))
-        {
-            duk_get_prop_string(ctx, -1, "Content-Type");
+        duk_pop(ctx);
 
-            std::string contentType(duk_get_string(ctx, -1));
-            request.add("Content-Type", contentType);
+        for (std::string key : keys)
+        {
+            duk_get_prop_string(ctx, -1, key.c_str());
+
+            std::string val(duk_get_string(ctx, -1));
+            request.add(key, val);
 
             duk_pop(ctx);
         }
