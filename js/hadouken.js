@@ -11,6 +11,7 @@
             "config",
             "core",
             "fs",
+            "http",
             "logger"
         ];
 
@@ -49,9 +50,12 @@
         var logger = require("logger").get("hadouken");
 
         try {
-            hadouken.rpc = require("rpc").handler;            
+            hadouken.emit = require("events").emitter;
+            hadouken.rpc  = require("rpc").handler;
+
+            require("plugins").load();
         } catch(e) {
-            logger.error("Could not load RPC handler: " + e);
+            logger.error("Could not load Hadouken JS engine: " + e);
         }
     })();
 });

@@ -17,7 +17,7 @@ TorrentHandle::TorrentHandle(const libtorrent::torrent_handle& handle)
 
 TorrentHandle::TorrentHandle(const TorrentHandle& h)
     : handle_(h.handle_),
-      tags_(h.tags_)
+      data_(h.data_)
 {
 }
 
@@ -199,31 +199,37 @@ void TorrentHandle::setUploadMode(bool mode) const
     handle_.set_upload_mode(mode);
 }
 
-void TorrentHandle::addTag(std::string tag)
+std::vector<std::string> TorrentHandle::getDataKeys()
 {
-    if (hasTag(tag)) return;
-    tags_.push_back(tag);
-}
+    std::vector<std::string> result;
 
-std::vector<std::string> TorrentHandle::getTags() const
-{
-    return tags_;
-}
-
-void TorrentHandle::removeTag(std::string tag)
-{
-    if (!hasTag(tag)) return;
-
-    std::vector<std::string>::iterator finder = std::find(tags_.begin(), tags_.end(), tag);
-
-    if (finder != tags_.end())
+    for (std::pair<std::string, std::string> p : data_)
     {
-        tags_.erase(finder);
+        result.push_back(p.first);
     }
+
+    return result;
 }
 
-bool TorrentHandle::hasTag(std::string tag)
+std::string TorrentHandle::getData(std::string key)
 {
-    std::vector<std::string>::iterator finder = std::find(tags_.begin(), tags_.end(), tag);
-    return (finder != tags_.end());
+    if (data_.find(key) == data_.end())
+    {
+        return std::string();
+    }
+
+    return data_.at(key);
+}
+
+void TorrentHandle::setData(std::string key, std::string value)
+{
+    data_[key] = value;
+}
+
+void TorrentHandle::clearData(std::string key)
+{
+    if (data_.find(key) != data_.end())
+    {
+        data_.erase(key);
+    }
 }

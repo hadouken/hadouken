@@ -16,17 +16,11 @@ using namespace Poco::Util;
 duk_ret_t BitTorrentModule::initialize(duk_context* ctx)
 {
     // Set properties and functions on exports
-    DUK_READONLY_PROPERTY(ctx, 0, session, BitTorrentModule::getSession)
-
-    return 0;
-}
-
-duk_ret_t BitTorrentModule::getSession(duk_context* ctx)
-{
     Application& app = Application::instance();
     Session& sess = app.getSubsystem<TorrentSubsystem>().getSession();
 
     SessionWrapper::initialize(ctx, sess);
+    duk_put_prop_string(ctx, 0, "session");
 
-    return 1;
+    return 0;
 }

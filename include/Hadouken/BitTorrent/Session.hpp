@@ -43,9 +43,9 @@ namespace Hadouken
             void load();
             void unload();
 
-            HDKN_EXPORT std::string addTorrentFile(Poco::Path& filePath, AddTorrentParams& params);
+            HDKN_EXPORT std::string addTorrent(std::vector<char>& buffer, AddTorrentParams& params);
 
-            HDKN_EXPORT std::string addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params);
+            HDKN_EXPORT std::string addTorrentFile(std::string path, AddTorrentParams& params);
 
             HDKN_EXPORT void addTorrentUri(std::string uri, AddTorrentParams& params);
 
@@ -84,11 +84,11 @@ namespace Hadouken
         protected:
             void loadSessionState();
             void loadResumeData();
-            void loadHadoukenState(std::shared_ptr<TorrentHandle>& handle, const libtorrent::lazy_entry& entry);
+            void loadHadoukenState(std::shared_ptr<TorrentHandle> handle, const libtorrent::lazy_entry& entry);
 
             void saveSessionState();
             void saveResumeData();
-            void saveHadoukenState(std::shared_ptr<TorrentHandle>& handle, libtorrent::dictionary_type& entry);
+            void saveHadoukenState(std::shared_ptr<TorrentHandle> handle, libtorrent::dictionary_type& entry);
 
             void readAlerts();
 

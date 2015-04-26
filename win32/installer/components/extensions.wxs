@@ -4,23 +4,7 @@
   <Fragment>
     <ComponentGroup Id="ExtensionComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component>
-        <File Name="autoadd.dll" />
-      </Component>
-
-      <Component>
-        <File Name="automove.dll" />
-      </Component>
-
-      <Component>
         <File Name="launcher.dll" />
-      </Component>
-
-      <Component>
-        <File Name="pushbullet.dll" />
-      </Component>
-
-      <Component>
-        <File Name="pushover.dll" />
       </Component>
     </ComponentGroup>
   </Fragment>

@@ -17,12 +17,44 @@ duk_ret_t FileSystemModule::initialize(duk_context* ctx)
 {
     duk_function_list_entry functions[] =
     {
-        { "getFiles", FileSystemModule::getFiles, 1 },
-        { "readFile", FileSystemModule::readFile, 1 },
+        { "deleteFile", deleteFile, 1 },
+        { "getFiles",   getFiles,   1 },
+        { "readFile",   readFile,   1 },
         { NULL, NULL, 0 }
     };
 
     duk_put_function_list(ctx, 0 /* exports */, functions);
+    return 0;
+}
+
+duk_ret_t FileSystemModule::deleteFile(duk_context* ctx)
+{
+    std::string path(duk_require_string(ctx, 0));
+    Poco::Path fp(path);
+
+    if (fp.isRelative())
+    {
+        Application& app = Application::instance();
+        std::string scriptPath = app.getSubsystem<ScriptingSubsystem>().getScriptPath();
+
+        fp.makeAbsolute(scriptPath);
+    }
+
+    Poco::File p(fp);
+
+    if (!p.exists())
+    {
+        duk_push_error_object(ctx, DUK_ERR_ERROR, "File not found: %s", fp.toString().c_str());
+        return 1;
+    }
+
+    if (!p.isFile())
+    {
+        duk_push_error_object(ctx, DUK_ERR_ERROR, "Path is not a file: %s", fp.toString().c_str());
+        return 1;
+    }
+
+    p.remove();
     return 0;
 }
 

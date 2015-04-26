@@ -1,11 +1,15 @@
 #include <Hadouken/Scripting/ScriptingSubsystem.hpp>
 
+#include <Hadouken/Scripting/Event.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrentModule.hpp>
 #include <Hadouken/Scripting/Modules/ConfigModule.hpp>
 #include <Hadouken/Scripting/Modules/CoreModule.hpp>
 #include <Hadouken/Scripting/Modules/FileSystemModule.hpp>
+#include <Hadouken/Scripting/Modules/HttpModule.hpp>
 #include <Hadouken/Scripting/Modules/LoggerModule.hpp>
 #include <Poco/File.h>
+
+#include <chrono>
 
 #include "duktape.h"
 
@@ -73,14 +77,72 @@ void ScriptingSubsystem::initialize(Application& app)
 
     // Ignore result
     duk_pop(ctx_);
+
+    isRunning_ = true;
+    ticker_ = std::thread(std::bind(&ScriptingSubsystem::tick, this));
 }
 
 void ScriptingSubsystem::uninitialize()
 {
+    isRunning_ = false;
+    ticker_.join();
+
+    std::lock_guard<std::mutex> lock(contextMutex_);
+
     if (ctx_)
     {
         duk_destroy_heap(ctx_);
+        ctx_ = NULL;
     }
+}
+
+void ScriptingSubsystem::emit(std::string eventName, std::unique_ptr<Event> data)
+{
+    std::lock_guard<std::mutex> lock(contextMutex_);
+
+    if (!ctx_)
+    {
+        return;
+    }
+
+    duk_push_global_stash(ctx_);
+
+    if (duk_get_prop_string(ctx_, -1, "hdkn"))
+    {
+        if (duk_get_prop_string(ctx_, -1, "emit"))
+        {
+            if (!duk_is_callable(ctx_, -1))
+            {
+                logger_.error("Type 'emit' is not callable.");
+                return;
+            }
+
+            duk_dup(ctx_, -1);
+
+            duk_push_string(ctx_, eventName.c_str());
+
+            if (data)
+            {
+                data->push(ctx_);
+            }
+            else
+            {
+                duk_push_undefined(ctx_);
+            }
+
+            if (duk_pcall_method(ctx_, 2) != DUK_EXEC_SUCCESS)
+            {
+                std::string error(duk_safe_to_string(ctx_, -1));
+                logger_.error("Error when emitting event '%s': %s", eventName, error);
+            }
+
+            duk_pop(ctx_);
+        }
+
+        duk_pop(ctx_);
+    }
+
+    duk_pop(ctx_);
 }
 
 std::string ScriptingSubsystem::rpc(std::string request)
@@ -152,6 +214,15 @@ std::string ScriptingSubsystem::getScript()
     return app.config().getString("scripting.script", "hadouken.js");
 }
 
+void ScriptingSubsystem::tick()
+{
+    while (isRunning_)
+    {
+        emit("tick", nullptr);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
 const char* ScriptingSubsystem::name() const
 {
     return "Scripting";
@@ -196,6 +267,14 @@ duk_ret_t ScriptingSubsystem::requireNative(duk_context* ctx)
     else if (strcmp("config", moduleName) == 0)
     {
         duk_push_c_function(ctx, &Modules::ConfigModule::initialize, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
+
+        return 1;
+    }
+    else if (strcmp("http", moduleName) == 0)
+    {
+        duk_push_c_function(ctx, &Modules::HttpModule::initialize, 1);
         duk_dup(ctx, 2);
         duk_call(ctx, 1);
 

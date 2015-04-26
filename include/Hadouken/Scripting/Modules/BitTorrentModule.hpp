@@ -13,9 +13,6 @@ namespace Hadouken
             {
             public:
                 static int initialize(void* ctx);
-
-            private:
-                static int getSession(void* ctx);
             };
         }
     }

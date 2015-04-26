@@ -1,9 +1,8 @@
 #ifndef HADOUKEN_BITTORRENT_ADDTORRENTPARAMS_HPP
 #define HADOUKEN_BITTORRENT_ADDTORRENTPARAMS_HPP
 
-#include <Poco/Path.h>
+#include <map>
 #include <string>
-#include <vector>
 
 namespace Hadouken
 {
@@ -14,7 +13,7 @@ namespace Hadouken
         public:
             std::string savePath;
 
-            std::vector<std::string> tags;
+            std::map<std::string, std::string> data;
         };
     }
 }

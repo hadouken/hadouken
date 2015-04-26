@@ -33,6 +33,7 @@
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="RegistryComponents" />
       <ComponentGroupRef Id="ScriptingComponents" />
+      <ComponentGroupRef Id="PluginsScriptingComponents" />
       <ComponentGroupRef Id="RpcScriptingComponents" />
 
       <MergeRef Id="VCRedist" />

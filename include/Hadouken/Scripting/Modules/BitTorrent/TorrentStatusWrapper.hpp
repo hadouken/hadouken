@@ -24,8 +24,6 @@ namespace Hadouken
                 public:
                     static void initialize(void* ctx, const Hadouken::BitTorrent::TorrentStatus& status);
 
-                    static const char* field;
-
                 private:
                     static int finalize(void* ctx);
 

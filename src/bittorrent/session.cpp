@@ -7,6 +7,12 @@
 #include <Hadouken/BitTorrent/ProxySettings.hpp>
 #include <Hadouken/BitTorrent/SessionStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
+
+#include <Hadouken/Scripting/ScriptingSubsystem.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/StatsEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentRemovedEvent.hpp>
+
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/create_torrent.hpp>
@@ -21,6 +27,8 @@
 #include <Poco/Util/Application.h>
 
 using namespace Hadouken::BitTorrent;
+using namespace Hadouken::Scripting;
+using namespace Hadouken::Scripting::Modules::BitTorrent::Events;
 using namespace Poco::Util;
 
 Session::Session(const Poco::Util::AbstractConfiguration& config)
@@ -255,7 +263,7 @@ void Session::loadResumeData()
     }
 }
 
-void Session::loadHadoukenState(std::shared_ptr<TorrentHandle>& handle, const libtorrent::lazy_entry& entry)
+void Session::loadHadoukenState(std::shared_ptr<TorrentHandle> handle, const libtorrent::lazy_entry& entry)
 {
     if (entry.type() != libtorrent::lazy_entry::entry_type_t::dict_t)
     {
@@ -277,13 +285,21 @@ void Session::loadHadoukenState(std::shared_ptr<TorrentHandle>& handle, const li
         return;
     }
 
-    const libtorrent::lazy_entry* tags = entry.dict_find_list("tags");
+    const libtorrent::lazy_entry* meta = entry.dict_find_dict("metadata");
 
-    if (tags)
+    if (meta)
     {
-        for (int i = 0; i < tags->list_size(); i++)
+        for (int i = 0; i < meta->dict_size(); i++)
         {
-            handle->addTag(tags->list_string_value_at(i));
+            std::pair<std::string, const libtorrent::lazy_entry*> val = meta->dict_at(i);
+
+            if (val.second->type() != libtorrent::lazy_entry::entry_type_t::string_t)
+            {
+                logger_.error("Found invalid value type in metadata dictionary.");
+                continue;
+            }
+
+            handle->setData(val.first, val.second->string_value());
         }
     }
 }
@@ -298,15 +314,15 @@ void Session::unload()
     saveResumeData();
 }
 
-std::string Session::addTorrentFile(Poco::Path& filePath, AddTorrentParams& params)
+std::string Session::addTorrentFile(std::string path, AddTorrentParams& params)
 {
-    std::ifstream file_stream(filePath.toString(), std::ios::binary);
-    std::vector<char> file_data((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
+    std::ifstream fileStream(path, std::ios::binary);
+    std::vector<char> data((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
 
-    return addTorrentFile(file_data, params);
+    return addTorrent(data, params);
 }
 
-std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams& params)
+std::string Session::addTorrent(std::vector<char>& buffer, AddTorrentParams& params)
 {
     libtorrent::error_code ec;
     libtorrent::lazy_entry le;
@@ -343,9 +359,9 @@ std::string Session::addTorrentFile(std::vector<char>& buffer, AddTorrentParams&
 
     std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sess_->add_torrent(p)));
 
-    for (std::string tag : params.tags)
+    for (std::pair<std::string, std::string> p : params.data)
     {
-        handle->addTag(tag);
+        handle->setData(p.first, p.second);
     }
 
     torrents_.insert(std::make_pair(handle->handle_.info_hash(), handle));
@@ -536,7 +552,7 @@ void Session::saveResumeData()
     }
 }
 
-void Session::saveHadoukenState(std::shared_ptr<TorrentHandle>& handle, libtorrent::entry::dictionary_type& entry)
+void Session::saveHadoukenState(std::shared_ptr<TorrentHandle> handle, libtorrent::entry::dictionary_type& entry)
 {
     if (!handle->isValid())
     {
@@ -546,14 +562,14 @@ void Session::saveHadoukenState(std::shared_ptr<TorrentHandle>& handle, libtorre
 
     entry.insert(std::make_pair("hadouken-state-version", 1));
 
-    libtorrent::entry::list_type tags;
+    libtorrent::entry::dictionary_type meta;
     
-    for (std::string tag : handle->getTags())
+    for (std::string key : handle->getDataKeys())
     {
-        tags.push_back(tag);
+        meta.insert(std::make_pair(key, handle->getData(key)));
     }
 
-    entry.insert(std::make_pair("tags", tags));
+    entry.insert(std::make_pair("metadata", meta));
 }
 
 void Session::readAlerts()
@@ -563,6 +579,9 @@ void Session::readAlerts()
     // Setting the following to true in the configuration will print all alerts
     // to the trace log.
     bool traceAlerts = config_.getBool("bittorrent.tracingEnabled", false);
+
+    Application& app = Application::instance();
+    ScriptingSubsystem& scripting = app.getSubsystem<ScriptingSubsystem>();
 
     while (isRunning_)
     {
@@ -583,22 +602,35 @@ void Session::readAlerts()
 
             switch (a->type())
             {
+            case stats_alert::alert_type:
+            {
+                stats_alert* st_alert = alert_cast<stats_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(st_alert->handle));
+
+                std::unique_ptr<Event> data(new StatsEvent(handle, st_alert->interval, st_alert->transferred));
+                scripting.emit("bt.torrent.stats", std::move(data));
+                break;
+            }
             case torrent_added_alert::alert_type:
             {
                 // save torrent file to state path if it doesn't
                 // already exist there. then publish an added event.
                 torrent_added_alert* added_alert = alert_cast<torrent_added_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(added_alert->handle));
+
+                if (torrents_.find(added_alert->handle.info_hash()) != torrents_.end())
+                {
+                    logger_.error("Torrent already exists in session: '%s'.", handle->getInfoHash());
+                    break;
+                }
 
                 if (added_alert->handle.torrent_file())
                 {
                     saveTorrentInfo(*added_alert->handle.torrent_file());
                 }
 
-                if (torrents_.find(added_alert->handle.info_hash()) == torrents_.end())
-                {
-                    std::shared_ptr<TorrentHandle> handle(new TorrentHandle(added_alert->handle));
-                    torrents_.insert(std::make_pair(added_alert->handle.info_hash(), handle));
-                }
+                std::unique_ptr<Event> data(new TorrentEvent(handle));
+                scripting.emit("bt.torrent.added", std::move(data));
 
                 onTorrentAdded(this, torrents_.at(added_alert->handle.info_hash()));
                 
@@ -609,6 +641,9 @@ void Session::readAlerts()
             {
                 torrent_finished_alert* finished_alert = alert_cast<torrent_finished_alert>(alert);
                 std::shared_ptr<TorrentHandle> handle = torrents_.at(finished_alert->handle.info_hash());
+
+                std::unique_ptr<Event> data(new TorrentEvent(handle));
+                scripting.emit("bt.torrent.finished", std::move(data));
 
                 onTorrentFinished.notifyAsync(this, handle);
                 
@@ -633,6 +668,9 @@ void Session::readAlerts()
                     Poco::File resume_file(resume_file_path);
                     if (resume_file.exists()) { resume_file.remove(); }
                 }
+
+                std::unique_ptr<Event> data(new TorrentRemovedEvent(hash));
+                scripting.emit("bt.torrent.removed", std::move(data));
 
                 onTorrentRemoved.notifyAsync(this, hash);
                 break;

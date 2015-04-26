@@ -119,8 +119,4 @@ install(TARGETS hadouken  DESTINATION lib/hadoukend)
 install(TARGETS hadoukend DESTINATION sbin)
 
 # Extensions
-add_subdirectory(extensions/autoadd)
-add_subdirectory(extensions/automove)
 add_subdirectory(extensions/launcher)
-add_subdirectory(extensions/pushbullet)
-add_subdirectory(extensions/pushover)

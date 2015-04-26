@@ -31,6 +31,7 @@ void SessionWrapper::initialize(duk_context* ctx, Session& session)
     // Session functions
     duk_function_list_entry functions[] =
     {
+        { "addTorrent",     addTorrent,     2 },
         { "addTorrentFile", addTorrentFile, 2 },
         { "addTorrentUri",  addTorrentUri,  2 },
         { "findTorrent",    findTorrent,    1 },
@@ -45,7 +46,7 @@ void SessionWrapper::initialize(duk_context* ctx, Session& session)
     duk_put_function_list(ctx, sessionIndex, functions);
 }
 
-duk_ret_t SessionWrapper::addTorrentFile(duk_context* ctx)
+duk_ret_t SessionWrapper::addTorrent(duk_context* ctx)
 {
     Session* sess = Common::getPointer<Session>(ctx);
 
@@ -63,7 +64,26 @@ duk_ret_t SessionWrapper::addTorrentFile(duk_context* ctx)
         duk_pop(ctx);
     }
 
-    std::string infoHash = sess->addTorrentFile(data, params);
+    std::string infoHash = sess->addTorrent(data, params);
+
+    duk_push_string(ctx, infoHash.c_str());
+    return 1;
+}
+
+duk_ret_t SessionWrapper::addTorrentFile(duk_context* ctx)
+{
+    Session* sess = Common::getPointer<Session>(ctx);
+
+    AddTorrentParams params;
+
+    if (duk_has_prop_string(ctx, 1, "savePath"))
+    {
+        duk_get_prop_string(ctx, 1, "savePath");
+        params.savePath = std::string(duk_get_string(ctx, -1));
+        duk_pop(ctx);
+    }
+
+    std::string infoHash = sess->addTorrentFile(duk_require_string(ctx, 0), params);
 
     duk_push_string(ctx, infoHash.c_str());
     return 1;

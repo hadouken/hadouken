@@ -10,6 +10,7 @@
       <Directory Id="CommonAppDataFolder" Name="ProgramDataFolder">
         <Directory Id="HDKNDATA" Name="Hadouken">
           <Directory Id="JS_ROOT" Name="js">
+            <Directory Id="JS_PLUGINS" Name="plugins" />
             <Directory Id="JS_RPC" Name="rpc" />
           </Directory>
         </Directory>

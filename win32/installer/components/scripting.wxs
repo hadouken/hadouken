@@ -4,11 +4,45 @@
   <Fragment>
     <ComponentGroup Id="ScriptingComponents" Directory="JS_ROOT" Source="$(var.BinDir)\js\">
       <Component>
+        <File Name="bittorrent.js" />
+      </Component>
+
+      <Component>
+        <File Name="events.js" />
+      </Component>
+
+      <Component>
         <File Name="hadouken.js" />
       </Component>
 
       <Component>
+        <File Name="plugins.js" />
+      </Component>
+
+      <Component>
         <File Name="rpc.js" />
+      </Component>
+
+      <Component>
+        <File Name="timer.js" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="PluginsScriptingComponents" Directory="JS_PLUGINS" Source="$(var.BinDir)\js\plugins\">
+      <Component>
+        <File Name="autoadd.js" />
+      </Component>
+
+      <Component>
+        <File Name="automove.js" />
+      </Component>
+
+      <Component>
+        <File Name="pushbullet.js" />
+      </Component>
+
+      <Component>
+        <File Name="pushover.js" />
       </Component>
     </ComponentGroup>
 
@@ -62,6 +96,10 @@
       </Component>
 
       <Component>
+        <File Name="torrent_getMetadata.js" />
+      </Component>
+
+      <Component>
         <File Name="torrent_getPeers.js" />
       </Component>
 
@@ -71,6 +109,14 @@
 
       <Component>
         <File Name="torrent_getTrackers.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_moveStorage.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_pause.js" />
       </Component>
 
       <Component>
@@ -90,19 +136,15 @@
       </Component>
 
       <Component>
-        <File Name="torrent_moveStorage.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_pause.js" />
-      </Component>
-
-      <Component>
         <File Name="torrent_renameFile.js" />
       </Component>
 
       <Component>
         <File Name="torrent_resume.js" />
+      </Component>
+
+      <Component>
+        <File Name="torrent_setMetadata.js" />
       </Component>
 
       <Component>

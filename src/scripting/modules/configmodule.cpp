@@ -33,7 +33,14 @@ duk_ret_t ConfigModule::getBoolean(duk_context* ctx)
     std::string key(duk_require_string(ctx, 0));
     AbstractConfiguration* config = Common::getPointer<AbstractConfiguration>(ctx);
 
-    duk_push_boolean(ctx, config->getBool(key));
+    if (config->has(key))
+    {
+        duk_push_boolean(ctx, config->getBool(key));
+    }
+    else
+    {
+        duk_push_undefined(ctx);
+    }
 
     return 1;
 }
@@ -43,7 +50,14 @@ duk_ret_t ConfigModule::getNumber(duk_context* ctx)
     std::string key(duk_require_string(ctx, 0));
     AbstractConfiguration* config = Common::getPointer<AbstractConfiguration>(ctx);
 
-    duk_push_number(ctx, static_cast<duk_double_t>(config->getInt64(key)));
+    if (config->has(key))
+    {
+        duk_push_number(ctx, static_cast<duk_double_t>(config->getInt64(key)));
+    }
+    else
+    {
+        duk_push_undefined(ctx);
+    }
 
     return 1;
 }
@@ -53,7 +67,14 @@ duk_ret_t ConfigModule::getString(duk_context* ctx)
     std::string key(duk_require_string(ctx, 0));
     AbstractConfiguration* config = Common::getPointer<AbstractConfiguration>(ctx);
 
-    duk_push_string(ctx, config->getString(key).c_str());
+    if (config->has(key))
+    {
+        duk_push_string(ctx, config->getString(key).c_str());
+    }
+    else
+    {
+        duk_push_undefined(ctx);
+    }
 
     return 1;
 }

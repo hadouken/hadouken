@@ -41,12 +41,11 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
     duk_idx_t idx = duk_push_object(ctx);
     duk_put_function_list(ctx, idx, functions);
 
-    Common::setPointer<TorrentHandle>(ctx, idx, new TorrentHandle(*handle));
+    Common::setPointer<TorrentHandle>(ctx, idx, handle.get());
 
     // read-only properties
     DUK_READONLY_PROPERTY(ctx, idx, infoHash, getInfoHash);
     DUK_READONLY_PROPERTY(ctx, idx, queuePosition, getQueuePosition);
-    DUK_READONLY_PROPERTY(ctx, idx, tags, getTags);
 
     // read+write properties
     DUK_READWRITE_PROPERTY(ctx, idx, maxConnections, getMaxConnections, setMaxConnections);
@@ -56,14 +55,22 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
     DUK_READWRITE_PROPERTY(ctx, idx, uploadMode, getUploadMode, setUploadMode);
     DUK_READWRITE_PROPERTY(ctx, idx, uploadLimit, getUploadLimit, setUploadLimit);
 
-    duk_push_c_function(ctx, finalize, 1);
-    duk_set_finalizer(ctx, -2);
-}
+    // ----------------- metadata
+    duk_function_list_entry metaFunctions[] =
+    {
+        { "get", getMetadata, 1 },
+        { "set", setMetadata, 2 },
+        { NULL,  NULL,        0}
+    };
+    
+    duk_idx_t metaIdx = duk_push_object(ctx);
+    duk_put_function_list(ctx, metaIdx, metaFunctions);
 
-duk_ret_t TorrentHandleWrapper::finalize(duk_context* ctx)
-{
-    Common::finalize<TorrentHandle>(ctx);
-    return 0;
+    Common::setPointer<TorrentHandle>(ctx, metaIdx, handle.get());
+
+    DUK_READONLY_PROPERTY(ctx, metaIdx, keys, getMetadataKeys);
+
+    duk_put_prop_string(ctx, idx, "metadata");
 }
 
 duk_ret_t TorrentHandleWrapper::clearError(duk_context* ctx)
@@ -114,24 +121,6 @@ duk_ret_t TorrentHandleWrapper::getStatus(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     TorrentStatusWrapper::initialize(ctx, handle->getStatus());
-    return 1;
-}
-
-duk_ret_t TorrentHandleWrapper::getTags(duk_context* ctx)
-{
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
-
-    int arrayIndex = duk_push_array(ctx);
-    int i = 0;
-
-    for (std::string tag : handle->getTags())
-    {
-        duk_push_string(ctx, tag.c_str());
-        duk_put_prop_index(ctx, arrayIndex, i);
-
-        ++i;
-    }
-
     return 1;
 }
 
@@ -229,6 +218,56 @@ duk_ret_t TorrentHandleWrapper::resume(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     handle->resume();
+    return 0;
+}
+
+duk_ret_t TorrentHandleWrapper::getMetadata(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    std::string key(duk_require_string(ctx, 0));
+    std::string val = handle->getData(key);
+
+    if (val.empty())
+    {
+        duk_push_undefined(ctx);
+    }
+    else
+    {
+        duk_push_string(ctx, val.c_str());
+        duk_json_decode(ctx, -1);
+    }
+
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::getMetadataKeys(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    
+    duk_idx_t arrIdx = duk_push_array(ctx);
+    int i = 0;
+
+    for (std::string key : handle->getDataKeys())
+    {
+        duk_push_string(ctx, key.c_str());
+        duk_put_prop_index(ctx, arrIdx, i);
+
+        ++i;
+    }
+
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::setMetadata(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    std::string key(duk_require_string(ctx, 0));
+
+    duk_json_encode(ctx, 1);
+    std::string val(duk_require_string(ctx, 1));
+
+    handle->setData(key, val);
+
     return 0;
 }
 

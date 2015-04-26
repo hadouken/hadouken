@@ -25,15 +25,12 @@ namespace Hadouken
                     static void initialize(void* ctx, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle> handle);
 
                 private:
-                    static int finalize(void* ctx);
-
                     static int clearError(void* ctx);
                     static int forceRecheck(void* ctx);
                     static int getInfoHash(void* ctx);
                     static int getPeers(void* ctx);
                     static int getQueuePosition(void* ctx);
                     static int getStatus(void* ctx);
-                    static int getTags(void* ctx);
                     static int getTorrentInfo(void* ctx);
                     static int getTrackers(void* ctx);
                     static int moveStorage(void* ctx);
@@ -45,6 +42,10 @@ namespace Hadouken
                     static int queueDown(void* ctx);
                     static int queueTop(void* ctx);
                     static int queueUp(void* ctx);
+
+                    static int getMetadata(void* ctx);
+                    static int getMetadataKeys(void* ctx);
+                    static int setMetadata(void* ctx);
 
                     static int getMaxConnections(void* ctx);
                     static int getMaxUploads(void* ctx);

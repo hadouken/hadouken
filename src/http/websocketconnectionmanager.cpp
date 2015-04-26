@@ -89,7 +89,6 @@ void WebSocketConnectionManager::onTorrentAdded(const void* sender, std::shared_
     torrent["isSeeding"] = status.isSeeding();
     torrent["isSequentialDownload"] = status.isSequentialDownload();
     torrent["queuePosition"] = status.getQueuePosition();
-    torrent["tags"] = handle->getTags();
 
     Poco::DynamicStruct ev;
     ev["event"] = "torrent.added";

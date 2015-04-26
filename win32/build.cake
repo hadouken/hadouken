@@ -61,6 +61,7 @@ Task("Clean")
         CleanDirectories(new[]
         {
             BinariesDirectory,
+            BinariesDirectory + "/js/plugins",
             BinariesDirectory + "/js/rpc",
             OutputDirectory,
             "./build/" + Configuration,
@@ -169,8 +170,9 @@ Task("Output")
         );
 
         // Copy JS files
-        CopyFiles(GetFiles("../js/*.js"),     BinariesDirectory + "/js");
-        CopyFiles(GetFiles("../js/rpc/*.js"), BinariesDirectory + "/js/rpc");
+        CopyFiles(GetFiles("../js/*.js"),         BinariesDirectory + "/js");
+        CopyFiles(GetFiles("../js/plugins/*.js"), BinariesDirectory + "/js/plugins");
+        CopyFiles(GetFiles("../js/rpc/*.js"),     BinariesDirectory + "/js/rpc");
 
         // Copy relevant dist files
         var distFiles = new []
@@ -190,6 +192,7 @@ Task("Create-Zip-Package")
         files = files.Union(GetFiles(BinariesDirectory + "/*.exe"));
         files = files.Union(GetFiles(BinariesDirectory + "/*.template"));
         files = files.Union(GetFiles(BinariesDirectory + "/js/*.js"));
+        files = files.Union(GetFiles(BinariesDirectory + "/js/plugins/*.js"));
         files = files.Union(GetFiles(BinariesDirectory + "/js/rpc/*.js"));
 
         Zip(BinariesDirectory,

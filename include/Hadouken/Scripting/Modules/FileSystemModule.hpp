@@ -13,6 +13,7 @@ namespace Hadouken
                 static int initialize(void* ctx);
 
             private:
+                static int deleteFile(void* ctx);
                 static int getFiles(void* ctx);
                 static int readFile(void* ctx);
             };

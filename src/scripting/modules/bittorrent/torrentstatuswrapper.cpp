@@ -9,15 +9,10 @@ using namespace Hadouken::BitTorrent;
 using namespace Hadouken::Scripting::Modules;
 using namespace Hadouken::Scripting::Modules::BitTorrent;
 
-const char* TorrentStatusWrapper::field = "\xff" "TorrentStatus";
-
 void TorrentStatusWrapper::initialize(duk_context* ctx, const TorrentStatus& status)
 {
     duk_idx_t statusIndex = duk_push_object(ctx);
-
-    // Internal pointer
-    duk_push_pointer(ctx, new TorrentStatus(status));
-    duk_put_prop_string(ctx, statusIndex, field);
+    Common::setPointer<TorrentStatus>(ctx, statusIndex, new TorrentStatus(status));
 
     DUK_READONLY_PROPERTY(ctx, statusIndex, name, TorrentStatusWrapper::getName);
     DUK_READONLY_PROPERTY(ctx, statusIndex, progress, TorrentStatusWrapper::getProgress);
@@ -43,13 +38,7 @@ void TorrentStatusWrapper::initialize(duk_context* ctx, const TorrentStatus& sta
 
 duk_ret_t TorrentStatusWrapper::finalize(duk_context* ctx)
 {
-    if (duk_get_prop_string(ctx, -1, field))
-    {
-        void* ptr = duk_get_pointer(ctx, -1);
-        TorrentStatus* status = static_cast<TorrentStatus*>(ptr);
-        delete status;
-    }
-
+    Common::finalize<TorrentStatus>(ctx);
     return 0;
 }
 
