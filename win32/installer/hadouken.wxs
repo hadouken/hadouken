@@ -29,7 +29,6 @@
              Display="expand">
       <ComponentGroupRef Id="ConfigComponents" />
       <ComponentGroupRef Id="CoreComponents" />
-      <ComponentGroupRef Id="ExtensionComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="RegistryComponents" />
       <ComponentGroupRef Id="ScriptingComponents" />

@@ -7,6 +7,7 @@
 #include <Hadouken/Scripting/Modules/FileSystemModule.hpp>
 #include <Hadouken/Scripting/Modules/HttpModule.hpp>
 #include <Hadouken/Scripting/Modules/LoggerModule.hpp>
+#include <Hadouken/Scripting/Modules/ProcessModule.hpp>
 #include <Poco/File.h>
 
 #include <chrono>
@@ -275,6 +276,14 @@ duk_ret_t ScriptingSubsystem::requireNative(duk_context* ctx)
     else if (strcmp("http", moduleName) == 0)
     {
         duk_push_c_function(ctx, &Modules::HttpModule::initialize, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
+
+        return 1;
+    }
+    else if (strcmp("process", moduleName) == 0)
+    {
+        duk_push_c_function(ctx, &Modules::ProcessModule::initialize, 1);
         duk_dup(ctx, 2);
         duk_call(ctx, 1);
 

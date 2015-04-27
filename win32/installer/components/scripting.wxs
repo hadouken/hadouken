@@ -38,6 +38,10 @@
       </Component>
 
       <Component>
+        <File Name="launcher.js" />
+      </Component>
+
+      <Component>
         <File Name="pushbullet.js" />
       </Component>
 
