@@ -1,5 +1,4 @@
 #include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
-#include <Hadouken/Extensions/ExtensionSubsystem.hpp>
 #include <Hadouken/Http/HttpSubsystem.hpp>
 #include <Hadouken/Scripting/ScriptingSubsystem.hpp>
 #include <Hadouken/Platform.hpp>
@@ -21,7 +20,6 @@ public:
 
         addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
         addSubsystem(new Hadouken::Http::HttpSubsystem());
-        addSubsystem(new Hadouken::Extensions::ExtensionSubsystem());
         addSubsystem(new Hadouken::Scripting::ScriptingSubsystem());
     }
 

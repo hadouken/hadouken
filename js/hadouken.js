@@ -12,7 +12,8 @@
             "core",
             "fs",
             "http",
-            "logger"
+            "logger",
+            "process"
         ];
 
         var found = false;

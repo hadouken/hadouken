@@ -117,6 +117,3 @@ target_link_libraries(
 
 install(TARGETS hadouken  DESTINATION lib/hadoukend)
 install(TARGETS hadoukend DESTINATION sbin)
-
-# Extensions
-add_subdirectory(extensions/launcher)
