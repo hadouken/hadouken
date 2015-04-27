@@ -25,6 +25,8 @@ ScriptingSubsystem::ScriptingSubsystem()
 
 void ScriptingSubsystem::initialize(Application& app)
 {
+    std::lock_guard<std::mutex> lock(contextMutex_);
+
     AbstractConfiguration& config = app.config();
 
     std::string path = getScriptPath();
@@ -86,7 +88,11 @@ void ScriptingSubsystem::initialize(Application& app)
 void ScriptingSubsystem::uninitialize()
 {
     isRunning_ = false;
-    ticker_.join();
+    
+    if (ticker_.joinable())
+    {
+        ticker_.join();
+    }
 
     std::lock_guard<std::mutex> lock(contextMutex_);
 

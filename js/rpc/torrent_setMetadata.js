@@ -5,11 +5,11 @@ exports.rpc = {
     method: function(infoHash, key, value) {
         var torrent = session.findTorrent(infoHash);
 
-        if(!torrent) {
-            return false;
+        if(!torrent || !torrent.isValid) {
+            throw Error("Invalid info hash: " + infoHash);
         }
 
-        torrent.metadata.set(key, value);
+        torrent.metadata(key, value);
         return true;
     }
 };

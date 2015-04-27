@@ -15,9 +15,8 @@ TorrentHandle::TorrentHandle(const libtorrent::torrent_handle& handle)
 {
 }
 
-TorrentHandle::TorrentHandle(const TorrentHandle& h)
-    : handle_(h.handle_),
-      data_(h.data_)
+TorrentHandle::TorrentHandle(const TorrentHandle& handle)
+    : handle_(handle.handle_)
 {
 }
 
@@ -197,39 +196,4 @@ void TorrentHandle::setUploadLimit(int limit) const
 void TorrentHandle::setUploadMode(bool mode) const
 {
     handle_.set_upload_mode(mode);
-}
-
-std::vector<std::string> TorrentHandle::getDataKeys()
-{
-    std::vector<std::string> result;
-
-    for (std::pair<std::string, std::string> p : data_)
-    {
-        result.push_back(p.first);
-    }
-
-    return result;
-}
-
-std::string TorrentHandle::getData(std::string key)
-{
-    if (data_.find(key) == data_.end())
-    {
-        return std::string();
-    }
-
-    return data_.at(key);
-}
-
-void TorrentHandle::setData(std::string key, std::string value)
-{
-    data_[key] = value;
-}
-
-void TorrentHandle::clearData(std::string key)
-{
-    if (data_.find(key) != data_.end())
-    {
-        data_.erase(key);
-    }
 }

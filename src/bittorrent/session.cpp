@@ -4,14 +4,45 @@
 #include <iostream>
 
 #include <Hadouken/BitTorrent/AddTorrentParams.hpp>
+#include <Hadouken/BitTorrent/Error.hpp>
 #include <Hadouken/BitTorrent/ProxySettings.hpp>
 #include <Hadouken/BitTorrent/SessionStatus.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 
 #include <Hadouken/Scripting/ScriptingSubsystem.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/BlockEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/DhtReplyEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/EmptyEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/EmptyPeerEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/ExternalAddressEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/FileCompletedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/FileErrorEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/FileRenamedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/FileRenameFailedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/HashFailedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/IncomingConnectionEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/ListenSucceededEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/MetadataFailedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/PeerErrorEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/PerformanceEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/PieceFinishedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/ScrapeFailedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/ScrapeReplyEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/StateChangedEvent.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/Events/StatsEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/StorageMovedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/StorageMoveFailedEvent.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentDeletedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentDeleteFailedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentErrorEvent.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/Events/TorrentRemovedEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TrackerAnnounceEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TrackerErrorEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TrackerIdEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TrackerReplyEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/TrackerWarningEvent.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/Events/UrlSeedEvent.hpp>
 
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
@@ -237,33 +268,11 @@ void Session::loadResumeData()
             logger_.debug("Loaded resume data for '%s'.", params.ti->name());
         }
 
-        std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sess_->add_torrent(params)));
-
-        if (params.resume_data.size() > 0)
-        {
-            libtorrent::lazy_entry state;
-            libtorrent::error_code ec;
-            libtorrent::lazy_bdecode(&params.resume_data[0], &params.resume_data[0] + params.resume_data.size(), state, ec);
-
-            if (ec)
-            {
-                logger_.error("Could not load Hadouken-specific state: %s.", ec.message());
-                return;
-            }
-
-            const libtorrent::lazy_entry* hdkn = state.dict_find_dict("hdkn");
-            
-            if (hdkn)
-            {
-                loadHadoukenState(handle, *hdkn);
-            }
-        }
-
-        torrents_.insert(std::make_pair(handle->handle_.info_hash(), handle));
+        sess_->async_add_torrent(params);
     }
 }
 
-void Session::loadHadoukenState(std::shared_ptr<TorrentHandle> handle, const libtorrent::lazy_entry& entry)
+void Session::loadHadoukenState(const libtorrent::torrent_handle& handle, const libtorrent::lazy_entry& entry)
 {
     if (entry.type() != libtorrent::lazy_entry::entry_type_t::dict_t)
     {
@@ -286,9 +295,16 @@ void Session::loadHadoukenState(std::shared_ptr<TorrentHandle> handle, const lib
     }
 
     const libtorrent::lazy_entry* meta = entry.dict_find_dict("metadata");
+    std::string hash = libtorrent::to_hex(handle.info_hash().to_string());
 
     if (meta)
     {
+        if (torrentMetadata_.find(hash) == torrentMetadata_.end())
+        {
+            // Make sure we have a map for this info hash
+            torrentMetadata_.insert(std::make_pair(hash, std::map<std::string, std::string>()));
+        }
+
         for (int i = 0; i < meta->dict_size(); i++)
         {
             std::pair<std::string, const libtorrent::lazy_entry*> val = meta->dict_at(i);
@@ -299,7 +315,7 @@ void Session::loadHadoukenState(std::shared_ptr<TorrentHandle> handle, const lib
                 continue;
             }
 
-            handle->setData(val.first, val.second->string_value());
+            torrentMetadata_[hash][val.first] = val.second->string_value();
         }
     }
 }
@@ -351,22 +367,10 @@ std::string Session::addTorrent(std::vector<char>& buffer, AddTorrentParams& par
         return std::string();
     }
 
-    if (torrents_.find(p.ti->info_hash()) != torrents_.end())
-    {
-        logger_.error("Torrent '%s' already exist in session.", p.ti->name());
-        return std::string();
-    }
+    // TODO: save extra data somewhere
 
-    std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sess_->add_torrent(p)));
-
-    for (std::pair<std::string, std::string> p : params.data)
-    {
-        handle->setData(p.first, p.second);
-    }
-
-    torrents_.insert(std::make_pair(handle->handle_.info_hash(), handle));
-
-    return handle->getInfoHash();
+    sess_->async_add_torrent(p);
+    return libtorrent::to_hex(p.ti->info_hash().to_string());
 }
 
 void Session::addTorrentUri(std::string uri, AddTorrentParams& params)
@@ -388,12 +392,8 @@ std::shared_ptr<TorrentHandle> Session::findTorrent(const std::string& infoHash)
     libtorrent::sha1_hash hash;
     libtorrent::from_hex(infoHash.c_str(), infoHash.size(), (char*)&hash[0]);
 
-    if (torrents_.find(hash) == torrents_.end())
-    {
-        return std::shared_ptr<TorrentHandle>();
-    }
-
-    return torrents_.at(hash);
+    libtorrent::torrent_handle handle = sess_->find_torrent(hash);
+    return std::shared_ptr<TorrentHandle>(new TorrentHandle(handle));
 }
 
 uint16_t Session::getListenPort() const
@@ -410,9 +410,9 @@ std::vector<std::shared_ptr<TorrentHandle>> Session::getTorrents() const
 {
     std::vector<std::shared_ptr<TorrentHandle>> th;
 
-    for (std::pair<libtorrent::sha1_hash, std::shared_ptr<TorrentHandle>> pair : torrents_)
+    for (libtorrent::torrent_handle handle : sess_->get_torrents())
     {
-        th.push_back(pair.second);
+        th.push_back(std::shared_ptr<TorrentHandle>(new TorrentHandle(handle)));
     }
 
     return th;
@@ -449,7 +449,7 @@ void Session::pause()
     sess_->pause();
 }
 
-void Session::removeTorrent(const std::shared_ptr<TorrentHandle>& handle, int options) const
+void Session::removeTorrent(std::shared_ptr<TorrentHandle> handle, int options) const
 {
     sess_->remove_torrent(handle->handle_, options);
 }
@@ -462,6 +462,48 @@ void Session::resume()
 void Session::setProxy(ProxySettings& proxy)
 {
     sess_->set_proxy(proxy.settings_);
+}
+
+std::string Session::getTorrentMetadata(std::string infoHash, std::string key)
+{
+    if (torrentMetadata_.find(infoHash) == torrentMetadata_.end())
+    {
+        return std::string();
+    }
+
+    if (torrentMetadata_[infoHash].find(key) == torrentMetadata_[infoHash].end())
+    {
+        return std::string();
+    }
+
+    return torrentMetadata_[infoHash][key];
+}
+
+std::vector<std::string> Session::getTorrentMetadataKeys(std::string infoHash)
+{
+    std::vector<std::string> result;
+
+    if (torrentMetadata_.find(infoHash) == torrentMetadata_.end())
+    {
+        return result;
+    }
+
+    for (std::pair<std::string, std::string> p : torrentMetadata_[infoHash])
+    {
+        result.push_back(p.first);
+    }
+
+    return result;
+}
+
+void Session::setTorrentMetadata(std::string infoHash, std::string key, std::string value)
+{
+    if (torrentMetadata_.find(infoHash) == torrentMetadata_.end())
+    {
+        torrentMetadata_.insert(std::make_pair(infoHash, std::map<std::string, std::string>()));
+    }
+
+    torrentMetadata_[infoHash][key] = value;
 }
 
 void Session::saveSessionState()
@@ -532,9 +574,9 @@ void Session::saveResumeData()
             --num;
             if (!rd->resume_data) continue;
 
-            // Save any specific Hadouken state (labels, tags, etc)
+            // Save any specific Hadouken state
             libtorrent::entry::dictionary_type hdkn;
-            saveHadoukenState(torrents_.at(rd->handle.info_hash()), hdkn);
+            saveHadoukenState(rd->handle, hdkn);
             rd->resume_data->dict().insert(std::make_pair("hdkn", hdkn));
 
             std::vector<char> out;
@@ -552,9 +594,9 @@ void Session::saveResumeData()
     }
 }
 
-void Session::saveHadoukenState(std::shared_ptr<TorrentHandle> handle, libtorrent::entry::dictionary_type& entry)
+void Session::saveHadoukenState(const libtorrent::torrent_handle& handle, libtorrent::entry::dictionary_type& entry)
 {
-    if (!handle->isValid())
+    if (!handle.is_valid())
     {
         logger_.error("Invalid torrent handle.");
         return;
@@ -562,11 +604,18 @@ void Session::saveHadoukenState(std::shared_ptr<TorrentHandle> handle, libtorren
 
     entry.insert(std::make_pair("hadouken-state-version", 1));
 
+    std::string hash = libtorrent::to_hex(handle.info_hash().to_string());
+
+    if (torrentMetadata_.find(hash) == torrentMetadata_.end())
+    {
+        return;
+    }
+
     libtorrent::entry::dictionary_type meta;
     
-    for (std::string key : handle->getDataKeys())
+    for (std::pair<std::string, std::string> data : torrentMetadata_[hash])
     {
-        meta.insert(std::make_pair(key, handle->getData(key)));
+        meta.insert(data);
     }
 
     entry.insert(std::make_pair("metadata", meta));
@@ -597,63 +646,367 @@ void Session::readAlerts()
 
             if (traceAlerts)
             {
-                logger_.trace("%s", a->message());
+                logger_.information("%s", a->message());
             }
+
+            std::string alertName = a->what();
+            std::unique_ptr<Event> alertData;
 
             switch (a->type())
             {
-            case stats_alert::alert_type:
+            case add_torrent_alert::alert_type:
             {
-                stats_alert* st_alert = alert_cast<stats_alert>(alert);
-                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(st_alert->handle));
+                add_torrent_alert* ata = alert_cast<add_torrent_alert>(alert);
 
-                std::unique_ptr<Event> data(new StatsEvent(handle, st_alert->interval, st_alert->transferred));
-                scripting.emit("bt.torrent.stats", std::move(data));
-                break;
-            }
-            case torrent_added_alert::alert_type:
-            {
-                // save torrent file to state path if it doesn't
-                // already exist there. then publish an added event.
-                torrent_added_alert* added_alert = alert_cast<torrent_added_alert>(alert);
-                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(added_alert->handle));
-
-                if (torrents_.find(added_alert->handle.info_hash()) != torrents_.end())
+                if (ata->error)
                 {
-                    logger_.error("Torrent already exists in session: '%s'.", handle->getInfoHash());
+                    logger_.error("Could not add torrent '%s': %s.", ata->params.ti->name(), ata->error.message());
                     break;
                 }
 
-                if (added_alert->handle.torrent_file())
+                // Load Hadouken-specific metadata from resume buffer
+                if (ata->params.resume_data.size() > 0)
                 {
-                    saveTorrentInfo(*added_alert->handle.torrent_file());
+                    libtorrent::lazy_entry state;
+                    libtorrent::error_code ec;
+                    libtorrent::lazy_bdecode(&ata->params.resume_data[0], &ata->params.resume_data[0] + ata->params.resume_data.size(), state, ec);
+
+                    if (ec)
+                    {
+                        logger_.error("Could not bdecode resume buffer to read Hadouken state: %s.", ec.message());
+                        break;
+                    }
+
+                    const libtorrent::lazy_entry* hdkn = state.dict_find_dict("hdkn");
+
+                    if (hdkn)
+                    {
+                        loadHadoukenState(ata->handle, *hdkn);
+                    }
+                }
+                break;
+            }
+
+            case block_downloading_alert::alert_type:
+            {
+                block_downloading_alert* bda = alert_cast<block_downloading_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(bda->handle));
+
+                alertData.reset(new BlockEvent(handle, bda->ip.address().to_string(), bda->ip.port(), bda->piece_index, bda->block_index));
+                break;
+            }
+
+            case block_finished_alert::alert_type:
+            {
+                block_finished_alert* bfa = alert_cast<block_finished_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(bfa->handle));
+
+                alertData.reset(new BlockEvent(handle, bfa->ip.address().to_string(), bfa->ip.port(), bfa->piece_index, bfa->block_index));
+                break;
+            }
+
+            case block_timeout_alert::alert_type:
+            {
+                block_timeout_alert* bta = alert_cast<block_timeout_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(bta->handle));
+
+                alertData.reset(new BlockEvent(handle, bta->ip.address().to_string(), bta->ip.port(), bta->piece_index, bta->block_index));
+                break;
+            }
+
+            case cache_flushed_alert::alert_type:
+            {
+                cache_flushed_alert* cfa = alert_cast<cache_flushed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(cfa->handle));
+
+                alertData.reset(new TorrentEvent(handle));
+                break;
+            }
+
+            case dht_bootstrap_alert::alert_type:
+            {
+                alertData.reset(new EmptyEvent);
+                break;
+            }
+
+            case dht_reply_alert::alert_type:
+            {
+                dht_reply_alert* dra = alert_cast<dht_reply_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(dra->handle));
+
+                alertData.reset(new DhtReplyEvent(handle, dra->url, dra->num_peers));
+                break;
+            }
+
+            case external_ip_alert::alert_type:
+            {
+                external_ip_alert* eia = alert_cast<external_ip_alert>(alert);
+                alertData.reset(new ExternalAddressEvent(eia->external_address.to_string()));
+                break;
+            }
+
+            case file_completed_alert::alert_type:
+            {
+                file_completed_alert* fca = alert_cast<file_completed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(fca->handle));
+
+                alertData.reset(new FileCompletedEvent(handle, fca->index));
+                break;
+            }
+
+            case file_error_alert::alert_type:
+            {
+                file_error_alert* fea = alert_cast<file_error_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(fea->handle));
+                Error err(fea->error.value(), fea->error.message());
+
+                alertData.reset(new FileErrorEvent(handle, err, fea->file));
+                break;
+            }
+
+            case file_renamed_alert::alert_type:
+            {
+                file_renamed_alert* fra = alert_cast<file_renamed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(fra->handle));
+
+                alertData.reset(new FileRenamedEvent(handle, fra->index, fra->name));
+                break;
+            }
+            
+            case file_rename_failed_alert::alert_type:
+            {
+                file_rename_failed_alert* frfa = alert_cast<file_rename_failed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(frfa->handle));
+                Error err(frfa->error.value(), frfa->error.message());
+
+                alertData.reset(new FileRenameFailedEvent(handle, frfa->index, err));
+                break;
+            }
+
+            case hash_failed_alert::alert_type:
+            {
+                hash_failed_alert* hfa = alert_cast<hash_failed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(hfa->handle));
+                
+                alertData.reset(new HashFailedEvent(handle, hfa->piece_index));
+                break;
+            }
+
+            case incoming_connection_alert::alert_type:
+            {
+                incoming_connection_alert* ica = alert_cast<incoming_connection_alert>(alert);
+                alertData.reset(new IncomingConnectionEvent(ica->ip.address().to_string(), ica->ip.port()));
+                break;
+            }
+
+            case listen_succeeded_alert::alert_type:
+            {
+                listen_succeeded_alert* lsa = alert_cast<listen_succeeded_alert>(alert);
+                alertData.reset(new ListenSucceededEvent(lsa->endpoint.address().to_string(), lsa->endpoint.port(), lsa->sock_type));
+                break;
+            }
+
+            case metadata_failed_alert::alert_type:
+            {
+                metadata_failed_alert* mfa = alert_cast<metadata_failed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(mfa->handle));
+                Error err(mfa->error.value(), mfa->error.message());
+
+                alertData.reset(new MetadataFailedEvent(handle, err));
+                break;
+            }
+            
+            case lsd_peer_alert::alert_type:
+            case peer_ban_alert::alert_type:
+            case peer_connect_alert::alert_type:
+            case peer_disconnected_alert::alert_type:
+            case peer_snubbed_alert::alert_type:
+            case peer_unsnubbed_alert::alert_type:
+            {
+                peer_alert* pa = static_cast<peer_alert*>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(pa->handle));
+
+                alertData.reset(new EmptyPeerEvent(handle, pa->ip.address().to_string(), pa->ip.port()));
+                break;
+            }
+
+            case peer_error_alert::alert_type:
+            {
+                peer_error_alert* pea = alert_cast<peer_error_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(pea->handle));
+                Error err(pea->error.value(), pea->error.message());
+
+                alertData.reset(new PeerErrorEvent(handle, pea->ip.address().to_string(), pea->ip.port(), err));
+                break;
+            }
+            
+            case performance_alert::alert_type:
+            {
+                performance_alert* pa = alert_cast<performance_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(pa->handle));
+
+                alertData.reset(new PerformanceEvent(handle, pa->warning_code));
+                break;
+            }
+
+            case piece_finished_alert::alert_type:
+            {
+                piece_finished_alert* pfa = alert_cast<piece_finished_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(pfa->handle));
+
+                alertData.reset(new PieceFinishedEvent(handle, pfa->piece_index));
+                break;
+            }
+
+            case request_dropped_alert::alert_type:
+            {
+                request_dropped_alert* rda = alert_cast<request_dropped_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(rda->handle));
+
+                alertData.reset(new BlockEvent(handle, rda->ip.address().to_string(), rda->ip.port(), rda->piece_index, rda->block_index));
+                break;
+            }
+
+            case scrape_failed_alert::alert_type:
+            {
+                scrape_failed_alert* sfa = alert_cast<scrape_failed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sfa->handle));
+
+                alertData.reset(new ScrapeFailedEvent(handle, sfa->url, sfa->msg));
+                break;
+            }
+
+            case scrape_reply_alert::alert_type:
+            {
+                scrape_reply_alert* sra = alert_cast<scrape_reply_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sra->handle));
+
+                alertData.reset(new ScrapeReplyEvent(handle, sra->url, sra->complete, sra->incomplete));
+                break;
+            }
+
+            case state_changed_alert::alert_type:
+            {
+                state_changed_alert* sca = alert_cast<state_changed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sca->handle));
+
+                alertData.reset(new StateChangedEvent(handle, sca->state, sca->prev_state));
+                break;
+            }
+            
+            case stats_alert::alert_type:
+            {
+                stats_alert* sa = alert_cast<stats_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sa->handle));
+
+                alertData.reset(new StatsEvent(handle, sa->interval, sa->transferred));
+                break;
+            }
+
+            case storage_moved_alert::alert_type:
+            {
+                storage_moved_alert* sma = alert_cast<storage_moved_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(sma->handle));
+
+                alertData.reset(new StorageMovedEvent(handle, sma->path));
+                break;
+            }
+
+            case storage_moved_failed_alert::alert_type:
+            {
+                storage_moved_failed_alert* smfa = alert_cast<storage_moved_failed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(smfa->handle));
+
+                Error err(smfa->error.value(), smfa->error.message());
+                alertData.reset(new StorageMoveFailedEvent(handle, err));
+                break;
+            }
+
+            case torrent_added_alert::alert_type:
+            {
+                torrent_added_alert* taa = alert_cast<torrent_added_alert>(alert);
+
+                if (taa->handle.torrent_file())
+                {
+                    saveTorrentInfo(*taa->handle.torrent_file());
                 }
 
-                std::unique_ptr<Event> data(new TorrentEvent(handle));
-                scripting.emit("bt.torrent.added", std::move(data));
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(taa->handle));
+                alertData.reset(new TorrentEvent(handle));
+                onTorrentAdded(this, handle);
+                break;
+            }
 
-                onTorrentAdded(this, torrents_.at(added_alert->handle.info_hash()));
-                
+            case torrent_checked_alert::alert_type:
+            {
+                torrent_checked_alert* tca = alert_cast<torrent_checked_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tca->handle));
+
+                alertData.reset(new TorrentEvent(handle));
+                break;
+            }
+
+            case torrent_delete_failed_alert::alert_type:
+            {
+                torrent_delete_failed_alert* tdfa = alert_cast<torrent_delete_failed_alert>(alert);
+                std::string hash = to_hex(tdfa->info_hash.to_string());
+                Error err(tdfa->error.value(), tdfa->error.message());
+
+                alertData.reset(new TorrentDeleteFailedEvent(hash, err));
+                break;
+            }
+
+            case torrent_deleted_alert::alert_type:
+            {
+                torrent_deleted_alert* tda = alert_cast<torrent_deleted_alert>(alert);
+                std::string hash = to_hex(tda->info_hash.to_string());
+
+                alertData.reset(new TorrentDeletedEvent(hash));
+                break;
+            }
+
+            case torrent_error_alert::alert_type:
+            {
+                torrent_error_alert* tea = alert_cast<torrent_error_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tea->handle));
+                Error err(tea->error.value(), tea->error.message());
+
+                alertData.reset(new TorrentErrorEvent(handle, err));
                 break;
             }
 
             case torrent_finished_alert::alert_type:
             {
-                torrent_finished_alert* finished_alert = alert_cast<torrent_finished_alert>(alert);
-                std::shared_ptr<TorrentHandle> handle = torrents_.at(finished_alert->handle.info_hash());
+                torrent_finished_alert* tfa = alert_cast<torrent_finished_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tfa->handle));
 
-                std::unique_ptr<Event> data(new TorrentEvent(handle));
-                scripting.emit("bt.torrent.finished", std::move(data));
-
+                alertData.reset(new TorrentEvent(handle));
                 onTorrentFinished.notifyAsync(this, handle);
-                
+                break;
+            }
+
+            case torrent_need_cert_alert::alert_type:
+            {
+                torrent_need_cert_alert* tnca = alert_cast<torrent_need_cert_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tnca->handle));
+                Error err(tnca->error.value(), tnca->error.message());
+
+                alertData.reset(new TorrentErrorEvent(handle, err));
+                break;
+            }
+
+            case torrent_paused_alert::alert_type:
+            {
+                torrent_paused_alert* tpa = alert_cast<torrent_paused_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tpa->handle));
+
+                alertData.reset(new TorrentEvent(handle));
                 break;
             }
 
             case torrent_removed_alert::alert_type:
             {
                 torrent_removed_alert* removed_alert = alert_cast<torrent_removed_alert>(alert);
-                torrents_.erase(removed_alert->info_hash);
 
                 std::string hash = to_hex(removed_alert->info_hash.to_string());
                 Poco::Path torrents_path = getTorrentsPath();
@@ -669,10 +1022,17 @@ void Session::readAlerts()
                     if (resume_file.exists()) { resume_file.remove(); }
                 }
 
-                std::unique_ptr<Event> data(new TorrentRemovedEvent(hash));
-                scripting.emit("bt.torrent.removed", std::move(data));
-
+                alertData.reset(new TorrentRemovedEvent(hash));
                 onTorrentRemoved.notifyAsync(this, hash);
+                break;
+            }
+
+            case torrent_resumed_alert::alert_type:
+            {
+                torrent_resumed_alert* tpa = alert_cast<torrent_resumed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tpa->handle));
+
+                alertData.reset(new TorrentEvent(handle));
                 break;
             }
 
@@ -680,20 +1040,88 @@ void Session::readAlerts()
             {
                 // A torrent downloaded from a URL has changed its info hash.
                 torrent_update_alert* update_alert = alert_cast<torrent_update_alert>(alert);
+                // TODO
+                break;
+            }
 
-                std::shared_ptr<TorrentHandle> handle = torrents_.at(update_alert->old_ih);
-                torrents_.erase(update_alert->old_ih);
-                torrents_.insert(std::make_pair(update_alert->new_ih, handle));
+            case tracker_error_alert::alert_type:
+            {
+                tracker_error_alert* tea = alert_cast<tracker_error_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tea->handle));
+                Error err(tea->error.value(), tea->error.message());
+                
+                alertData.reset(new TrackerErrorEvent(handle, err, tea->url, tea->times_in_row, tea->status_code, tea->msg));
+                break;
+            }
 
+            case tracker_announce_alert::alert_type:
+            {
+                tracker_announce_alert* taa = alert_cast<tracker_announce_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(taa->handle));
+
+                alertData.reset(new TrackerAnnounceEvent(handle, taa->url, taa->event));
+                break;
+            }
+
+            case trackerid_alert::alert_type:
+            {
+                trackerid_alert* ta = alert_cast<trackerid_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(ta->handle));
+
+                alertData.reset(new TrackerIdEvent(handle, ta->url, ta->trackerid));
+                break;
+            }
+
+            case tracker_reply_alert::alert_type:
+            {
+                tracker_reply_alert* tra = alert_cast<tracker_reply_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(tra->handle));
+
+                alertData.reset(new TrackerReplyEvent(handle, tra->url, tra->num_peers));
+                break;
+            }
+
+            case tracker_warning_alert::alert_type:
+            {
+                tracker_warning_alert* twa = alert_cast<tracker_warning_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(twa->handle));
+
+                alertData.reset(new TrackerWarningEvent(handle, twa->url, twa->msg));
+                break;
+            }
+
+            case unwanted_block_alert::alert_type:
+            {
+                unwanted_block_alert* uba = alert_cast<unwanted_block_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(uba->handle));
+
+                alertData.reset(new BlockEvent(handle, uba->ip.address().to_string(), uba->ip.port(), uba->piece_index, uba->block_index));
+                break;
+            }
+
+            case url_seed_alert::alert_type:
+            {
+                url_seed_alert* usa = alert_cast<url_seed_alert>(alert);
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(usa->handle));
+
+                alertData.reset(new UrlSeedEvent(handle, usa->url, usa->msg));
                 break;
             }
 
             case metadata_received_alert::alert_type:
             {
-                metadata_received_alert* metadata_alert = alert_cast<metadata_received_alert>(alert);
-                saveTorrentInfo(*metadata_alert->handle.torrent_file());
+                metadata_received_alert* mra = alert_cast<metadata_received_alert>(alert);
+                saveTorrentInfo(*mra->handle.torrent_file());
+                std::shared_ptr<TorrentHandle> handle(new TorrentHandle(mra->handle));
+
+                alertData.reset(new TorrentEvent(handle));
                 break;
             }
+            }
+
+            if (alertData)
+            {
+                scripting.emit(alertName, std::move(alertData));
             }
         }
     }

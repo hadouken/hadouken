@@ -2,13 +2,16 @@
 
 #include <Hadouken/BitTorrent/AnnounceEntry.hpp>
 #include <Hadouken/BitTorrent/PeerInfo.hpp>
+#include <Hadouken/BitTorrent/Session.hpp>
 #include <Hadouken/BitTorrent/TorrentInfo.hpp>
 #include <Hadouken/BitTorrent/TorrentHandle.hpp>
 #include <Hadouken/BitTorrent/TorrentStatus.hpp>
+#include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/AnnounceEntryWrapper.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/PeerInfoWrapper.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/TorrentInfoWrapper.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrent/TorrentStatusWrapper.hpp>
+#include <Poco/Util/Application.h>
 
 #include "../common.hpp"
 #include "../../duktape.h"
@@ -27,6 +30,7 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
         { "getStatus",      getStatus,      0 },
         { "getTorrentInfo", getTorrentInfo, 0 },
         { "getTrackers",    getTrackers,    0 },
+        { "metadata",       metadata,       DUK_VARARGS },
         { "moveStorage",    moveStorage,    1 },
         { "pause",          pause,          0 },
         { "queueBottom",    queueBottom,    0 },
@@ -41,11 +45,15 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
     duk_idx_t idx = duk_push_object(ctx);
     duk_put_function_list(ctx, idx, functions);
 
-    Common::setPointer<TorrentHandle>(ctx, idx, handle.get());
+    Common::setPointer<TorrentHandle>(ctx, idx, new TorrentHandle(*handle));
 
     // read-only properties
     DUK_READONLY_PROPERTY(ctx, idx, infoHash, getInfoHash);
+    DUK_READONLY_PROPERTY(ctx, idx, isValid, isValid);
     DUK_READONLY_PROPERTY(ctx, idx, queuePosition, getQueuePosition);
+
+    duk_push_c_function(ctx, finalize, 1);
+    duk_set_finalizer(ctx, -2);
 
     // read+write properties
     DUK_READWRITE_PROPERTY(ctx, idx, maxConnections, getMaxConnections, setMaxConnections);
@@ -54,23 +62,18 @@ void TorrentHandleWrapper::initialize(duk_context* ctx, std::shared_ptr<Hadouken
     DUK_READWRITE_PROPERTY(ctx, idx, sequentialDownload, getSequentialDownload, setSequentialDownload);
     DUK_READWRITE_PROPERTY(ctx, idx, uploadMode, getUploadMode, setUploadMode);
     DUK_READWRITE_PROPERTY(ctx, idx, uploadLimit, getUploadLimit, setUploadLimit);
+}
 
-    // ----------------- metadata
-    duk_function_list_entry metaFunctions[] =
-    {
-        { "get", getMetadata, 1 },
-        { "set", setMetadata, 2 },
-        { NULL,  NULL,        0}
-    };
-    
-    duk_idx_t metaIdx = duk_push_object(ctx);
-    duk_put_function_list(ctx, metaIdx, metaFunctions);
+duk_ret_t TorrentHandleWrapper::finalize(duk_context* ctx)
+{
+    Common::finalize<TorrentHandle>(ctx);
+    return 0;
+}
 
-    Common::setPointer<TorrentHandle>(ctx, metaIdx, handle.get());
-
-    DUK_READONLY_PROPERTY(ctx, metaIdx, keys, getMetadataKeys);
-
-    duk_put_prop_string(ctx, idx, "metadata");
+duk_ret_t TorrentHandleWrapper::finalizeMetadata(duk_context* ctx)
+{
+    Common::finalize<std::string>(ctx);
+    return 0;
 }
 
 duk_ret_t TorrentHandleWrapper::clearError(duk_context* ctx)
@@ -89,6 +92,13 @@ duk_ret_t TorrentHandleWrapper::getInfoHash(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
     duk_push_string(ctx, handle->getInfoHash().c_str());
+    return 1;
+}
+
+duk_ret_t TorrentHandleWrapper::isValid(duk_context* ctx)
+{
+    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
+    duk_push_boolean(ctx, handle->isValid());
     return 1;
 }
 
@@ -221,52 +231,67 @@ duk_ret_t TorrentHandleWrapper::resume(duk_context* ctx)
     return 0;
 }
 
-duk_ret_t TorrentHandleWrapper::getMetadata(duk_context* ctx)
+duk_ret_t TorrentHandleWrapper::metadata(duk_context* ctx)
 {
     TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
-    std::string key(duk_require_string(ctx, 0));
-    std::string val = handle->getData(key);
+    Session& sess = Poco::Util::Application::instance().getSubsystem<TorrentSubsystem>().getSession();
+    std::string hash = handle->getInfoHash();
 
-    if (val.empty())
+    switch (duk_get_top(ctx))
     {
-        duk_push_undefined(ctx);
-    }
-    else
+    case 0:
     {
-        duk_push_string(ctx, val.c_str());
-        duk_json_decode(ctx, -1);
-    }
+        duk_idx_t metaIdx = duk_push_object(ctx);
 
-    return 1;
-}
+        for (std::string key : sess.getTorrentMetadataKeys(hash))
+        {
+            std::string val = sess.getTorrentMetadata(hash, key);
 
-duk_ret_t TorrentHandleWrapper::getMetadataKeys(duk_context* ctx)
-{
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
-    
-    duk_idx_t arrIdx = duk_push_array(ctx);
-    int i = 0;
+            if (!val.empty())
+            {
+                duk_push_string(ctx, val.c_str());
+                duk_json_decode(ctx, -1);
 
-    for (std::string key : handle->getDataKeys())
-    {
-        duk_push_string(ctx, key.c_str());
-        duk_put_prop_index(ctx, arrIdx, i);
+                duk_put_prop_string(ctx, metaIdx, key.c_str());
+            }
+        }
 
-        ++i;
+        return 1;
     }
 
-    return 1;
-}
+    case 1:
+    {
+        std::string key(duk_require_string(ctx, 0));
+        std::string val = sess.getTorrentMetadata(hash, key);
 
-duk_ret_t TorrentHandleWrapper::setMetadata(duk_context* ctx)
-{
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
-    std::string key(duk_require_string(ctx, 0));
+        if (val.empty())
+        {
+            duk_push_undefined(ctx);
+        }
+        else
+        {
+            duk_push_string(ctx, val.c_str());
+            duk_json_decode(ctx, -1);
+        }
 
-    duk_json_encode(ctx, 1);
-    std::string val(duk_require_string(ctx, 1));
+        return 1;
+    }
 
-    handle->setData(key, val);
+    case 2:
+    {
+        std::string key(duk_require_string(ctx, 0));
+        std::string val;
+
+        if (!duk_is_undefined(ctx, 1))
+        {
+            duk_json_encode(ctx, 1);
+            std::string val(duk_require_string(ctx, 1));
+        }
+        
+        sess.setTorrentMetadata(hash, key, val);
+        break;
+    }
+    }
 
     return 0;
 }

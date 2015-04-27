@@ -3,6 +3,7 @@
 
 #include <Hadouken/Config.hpp>
 #include <libtorrent/torrent_handle.hpp>
+#include <map>
 #include <string>
 
 namespace Hadouken
@@ -62,14 +63,6 @@ namespace Hadouken
             HDKN_EXPORT void renameFile(int index, std::string const& name) const;
 
             HDKN_EXPORT void resume() const;
-
-            HDKN_EXPORT std::vector<std::string> getDataKeys();
-
-            HDKN_EXPORT std::string getData(std::string key);
-
-            HDKN_EXPORT void setData(std::string key, std::string value);
-
-            HDKN_EXPORT void clearData(std::string key);
 
             HDKN_EXPORT void queueBottom() const;
 

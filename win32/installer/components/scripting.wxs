@@ -8,6 +8,10 @@
       </Component>
 
       <Component>
+        <File Name="core.js" />
+      </Component>
+
+      <Component>
         <File Name="events.js" />
       </Component>
 

@@ -22,6 +22,7 @@ namespace libtorrent
     struct lazy_entry;
     class session;
     class sha1_hash;
+    struct torrent_handle;
     class torrent_info;
 }
 
@@ -69,9 +70,15 @@ namespace Hadouken
 
             HDKN_EXPORT void pause();
 
-            void removeTorrent(const std::shared_ptr<TorrentHandle>& handle, int options = 0) const;
+            void removeTorrent(std::shared_ptr<TorrentHandle> handle, int options = 0) const;
 
             HDKN_EXPORT void resume();
+
+            HDKN_EXPORT std::string getTorrentMetadata(std::string infoHash, std::string key);
+
+            HDKN_EXPORT std::vector<std::string> getTorrentMetadataKeys(std::string infoHash);
+
+            HDKN_EXPORT void setTorrentMetadata(std::string infoHash, std::string key, std::string value);
 
             void setProxy(ProxySettings& proxy);
 
@@ -84,11 +91,11 @@ namespace Hadouken
         protected:
             void loadSessionState();
             void loadResumeData();
-            void loadHadoukenState(std::shared_ptr<TorrentHandle> handle, const libtorrent::lazy_entry& entry);
+            void loadHadoukenState(const libtorrent::torrent_handle& handle, const libtorrent::lazy_entry& entry);
 
             void saveSessionState();
             void saveResumeData();
-            void saveHadoukenState(std::shared_ptr<TorrentHandle> handle, libtorrent::dictionary_type& entry);
+            void saveHadoukenState(const libtorrent::torrent_handle& handle, libtorrent::dictionary_type& entry);
 
             void readAlerts();
 
@@ -99,11 +106,10 @@ namespace Hadouken
             Poco::Path getTorrentsPath();
 
         private:
-            std::map<libtorrent::sha1_hash, std::shared_ptr<TorrentHandle>> torrents_;
-
             Poco::Logger& logger_;
             const Poco::Util::AbstractConfiguration& config_;
             std::unique_ptr<libtorrent::session> sess_;
+            std::map<std::string, std::map<std::string, std::string>> torrentMetadata_;
 
             // default settings
             std::string default_save_path_;

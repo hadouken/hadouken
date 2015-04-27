@@ -1,3 +1,4 @@
+var core      = require("core");
 var logger    = require("logger").get("events");
 var callbacks = {};
 
@@ -11,6 +12,7 @@ exports.register = function(eventName, callback) {
 }
 
 exports.emitter = function(eventName, eventData) {
+    eventName = core.getEventName(eventName);
     var list = callbacks[eventName];
 
     if(!list) {
