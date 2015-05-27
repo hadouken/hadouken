@@ -1,3 +1,4 @@
+var config = require("config");
 var logger = require("logger").get("rpc");
 var fs     = require("fs");
 
@@ -15,7 +16,10 @@ var methods = {};
 })();
 
 (function() {
-    var files = fs.getFiles("./rpc");
+    var scriptPath = config.getString("scripting.path");
+    var rpcFiles   = fs.combine(scriptPath, "rpc");
+
+    var files = fs.getFiles(rpcFiles);
 
     for(var i = 0; i < files.length; i++) {
         var rpc = require(files[i]).rpc;

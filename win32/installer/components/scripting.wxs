@@ -20,6 +20,10 @@
       </Component>
 
       <Component>
+        <File Name="metadata.js" />
+      </Component>
+
+      <Component>
         <File Name="plugins.js" />
       </Component>
 

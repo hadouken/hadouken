@@ -1,23 +1,46 @@
 #include <Hadouken/Scripting/Modules/BitTorrent/TorrentInfoWrapper.hpp>
 
-#include <Hadouken/BitTorrent/FileEntry.hpp>
-#include <Hadouken/BitTorrent/FileStorage.hpp>
-#include <Hadouken/BitTorrent/TorrentInfo.hpp>
-#include <Hadouken/BitTorrent/TorrentHandle.hpp>
-#include <Hadouken/Scripting/Modules/BitTorrent/TorrentHandleWrapper.hpp>
+#include <libtorrent/torrent_info.hpp>
 
 #include "../common.hpp"
 #include "../../duktape.h"
 
-using namespace Hadouken::BitTorrent;
 using namespace Hadouken::Scripting::Modules;
 using namespace Hadouken::Scripting::Modules::BitTorrent;
 
-void TorrentInfoWrapper::initialize(duk_context* ctx, TorrentHandle& handle, std::unique_ptr<TorrentInfo> info)
+duk_ret_t TorrentInfoWrapper::construct(duk_context* ctx)
+{
+    int t = duk_get_type(ctx, 0);
+    libtorrent::torrent_info* info;
+
+    if (t == DUK_TYPE_STRING)
+    {
+        std::string file(duk_require_string(ctx, 0));
+        // TODO: error handling
+        info = new libtorrent::torrent_info(file);
+    }
+    else if (t == DUK_TYPE_BUFFER)
+    {
+        duk_size_t size;
+        const char* buffer = static_cast<const char*>(duk_require_buffer(ctx, 0, &size));
+        // TODO: error handling
+        info = new libtorrent::torrent_info(buffer, size);
+    }
+
+    duk_push_this(ctx);
+    Common::setPointer<libtorrent::torrent_info>(ctx, -2, info);
+
+    duk_push_c_function(ctx, finalize, 1);
+    duk_set_finalizer(ctx, -2);
+
+    return 0;
+}
+
+void TorrentInfoWrapper::initialize(duk_context* ctx, const libtorrent::torrent_info& info)
 {
     duk_function_list_entry functions[] =
     {
-        { "getFiles", TorrentInfoWrapper::getFiles, 0 },
+        { "getFiles", getFiles, 0 },
         { NULL, NULL, 0 }
     };
 
@@ -25,10 +48,11 @@ void TorrentInfoWrapper::initialize(duk_context* ctx, TorrentHandle& handle, std
     duk_put_function_list(ctx, infoIndex, functions);
 
     // Set internal pointers
-    Common::setPointer<TorrentHandle>(ctx, infoIndex, new TorrentHandle(handle));
-    Common::setPointer<TorrentInfo>(ctx, infoIndex, info.release());
+    Common::setPointer<libtorrent::torrent_info>(ctx, infoIndex, new libtorrent::torrent_info(info));
 
-    DUK_READONLY_PROPERTY(ctx, infoIndex, totalSize, TorrentInfoWrapper::getTotalSize);
+    DUK_READONLY_PROPERTY(ctx, infoIndex, infoHash, getInfoHash);
+    DUK_READONLY_PROPERTY(ctx, infoIndex, name, getName);
+    DUK_READONLY_PROPERTY(ctx, infoIndex, totalSize, getTotalSize);
 
     duk_push_c_function(ctx, TorrentInfoWrapper::finalize, 1);
     duk_set_finalizer(ctx, -2);
@@ -36,35 +60,28 @@ void TorrentInfoWrapper::initialize(duk_context* ctx, TorrentHandle& handle, std
 
 duk_ret_t TorrentInfoWrapper::finalize(duk_context* ctx)
 {
-    Common::finalize<TorrentHandle>(ctx);
-    Common::finalize<TorrentInfo>(ctx);
-
+    Common::finalize<libtorrent::torrent_info>(ctx);
     return 0;
 }
 
 duk_ret_t TorrentInfoWrapper::getFiles(duk_context* ctx)
 {
-    TorrentHandle* handle = Common::getPointer<TorrentHandle>(ctx);
-    TorrentInfo* info = Common::getPointer<TorrentInfo>(ctx);
+    libtorrent::torrent_info* info = Common::getPointer<libtorrent::torrent_info>(ctx);
 
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
 
-    FileStorage fileStorage = info->getFiles();
-    std::vector<int64_t> progress = handle->getFileProgress();
+    const libtorrent::file_storage& storage = info->files();
 
-    for (int i = 0; i < fileStorage.getNumFiles(); i++)
+    for (int i = 0; i < storage.num_files(); i++)
     {
-        FileEntry entry = fileStorage.getEntryAt(i);
+        libtorrent::file_entry entry = storage.at(i);
 
         duk_idx_t entryIndex = duk_push_object(ctx);
-        duk_push_string(ctx, entry.getPath().c_str());
+        duk_push_string(ctx, entry.path.c_str());
         duk_put_prop_string(ctx, entryIndex, "path");
 
-        duk_push_number(ctx, static_cast<duk_double_t>(progress[i]));
-        duk_put_prop_string(ctx, entryIndex, "progress");
-
-        duk_push_number(ctx, static_cast<duk_double_t>(entry.getSize()));
+        duk_push_number(ctx, static_cast<duk_double_t>(entry.size));
         duk_put_prop_string(ctx, entryIndex, "size");
 
         // Put entry object
@@ -74,9 +91,23 @@ duk_ret_t TorrentInfoWrapper::getFiles(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t TorrentInfoWrapper::getInfoHash(duk_context* ctx)
+{
+    libtorrent::torrent_info* info = Common::getPointer<libtorrent::torrent_info>(ctx);
+    duk_push_string(ctx, libtorrent::to_hex(info->info_hash().to_string()).c_str());
+    return 1;
+}
+
+duk_ret_t TorrentInfoWrapper::getName(duk_context* ctx)
+{
+    libtorrent::torrent_info* info = Common::getPointer<libtorrent::torrent_info>(ctx);
+    duk_push_string(ctx, info->name().c_str());
+    return 1;
+}
+
 duk_ret_t TorrentInfoWrapper::getTotalSize(duk_context* ctx)
 {
-    TorrentInfo* info = Common::getPointer<TorrentInfo>(ctx);
-    duk_push_number(ctx, static_cast<duk_double_t>(info->getTotalSize()));
+    libtorrent::torrent_info* info = Common::getPointer<libtorrent::torrent_info>(ctx);
+    duk_push_number(ctx, static_cast<duk_double_t>(info->total_size()));
     return 1;
 }

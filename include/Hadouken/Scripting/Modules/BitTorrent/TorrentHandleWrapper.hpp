@@ -3,12 +3,9 @@
 
 #include <memory>
 
-namespace Hadouken
+namespace libtorrent
 {
-    namespace BitTorrent
-    {
-        struct TorrentHandle;
-    }
+    struct torrent_handle;
 }
 
 namespace Hadouken
@@ -22,26 +19,32 @@ namespace Hadouken
                 class TorrentHandleWrapper
                 {
                 public:
-                    static void initialize(void* ctx, std::shared_ptr<Hadouken::BitTorrent::TorrentHandle> handle);
+                    static void initialize(void* ctx, const libtorrent::torrent_handle& handle);
 
                 private:
                     static int finalize(void* ctx);
                     static int finalizeMetadata(void* ctx);
 
                     static int clearError(void* ctx);
+                    static int flushCache(void* ctx);
                     static int forceRecheck(void* ctx);
                     static int getInfoHash(void* ctx);
+                    static int getFileProgress(void* ctx);
                     static int getPeers(void* ctx);
                     static int getQueuePosition(void* ctx);
                     static int getStatus(void* ctx);
                     static int getTorrentInfo(void* ctx);
                     static int getTrackers(void* ctx);
+                    static int havePiece(void* ctx);
                     static int isValid(void* ctx);
                     static int metadata(void* ctx);
                     static int moveStorage(void* ctx);
                     static int pause(void* ctx);
+                    static int readPiece(void* ctx);
                     static int renameFile(void* ctx);
                     static int resume(void* ctx);
+                    static int saveResumeData(void* ctx);
+                    static int setPriority(void* ctx);
 
                     static int queueBottom(void* ctx);
                     static int queueDown(void* ctx);

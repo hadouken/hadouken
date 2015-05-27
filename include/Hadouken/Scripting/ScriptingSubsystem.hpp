@@ -12,18 +12,21 @@
 
 using namespace Poco::Util;
 
+namespace libtorrent
+{
+    class alert;
+}
+
 namespace Hadouken
 {
     namespace Scripting
     {
-        class Event;
-
         class ScriptingSubsystem : public Subsystem
         {
         public:
             HDKN_EXPORT ScriptingSubsystem();
 
-            HDKN_EXPORT void emit(std::string eventName, std::unique_ptr<Event> data);
+            HDKN_EXPORT void emit(std::string name, libtorrent::alert* alert);
 
             HDKN_EXPORT std::string rpc(std::string request);
 
@@ -38,6 +41,8 @@ namespace Hadouken
 
             void tick();
 
+            void read();
+
             const char* name() const;
 
         private:
@@ -50,6 +55,7 @@ namespace Hadouken
             duk_context* ctx_;
             std::mutex contextMutex_;
             std::thread ticker_;
+            std::thread reader_;
         };
     }
 }

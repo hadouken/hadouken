@@ -1,8 +1,10 @@
+var config = require("config");
 var fs     = require("fs");
 var logger = require("logger").get("plugins");
 
 function load() {
-    var plugins = fs.getFiles("./plugins");
+    var scriptPath = config.getString("scripting.path");
+    var plugins = fs.getFiles(fs.combine(scriptPath, "./plugins"));
 
     for(var i = 0; i < plugins.length; i++) {
         try {

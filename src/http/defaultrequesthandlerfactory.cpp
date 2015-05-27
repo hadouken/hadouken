@@ -1,8 +1,6 @@
 #include <Hadouken/Http/DefaultRequestHandlerFactory.hpp>
 
 #include <Hadouken/Http/JsonRpcRequestHandler.hpp>
-#include <Hadouken/Http/WebSocketConnectionManager.hpp>
-#include <Hadouken/Http/WebSocketRequestHandler.hpp>
 #include <Poco/Net/HTTPServerResponse.h>
 #include <Poco/Net/HTTPServerRequest.h>
 
@@ -12,8 +10,6 @@ using namespace Poco::Net;
 DefaultRequestHandlerFactory::DefaultRequestHandlerFactory(const Poco::Util::AbstractConfiguration& config)
     : config_(config)
 {
-    wsConnectionManager_ = std::unique_ptr<WebSocketConnectionManager>(new WebSocketConnectionManager());
-
     // Set up virtual path. It should never be empty and it should
     // always start and end with "/".
 
@@ -36,13 +32,6 @@ HTTPRequestHandler* DefaultRequestHandlerFactory::createRequestHandler(const HTT
     if (request.getURI() == virtualPath_ + "api")
     {
         return new JsonRpcRequestHandler(config_);
-    }
-
-    if (request.getURI() == virtualPath_ + "events"
-        && request.find("Upgrade") != request.end()
-        && Poco::icompare(request["Upgrade"], "websocket") == 0)
-    {
-        return new WebSocketRequestHandler(*wsConnectionManager_);
     }
 
     return 0;
