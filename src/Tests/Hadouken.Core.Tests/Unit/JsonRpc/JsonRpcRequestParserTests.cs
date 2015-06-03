@@ -3,15 +3,11 @@ using Hadouken.Common.Text;
 using Hadouken.Core.JsonRpc;
 using Xunit;
 
-namespace Hadouken.Core.Tests.Unit.JsonRpc
-{
-    public class JsonRpcRequestParserTests
-    {
-        public class TheConstructor
-        {
+namespace Hadouken.Core.Tests.Unit.JsonRpc {
+    public class JsonRpcRequestParserTests {
+        public class TheConstructor {
             [Fact]
-            public void Throws_ArgumentNullException_If_Serializer_Is_Null()
-            {
+            public void Throws_ArgumentNullException_If_Serializer_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new JsonRpcRequestParser(null));
 
@@ -21,13 +17,11 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
         }
 
-        public class TheParseMethod
-        {
+        public class TheParseMethod {
             [Fact]
-            public void Returns_Object_For_Valid_Json()
-            {
+            public void Returns_Object_For_Valid_Json() {
                 // Given
-                var json = "{ \"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"foo\", \"params\": 1 }";
+                const string json = "{ \"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"foo\", \"params\": 1 }";
                 var parser = new JsonRpcRequestParser(new JsonSerializer());
 
                 // When
@@ -41,8 +35,7 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Throws_InvalidRequestException_For_Request_With_Invalid_Protocol_Version()
-            {
+            public void Throws_InvalidRequestException_For_Request_With_Invalid_Protocol_Version() {
                 // Given
                 const string json = "{\"jsonrpc\": \"1.0\", \"method\": \"test\", \"params\": \"bar\"}";
                 var parser = new JsonRpcRequestParser(new JsonSerializer());
@@ -56,8 +49,7 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Throws_InvalidRequestException_For_Request_With_Invalid_Method_Type()
-            {
+            public void Throws_InvalidRequestException_For_Request_With_Invalid_Method_Type() {
                 // Given
                 const string json = "{\"jsonrpc\": \"2.0\", \"method\": 1, \"params\": \"bar\"}";
                 var parser = new JsonRpcRequestParser(new JsonSerializer());
@@ -71,8 +63,7 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Throws_InvalidRequestException_For_Request_With_Object_As_Id()
-            {
+            public void Throws_InvalidRequestException_For_Request_With_Object_As_Id() {
                 // Given
                 const string json = "{\"jsonrpc\": \"2.0\", \"id\": {}, \"method\": \"test\", \"params\": \"bar\"}";
                 var parser = new JsonRpcRequestParser(new JsonSerializer());

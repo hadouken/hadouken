@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Core.JsonRpc
-{
-    public interface IJsonRpcRequestParser
-    {
+﻿namespace Hadouken.Core.JsonRpc {
+    public interface IJsonRpcRequestParser {
         JsonRpcRequest Parse(string json);
     }
 }

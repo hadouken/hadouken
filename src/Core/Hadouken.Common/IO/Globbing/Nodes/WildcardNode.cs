@@ -5,36 +5,28 @@
 
 using System;
 
-namespace Hadouken.Common.IO.Globbing.Nodes
-{
-    internal sealed class WildcardNode : Node
-    {
+namespace Hadouken.Common.IO.Globbing.Nodes {
+    internal sealed class WildcardNode : Node {
         private readonly TokenKind _kind;
 
-        public override bool IsWildcard
-        {
+        public WildcardNode(TokenKind kind) {
+            this._kind = kind;
+        }
+
+        public override bool IsWildcard {
             get { return true; }
         }
 
-        public TokenKind Kind
-        {
-            get { return _kind; }
+        public TokenKind Kind {
+            get { return this._kind; }
         }
 
-        public WildcardNode(TokenKind kind)
-        {
-            _kind = kind;
-        }
-
-        public override string Render()
-        {
-            if (Kind == TokenKind.Wildcard)
-            {
-                return ".*";
-            }
-            if (Kind == TokenKind.CharacterWildcard)
-            {
-                return ".{1}";
+        public override string Render() {
+            switch (this.Kind) {
+                case TokenKind.Wildcard:
+                    return ".*";
+                case TokenKind.CharacterWildcard:
+                    return ".{1}";
             }
             throw new NotSupportedException();
         }

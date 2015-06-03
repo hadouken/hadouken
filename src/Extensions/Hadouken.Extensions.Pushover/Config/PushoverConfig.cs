@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Hadouken.Extensions.Pushover.Config
-{
-    public sealed class PushoverConfig
-    {
+namespace Hadouken.Extensions.Pushover.Config {
+    public sealed class PushoverConfig {
         [DataType(DataType.Password)]
         [Display(Name = "App key", Order = 1)]
         [Required]

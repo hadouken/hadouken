@@ -8,35 +8,29 @@ using Autofac;
 using Hadouken.Core.Security;
 using Microsoft.Owin;
 
-namespace Hadouken.Core.Http.WebSockets
-{
-    public class WebSocketConnectionMiddleware<T> : OwinMiddleware where T : WebSocketConnection
-    {
+namespace Hadouken.Core.Http.WebSockets {
+    public class WebSocketConnectionMiddleware<T> : OwinMiddleware where T : WebSocketConnection {
         private readonly ILifetimeScope _lifetimeScope;
         private readonly IUserManager _userManager;
 
         public WebSocketConnectionMiddleware(OwinMiddleware next,
             ILifetimeScope lifetimeScope,
             IUserManager userManager)
-            : base(next)
-        {
-            _lifetimeScope = lifetimeScope;
-            _userManager = userManager;
+            : base(next) {
+            this._lifetimeScope = lifetimeScope;
+            this._userManager = userManager;
         }
 
-        public override Task Invoke(IOwinContext context)
-        {
+        public override Task Invoke(IOwinContext context) {
             var token = context.Request.Query.Get("token");
-            var user = _userManager.GetUserByToken(token);
+            var user = this._userManager.GetUserByToken(token);
 
-            if (user == null)
-            {
+            if (user == null) {
                 context.Response.StatusCode = 401;
             }
-            else
-            {
-                var socketHandler = _lifetimeScope.Resolve<T>();
-                socketHandler.AcceptSocket(context, new Dictionary<string, string>());    
+            else {
+                var socketHandler = this._lifetimeScope.Resolve<T>();
+                socketHandler.AcceptSocket(context, new Dictionary<string, string>());
             }
 
             return Task.FromResult<object>(null);

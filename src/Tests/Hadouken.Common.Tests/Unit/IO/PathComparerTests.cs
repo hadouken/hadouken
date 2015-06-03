@@ -3,17 +3,13 @@ using Hadouken.Common.IO;
 using Xunit;
 using Xunit.Extensions;
 
-namespace Hadouken.Common.Tests.Unit.IO
-{
-    public sealed class PathComparerTests
-    {
-        public sealed class TheEqualsMethod
-        {
+namespace Hadouken.Common.Tests.Unit.IO {
+    public sealed class PathComparerTests {
+        public sealed class TheEqualsMethod {
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Same_Asset_Instances_Is_Considered_Equal(bool isCaseSensitive)
-            {
+            public void Same_Asset_Instances_Is_Considered_Equal(bool isCaseSensitive) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var path = new FilePath("shaders/basic.vert");
@@ -25,8 +21,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Two_Null_Paths_Are_Considered_Equal(bool isCaseSensitive)
-            {
+            public void Two_Null_Paths_Are_Considered_Equal(bool isCaseSensitive) {
                 // Given
                 var comparer = new PathComparer(isCaseSensitive);
 
@@ -40,8 +35,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Paths_Are_Considered_Inequal_If_Any_Is_Null(bool isCaseSensitive)
-            {
+            public void Paths_Are_Considered_Inequal_If_Any_Is_Null(bool isCaseSensitive) {
                 // Given
                 var comparer = new PathComparer(isCaseSensitive);
 
@@ -52,12 +46,10 @@ namespace Hadouken.Common.Tests.Unit.IO
                 Assert.False(result);
             }
 
-
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Same_Paths_Are_Considered_Equal(bool isCaseSensitive)
-            {
+            public void Same_Paths_Are_Considered_Equal(bool isCaseSensitive) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var first = new FilePath("shaders/basic.vert");
@@ -71,8 +63,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Different_Paths_Are_Not_Considered_Equal(bool isCaseSensitive)
-            {
+            public void Different_Paths_Are_Not_Considered_Equal(bool isCaseSensitive) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var first = new FilePath("shaders/basic.vert");
@@ -86,8 +77,8 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true, false)]
             [InlineData(false, true)]
-            public void Same_Paths_But_Different_Casing_Are_Considered_Equal_Depending_On_Case_Sensitivity(bool isCaseSensitive, bool expected)
-            {
+            public void Same_Paths_But_Different_Casing_Are_Considered_Equal_Depending_On_Case_Sensitivity(
+                bool isCaseSensitive, bool expected) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var first = new FilePath("shaders/basic.vert");
@@ -99,11 +90,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheGetHashCodeMethod
-        {
+        public sealed class TheGetHashCodeMethod {
             [Fact]
-            public void Should_Throw_If_Other_Path_Is_Null()
-            {
+            public void Should_Throw_If_Other_Path_Is_Null() {
                 // Given
                 var comparer = new PathComparer(true);
 
@@ -118,8 +107,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Same_Paths_Get_Same_Hash_Code(bool isCaseSensitive)
-            {
+            public void Same_Paths_Get_Same_Hash_Code(bool isCaseSensitive) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var first = new FilePath("shaders/basic.vert");
@@ -132,8 +120,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Different_Paths_Get_Different_Hash_Codes(bool isCaseSensitive)
-            {
+            public void Different_Paths_Get_Different_Hash_Codes(bool isCaseSensitive) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var first = new FilePath("shaders/basic.vert");
@@ -146,8 +133,8 @@ namespace Hadouken.Common.Tests.Unit.IO
             [Theory]
             [InlineData(true, false)]
             [InlineData(false, true)]
-            public void Same_Paths_But_Different_Casing_Get_Same_Hash_Code_Depending_On_Case_Sensitivity(bool isCaseSensitive, bool expected)
-            {
+            public void Same_Paths_But_Different_Casing_Get_Same_Hash_Code_Depending_On_Case_Sensitivity(
+                bool isCaseSensitive, bool expected) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
                 var first = new FilePath("shaders/basic.vert");
@@ -158,11 +145,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheDefaultProperty
-        {
+        public sealed class TheDefaultProperty {
             [Fact]
-            public void Should_Return_Correct_Comparer_Depending_On_Operative_System()
-            {
+            public void Should_Return_Correct_Comparer_Depending_On_Operative_System() {
                 // Given
                 var expected = Machine.IsUnix();
 
@@ -174,13 +159,11 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheIsCaseSensitiveProperty
-        {
+        public sealed class TheIsCaseSensitiveProperty {
             [Theory]
             [InlineData(true)]
             [InlineData(false)]
-            public void Should_Return_Whether_Or_Not_The_Comparer_Is_Case_Sensitive(bool isCaseSensitive)
-            {
+            public void Should_Return_Whether_Or_Not_The_Comparer_Is_Case_Sensitive(bool isCaseSensitive) {
                 // Given, When
                 var comparer = new PathComparer(isCaseSensitive);
 

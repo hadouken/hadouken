@@ -8,42 +8,43 @@ using Hadouken.Common.Net;
 using Hadouken.Common.Text;
 using Hadouken.Extensions.UpdateChecker.Models;
 
-namespace Hadouken.Extensions.UpdateChecker.Http
-{
+namespace Hadouken.Extensions.UpdateChecker.Http {
     [Component]
-    public class GitHubReleasesClient : IGitHubReleasesClient
-    {
-        private static readonly string DefaultUrl = "https://api.github.com/repos/hadouken/hadouken/releases";
-
+    public class GitHubReleasesClient : IGitHubReleasesClient {
+        private const string DefaultUrl = "https://api.github.com/repos/hadouken/hadouken/releases";
+        private readonly Version _currentVersion;
         private readonly IHttpClient _httpClient;
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IKeyValueStore _keyValueStore;
-        private readonly Version _currentVersion;
 
         public GitHubReleasesClient(IHttpClient httpClient,
             IJsonSerializer jsonSerializer,
-            IKeyValueStore keyValueStore)
-        {
-            if (httpClient == null) throw new ArgumentNullException("httpClient");
-            if (jsonSerializer == null) throw new ArgumentNullException("jsonSerializer");
-            if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
+            IKeyValueStore keyValueStore) {
+            if (httpClient == null) {
+                throw new ArgumentNullException("httpClient");
+            }
+            if (jsonSerializer == null) {
+                throw new ArgumentNullException("jsonSerializer");
+            }
+            if (keyValueStore == null) {
+                throw new ArgumentNullException("keyValueStore");
+            }
 
-            _httpClient = httpClient;
-            _jsonSerializer = jsonSerializer;
-            _keyValueStore = keyValueStore;
-            _currentVersion = GetType().Assembly.GetName().Version;
+            this._httpClient = httpClient;
+            this._jsonSerializer = jsonSerializer;
+            this._keyValueStore = keyValueStore;
+            this._currentVersion = this.GetType().Assembly.GetName().Version;
         }
 
-        public IEnumerable<Release> ListReleases()
-        {
-            var url = _keyValueStore.Get("updatechecker.url", DefaultUrl);
+        public IEnumerable<Release> ListReleases() {
+            var url = this._keyValueStore.Get("updatechecker.url", DefaultUrl);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Hadouken", _currentVersion.ToString()));
+            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("Hadouken", this._currentVersion.ToString()));
 
-            var response = _httpClient.SendAsync(request).Result;
+            var response = this._httpClient.SendAsync(request).Result;
             var json = response.Content.ReadAsStringAsync().Result;
 
-            return _jsonSerializer.DeserializeObject<Release[]>(json);
+            return this._jsonSerializer.DeserializeObject<Release[]>(json);
         }
     }
 }

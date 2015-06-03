@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Core.JsonRpc
-{
-    public interface IMethodCacheBuilder
-    {
+﻿namespace Hadouken.Core.JsonRpc {
+    public interface IMethodCacheBuilder {
         IMethodCache Build();
     }
 }

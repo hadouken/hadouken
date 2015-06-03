@@ -1,10 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hadouken.Extensions.Kodi.Config
-{
-    public sealed class KodiConfig
-    {
+namespace Hadouken.Extensions.Kodi.Config {
+    public sealed class KodiConfig {
         [DataType(DataType.Url)]
         [Display(Name = "Url", Order = 1)]
         [Required]

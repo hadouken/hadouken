@@ -1,72 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Hadouken.Common.Data;
 using Hadouken.Common.Extensibility;
 using Hadouken.Common.Logging;
 using Hadouken.Core.BitTorrent;
 using Hadouken.Core.Http;
 
-namespace Hadouken.Core
-{
-    public class HadoukenService : IHadoukenService
-    {
+namespace Hadouken.Core {
+    public class HadoukenService : IHadoukenService {
+        private readonly IHttpServer _httpServer;
         private readonly ILogger<HadoukenService> _logger;
         private readonly IMigrator _migrator;
-        private readonly ISessionHandler _sessionHandler;
-        private readonly IHttpServer _httpServer;
         private readonly IList<IPlugin> _plugins;
+        private readonly ISessionHandler _sessionHandler;
 
         public HadoukenService(ILogger<HadoukenService> logger,
             IMigrator migrator,
             ISessionHandler sessionHandler,
             IHttpServer httpServer,
-            IEnumerable<IPlugin> plugins)
-        {
-            if (logger == null) throw new ArgumentNullException("logger");
-            if (migrator == null) throw new ArgumentNullException("migrator");
-            if (sessionHandler == null) throw new ArgumentNullException("sessionHandler");
-            if (httpServer == null) throw new ArgumentNullException("httpServer");
+            IEnumerable<IPlugin> plugins) {
+            if (logger == null) {
+                throw new ArgumentNullException("logger");
+            }
+            if (migrator == null) {
+                throw new ArgumentNullException("migrator");
+            }
+            if (sessionHandler == null) {
+                throw new ArgumentNullException("sessionHandler");
+            }
+            if (httpServer == null) {
+                throw new ArgumentNullException("httpServer");
+            }
 
-            _logger = logger;
-            _migrator = migrator;
-            _sessionHandler = sessionHandler;
-            _httpServer = httpServer;
-            _plugins = new List<IPlugin>(plugins);
+            this._logger = logger;
+            this._migrator = migrator;
+            this._sessionHandler = sessionHandler;
+            this._httpServer = httpServer;
+            this._plugins = new List<IPlugin>(plugins);
         }
 
-        public void Load(string[] args)
-        {
-            _migrator.Migrate();
+        public void Load(string[] args) {
+            this._migrator.Migrate();
 
-            _logger.Info("Loading BitTorrent session.");
-            _sessionHandler.Load();
+            this._logger.Info("Loading BitTorrent session.");
+            this._sessionHandler.Load();
 
-            foreach (var plugin in _plugins)
-            {
-                _logger.Info("Loading plugin {PluginId}", plugin.GetId());
+            foreach (var plugin in this._plugins) {
+                this._logger.Info("Loading plugin {PluginId}", plugin.GetId());
                 plugin.Load();
             }
 
-            _httpServer.Start();
+            this._httpServer.Start();
         }
 
-        public void Unload()
-        {
-            _logger.Info("Stopping HTTP server.");
+        public void Unload() {
+            this._logger.Info("Stopping HTTP server.");
 
-            _httpServer.Stop();
+            this._httpServer.Stop();
 
-            _logger.Info("Unloading plugins.");
+            this._logger.Info("Unloading plugins.");
 
-            foreach (var plugin in _plugins)
-            {
+            foreach (var plugin in this._plugins) {
                 plugin.Unload();
             }
 
-            _logger.Info("Unloading BitTorrent session.");
+            this._logger.Info("Unloading BitTorrent session.");
 
-            _sessionHandler.Unload();
+            this._sessionHandler.Unload();
         }
     }
 }

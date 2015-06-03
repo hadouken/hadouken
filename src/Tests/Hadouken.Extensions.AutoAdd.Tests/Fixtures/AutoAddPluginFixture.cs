@@ -4,35 +4,27 @@ using Hadouken.Common.Timers;
 using Hadouken.Extensions.AutoAdd.Data;
 using NSubstitute;
 
-namespace Hadouken.Extensions.AutoAdd.Tests.Fixtures
-{
-    internal sealed class AutoAddPluginFixture
-    {
-        public AutoAddPluginFixture()
-        {
-            Logger = Substitute.For<ILogger<AutoAddPlugin>>();
+namespace Hadouken.Extensions.AutoAdd.Tests.Fixtures {
+    internal sealed class AutoAddPluginFixture {
+        public AutoAddPluginFixture() {
+            this.Logger = Substitute.For<ILogger<AutoAddPlugin>>();
 
-            Timer = Substitute.For<ITimer>();
-            TimerFactory = Substitute.For<ITimerFactory>();
-            TimerFactory.Create(Arg.Any<int>(), Arg.Any<Action>()).Returns(Timer);
+            this.Timer = Substitute.For<ITimer>();
+            this.TimerFactory = Substitute.For<ITimerFactory>();
+            this.TimerFactory.Create(Arg.Any<int>(), Arg.Any<Action>()).Returns(this.Timer);
 
-            AutoAddRepository = Substitute.For<IAutoAddRepository>();
-            FolderScanner = Substitute.For<IFolderScanner>();
+            this.AutoAddRepository = Substitute.For<IAutoAddRepository>();
+            this.FolderScanner = Substitute.For<IFolderScanner>();
         }
 
         public ILogger<AutoAddPlugin> Logger { get; set; }
-
         public ITimerFactory TimerFactory { get; set; }
-
         public ITimer Timer { get; set; }
-
         public IAutoAddRepository AutoAddRepository { get; set; }
-
         public IFolderScanner FolderScanner { get; set; }
 
-        public AutoAddPlugin CreateAutoAddPlugin()
-        {
-            return new AutoAddPlugin(Logger, TimerFactory, AutoAddRepository, FolderScanner);
+        public AutoAddPlugin CreateAutoAddPlugin() {
+            return new AutoAddPlugin(this.Logger, this.TimerFactory, this.AutoAddRepository, this.FolderScanner);
         }
     }
 }

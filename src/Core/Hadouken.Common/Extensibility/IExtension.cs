@@ -1,6 +1,3 @@
-﻿namespace Hadouken.Common.Extensibility
-{
-    public interface IExtension
-    {
-    }
+﻿namespace Hadouken.Common.Extensibility {
+    public interface IExtension {}
 }

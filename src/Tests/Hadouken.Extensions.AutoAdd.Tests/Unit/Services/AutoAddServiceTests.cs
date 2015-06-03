@@ -6,29 +6,23 @@ using Hadouken.Extensions.AutoAdd.Tests.Fixtures;
 using NSubstitute;
 using Xunit;
 
-namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
-{
-    public sealed class AutoAddServiceTests
-    {
-        public sealed class TheConstructor
-        {
+namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services {
+    public sealed class AutoAddServiceTests {
+        public sealed class TheConstructor {
             [Fact]
-            public void Should_Throw_Exception_If_Auto_Add_Repository_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Auto_Add_Repository_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new AutoAddService(null));
 
                 // Then
                 Assert.IsType<ArgumentNullException>(exception);
-                Assert.Equal("autoAddRepository", ((ArgumentNullException) exception).ParamName);                
+                Assert.Equal("autoAddRepository", ((ArgumentNullException) exception).ParamName);
             }
         }
 
-        public sealed class TheCreateFolderMethod
-        {
+        public sealed class TheCreateFolderMethod {
             [Fact]
-            public void Should_Throw_Exception_If_Folder_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Folder_Is_Null() {
                 // Given
                 var service = new AutoAddServiceFixture().CreateAutoAddService();
 
@@ -37,12 +31,11 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
 
                 // Then
                 Assert.IsType<ArgumentNullException>(exception);
-                Assert.Equal("folder", ((ArgumentNullException)exception).ParamName);
+                Assert.Equal("folder", ((ArgumentNullException) exception).ParamName);
             }
 
             [Fact]
-            public void Should_Return_The_Folder_Passed_As_Argument()
-            {
+            public void Should_Return_The_Folder_Passed_As_Argument() {
                 // Given
                 var service = new AutoAddServiceFixture().CreateAutoAddService();
 
@@ -54,11 +47,9 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
             }
         }
 
-        public sealed class TheUpdateFolderMethod
-        {
+        public sealed class TheUpdateFolderMethod {
             [Fact]
-            public void Should_Throw_Exception_If_Folder_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Folder_Is_Null() {
                 // Given
                 var service = new AutoAddServiceFixture().CreateAutoAddService();
 
@@ -67,12 +58,11 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
 
                 // Then
                 Assert.IsType<ArgumentNullException>(exception);
-                Assert.Equal("folder", ((ArgumentNullException)exception).ParamName);
+                Assert.Equal("folder", ((ArgumentNullException) exception).ParamName);
             }
 
             [Fact]
-            public void Should_Call_Update_Folder_On_Repository()
-            {
+            public void Should_Call_Update_Folder_On_Repository() {
                 // Given
                 var fixture = new AutoAddServiceFixture();
                 var service = fixture.CreateAutoAddService();
@@ -85,11 +75,9 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
             }
         }
 
-        public sealed class TheGetAllMethod
-        {
+        public sealed class TheGetAllMethod {
             [Fact]
-            public void Should_Return_An_Empty_List_If_Repository_Is_Null()
-            {
+            public void Should_Return_An_Empty_List_If_Repository_Is_Null() {
                 // Given
                 var fixture = new AutoAddServiceFixture();
                 fixture.AutoAddRepository.GetFolders().Returns(info => null);
@@ -103,8 +91,7 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
             }
 
             [Fact]
-            public void Should_Return_An_List_Of_Folders()
-            {
+            public void Should_Return_An_List_Of_Folders() {
                 // Given
                 var fixture = new AutoAddServiceFixture();
                 fixture.AutoAddRepository.GetFolders().Returns(info => new[] {new Folder()});
@@ -118,11 +105,9 @@ namespace Hadouken.Extensions.AutoAdd.Tests.Unit.Services
             }
         }
 
-        public sealed class TheDeleteFolderMethod
-        {
+        public sealed class TheDeleteFolderMethod {
             [Fact]
-            public void Should_Call_Delete_Folder_On_Repository()
-            {
+            public void Should_Call_Delete_Folder_On_Repository() {
                 // Given
                 var fixture = new AutoAddServiceFixture();
                 var service = fixture.CreateAutoAddService();

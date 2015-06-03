@@ -1,31 +1,25 @@
 ﻿using System;
 using Nancy;
 using Nancy.Bootstrapper;
-using Nancy.Security;
 
-namespace Hadouken.Core.Http.Security
-{
+namespace Hadouken.Core.Http.Security {
     /// <summary>
-    /// Nancy Token authentication implementation
+    ///     Nancy Token authentication implementation
     /// </summary>
-    public static class TokenAuthentication
-    {
+    public static class TokenAuthentication {
         private const string Scheme = "Token";
 
         /// <summary>
-        /// Enables Token authentication for the application
+        ///     Enables Token authentication for the application
         /// </summary>
         /// <param name="pipelines">Pipelines to add handlers to (usually "this")</param>
         /// <param name="configuration">Forms authentication configuration</param>
-        public static void Enable(IPipelines pipelines, TokenAuthenticationConfiguration configuration)
-        {
-            if (pipelines == null)
-            {
+        public static void Enable(IPipelines pipelines, TokenAuthenticationConfiguration configuration) {
+            if (pipelines == null) {
                 throw new ArgumentNullException("pipelines");
             }
 
-            if (configuration == null)
-            {
+            if (configuration == null) {
                 throw new ArgumentNullException("configuration");
             }
 
@@ -33,62 +27,53 @@ namespace Hadouken.Core.Http.Security
         }
 
         /// <summary>
-        /// Gets the pre request hook for loading the authenticated user's details
-        /// from the auth header.
+        ///     Gets the pre request hook for loading the authenticated user's details
+        ///     from the auth header.
         /// </summary>
         /// <param name="configuration">Token authentication configuration to use</param>
         /// <returns>Pre request hook delegate</returns>
-        private static Func<NancyContext, Response> GetCredentialRetrievalHook(TokenAuthenticationConfiguration configuration)
-        {
-            if (configuration == null)
-            {
+        private static Func<NancyContext, Response> GetCredentialRetrievalHook(
+            TokenAuthenticationConfiguration configuration) {
+            if (configuration == null) {
                 throw new ArgumentNullException("configuration");
             }
 
-            return context =>
-            {
+            return context => {
                 RetrieveCredentials(context, configuration);
                 return null;
             };
         }
 
-        private static void RetrieveCredentials(NancyContext context, TokenAuthenticationConfiguration configuration)
-        {
+        private static void RetrieveCredentials(NancyContext context, TokenAuthenticationConfiguration configuration) {
             var token = ExtractTokenFromHeader(context.Request);
 
-            if (token != null)
-            {
-                var user = configuration.UserManager.GetUserByToken(token);
+            if (token == null) {
+                return;
+            }
+            var user = configuration.UserManager.GetUserByToken(token);
 
-                if (user != null)
-                {
-                    context.CurrentUser = new TokenUserIdentity(user);
-                }
+            if (user != null) {
+                context.CurrentUser = new TokenUserIdentity(user);
             }
         }
 
-        private static string ExtractTokenFromHeader(Request request)
-        {
+        private static string ExtractTokenFromHeader(Request request) {
             var authorization =
                 request.Headers.Authorization;
 
-            if (string.IsNullOrEmpty(authorization))
-            {
+            if (string.IsNullOrEmpty(authorization)) {
                 return null;
             }
 
-            if (!authorization.StartsWith(Scheme))
-            {
+            if (!authorization.StartsWith(Scheme)) {
                 return null;
             }
 
-            try
-            {
+            try {
                 var encodedToken = authorization.Substring(Scheme.Length).Trim();
-                return String.IsNullOrWhiteSpace(encodedToken) ? null : encodedToken;
+                return string.IsNullOrWhiteSpace(encodedToken) ? null : encodedToken;
             }
-            catch (FormatException)
-            {
+            catch (FormatException) {
                 return null;
             }
         }

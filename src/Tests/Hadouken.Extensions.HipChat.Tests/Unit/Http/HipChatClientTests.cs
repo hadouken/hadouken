@@ -9,15 +9,11 @@ using Hadouken.Extensions.HipChat.Tests.Fixtures;
 using NSubstitute;
 using Xunit;
 
-namespace Hadouken.Extensions.HipChat.Tests.Unit.Http
-{
-    public sealed class HipChatClientTests
-    {
-        public sealed class TheConstructor
-        {
+namespace Hadouken.Extensions.HipChat.Tests.Unit.Http {
+    public sealed class HipChatClientTests {
+        public sealed class TheConstructor {
             [Fact]
-            public void Should_Throw_Exception_If_Logger_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Logger_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new HipChatClient(null, Substitute.For<IHttpClient>()));
 
@@ -27,8 +23,7 @@ namespace Hadouken.Extensions.HipChat.Tests.Unit.Http
             }
 
             [Fact]
-            public void Should_Throw_Exception_If_Http_Client_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Http_Client_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new HipChatClient(Substitute.For<ILogger<HipChatClient>>(), null));
 
@@ -38,11 +33,9 @@ namespace Hadouken.Extensions.HipChat.Tests.Unit.Http
             }
         }
 
-        public sealed class TheSendMessageMethod
-        {
+        public sealed class TheSendMessageMethod {
             [Fact]
-            public void Should_Throw_Exception_If_Config_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Config_Is_Null() {
                 // Given
                 var client = new HipChatClientFixture().CreateClient();
 
@@ -55,8 +48,7 @@ namespace Hadouken.Extensions.HipChat.Tests.Unit.Http
             }
 
             [Fact]
-            public void Should_Throw_Exception_If_Message_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Message_Is_Null() {
                 // Given
                 var client = new HipChatClientFixture().CreateClient();
 
@@ -69,8 +61,7 @@ namespace Hadouken.Extensions.HipChat.Tests.Unit.Http
             }
 
             [Fact]
-            public void Should_Append_Auth_Token_To_Uri()
-            {
+            public void Should_Append_Auth_Token_To_Uri() {
                 // Given
                 var expectedUri = new Uri("https://api.hipchat.com/v1/rooms/message?auth_token=token");
                 var fixture = new HipChatClientFixture();
@@ -84,13 +75,13 @@ namespace Hadouken.Extensions.HipChat.Tests.Unit.Http
             }
 
             [Fact]
-            public void Should_Log_If_Post_Did_Not_Return_Success_Status()
-            {
-                var fixture = new HipChatClientFixture();
-                fixture.HttpResponseMessage.StatusCode = HttpStatusCode.InternalServerError;
+            public void Should_Log_If_Post_Did_Not_Return_Success_Status() {
+                var fixture = new HipChatClientFixture {
+                    HttpResponseMessage = {StatusCode = HttpStatusCode.InternalServerError}
+                };
                 var client = fixture.CreateClient();
                 var config = new HipChatConfig {AuthenticationToken = "token", From = "test", RoomId = "rid"};
-                
+
                 // When
                 client.SendMessage(config, "Message");
 

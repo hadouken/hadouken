@@ -3,17 +3,13 @@
 // https://github.com/kthompson/glob-js
 ///////////////////////////////////////////////////////////////////////
 
-namespace Hadouken.Common.IO.Globbing.Nodes
-{
-    internal sealed class WildcardSegmentNode : Node
-    {
-        public override bool IsWildcard
-        {
+namespace Hadouken.Common.IO.Globbing.Nodes {
+    internal sealed class WildcardSegmentNode : Node {
+        public override bool IsWildcard {
             get { return true; }
         }
 
-        public override string Render()
-        {
+        public override string Render() {
             return ".*";
         }
     }

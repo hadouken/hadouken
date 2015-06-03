@@ -2,18 +2,14 @@
 using Xunit;
 using Xunit.Extensions;
 
-namespace Hadouken.Common.Tests.Unit.IO
-{
-    public sealed class FilePathTests
-    {
-        public sealed class TheHasExtensionProperty
-        {
+namespace Hadouken.Common.Tests.Unit.IO {
+    public sealed class FilePathTests {
+        public sealed class TheHasExtensionProperty {
             [Theory]
             [InlineData("assets/shaders/basic.txt", true)]
             [InlineData("assets/shaders/basic", false)]
             [InlineData("assets/shaders/basic/", false)]
-            public void Can_See_If_A_Path_Has_An_Extension(string fullPath, bool expected)
-            {
+            public void Can_See_If_A_Path_Has_An_Extension(string fullPath, bool expected) {
                 // Given, When
                 var path = new FilePath(fullPath);
 
@@ -22,15 +18,13 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheGetExtensionProperty
-        {
+        public sealed class TheGetExtensionProperty {
             [Theory]
             [InlineData("assets/shaders/basic.frag", ".frag")]
             [InlineData("assets/shaders/basic.frag/test.vert", ".vert")]
             [InlineData("assets/shaders/basic", null)]
             [InlineData("assets/shaders/basic.frag/test", null)]
-            public void Can_Get_Extension(string fullPath, string expected)
-            {
+            public void Can_Get_Extension(string fullPath, string expected) {
                 // Given, When
                 var result = new FilePath(fullPath);
                 var extension = result.GetExtension();
@@ -40,11 +34,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheGetDirectoryMethod
-        {
+        public sealed class TheGetDirectoryMethod {
             [Fact]
-            public void Can_Get_Directory_For_File_Path()
-            {
+            public void Can_Get_Directory_For_File_Path() {
                 // Given, When
                 var path = new FilePath("temp/hello.txt");
                 var directory = path.GetDirectory();
@@ -54,8 +46,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
 
             [Fact]
-            public void Can_Get_Directory_For_File_Path_In_Root()
-            {
+            public void Can_Get_Directory_For_File_Path_In_Root() {
                 // Given, When
                 var path = new FilePath("hello.txt");
                 var directory = path.GetDirectory();
@@ -65,11 +56,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheChangeExtensionMethod
-        {
+        public sealed class TheChangeExtensionMethod {
             [Fact]
-            public void Can_Change_Extension_Of_Path()
-            {
+            public void Can_Change_Extension_Of_Path() {
                 // Given
                 var path = new FilePath("temp/hello.txt");
 
@@ -81,13 +70,11 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheAppendExtensionMethod
-        {
+        public sealed class TheAppendExtensionMethod {
             [Theory]
             [InlineData("dat", "temp/hello.txt.dat")]
             [InlineData(".dat", "temp/hello.txt.dat")]
-            public void Can_Append_Extension_To_Path(string extension, string expected)
-            {
+            public void Can_Append_Extension_To_Path(string extension, string expected) {
                 // Given
                 var path = new FilePath("temp/hello.txt");
 
@@ -99,12 +86,9 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-
-        public sealed class TheGetFilenameMethod
-        {
+        public sealed class TheGetFilenameMethod {
             [Fact]
-            public void Can_Get_Filename_From_Path()
-            {
+            public void Can_Get_Filename_From_Path() {
                 // Given
                 var path = new FilePath("/input/test.txt");
 
@@ -114,6 +98,6 @@ namespace Hadouken.Common.Tests.Unit.IO
                 // Then
                 Assert.Equal("test.txt", result.FullPath);
             }
-        }        
+        }
     }
 }

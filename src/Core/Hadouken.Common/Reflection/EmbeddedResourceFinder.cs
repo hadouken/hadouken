@@ -3,22 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Hadouken.Common.Reflection
-{
-    public class EmbeddedResourceFinder : IEmbeddedResourceFinder
-    {
-        public IEnumerable<IEmbeddedResource> Get(Assembly assembly)
-        {
+namespace Hadouken.Common.Reflection {
+    public class EmbeddedResourceFinder : IEmbeddedResourceFinder {
+        public IEnumerable<IEmbeddedResource> Get(Assembly assembly) {
             return Get(new[] {assembly});
         }
 
-        public IEnumerable<IEmbeddedResource> GetAll()
-        {
+        public IEnumerable<IEmbeddedResource> GetAll() {
             return Get(AppDomain.CurrentDomain.GetAssemblies());
         }
 
-        private static IEnumerable<IEmbeddedResource> Get(IEnumerable<Assembly> assemblies)
-        {
+        private static IEnumerable<IEmbeddedResource> Get(IEnumerable<Assembly> assemblies) {
             return (from asm in assemblies
                 where !asm.IsDynamic
                 from resourceName in asm.GetManifestResourceNames()

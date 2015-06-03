@@ -1,32 +1,26 @@
 ﻿using System;
 
-namespace Hadouken.Common.JsonRpc
-{
+namespace Hadouken.Common.JsonRpc {
     [Serializable]
-    public sealed class JsonRpcException : Exception
-    {
+    public sealed class JsonRpcException : Exception {
         private readonly int _errorCode;
 
-        public JsonRpcException(int errorCode)
-        {
-            _errorCode = errorCode;
+        public JsonRpcException(int errorCode) {
+            this._errorCode = errorCode;
         }
 
         public JsonRpcException(int errorCode, string message)
-            : base(message)
-        {
-            _errorCode = errorCode;
+            : base(message) {
+            this._errorCode = errorCode;
         }
 
         public JsonRpcException(int errorCode, string message, Exception innerException)
-            : base(message, innerException)
-        {
-            _errorCode = errorCode;
+            : base(message, innerException) {
+            this._errorCode = errorCode;
         }
 
-        public int ErrorCode
-        {
-            get { return _errorCode; }
+        public int ErrorCode {
+            get { return this._errorCode; }
         }
     }
 }

@@ -2,34 +2,30 @@
 using System.Collections.Generic;
 using Hadouken.Common.Text;
 
-namespace Hadouken.Core.JsonRpc
-{
-    public class JsonRpcRequestParser : IJsonRpcRequestParser
-    {
+namespace Hadouken.Core.JsonRpc {
+    public class JsonRpcRequestParser : IJsonRpcRequestParser {
         private readonly IJsonSerializer _serializer;
 
-        public JsonRpcRequestParser(IJsonSerializer serializer)
-        {
-            if (serializer == null) throw new ArgumentNullException("serializer");
-            _serializer = serializer;
+        public JsonRpcRequestParser(IJsonSerializer serializer) {
+            if (serializer == null) {
+                throw new ArgumentNullException("serializer");
+            }
+            this._serializer = serializer;
         }
 
-        public JsonRpcRequest Parse(string json)
-        {
-            var request = _serializer.DeserializeObject<IDictionary<string, object>>(json);
+        public JsonRpcRequest Parse(string json) {
+            var request = this._serializer.DeserializeObject<IDictionary<string, object>>(json);
 
             // Validate protocol version
             if (!request.ContainsKey("jsonrpc")
                 || request["jsonrpc"].GetType() != typeof (string)
-                || request["jsonrpc"].ToString() != "2.0")
-            {
+                || request["jsonrpc"].ToString() != "2.0") {
                 throw new InvalidRequestException("Invalid protocol version.");
             }
 
             // Validate method
             if (!request.ContainsKey("method")
-                || request["method"].GetType() != typeof (string))
-            {
+                || request["method"].GetType() != typeof (string)) {
                 throw new InvalidRequestException("Invalid method name.");
             }
 
@@ -38,20 +34,17 @@ namespace Hadouken.Core.JsonRpc
                   && request["id"] != null)
                 || !(request["id"] is int
                      || request["id"] is long
-                     || request["id"] is string))
-            {
+                     || request["id"] is string)) {
                 throw new InvalidRequestException("Invalid id.");
             }
 
-            var rpcRequest =  new JsonRpcRequest
-            {
+            var rpcRequest = new JsonRpcRequest {
                 Id = request["id"],
                 MethodName = request["method"].ToString(),
                 ProtocolVersion = request["jsonrpc"].ToString()
             };
 
-            if (request.ContainsKey("params"))
-            {
+            if (request.ContainsKey("params")) {
                 rpcRequest.Parameters = request["params"];
             }
 

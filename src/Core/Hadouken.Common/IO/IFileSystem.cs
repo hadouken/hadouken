@@ -1,24 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace Hadouken.Common.IO
-{
+namespace Hadouken.Common.IO {
     /// <summary>
-    /// Represents a file system.
+    ///     Represents a file system.
     /// </summary>
-    public interface IFileSystem
-    {
+    public interface IFileSystem {
         /// <summary>
-        /// Gets a <see cref="IFile"/> instance representing the specified path.
+        ///     Gets a <see cref="IFile" /> instance representing the specified path.
         /// </summary>
         /// <param name="path">The path.</param>
-        /// <returns>A <see cref="IFile"/> instance representing the specified path.</returns>
+        /// <returns>A <see cref="IFile" /> instance representing the specified path.</returns>
         IFile GetFile(FilePath path);
 
         /// <summary>
-        /// Gets a <see cref="IDirectory"/> instance representing the specified path.
+        ///     Gets a <see cref="IDirectory" /> instance representing the specified path.
         /// </summary>
         /// <param name="path">The path.</param>
-        /// <returns>A <see cref="IDirectory"/> instance representing the specified path.</returns>
+        /// <returns>A <see cref="IDirectory" /> instance representing the specified path.</returns>
         IDirectory GetDirectory(DirectoryPath path);
 
         IEnumerable<IDriveInfo> GetDrives();

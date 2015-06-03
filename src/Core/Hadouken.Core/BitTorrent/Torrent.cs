@@ -3,172 +3,155 @@ using System.Collections.Generic;
 using System.Linq;
 using Hadouken.Common.BitTorrent;
 using Ragnar;
+using TorrentState = Hadouken.Common.BitTorrent.TorrentState;
 
-namespace Hadouken.Core.BitTorrent
-{
-    internal sealed class Torrent : ITorrent, IDisposable
-    {
+namespace Hadouken.Core.BitTorrent {
+    internal sealed class Torrent : ITorrent, IDisposable {
         private readonly TorrentHandle _handle;
         private TorrentInfo _info;
         private TorrentStatus _status;
 
-        public Torrent(TorrentHandle handle)
-        {
-            if (handle == null) throw new ArgumentNullException("handle");
-            _handle = handle;
-            _status = handle.QueryStatus();
+        public Torrent(TorrentHandle handle) {
+            if (handle == null) {
+                throw new ArgumentNullException("handle");
+            }
+            this._handle = handle;
+            this._status = handle.QueryStatus();
 
             // Set initial properties
-            TorrentInfo = _handle.TorrentFile;
+            this.TorrentInfo = this._handle.TorrentFile;
         }
 
-        internal TorrentHandle Handle
-        {
-            get { return _handle; }
+        internal TorrentHandle Handle {
+            get { return this._handle; }
         }
 
-        internal TorrentInfo TorrentInfo
-        {
-            get { return _info; }
-            set
-            {
-                if (_info != null) _info.Dispose();
-                _info = value;
+        internal TorrentInfo TorrentInfo {
+            get { return this._info; }
+            set {
+                if (this._info != null) {
+                    this._info.Dispose();
+                }
+                this._info = value;
             }
         }
 
-        internal TorrentStatus Status
-        {
-            get { return _status; }
-            set
-            {
-                if (_status != null) _status.Dispose();
-                _status = value;
+        internal TorrentStatus Status {
+            get { return this._status; }
+            set {
+                if (this._status != null) {
+                    this._status.Dispose();
+                }
+                this._status = value;
             }
         }
 
-        public string InfoHash
-        {
-            get { return _status.InfoHash.ToHex(); }
+        public bool HasMetadata {
+            get { return this.TorrentInfo != null; }
         }
 
-        public string Name
-        {
-            get { return (HasMetadata ? _status.Name : InfoHash); }
+        public void Dispose() {
+            if (this.TorrentInfo != null) {
+                this.TorrentInfo.Dispose();
+            }
+
+            this._status.Dispose();
+            this._handle.Dispose();
         }
 
-        public bool HasMetadata
-        {
-            get { return TorrentInfo != null; }
+        public string InfoHash {
+            get { return this._status.InfoHash.ToHex(); }
         }
 
-        public long Size
-        {
-            get { return HasMetadata ? TorrentInfo.TotalSize : -1; }
+        public string Name {
+            get { return (this.HasMetadata ? this._status.Name : this.InfoHash); }
         }
 
-        public float Progress
-        {
-            get { return _status.Progress; }
+        public long Size {
+            get { return this.HasMetadata ? this.TorrentInfo.TotalSize : -1; }
         }
 
-        public string SavePath
-        {
-            get { return _status.SavePath; }
+        public float Progress {
+            get { return this._status.Progress; }
         }
 
-        public long DownloadSpeed
-        {
-            get { return _status.DownloadPayloadRate; }
+        public string SavePath {
+            get { return this._status.SavePath; }
         }
 
-        public long UploadSpeed
-        {
-            get { return _status.UploadPayloadRate; }
+        public long DownloadSpeed {
+            get { return this._status.DownloadPayloadRate; }
         }
 
-        public long DownloadedBytes
-        {
-            get { return _status.TotalPayloadDownload; }
+        public long UploadSpeed {
+            get { return this._status.UploadPayloadRate; }
         }
 
-        public long UploadedBytes
-        {
-            get { return _status.TotalPayloadUpload; }
+        public long DownloadedBytes {
+            get { return this._status.TotalPayloadDownload; }
         }
 
-        public long TotalDownloadedBytes
-        {
-            get { return _status.AllTimeDownload; }
+        public long UploadedBytes {
+            get { return this._status.TotalPayloadUpload; }
         }
 
-        public long TotalUploadedBytes
-        {
-            get { return _status.AllTimeUpload; }
+        public long TotalDownloadedBytes {
+            get { return this._status.AllTimeDownload; }
         }
 
-        public long TotalRemainingBytes
-        {
-            get { return _status.TotalWanted - _status.TotalWantedDone; }
+        public long TotalUploadedBytes {
+            get { return this._status.AllTimeUpload; }
         }
 
-        public Common.BitTorrent.TorrentState State
-        {
-            get { return (Common.BitTorrent.TorrentState) (int) _status.State; }
+        public long TotalRemainingBytes {
+            get { return this._status.TotalWanted - this._status.TotalWantedDone; }
         }
 
-        public bool Paused
-        {
-            get { return _status.Paused; }
+        public TorrentState State {
+            get { return (TorrentState) (int) this._status.State; }
+        }
+
+        public bool Paused {
+            get { return this._status.Paused; }
         }
 
         public string Label { get; internal set; }
 
-        public bool IsSeed
-        {
-            get { return _status.IsSeeding; }
+        public bool IsSeed {
+            get { return this._status.IsSeeding; }
         }
 
-        public bool IsFinished
-        {
-            get { return _status.IsFinished; }
+        public bool IsFinished {
+            get { return this._status.IsFinished; }
         }
 
-        public int QueuePosition
-        {
-            get { return _status.QueuePosition; }
+        public int QueuePosition {
+            get { return this._status.QueuePosition; }
         }
 
-        public string Error
-        {
-            get { return _status.Error; }
+        public string Error {
+            get { return this._status.Error; }
         }
 
-        public ITorrentSettings GetSettings()
-        {
-            return new TorrentSettings
-            {
-                DownloadRateLimit = _handle.DownloadLimit,
-                MaxConnections = _handle.MaxConnections,
-                MaxUploads = _handle.MaxUploads,
-                SequentialDownload = _handle.SequentialDownload,
-                UploadRateLimit = _handle.UploadLimit
+        public ITorrentSettings GetSettings() {
+            return new TorrentSettings {
+                DownloadRateLimit = this._handle.DownloadLimit,
+                MaxConnections = this._handle.MaxConnections,
+                MaxUploads = this._handle.MaxUploads,
+                SequentialDownload = this._handle.SequentialDownload,
+                UploadRateLimit = this._handle.UploadLimit
             };
         }
 
-        public IEnumerable<ITorrentFile> GetFiles()
-        {
-            if (!HasMetadata)
-            {
+        public IEnumerable<ITorrentFile> GetFiles() {
+            if (!this.HasMetadata) {
                 return Enumerable.Empty<ITorrentFile>();
             }
 
             var result = new List<ITorrentFile>();
 
-            for (var i = 0; i < TorrentInfo.NumFiles; i++)
-            {
-                using (var entry = TorrentInfo.FileAt(i))
-                {
+            for (var i = 0; i < this.TorrentInfo.NumFiles; i++) {
+                using (var entry = this.TorrentInfo.FileAt(i)) {
                     result.Add(new TorrentFile(i, entry.Path, entry.Size, entry.Offset));
                 }
             }
@@ -176,55 +159,40 @@ namespace Hadouken.Core.BitTorrent
             return result;
         }
 
-        public IEnumerable<int> GetFilePriorities()
-        {
-            return !HasMetadata ? Enumerable.Empty<int>() : _handle.GetFilePriorities();
+        public IEnumerable<int> GetFilePriorities() {
+            return !this.HasMetadata ? Enumerable.Empty<int>() : this._handle.GetFilePriorities();
         }
 
-        public IEnumerable<float> GetFileProgress()
-        {
-            if (!HasMetadata)
-            {
+        public IEnumerable<float> GetFileProgress() {
+            if (!this.HasMetadata) {
                 return Enumerable.Empty<float>();
             }
 
-            var progress = _handle.GetFileProgresses();
+            var progress = this._handle.GetFileProgresses();
             var result = new List<float>();
 
-            foreach (var file in GetFiles())
-            {
-                try
-                {
+            foreach (var file in this.GetFiles()) {
+                try {
                     result.Add(progress[file.Index]/(float) file.Size);
                 }
-                catch (DivideByZeroException)
-                {
+                catch (DivideByZeroException) {
                     result.Add(0.0f);
                 }
             }
 
             return result;
-        } 
+        }
 
-        public IEnumerable<IPeer> GetPeers()
-        {
+        public IEnumerable<IPeer> GetPeers() {
             var result = new List<IPeer>();
-            var peers = _handle.GetPeerInfo();
+            var peers = this._handle.GetPeerInfo();
 
-            foreach (var peer in peers)
-            {
-                if (peer.Flags.HasFlag(PeerFlags.Connecting)
-                    || peer.Flags.HasFlag(PeerFlags.Handshake))
-                {
-                    continue;
-                }
-
-                result.Add(new Peer
-                {
+            foreach (var peer in peers.Where(peer => !peer.Flags.HasFlag(PeerFlags.Connecting) && !peer.Flags.HasFlag(PeerFlags.Handshake))) {
+                result.Add(new Peer {
                     Client = peer.Client,
                     Country = string.Empty,
                     DownloadSpeed = peer.PayloadDownSpeed,
-                    IP = peer.EndPoint.ToString(),
+                    Ip = peer.EndPoint.ToString(),
                     IsSeed = peer.Flags.HasFlag(PeerFlags.Seed),
                     Progress = peer.Progress,
                     UploadSpeed = peer.PayloadUpSpeed
@@ -234,17 +202,6 @@ namespace Hadouken.Core.BitTorrent
             }
 
             return result;
-        }
-
-        public void Dispose()
-        {
-            if (TorrentInfo != null)
-            {
-                TorrentInfo.Dispose();
-            }
-
-            _status.Dispose();
-            _handle.Dispose();
         }
     }
 }

@@ -1,6 +1,3 @@
-﻿namespace Hadouken.Common.Text.BEncoding
-{
-    public abstract class BEncodedValue
-    {
-    }
+﻿namespace Hadouken.Common.Text.BEncoding {
+    public abstract class BEncodedValue {}
 }

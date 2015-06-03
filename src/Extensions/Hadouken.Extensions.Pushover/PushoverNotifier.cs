@@ -6,56 +6,55 @@ using Hadouken.Common.Logging;
 using Hadouken.Extensions.Pushover.Config;
 using Hadouken.Extensions.Pushover.Http;
 
-namespace Hadouken.Extensions.Pushover
-{
+namespace Hadouken.Extensions.Pushover {
     [Extension("notifier.pushover",
         Name = "Pushover",
         Description = "Sends push notifications to your mobile devices via Pushover."
-    )]
-    [Configuration(typeof(PushoverConfig), Key = "pushover.config")]
-    public class PushoverNotifier : INotifier
-    {
-        private readonly ILogger<PushoverNotifier> _logger;
+        )]
+    [Configuration(typeof (PushoverConfig), Key = "pushover.config")]
+    public class PushoverNotifier : INotifier {
         private readonly IKeyValueStore _keyValueStore;
+        private readonly ILogger<PushoverNotifier> _logger;
         private readonly IPushoverClient _pushoverClient;
 
         public PushoverNotifier(ILogger<PushoverNotifier> logger,
             IKeyValueStore keyValueStore,
-            IPushoverClient pushoverClient)
-        {
-            if (logger == null) throw new ArgumentNullException("logger");
-            if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
-            if (pushoverClient == null) throw new ArgumentNullException("pushoverClient");
+            IPushoverClient pushoverClient) {
+            if (logger == null) {
+                throw new ArgumentNullException("logger");
+            }
+            if (keyValueStore == null) {
+                throw new ArgumentNullException("keyValueStore");
+            }
+            if (pushoverClient == null) {
+                throw new ArgumentNullException("pushoverClient");
+            }
 
-            _logger = logger;
-            _keyValueStore = keyValueStore;
-            _pushoverClient = pushoverClient;
+            this._logger = logger;
+            this._keyValueStore = keyValueStore;
+            this._pushoverClient = pushoverClient;
         }
 
-        public bool CanNotify()
-        {
-            var config = _keyValueStore.Get<PushoverConfig>("pushover.config");
+        public bool CanNotify() {
+            var config = this._keyValueStore.Get<PushoverConfig>("pushover.config");
             return (config != null
                     && !string.IsNullOrEmpty(config.AppKey)
                     && !string.IsNullOrEmpty(config.UserKey));
         }
 
-        public void Notify(Notification notification)
-        {
-            var config = _keyValueStore.Get<PushoverConfig>("pushover.config");
-            
-            if (config == null)
-            {
-                _logger.Warn("Pushover not configured.");
+        public void Notify(Notification notification) {
+            var config = this._keyValueStore.Get<PushoverConfig>("pushover.config");
+
+            if (config == null) {
+                this._logger.Warn("Pushover not configured.");
                 return;
             }
 
-            var message = new PushoverMessage(config.AppKey, config.UserKey, notification.Message)
-            {
+            var message = new PushoverMessage(config.AppKey, config.UserKey, notification.Message) {
                 Title = notification.Title
             };
 
-            _pushoverClient.Send(message);
+            this._pushoverClient.Send(message);
         }
     }
 }

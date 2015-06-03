@@ -6,35 +6,34 @@ using Hadouken.Common.Extensibility;
 using Hadouken.Extensions.AutoMove.Data;
 using Hadouken.Extensions.AutoMove.Data.Models;
 
-namespace Hadouken.Extensions.AutoMove
-{
+namespace Hadouken.Extensions.AutoMove {
     [Component]
-    public sealed class RuleFinder : IRuleFinder
-    {
+    public sealed class RuleFinder : IRuleFinder {
         private readonly IAutoMoveRepository _autoMoveRepository;
         private readonly ISourceValueProvider _sourceValueProvider;
 
         public RuleFinder(IAutoMoveRepository autoMoveRepository,
-            ISourceValueProvider sourceValueProvider)
-        {
-            if (autoMoveRepository == null) throw new ArgumentNullException("autoMoveRepository");
-            if (sourceValueProvider == null) throw new ArgumentNullException("sourceValueProvider");
-            _autoMoveRepository = autoMoveRepository;
-            _sourceValueProvider = sourceValueProvider;
+            ISourceValueProvider sourceValueProvider) {
+            if (autoMoveRepository == null) {
+                throw new ArgumentNullException("autoMoveRepository");
+            }
+            if (sourceValueProvider == null) {
+                throw new ArgumentNullException("sourceValueProvider");
+            }
+            this._autoMoveRepository = autoMoveRepository;
+            this._sourceValueProvider = sourceValueProvider;
         }
 
-        public Rule FindRule(ITorrent torrent)
-        {
-            var rules = _autoMoveRepository.GetRules() ?? new Rule[] {};
+        public Rule FindRule(ITorrent torrent) {
+            var rules = this._autoMoveRepository.GetRules() ?? new Rule[] {};
             return (from rule in rules
-                let parameters = _autoMoveRepository.GetParametersByRuleId(rule.Id) ?? new Parameter[] {}
-                where parameters.All(p => MatchesTorrent(torrent, p))
+                let parameters = this._autoMoveRepository.GetParametersByRuleId(rule.Id) ?? new Parameter[] {}
+                where parameters.All(p => this.MatchesTorrent(torrent, p))
                 select rule).FirstOrDefault();
         }
 
-        private bool MatchesTorrent(ITorrent torrent, Parameter parameter)
-        {
-            var sourceValue = _sourceValueProvider.GetValue(torrent, parameter.Source);
+        private bool MatchesTorrent(ITorrent torrent, Parameter parameter) {
+            var sourceValue = this._sourceValueProvider.GetValue(torrent, parameter.Source);
             return Regex.IsMatch(sourceValue, parameter.Pattern);
         }
     }

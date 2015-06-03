@@ -6,57 +6,56 @@ using Hadouken.Common.Logging;
 using Hadouken.Extensions.Pushbullet.Config;
 using Hadouken.Extensions.Pushbullet.Http;
 
-namespace Hadouken.Extensions.Pushbullet
-{
+namespace Hadouken.Extensions.Pushbullet {
     [Extension("notifier.pushbullet",
         Name = "Pushbullet",
         Description = "Sends push notifications to your devices via Pushbullet."
-    )]
-    [Configuration(typeof(PushbulletConfig), Key = "pushbullet.config")]
-    public class PushbulletNotifier : INotifier
-    {
-        private readonly ILogger<PushbulletNotifier> _logger;
+        )]
+    [Configuration(typeof (PushbulletConfig), Key = "pushbullet.config")]
+    public class PushbulletNotifier : INotifier {
         private readonly IKeyValueStore _keyValueStore;
+        private readonly ILogger<PushbulletNotifier> _logger;
         private readonly IPushbulletClient _pushbulletClient;
 
         public PushbulletNotifier(ILogger<PushbulletNotifier> logger,
             IKeyValueStore keyValueStore,
-            IPushbulletClient pushbulletClient)
-        {
-            if (logger == null) throw new ArgumentNullException("logger");
-            if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
-            if (pushbulletClient == null) throw new ArgumentNullException("pushbulletClient");
+            IPushbulletClient pushbulletClient) {
+            if (logger == null) {
+                throw new ArgumentNullException("logger");
+            }
+            if (keyValueStore == null) {
+                throw new ArgumentNullException("keyValueStore");
+            }
+            if (pushbulletClient == null) {
+                throw new ArgumentNullException("pushbulletClient");
+            }
 
-            _logger = logger;
-            _keyValueStore = keyValueStore;
-            _pushbulletClient = pushbulletClient;
+            this._logger = logger;
+            this._keyValueStore = keyValueStore;
+            this._pushbulletClient = pushbulletClient;
         }
 
-        public bool CanNotify()
-        {
-            var config = _keyValueStore.Get<PushbulletConfig>("pushbullet.config");
+        public bool CanNotify() {
+            var config = this._keyValueStore.Get<PushbulletConfig>("pushbullet.config");
 
             return (config != null
                     && !string.IsNullOrEmpty(config.AccessToken));
         }
 
-        public void Notify(Notification notification)
-        {
-            var config = _keyValueStore.Get<PushbulletConfig>("pushbullet.config");
+        public void Notify(Notification notification) {
+            var config = this._keyValueStore.Get<PushbulletConfig>("pushbullet.config");
 
-            if (config == null)
-            {
-                _logger.Warn("Pushbullet not configured.");
+            if (config == null) {
+                this._logger.Warn("Pushbullet not configured.");
                 return;
             }
 
-            if (string.IsNullOrEmpty(config.AccessToken))
-            {
-                _logger.Warn("Pushbullet access token not set.");
+            if (string.IsNullOrEmpty(config.AccessToken)) {
+                this._logger.Warn("Pushbullet access token not set.");
                 return;
             }
 
-            _pushbulletClient.Send(config.AccessToken, new Note(notification.Title, notification.Message));
+            this._pushbulletClient.Send(config.AccessToken, new Note(notification.Title, notification.Message));
         }
     }
 }

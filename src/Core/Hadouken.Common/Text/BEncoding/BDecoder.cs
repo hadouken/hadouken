@@ -2,37 +2,30 @@
 using System.IO;
 using System.Text;
 
-namespace Hadouken.Common.Text.BEncoding
-{
-    public class BDecoder
-    {
-        public BEncodedValue Decode(Stream stream)
-        {
-            using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
-            {
-                return Decode(reader);
+namespace Hadouken.Common.Text.BEncoding {
+    public class BDecoder {
+        public BEncodedValue Decode(Stream stream) {
+            using (var reader = new BinaryReader(stream, Encoding.UTF8, true)) {
+                return this.Decode(reader);
             }
         }
 
-        private BEncodedValue Decode(BinaryReader reader)
-        {
+        private BEncodedValue Decode(BinaryReader reader) {
             var c = reader.PeekChar();
 
-            if (c == -1)
-            {
+            if (c == -1) {
                 throw new InvalidDataException("Unexpected end of stream.");
             }
 
-            switch (c)
-            {
+            switch (c) {
                 case 'd':
-                    return DecodeDictionary(reader);
+                    return this.DecodeDictionary(reader);
 
                 case 'i':
                     return DecodeNumber(reader);
 
                 case 'l':
-                    return DecodeList(reader);
+                    return this.DecodeList(reader);
 
                 case '0':
                 case '1':
@@ -50,19 +43,21 @@ namespace Hadouken.Common.Text.BEncoding
             return null;
         }
 
-        private BEncodedDictionary DecodeDictionary(BinaryReader reader)
-        {
+        private BEncodedDictionary DecodeDictionary(BinaryReader reader) {
             Expect(reader, 'd');
 
             var map = new Dictionary<BEncodedString, BEncodedValue>();
 
-            while (true)
-            {
-                var key = Decode(reader);
-                if (key == null) break;
+            while (true) {
+                var key = this.Decode(reader);
+                if (key == null) {
+                    break;
+                }
 
-                var value = Decode(reader);
-                if (value == null) break;
+                var value = this.Decode(reader);
+                if (value == null) {
+                    break;
+                }
 
                 map.Add((BEncodedString) key, value);
             }
@@ -72,15 +67,13 @@ namespace Hadouken.Common.Text.BEncoding
             return new BEncodedDictionary(map);
         }
 
-        private BEncodedList DecodeList(BinaryReader reader)
-        {
+        private BEncodedList DecodeList(BinaryReader reader) {
             Expect(reader, 'l');
 
             var items = new List<BEncodedValue>();
             BEncodedValue value;
 
-            while ((value = Decode(reader)) != null)
-            {
+            while ((value = this.Decode(reader)) != null) {
                 items.Add(value);
             }
 
@@ -89,14 +82,12 @@ namespace Hadouken.Common.Text.BEncoding
             return new BEncodedList(items);
         }
 
-        private static BEncodedNumber DecodeNumber(BinaryReader reader)
-        {
+        private static BEncodedNumber DecodeNumber(BinaryReader reader) {
             Expect(reader, 'i');
 
             var builder = new StringBuilder();
 
-            while (reader.PeekChar() != 'e')
-            {
+            while (reader.PeekChar() != 'e') {
                 builder.Append(reader.ReadChar());
             }
 
@@ -106,12 +97,10 @@ namespace Hadouken.Common.Text.BEncoding
             return new BEncodedNumber(num);
         }
 
-        private static BEncodedString DecodeString(BinaryReader reader)
-        {
+        private static BEncodedString DecodeString(BinaryReader reader) {
             var builder = new StringBuilder();
 
-            while (reader.PeekChar() != ':')
-            {
+            while (reader.PeekChar() != ':') {
                 builder.Append(reader.ReadChar());
             }
 
@@ -123,12 +112,10 @@ namespace Hadouken.Common.Text.BEncoding
             return new BEncodedString(data);
         }
 
-        private static void Expect(BinaryReader reader, char c)
-        {
+        private static void Expect(BinaryReader reader, char c) {
             var found = reader.ReadChar();
 
-            if (found != c)
-            {
+            if (found != c) {
                 throw new InvalidDataException(string.Format("Expected {0}. Found {1}.", c, found));
             }
         }

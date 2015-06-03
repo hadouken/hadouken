@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Common.Data
-{
-    public interface IMigrator
-    {
+﻿namespace Hadouken.Common.Data {
+    public interface IMigrator {
         void Migrate();
     }
 }

@@ -6,25 +6,20 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hadouken.Common.IO.Globbing.Nodes
-{
-    internal sealed class SegmentNode : Node
-    {
+namespace Hadouken.Common.IO.Globbing.Nodes {
+    internal sealed class SegmentNode : Node {
         private readonly List<Node> _items;
 
-        public override bool IsWildcard
-        {
-            get { return _items.Any(x => x.IsWildcard); }
+        public SegmentNode(List<Node> items) {
+            this._items = items;
         }
 
-        public SegmentNode(List<Node> items)
-        {
-            _items = items;
+        public override bool IsWildcard {
+            get { return this._items.Any(x => x.IsWildcard); }
         }
 
-        public override string Render()
-        {
-            return string.Join(string.Empty, _items.Select(x => x.Render()));
+        public override string Render() {
+            return string.Join(string.Empty, this._items.Select(x => x.Render()));
         }
     }
 }

@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Linq;
-using Hadouken.Common.Data;
-using Hadouken.Common.Logging;
-using Hadouken.Extensions.AutoMove.Data;
 using Hadouken.Extensions.AutoMove.Data.Models;
 using Hadouken.Extensions.AutoMove.Services;
 using Hadouken.Extensions.AutoMove.Tests.Fixtures;
 using NSubstitute;
 using Xunit;
 
-namespace Hadouken.Extensions.AutoMove.Tests.Unit
-{
-    public class AutoMoveServiceTests
-    {
-        public sealed class TheConstructor
-        {
+namespace Hadouken.Extensions.AutoMove.Tests.Unit {
+    public class AutoMoveServiceTests {
+        public sealed class TheConstructor {
             [Fact]
-            public void Should_Throw_Exception_If_Auto_Move_Repository_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Auto_Move_Repository_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new AutoMoveService(null));
 
@@ -27,11 +19,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
         }
 
-        public sealed class TheCreateRuleMethod
-        {
+        public sealed class TheCreateRuleMethod {
             [Fact]
-            public void Should_Throw_Exception_If_Rule_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Rule_Is_Null() {
                 // Given
                 var service = new AutoMoveServiceFixture().CreateService();
 
@@ -44,8 +34,7 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
 
             [Fact]
-            public void Should_Call_Create_Rule_On_Repository()
-            {
+            public void Should_Call_Create_Rule_On_Repository() {
                 // Given
                 var fixture = new AutoMoveServiceFixture();
                 var service = fixture.CreateService();
@@ -58,8 +47,7 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
 
             [Fact]
-            public void Should_Return_The_Rule_Passed_As_Argument()
-            {
+            public void Should_Return_The_Rule_Passed_As_Argument() {
                 // Given
                 var service = new AutoMoveServiceFixture().CreateService();
 
@@ -71,11 +59,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
         }
 
-        public sealed class TheCreateParameterMethod
-        {
+        public sealed class TheCreateParameterMethod {
             [Fact]
-            public void Should_Throw_If_Parameter_Is_Null()
-            {
+            public void Should_Throw_If_Parameter_Is_Null() {
                 // Given
                 var service = new AutoMoveServiceFixture().CreateService();
 

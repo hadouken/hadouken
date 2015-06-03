@@ -2,31 +2,25 @@
 using NSubstitute;
 using Xunit;
 
-namespace Hadouken.Common.Tests.Unit.IO
-{
-    public sealed class FileSystemExtensionsTest
-    {
-        public sealed class TheExistMethod
-        {
-            public sealed class WithFilePath
-            {
+namespace Hadouken.Common.Tests.Unit.IO {
+    public sealed class FileSystemExtensionsTest {
+        public sealed class TheExistMethod {
+            public sealed class WithFilePath {
                 [Fact]
-                public void Should_Return_False_If_File_System_Returned_Null()
-                {
+                public void Should_Return_False_If_File_System_Returned_Null() {
                     // Given
                     var fileSystem = Substitute.For<IFileSystem>();
-                    fileSystem.GetFile(Arg.Any<FilePath>()).Returns((IFile)null);
+                    fileSystem.GetFile(Arg.Any<FilePath>()).Returns((IFile) null);
 
                     // When
-                    var result = fileSystem.Exist((FilePath)"file.txt");
+                    var result = fileSystem.Exist((FilePath) "file.txt");
 
                     // Then
                     Assert.False(result);
                 }
 
                 [Fact]
-                public void Should_Return_False_If_File_Do_Not_Exist()
-                {
+                public void Should_Return_False_If_File_Do_Not_Exist() {
                     // Given
                     var fileSystem = Substitute.For<IFileSystem>();
                     var file = Substitute.For<IFile>();
@@ -34,15 +28,14 @@ namespace Hadouken.Common.Tests.Unit.IO
                     fileSystem.GetFile(Arg.Any<FilePath>()).Returns(file);
 
                     // When
-                    var result = fileSystem.Exist((FilePath)"file.txt");
+                    var result = fileSystem.Exist((FilePath) "file.txt");
 
                     // Then
                     Assert.False(result);
                 }
 
                 [Fact]
-                public void Should_Return_True_If_File_Exist()
-                {
+                public void Should_Return_True_If_File_Exist() {
                     // Given
                     var fileSystem = Substitute.For<IFileSystem>();
                     var file = Substitute.For<IFile>();
@@ -50,32 +43,29 @@ namespace Hadouken.Common.Tests.Unit.IO
                     fileSystem.GetFile(Arg.Any<FilePath>()).Returns(file);
 
                     // When
-                    var result = fileSystem.Exist((FilePath)"file.txt");
+                    var result = fileSystem.Exist((FilePath) "file.txt");
 
                     // Then
                     Assert.True(result);
                 }
             }
 
-            public sealed class WithDirectoryPath
-            {
+            public sealed class WithDirectoryPath {
                 [Fact]
-                public void Should_Return_False_If_File_System_Returned_Null()
-                {
+                public void Should_Return_False_If_File_System_Returned_Null() {
                     // Given
                     var fileSystem = Substitute.For<IFileSystem>();
-                    fileSystem.GetDirectory(Arg.Any<DirectoryPath>()).Returns((IDirectory)null);
+                    fileSystem.GetDirectory(Arg.Any<DirectoryPath>()).Returns((IDirectory) null);
 
                     // When
-                    var result = fileSystem.Exist((DirectoryPath)"/Target");
+                    var result = fileSystem.Exist((DirectoryPath) "/Target");
 
                     // Then
                     Assert.False(result);
                 }
 
                 [Fact]
-                public void Should_Return_False_If_Directory_Do_Not_Exist()
-                {
+                public void Should_Return_False_If_Directory_Do_Not_Exist() {
                     // Given
                     var fileSystem = Substitute.For<IFileSystem>();
                     var directory = Substitute.For<IDirectory>();
@@ -83,15 +73,14 @@ namespace Hadouken.Common.Tests.Unit.IO
                     fileSystem.GetDirectory(Arg.Any<DirectoryPath>()).Returns(directory);
 
                     // When
-                    var result = fileSystem.Exist((DirectoryPath)"/Target");
+                    var result = fileSystem.Exist((DirectoryPath) "/Target");
 
                     // Then
                     Assert.False(result);
                 }
 
                 [Fact]
-                public void Should_Return_True_If_Directory_Exist()
-                {
+                public void Should_Return_True_If_Directory_Exist() {
                     // Given
                     var fileSystem = Substitute.For<IFileSystem>();
                     var directory = Substitute.For<IDirectory>();
@@ -99,7 +88,7 @@ namespace Hadouken.Common.Tests.Unit.IO
                     fileSystem.GetDirectory(Arg.Any<DirectoryPath>()).Returns(directory);
 
                     // When
-                    var result = fileSystem.Exist((DirectoryPath)"/Target");
+                    var result = fileSystem.Exist((DirectoryPath) "/Target");
 
                     // Then
                     Assert.True(result);

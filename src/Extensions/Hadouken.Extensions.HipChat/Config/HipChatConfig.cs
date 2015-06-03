@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Hadouken.Extensions.HipChat.Config
-{
-    public sealed class HipChatConfig
-    {
+namespace Hadouken.Extensions.HipChat.Config {
+    public sealed class HipChatConfig {
         [DataType(DataType.Password)]
         [Display(Name = "Auth. token")]
         [Required]

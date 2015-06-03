@@ -4,12 +4,9 @@ using NSubstitute;
 using Xunit;
 using Xunit.Extensions;
 
-namespace Hadouken.Common.Tests.Unit.IO
-{
-    public sealed class DirectoryPathTests
-    {
-        public sealed class TheGetFilePathMethod
-        {
+namespace Hadouken.Common.Tests.Unit.IO {
+    public sealed class DirectoryPathTests {
+        public sealed class TheGetFilePathMethod {
             [Theory]
 #if !UNIX
             [InlineData("c:/assets/shaders/", "simple.frag", "c:/assets/shaders/simple.frag")]
@@ -18,8 +15,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [InlineData("assets/shaders", "simple.frag", "assets/shaders/simple.frag")]
             [InlineData("assets/shaders/", "simple.frag", "assets/shaders/simple.frag")]
             [InlineData("/assets/shaders/", "simple.frag", "/assets/shaders/simple.frag")]
-            public void Should_Combine_Paths(string first, string second, string expected)
-            {
+            public void Should_Combine_Paths(string first, string second, string expected) {
                 // Given
                 var path = new DirectoryPath(first);
 
@@ -31,8 +27,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
 
             [Fact]
-            public void Should_Throw_If_Path_Is_Null()
-            {
+            public void Should_Throw_If_Path_Is_Null() {
                 // Given
                 var path = new DirectoryPath("assets");
 
@@ -41,12 +36,11 @@ namespace Hadouken.Common.Tests.Unit.IO
 
                 // Then
                 Assert.IsType<ArgumentNullException>(result);
-                Assert.Equal("path", ((ArgumentNullException)result).ParamName);
+                Assert.Equal("path", ((ArgumentNullException) result).ParamName);
             }
 
             [Fact]
-            public void Can_Not_Combine_Directory_Path_With_Absolute_File_Path()
-            {
+            public void Can_Not_Combine_Directory_Path_With_Absolute_File_Path() {
                 // Given
                 var path = new DirectoryPath("assets");
 
@@ -59,8 +53,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheCombineWithDirectoryPathMethod
-        {
+        public sealed class TheCombineWithDirectoryPathMethod {
             [Theory]
 #if !UNIX
             [InlineData("c:/assets/shaders/", "simple", "c:/assets/shaders/simple")]
@@ -69,8 +62,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             [InlineData("assets/shaders", "simple", "assets/shaders/simple")]
             [InlineData("assets/shaders/", "simple", "assets/shaders/simple")]
             [InlineData("/assets/shaders/", "simple", "/assets/shaders/simple")]
-            public void Should_Combine_Paths(string first, string second, string expected)
-            {
+            public void Should_Combine_Paths(string first, string second, string expected) {
                 // Given
                 var path = new DirectoryPath(first);
 
@@ -82,8 +74,7 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
 
             [Fact]
-            public void Should_Throw_If_Path_Is_Null()
-            {
+            public void Should_Throw_If_Path_Is_Null() {
                 // Given
                 var path = new DirectoryPath("assets");
 
@@ -92,12 +83,11 @@ namespace Hadouken.Common.Tests.Unit.IO
 
                 // Then
                 Assert.IsType<ArgumentNullException>(result);
-                Assert.Equal("path", ((ArgumentNullException)result).ParamName);
+                Assert.Equal("path", ((ArgumentNullException) result).ParamName);
             }
 
             [Fact]
-            public void Can_Not_Combine_Directory_Path_With_Absolute_Directory_Path()
-            {
+            public void Can_Not_Combine_Directory_Path_With_Absolute_Directory_Path() {
                 // Given
                 var path = new DirectoryPath("assets");
 
@@ -110,13 +100,10 @@ namespace Hadouken.Common.Tests.Unit.IO
             }
         }
 
-        public sealed class TheMakeAbsoluteMethod
-        {
-            public sealed class That_Takes_An_Environment
-            {
+        public sealed class TheMakeAbsoluteMethod {
+            public sealed class ThatTakesAnEnvironment {
                 [Fact]
-                public void Should_Throw_If_Provided_Environment_Is_Null()
-                {
+                public void Should_Throw_If_Provided_Environment_Is_Null() {
                     // Given
                     var path = new DirectoryPath("assets");
 
@@ -126,12 +113,11 @@ namespace Hadouken.Common.Tests.Unit.IO
 
                     // Then
                     Assert.IsType<ArgumentNullException>(result);
-                    Assert.Equal("environment", ((ArgumentNullException)result).ParamName);
+                    Assert.Equal("environment", ((ArgumentNullException) result).ParamName);
                 }
 
                 [Fact]
-                public void Should_Create_New_Absolute_Path_When_Path_Is_Relative()
-                {
+                public void Should_Create_New_Absolute_Path_When_Path_Is_Relative() {
                     // Given
                     var environment = Substitute.For<IEnvironment>();
                     environment.GetApplicationRoot().Returns("/Working");
@@ -145,8 +131,7 @@ namespace Hadouken.Common.Tests.Unit.IO
                 }
 
                 [Fact]
-                public void Should_Create_New_Absolute_Path_Identical_To_The_Path()
-                {
+                public void Should_Create_New_Absolute_Path_Identical_To_The_Path() {
                     // Given
                     var environment = Substitute.For<IEnvironment>();
                     var path = new DirectoryPath("/assets");
@@ -159,26 +144,23 @@ namespace Hadouken.Common.Tests.Unit.IO
                 }
             }
 
-            public sealed class That_Takes_Another_Directory_Path
-            {
+            public sealed class ThatTakesAnotherDirectoryPath {
                 [Fact]
-                public void Should_Throw_If_Provided_Path_Is_Null()
-                {
+                public void Should_Throw_If_Provided_Path_Is_Null() {
                     // Given
                     var path = new DirectoryPath("assets");
 
                     // When
                     var result = Record.Exception(
-                        () => path.MakeAbsolute((DirectoryPath)null));
+                        () => path.MakeAbsolute((DirectoryPath) null));
 
                     // Then
                     Assert.IsType<ArgumentNullException>(result);
-                    Assert.Equal("path", ((ArgumentNullException)result).ParamName);
+                    Assert.Equal("path", ((ArgumentNullException) result).ParamName);
                 }
 
                 [Fact]
-                public void Should_Throw_If_Provided_Path_Is_Relative()
-                {
+                public void Should_Throw_If_Provided_Path_Is_Relative() {
                     // Given
                     var path = new DirectoryPath("assets");
 
@@ -191,8 +173,7 @@ namespace Hadouken.Common.Tests.Unit.IO
                 }
 
                 [Fact]
-                public void Should_Create_New_Absolute_Path_When_Path_Is_Relative()
-                {
+                public void Should_Create_New_Absolute_Path_When_Path_Is_Relative() {
                     // Given
                     var path = new DirectoryPath("assets");
 
@@ -204,8 +185,7 @@ namespace Hadouken.Common.Tests.Unit.IO
                 }
 
                 [Fact]
-                public void Should_Create_New_Absolute_Path_Identical_To_The_Path()
-                {
+                public void Should_Create_New_Absolute_Path_Identical_To_The_Path() {
                     // Given
                     var path = new DirectoryPath("/assets");
 
