@@ -1,6 +1,8 @@
 #include <Hadouken/Scripting/ScriptingSubsystem.hpp>
 
-#include <Hadouken/Scripting/Event.hpp>
+#include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
+#include <Hadouken/Scripting/Modules/BitTorrent/AlertWrapper.hpp>
+#include <Hadouken/Scripting/Modules/BEncodingModule.hpp>
 #include <Hadouken/Scripting/Modules/BitTorrentModule.hpp>
 #include <Hadouken/Scripting/Modules/ConfigModule.hpp>
 #include <Hadouken/Scripting/Modules/CoreModule.hpp>
@@ -8,12 +10,14 @@
 #include <Hadouken/Scripting/Modules/HttpModule.hpp>
 #include <Hadouken/Scripting/Modules/LoggerModule.hpp>
 #include <Hadouken/Scripting/Modules/ProcessModule.hpp>
+#include <libtorrent/session.hpp>
 #include <Poco/File.h>
 
 #include <chrono>
 
 #include "duktape.h"
 
+using namespace Hadouken::BitTorrent;
 using namespace Hadouken::Scripting;
 using namespace Poco::Util;
 
@@ -81,20 +85,77 @@ void ScriptingSubsystem::initialize(Application& app)
     // Ignore result
     duk_pop(ctx_);
 
+    // Call load
+    duk_push_global_stash(ctx_);
+
+    if (duk_get_prop_string(ctx_, -1, "hdkn"))
+    {
+        if (duk_get_prop_string(ctx_, -1, "load"))
+        {
+            if (!duk_is_callable(ctx_, -1))
+            {
+                logger_.error("Type 'load' is not callable.");
+                return;
+            }
+
+            duk_dup(ctx_, -1);
+
+            if (duk_pcall_method(ctx_, 0) != DUK_EXEC_SUCCESS)
+            {
+                std::string error(duk_safe_to_string(ctx_, -1));
+                logger_.error("Error when calling 'load': %s", error);
+            }
+
+            duk_pop(ctx_);
+        }
+
+        duk_pop(ctx_);
+    }
+
+    duk_pop(ctx_);
+    
     isRunning_ = true;
     ticker_ = std::thread(std::bind(&ScriptingSubsystem::tick, this));
+    reader_ = std::thread(std::bind(&ScriptingSubsystem::read, this));
 }
 
 void ScriptingSubsystem::uninitialize()
 {
     isRunning_ = false;
-    
-    if (ticker_.joinable())
-    {
-        ticker_.join();
-    }
+
+    reader_.join();
+    ticker_.join();
 
     std::lock_guard<std::mutex> lock(contextMutex_);
+
+    // Call unload
+    duk_push_global_stash(ctx_);
+
+    if (duk_get_prop_string(ctx_, -1, "hdkn"))
+    {
+        if (duk_get_prop_string(ctx_, -1, "unload"))
+        {
+            if (!duk_is_callable(ctx_, -1))
+            {
+                logger_.error("Type 'unload' is not callable.");
+                return;
+            }
+
+            duk_dup(ctx_, -1);
+
+            if (duk_pcall_method(ctx_, 0) != DUK_EXEC_SUCCESS)
+            {
+                std::string error(duk_safe_to_string(ctx_, -1));
+                logger_.error("Error when calling 'unload': %s", error);
+            }
+
+            duk_pop(ctx_);
+        }
+
+        duk_pop(ctx_);
+    }
+
+    duk_pop(ctx_);
 
     if (ctx_)
     {
@@ -103,7 +164,7 @@ void ScriptingSubsystem::uninitialize()
     }
 }
 
-void ScriptingSubsystem::emit(std::string eventName, std::unique_ptr<Event> data)
+void ScriptingSubsystem::emit(std::string name, libtorrent::alert* alert)
 {
     std::lock_guard<std::mutex> lock(contextMutex_);
 
@@ -125,12 +186,11 @@ void ScriptingSubsystem::emit(std::string eventName, std::unique_ptr<Event> data
             }
 
             duk_dup(ctx_, -1);
+            duk_push_string(ctx_, name.c_str());
 
-            duk_push_string(ctx_, eventName.c_str());
-
-            if (data)
+            if (alert)
             {
-                data->push(ctx_);
+                Hadouken::Scripting::Modules::BitTorrent::AlertWrapper::construct(ctx_, alert);
             }
             else
             {
@@ -140,7 +200,7 @@ void ScriptingSubsystem::emit(std::string eventName, std::unique_ptr<Event> data
             if (duk_pcall_method(ctx_, 2) != DUK_EXEC_SUCCESS)
             {
                 std::string error(duk_safe_to_string(ctx_, -1));
-                logger_.error("Error when emitting event '%s': %s", eventName, error);
+                logger_.error("Error when emitting alert '%s': %s", name, error);
             }
 
             duk_pop(ctx_);
@@ -230,6 +290,25 @@ void ScriptingSubsystem::tick()
     }
 }
 
+void ScriptingSubsystem::read()
+{
+    libtorrent::session& sess = Application::instance().getSubsystem<TorrentSubsystem>().getSession();
+
+    while (isRunning_)
+    {
+        const libtorrent::alert* found_alert = sess.wait_for_alert(libtorrent::seconds(1));
+        if (!found_alert) continue;
+
+        std::deque<libtorrent::alert*> alerts;
+        sess.pop_alerts(&alerts);
+
+        for (auto &alert : alerts)
+        {
+            emit(alert->what(), alert);
+        }
+    }
+}
+
 const char* ScriptingSubsystem::name() const
 {
     return "Scripting";
@@ -290,6 +369,14 @@ duk_ret_t ScriptingSubsystem::requireNative(duk_context* ctx)
     else if (strcmp("process", moduleName) == 0)
     {
         duk_push_c_function(ctx, &Modules::ProcessModule::initialize, 1);
+        duk_dup(ctx, 2);
+        duk_call(ctx, 1);
+
+        return 1;
+    }
+    else if (strcmp("benc", moduleName) == 0)
+    {
+        duk_push_c_function(ctx, &Modules::BEncodingModule::initialize, 1);
         duk_dup(ctx, 2);
         duk_call(ctx, 1);
 

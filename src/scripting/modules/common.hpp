@@ -8,10 +8,10 @@
     duk_push_c_function(ctx, func, 0); \
     duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_ENUMERABLE | DUK_DEFPROP_ENUMERABLE);
 
-#define DUK_READWRITE_PROPERTY(ctx, index, name, getter, setter) \
+#define DUK_READWRITE_PROPERTY(ctx, index, name, func) \
     duk_push_string(ctx, #name); \
-    duk_push_c_function(ctx, getter, 0); \
-    duk_push_c_function(ctx, setter, 1); \
+    duk_push_c_function(ctx, get##func, 0); \
+    duk_push_c_function(ctx, set##func, 1); \
     duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_SETTER | DUK_DEFPROP_HAVE_ENUMERABLE | DUK_DEFPROP_ENUMERABLE);
 
 namespace Hadouken
@@ -47,6 +47,20 @@ namespace Hadouken
                     }
 
                     duk_pop(ctx);
+                    return res;
+                }
+
+                template<typename T>
+                static T* getPointer(duk_context* ctx, duk_idx_t idx)
+                {
+                    T* res = 0;
+
+                    if (duk_get_prop_string(ctx, idx, getFieldName<T>().c_str()))
+                    {
+                        res = static_cast<T*>(duk_get_pointer(ctx, -1));
+                        duk_pop(ctx);
+                    }
+
                     return res;
                 }
 

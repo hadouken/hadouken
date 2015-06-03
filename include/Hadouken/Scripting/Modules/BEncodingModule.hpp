@@ -1,7 +1,5 @@
-#ifndef HADOUKEN_SCRIPTING_MODULES_BITTORRENTMODULE_HPP
-#define HADOUKEN_SCRIPTING_MODULES_BITTORRENTMODULE_HPP
-
-#include <memory>
+#ifndef HADOUKEN_SCRIPTING_MODULES_BENCODINGMODULE_HPP
+#define HADOUKEN_SCRIPTING_MODULES_BENCODINGMODULE_HPP
 
 namespace Hadouken
 {
@@ -9,13 +7,14 @@ namespace Hadouken
     {
         namespace Modules
         {
-            class BitTorrentModule
+            class BEncodingModule
             {
             public:
                 static int initialize(void* ctx);
 
             private:
-                static int ctorAddTorrentParams(void* ctx);
+                static int decode(void* ctx);
+                static int encode(void* ctx);
             };
         }
     }

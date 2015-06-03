@@ -3,10 +3,13 @@ var session = require("bittorrent").session;
 exports.rpc = {
     name: "session.removeTorrent",
     method: function(infoHash, removeData) {
-        if(session.findTorrent(infoHash)) {
-            return session.removeTorrent(infoHash, removeData || false);
+        var torrent = session.findTorrent(infoHash);
+
+        if(!torrent || !torrent.isValid) {
+            return false;
         }
 
-        return false;
+        session.removeTorrent(torrent, removeData || false);
+        return true;
     }
 };

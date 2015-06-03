@@ -1,15 +1,10 @@
 #ifndef HADOUKEN_SCRIPTING_MODULES_BITTORRENT_TORRENTINFOWRAPPER_HPP
 #define HADOUKEN_SCRIPTING_MODULES_BITTORRENT_TORRENTINFOWRAPPER_HPP
 
-#include <memory>
-
-namespace Hadouken
+namespace libtorrent
 {
-    namespace BitTorrent
-    {
-        class TorrentInfo;
-        struct TorrentHandle;
-    }
+    class torrent_info;
+    struct torrent_handle;
 }
 
 namespace Hadouken
@@ -23,12 +18,15 @@ namespace Hadouken
                 class TorrentInfoWrapper
                 {
                 public:
-                    static void initialize(void* ctx, Hadouken::BitTorrent::TorrentHandle& handle, std::unique_ptr<Hadouken::BitTorrent::TorrentInfo> torrentInfo);
+                    static int construct(void* ctx);
+                    static void initialize(void* ctx, const libtorrent::torrent_info& info);
 
                 private:
                     static int finalize(void* ctx);
 
                     static int getFiles(void* ctx);
+                    static int getInfoHash(void* ctx);
+                    static int getName(void* ctx);
                     static int getTotalSize(void* ctx);
                 };
             }

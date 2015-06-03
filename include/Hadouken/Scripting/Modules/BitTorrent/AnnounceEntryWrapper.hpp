@@ -1,12 +1,9 @@
 #ifndef HADOUKEN_SCRIPTING_MODULES_BITTORRENT_ANNOUNCEENTRYWRAPPER_HPP
 #define HADOUKEN_SCRIPTING_MODULES_BITTORRENT_ANNOUNCEENTRYWRAPPER_HPP
 
-namespace Hadouken
+namespace libtorrent
 {
-    namespace BitTorrent
-    {
-        struct AnnounceEntry;
-    }
+    struct announce_entry;
 }
 
 namespace Hadouken
@@ -20,7 +17,7 @@ namespace Hadouken
                 class AnnounceEntryWrapper
                 {
                 public:
-                    static void initialize(void* ctx, Hadouken::BitTorrent::AnnounceEntry& announceEntry);
+                    static void initialize(void* ctx, libtorrent::announce_entry& entry);
 
                 private:
                     static int finalize(void* ctx);

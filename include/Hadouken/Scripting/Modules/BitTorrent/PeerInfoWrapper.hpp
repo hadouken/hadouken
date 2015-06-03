@@ -3,12 +3,9 @@
 
 #include <memory>
 
-namespace Hadouken
+namespace libtorrent
 {
-    namespace BitTorrent
-    {
-        struct PeerInfo;
-    }
+    struct peer_info;
 }
 
 namespace Hadouken
@@ -22,7 +19,7 @@ namespace Hadouken
                 class PeerInfoWrapper
                 {
                 public:
-                    static void initialize(void* ctx, Hadouken::BitTorrent::PeerInfo& peerInfo);
+                    static void initialize(void* ctx, libtorrent::peer_info& peer);
 
                 private:
                     static int finalize(void* ctx);

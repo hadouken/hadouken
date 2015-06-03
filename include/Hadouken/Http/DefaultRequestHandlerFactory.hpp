@@ -12,8 +12,6 @@ namespace Hadouken
 {
     namespace Http
     {
-        class WebSocketConnectionManager;
-
         class DefaultRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory
         {
         public:
@@ -24,7 +22,6 @@ namespace Hadouken
         private:
             const Poco::Util::AbstractConfiguration& config_;
             std::string virtualPath_;
-            std::unique_ptr<WebSocketConnectionManager> wsConnectionManager_;
         };
     }
 }

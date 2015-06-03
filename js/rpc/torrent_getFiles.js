@@ -5,7 +5,7 @@ exports.rpc = {
     method: function(infoHash) {
         var torrent = session.findTorrent(infoHash);
         
-        if(!torrent) {
+        if(!torrent || !torrent.isValid) {
             return null;
         }
 
@@ -15,8 +15,9 @@ exports.rpc = {
             return null;
         }
 
-        var files  = info.getFiles();
-        var result = [];
+        var files    = info.getFiles();
+        var progress = torrent.getFileProgress();
+        var result   = [];
 
         for(var i = 0; i < files.length; i++) {
             var file = files[i];
@@ -24,7 +25,7 @@ exports.rpc = {
             result.push({
                 index:    i,
                 path:     file.path,
-                progress: file.progress,
+                progress: progress[i],
                 size:     file.size
             });
         }

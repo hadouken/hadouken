@@ -3,12 +3,9 @@
 
 #include <memory>
 
-namespace Hadouken
+namespace libtorrent
 {
-    namespace BitTorrent
-    {
-        struct TorrentStatus;
-    }
+    struct torrent_status;
 }
 
 namespace Hadouken
@@ -22,7 +19,7 @@ namespace Hadouken
                 class TorrentStatusWrapper
                 {
                 public:
-                    static void initialize(void* ctx, const Hadouken::BitTorrent::TorrentStatus& status);
+                    static void initialize(void* ctx, const libtorrent::torrent_status& status);
 
                 private:
                     static int finalize(void* ctx);
@@ -39,11 +36,13 @@ namespace Hadouken
                     static int getNumPeers(void* ctx);
                     static int getNumSeeds(void* ctx);
                     static int getState(void* ctx);
+                    static int hasMetadata(void* ctx);
                     static int isFinished(void* ctx);
                     static int isMovingStorage(void* ctx);
                     static int isPaused(void* ctx);
                     static int isSeeding(void* ctx);
                     static int isSequentialDownload(void* ctx);
+                    static int needSaveResume(void* ctx);
                 };
             }
         }

@@ -1,4 +1,5 @@
-var session = require("bittorrent").session;
+var session  = require("bittorrent").session;
+var metadata = require("metadata");
 
 exports.rpc = {
     name: "torrent.getMetadata",
@@ -6,17 +7,19 @@ exports.rpc = {
         var torrent = session.findTorrent(infoHash);
 
         if(!torrent || !torrent.isValid) {
-            return null;
+            throw new Error("Invalid info hash: " + infoHash);
         }
 
         if(key) {
-            var val = torrent.metadata(key);
+            var val = metadata.get(infoHash, key);
 
             if(typeof val === 'undefined') {
                 throw new Error("Key not found: " + key);
             }
+
+            return val;
         }
 
-        return torrent.metadata();
+        return metadata.getAll(infoHash);
     }
 };
