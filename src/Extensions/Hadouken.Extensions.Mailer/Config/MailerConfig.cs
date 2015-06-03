@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Hadouken.Extensions.Mailer.Config
-{
-    public sealed class MailerConfig
-    {
+namespace Hadouken.Extensions.Mailer.Config {
+    public sealed class MailerConfig {
         [DataType(DataType.Text)]
         [Display(Name = "Host", Order = 1)]
         [Required]

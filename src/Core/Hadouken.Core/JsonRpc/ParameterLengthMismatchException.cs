@@ -1,9 +1,6 @@
 ﻿using System;
 
-namespace Hadouken.Core.JsonRpc
-{
+namespace Hadouken.Core.JsonRpc {
     [Serializable]
-    public class ParameterLengthMismatchException : Exception
-    {
-    }
+    public class ParameterLengthMismatchException : Exception {}
 }

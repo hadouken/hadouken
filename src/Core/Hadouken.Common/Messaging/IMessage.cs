@@ -1,6 +1,3 @@
-﻿namespace Hadouken.Common.Messaging
-{
-    public interface IMessage
-    {
-    }
+﻿namespace Hadouken.Common.Messaging {
+    public interface IMessage {}
 }

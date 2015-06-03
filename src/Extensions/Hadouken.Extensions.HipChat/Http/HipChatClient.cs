@@ -6,31 +6,34 @@ using Hadouken.Common.Logging;
 using Hadouken.Common.Net;
 using Hadouken.Extensions.HipChat.Config;
 
-namespace Hadouken.Extensions.HipChat.Http
-{
+namespace Hadouken.Extensions.HipChat.Http {
     [Component]
-    public sealed class HipChatClient : IHipChatClient
-    {
+    public sealed class HipChatClient : IHipChatClient {
         private static readonly Uri ApiUri = new Uri("https://api.hipchat.com/v1/rooms/message");
-        private readonly ILogger<HipChatClient> _logger;
         private readonly IHttpClient _httpClient;
+        private readonly ILogger<HipChatClient> _logger;
 
         public HipChatClient(ILogger<HipChatClient> logger,
-            IHttpClient httpClient)
-        {
-            if (logger == null) throw new ArgumentNullException("logger");
-            if (httpClient == null) throw new ArgumentNullException("httpClient");
-            _logger = logger;
-            _httpClient = httpClient;
+            IHttpClient httpClient) {
+            if (logger == null) {
+                throw new ArgumentNullException("logger");
+            }
+            if (httpClient == null) {
+                throw new ArgumentNullException("httpClient");
+            }
+            this._logger = logger;
+            this._httpClient = httpClient;
         }
 
-        public void SendMessage(HipChatConfig config, string message)
-        {
-            if (config == null) throw new ArgumentNullException("config");
-            if (message == null) throw new ArgumentNullException("message");
+        public void SendMessage(HipChatConfig config, string message) {
+            if (config == null) {
+                throw new ArgumentNullException("config");
+            }
+            if (message == null) {
+                throw new ArgumentNullException("message");
+            }
 
-            var data = new List<KeyValuePair<string, string>>
-            {
+            var data = new List<KeyValuePair<string, string>> {
                 new KeyValuePair<string, string>("room_id", config.RoomId),
                 new KeyValuePair<string, string>("from", config.From),
                 new KeyValuePair<string, string>("message", message),
@@ -38,11 +41,10 @@ namespace Hadouken.Extensions.HipChat.Http
             };
 
             var uri = new Uri(ApiUri, "?auth_token=" + config.AuthenticationToken);
-            var response = _httpClient.PostAsync(uri, new FormUrlEncodedContent(data)).Result;
+            var response = this._httpClient.PostAsync(uri, new FormUrlEncodedContent(data)).Result;
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.Error("Error sending message. Response status code: {StatusCode}.", response.StatusCode);
+            if (!response.IsSuccessStatusCode) {
+                this._logger.Error("Error sending message. Response status code: {StatusCode}.", response.StatusCode);
             }
         }
     }

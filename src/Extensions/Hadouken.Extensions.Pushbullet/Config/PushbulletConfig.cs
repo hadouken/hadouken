@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Hadouken.Extensions.Pushbullet.Config
-{
-    public sealed class PushbulletConfig
-    {
+namespace Hadouken.Extensions.Pushbullet.Config {
+    public sealed class PushbulletConfig {
         [DataType(DataType.Password)]
         [Display(Name = "Access token")]
         [Required]

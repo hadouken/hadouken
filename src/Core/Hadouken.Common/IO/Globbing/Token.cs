@@ -3,28 +3,22 @@
 // https://github.com/kthompson/glob-js
 ///////////////////////////////////////////////////////////////////////
 
-namespace Hadouken.Common.IO.Globbing
-{
-    internal sealed class Token
-    {
+namespace Hadouken.Common.IO.Globbing {
+    internal sealed class Token {
         private readonly TokenKind _kind;
         private readonly string _value;
 
-        public Token(TokenKind kind, string value)
-        {
-            _kind = kind;
-            _value = value;
+        public Token(TokenKind kind, string value) {
+            this._kind = kind;
+            this._value = value;
         }
 
-        public TokenKind Kind
-        {
-            get { return _kind; }
+        public TokenKind Kind {
+            get { return this._kind; }
         }
 
-        public string Value
-        {
-            get { return _value; }
+        public string Value {
+            get { return this._value; }
         }
-
     }
 }

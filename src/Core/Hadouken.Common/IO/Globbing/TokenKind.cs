@@ -3,10 +3,8 @@
 // https://github.com/kthompson/glob-js
 ///////////////////////////////////////////////////////////////////////
 
-namespace Hadouken.Common.IO.Globbing
-{
-    internal enum TokenKind
-    {
+namespace Hadouken.Common.IO.Globbing {
+    internal enum TokenKind {
         Wildcard,
         CharacterWildcard,
         DirectoryWildcard,

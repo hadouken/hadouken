@@ -8,14 +8,10 @@ using Hadouken.Core;
 using Hadouken.Core.DI;
 using Hadouken.Hosts;
 
-namespace Hadouken
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            using (var container = BuildContainer())
-            {
+namespace Hadouken {
+    public class Program {
+        public static void Main(string[] args) {
+            using (var container = BuildContainer()) {
                 var environment = container.Resolve<IEnvironment>();
                 var logger = container.Resolve<ILogger<Program>>();
 
@@ -23,7 +19,7 @@ namespace Hadouken
                 AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs)
                     => logger.Fatal(
                         eventArgs.ExceptionObject as Exception,
-                        "Unhandled exception. Hadouken crashing."); 
+                        "Unhandled exception. Hadouken crashing.");
 
                 // Create environment
                 environment.Create();
@@ -33,21 +29,18 @@ namespace Hadouken
 
                 var service = container.Resolve<IHadoukenService>();
 
-                if (environment.IsUserInteractive())
-                {
+                if (environment.IsUserInteractive()) {
                     new ConsoleHost(service).Run(args);
                 }
-                else
-                {
+                else {
                     ServiceBase.Run(new ServiceHost(service));
                 }
             }
         }
 
-        private static IContainer BuildContainer()
-        {
+        private static IContainer BuildContainer() {
             var builder = new ContainerBuilder();
-            
+
             builder.RegisterModule<CommonModule>();
             builder.RegisterModule<CoreModule>();
 

@@ -1,35 +1,33 @@
 ﻿using System;
 
-namespace Hadouken.Common.Extensibility.Notifications
-{
-    public class Notification
-    {
-        private readonly NotificationType _type;
-        private readonly string _title;
+namespace Hadouken.Common.Extensibility.Notifications {
+    public class Notification {
         private readonly string _message;
+        private readonly string _title;
+        private readonly NotificationType _type;
 
-        public Notification(NotificationType type, string title, string message)
-        {
-            if (title == null) throw new ArgumentNullException("title");
-            if (message == null) throw new ArgumentNullException("message");
-            _type = type;
-            _title = title;
-            _message = message;
+        public Notification(NotificationType type, string title, string message) {
+            if (title == null) {
+                throw new ArgumentNullException("title");
+            }
+            if (message == null) {
+                throw new ArgumentNullException("message");
+            }
+            this._type = type;
+            this._title = title;
+            this._message = message;
         }
 
-        public NotificationType Type
-        {
-            get { return _type; }
+        public NotificationType Type {
+            get { return this._type; }
         }
 
-        public string Title
-        {
-            get { return _title; }
+        public string Title {
+            get { return this._title; }
         }
 
-        public string Message
-        {
-            get { return _message; }
+        public string Message {
+            get { return this._message; }
         }
     }
 }

@@ -3,97 +3,82 @@ using System.Configuration;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Hadouken.Common.IO;
+using Directory = System.IO.Directory;
 
-namespace Hadouken.Common
-{
-    public class HadoukenEnvironment : IEnvironment
-    {
-        public bool Is64BitOperativeSystem()
-        {
+namespace Hadouken.Common {
+    public class HadoukenEnvironment : IEnvironment {
+        public bool Is64BitOperativeSystem() {
             return Machine.Is64BitOperativeSystem();
         }
 
-        public bool IsUnix()
-        {
+        public bool IsUnix() {
             return Machine.IsUnix();
         }
 
-        public bool IsUserInteractive()
-        {
+        public bool IsUserInteractive() {
             return Environment.UserInteractive;
         }
 
-        public DirectoryPath GetSpecialPath(SpecialPath path)
-        {
-            if (path == SpecialPath.ProgramFilesX86)
-            {
-                return new DirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86));
-            }
-            if (path == SpecialPath.Windows)
-            {
-                return new DirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
+        public DirectoryPath GetSpecialPath(SpecialPath path) {
+            switch (path) {
+                case SpecialPath.ProgramFilesX86:
+                    return new DirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86));
+                case SpecialPath.Windows:
+                    return new DirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.Windows));
             }
             const string format = "The special path '{0}' is not supported.";
             throw new NotSupportedException(string.Format(format, path));
         }
 
-        public DirectoryPath GetApplicationRoot()
-        {
+        public DirectoryPath GetApplicationRoot() {
             var path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return new DirectoryPath(path);
         }
 
-        public DirectoryPath GetApplicationDataPath()
-        {
-            var path = GetAppSetting("Path:Data");
+        public DirectoryPath GetApplicationDataPath() {
+            var path = this.GetAppSetting("Path:Data");
             return new DirectoryPath(path);
         }
 
-        public Path GetWebApplicationPath()
-        {
-            var path = GetAppSetting("Path:Web");
+        public Path GetWebApplicationPath() {
+            var path = this.GetAppSetting("Path:Web");
 
-            if (path.EndsWith(".zip")) return new FilePath(path);
+            if (path.EndsWith(".zip")) {
+                return new FilePath(path);
+            }
             return new DirectoryPath(path);
         }
 
-        public string GetEnvironmentVariable(string variable)
-        {
+        public string GetEnvironmentVariable(string variable) {
             return Environment.GetEnvironmentVariable(variable);
         }
 
-        public void Create()
-        {
-            var path = GetApplicationDataPath();
+        public void Create() {
+            var path = this.GetApplicationDataPath();
 
-            if (!System.IO.Directory.Exists(path.FullPath))
-            {
-                System.IO.Directory.CreateDirectory(path.FullPath);
+            if (!Directory.Exists(path.FullPath)) {
+                Directory.CreateDirectory(path.FullPath);
             }
         }
 
-        public string GetAppSetting(string key)
-        {
-            var replaced = ReplaceAppSettingTokens(ConfigurationManager.AppSettings[key]);
+        public string GetAppSetting(string key) {
+            var replaced = this.ReplaceAppSettingTokens(ConfigurationManager.AppSettings[key]);
             return Environment.ExpandEnvironmentVariables(replaced);
         }
 
-        public string GetConnectionString(string name)
-        {
-            return ReplaceAppSettingTokens(ConfigurationManager.ConnectionStrings[name].ConnectionString);
+        public string GetConnectionString(string name) {
+            return this.ReplaceAppSettingTokens(ConfigurationManager.ConnectionStrings[name].ConnectionString);
         }
 
-        private string ReplaceAppSettingTokens(string input)
-        {
+        private string ReplaceAppSettingTokens(string input) {
             const string pattern = @"(\${([a-zA-Z\.\:]+)})";
             var matches = Regex.Matches(input, pattern);
 
-            foreach (Match match in matches)
-            {
+            foreach (Match match in matches) {
                 var token = match.Groups[1].Value;
                 var value = match.Groups[2].Value;
 
-                input = input.Replace(token, GetAppSetting(value));
+                input = input.Replace(token, this.GetAppSetting(value));
             }
 
             return input;

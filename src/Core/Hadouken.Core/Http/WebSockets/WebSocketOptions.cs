@@ -1,7 +1,3 @@
-﻿namespace Hadouken.Core.Http.WebSockets
-{
-    public sealed class WebSocketOptions
-    {
-
-    }
+﻿namespace Hadouken.Core.Http.WebSockets {
+    public sealed class WebSocketOptions {}
 }

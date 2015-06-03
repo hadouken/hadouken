@@ -8,16 +8,13 @@ using Hadouken.Common.Logging;
 using Hadouken.Common.Reflection;
 using Hadouken.Core;
 
-namespace Hadouken
-{
-    public static class AutofacContainerExtensions
-    {
-        public static void LoadExtensions(this IContainer container, DirectoryPath path)
-        {
+namespace Hadouken {
+    public static class AutofacContainerExtensions {
+        public static void LoadExtensions(this IContainer container, DirectoryPath path) {
             var fileSystem = container.Resolve<IFileSystem>();
             var finder = container.Resolve<IAssemblyNameFinder>();
             var logger = container.Resolve<ILogger<HadoukenService>>();
-            
+
             var files = fileSystem.GetDirectory(path)
                 .GetFiles("*.dll", SearchScope.Current)
                 .Select(f => f.Path.FullPath);
@@ -28,8 +25,7 @@ namespace Hadouken
             // The container builder which later updates the provided container
             var builder = new ContainerBuilder();
 
-            foreach (var assemblyName in assemblyNames)
-            {
+            foreach (var assemblyName in assemblyNames) {
                 var filePath = new FilePath(assemblyName.CodeBase);
                 logger.Info("Loading extension {FileName}.", filePath.GetFilename());
 
@@ -45,10 +41,11 @@ namespace Hadouken
                     select type);
 
                 // Register extensions
-                foreach (var extension in extensions)
-                {
+                foreach (var extension in extensions) {
                     var attr = extension.GetCustomAttribute<ExtensionAttribute>();
-                    if (attr == null) continue;
+                    if (attr == null) {
+                        continue;
+                    }
 
                     builder.RegisterType(extension)
                         .AsImplementedInterfaces()
@@ -56,21 +53,18 @@ namespace Hadouken
                 }
 
                 // Register JSONRPC services
-                foreach (var service in services)
-                {
+                foreach (var service in services) {
                     builder.RegisterType(service)
                         .As<IJsonRpcService>()
                         .SingleInstance();
                 }
 
                 // Register custom components
-                foreach (var component in components)
-                {
+                foreach (var component in components) {
                     var attr = component.GetCustomAttribute<ComponentAttribute>();
                     var registration = builder.RegisterType(component).AsImplementedInterfaces();
 
-                    switch (attr.Lifestyle)
-                    {
+                    switch (attr.Lifestyle) {
                         case ComponentLifestyle.Singleton:
                             registration.SingleInstance();
                             break;

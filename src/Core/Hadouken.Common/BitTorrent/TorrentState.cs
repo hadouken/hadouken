@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Common.BitTorrent
-{
-    public enum TorrentState
-    {
+﻿namespace Hadouken.Common.BitTorrent {
+    public enum TorrentState {
         QueuedForChecking = 0,
         CheckingFiles = 1,
         DownloadingMetadata = 2,

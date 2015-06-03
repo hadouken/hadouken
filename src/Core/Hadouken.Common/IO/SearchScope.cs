@@ -1,17 +1,15 @@
-﻿namespace Hadouken.Common.IO
-{
+﻿namespace Hadouken.Common.IO {
     /// <summary>
-    /// Represents a search scope.
+    ///     Represents a search scope.
     /// </summary>
-    public enum SearchScope
-    {
+    public enum SearchScope {
         /// <summary>
-        /// The current directory.
+        ///     The current directory.
         /// </summary>
         Current,
 
         /// <summary>
-        /// The current directory and child directories.
+        ///     The current directory and child directories.
         /// </summary>
         Recursive
     }

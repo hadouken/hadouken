@@ -5,15 +5,11 @@ using Hadouken.Extensions.AutoMove.Data.Models;
 using Hadouken.Extensions.AutoMove.Tests.Fixtures;
 using Xunit;
 
-namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
-{
-    public sealed class AutoMoveRepositoryTests
-    {
-        public sealed class TheConstructor
-        {
+namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data {
+    public sealed class AutoMoveRepositoryTests {
+        public sealed class TheConstructor {
             [Fact]
-            public void Should_Throw_Exception_If_Connection_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Connection_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new AutoMoveRepository(null));
 
@@ -23,11 +19,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheCreateRuleMethod
-        {
+        public sealed class TheCreateRuleMethod {
             [Fact]
-            public void Should_Insert_Rule()
-            {
+            public void Should_Insert_Rule() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
 
@@ -39,11 +33,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheCreateParameterMethod
-        {
+        public sealed class TheCreateParameterMethod {
             [Fact]
-            public void Should_Insert_Parameter()
-            {
+            public void Should_Insert_Parameter() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
 
@@ -55,11 +47,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheDeleteRuleMethod
-        {
+        public sealed class TheDeleteRuleMethod {
             [Fact]
-            public void Should_Delete_Rule()
-            {
+            public void Should_Delete_Rule() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 repository.CreateRule(new Rule {Name = "Rule name", TargetPath = "//path"});
@@ -72,11 +62,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheDeleteParameterMethod
-        {
+        public sealed class TheDeleteParameterMethod {
             [Fact]
-            public void Should_Delete_Parameter()
-            {
+            public void Should_Delete_Parameter() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*"});
@@ -89,11 +77,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheGetRulesMethod
-        {
+        public sealed class TheGetRulesMethod {
             [Fact]
-            public void Should_Return_Empty_Enumerable_If_No_Rules_Exist()
-            {
+            public void Should_Return_Empty_Enumerable_If_No_Rules_Exist() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
 
@@ -105,8 +91,7 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
 
             [Fact]
-            public void Should_Return_Created_Rules()
-            {
+            public void Should_Return_Created_Rules() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 repository.CreateRule(new Rule {Name = "Rule #1", TargetPath = "//Path/1"});
@@ -120,11 +105,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheGetParametersByRuleIdMethod
-        {
+        public sealed class TheGetParametersByRuleIdMethod {
             [Fact]
-            public void Should_Return_Empty_Enumerable_For_Invalid_Rule_Id()
-            {
+            public void Should_Return_Empty_Enumerable_For_Invalid_Rule_Id() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
 
@@ -136,8 +119,7 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
 
             [Fact]
-            public void Should_Return_Enumerable_Of_Parameters_For_Valid_Rule_Id()
-            {
+            public void Should_Return_Enumerable_Of_Parameters_For_Valid_Rule_Id() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*", Source = ParameterSource.Label});
@@ -153,11 +135,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheUpdateRuleMethod
-        {
+        public sealed class TheUpdateRuleMethod {
             [Fact]
-            public void Should_Not_Fail_On_Invalid_Rule_Id()
-            {
+            public void Should_Not_Fail_On_Invalid_Rule_Id() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 var rule = new Rule {Id = 123, Name = "Name", TargetPath = "Path"};
@@ -170,8 +150,7 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
 
             [Fact]
-            public void Should_Update_Valid_Rule()
-            {
+            public void Should_Update_Valid_Rule() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 repository.CreateRule(new Rule {Name = "Name", TargetPath = "Path"});
@@ -184,11 +163,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
         }
 
-        public sealed class TheUpdateParameterMethod
-        {
+        public sealed class TheUpdateParameterMethod {
             [Fact]
-            public void Should_Not_Fail_On_Invalid_Parameter_Id()
-            {
+            public void Should_Not_Fail_On_Invalid_Parameter_Id() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 var parameter = new Parameter {Id = 123, RuleId = 1, Pattern = ".*"};
@@ -201,8 +178,7 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit.Data
             }
 
             [Fact]
-            public void Should_Update_Valid_Parameter()
-            {
+            public void Should_Update_Valid_Parameter() {
                 // Given
                 var repository = new AutoMoveRepositoryFixture().CreateRepository();
                 repository.CreateParameter(new Parameter {RuleId = 1, Pattern = ".*"});

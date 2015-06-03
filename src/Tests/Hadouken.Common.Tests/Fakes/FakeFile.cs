@@ -2,142 +2,109 @@
 using System.IO;
 using Hadouken.Common.IO;
 
-namespace Hadouken.Common.Tests.Fakes
-{
-    public sealed class FakeFile : IFile
-    {
+namespace Hadouken.Common.Tests.Fakes {
+    public sealed class FakeFile : IFile {
+        private readonly object _contentLock = new object();
         private readonly FakeFileSystem _fileSystem;
         private readonly FilePath _path;
-        private bool _exists;
         private byte[] _content = new byte[4096];
-        private long _contentLength;
-        private readonly object _contentLock = new object();
-        private bool _deleted;
 
-        public FilePath Path
-        {
-            get { return _path; }
+        public FakeFile(FakeFileSystem fileSystem, FilePath path) {
+            this._fileSystem = fileSystem;
+            this._path = path;
+            this.Exists = false;
         }
 
-        public bool Exists
-        {
-            get { return _exists; }
-            set { _exists = value; } 
+        public bool Deleted { get; private set; }
+
+        public object ContentLock {
+            get { return this._contentLock; }
         }
 
-        public bool Deleted
-        {
-            get { return _deleted; }
+        public long ContentLength {
+            get { return this.Length; }
+            set { this.Length = value; }
         }
 
-        public long Length
-        {
-            get { return _contentLength; }
+        public byte[] Content {
+            get { return this._content; }
+            set { this._content = value; }
         }
 
-        public object ContentLock
-        {
-            get { return _contentLock; }
+        public FilePath Path {
+            get { return this._path; }
         }
 
-        public long ContentLength
-        {
-            get { return _contentLength; }
-            set { _contentLength = value; }
-        }
+        public bool Exists { get; set; }
+        public long Length { get; private set; }
 
-        public byte[] Content
-        {
-            get { return _content; }
-            set { _content = value; }
-        }
-
-        public FakeFile(FakeFileSystem fileSystem, FilePath path)
-        {
-            _fileSystem = fileSystem;
-            _path = path;
-            _exists = false;
-        }
-
-        public void Copy(FilePath destination, bool overwrite)
-        {
-            var file = _fileSystem.GetCreatedFile(destination) as FakeFile;
-            if (file != null)
-            {
-                file.Content = Content;
-                file.ContentLength = ContentLength;
+        public void Copy(FilePath destination, bool overwrite) {
+            var file = this._fileSystem.GetCreatedFile(destination) as FakeFile;
+            if (file == null) {
+                return;
             }
+            file.Content = this.Content;
+            file.ContentLength = this.ContentLength;
         }
 
-        public void Move(FilePath destination)
-        {
+        public void Move(FilePath destination) {
             throw new NotImplementedException();
         }
 
-        public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
-        {
-            var position = GetPosition(fileMode);
+        public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare) {
+            var position = this.GetPosition(fileMode);
             var stream = new FakeFileStream(this) {Position = position};
             return stream;
         }
 
-        public void Resize(long offset)
-        {
-            if (_contentLength < offset)
-            {
-                _contentLength = offset;
+        public void Delete() {
+            this.Exists = false;
+            this.Deleted = true;
+        }
+
+        public void Resize(long offset) {
+            if (this.Length < offset) {
+                this.Length = offset;
             }
-            if (_content.Length >= _contentLength)
-            {
+            if (this._content.Length >= this.Length) {
                 return;
             }
 
-            var buffer = new byte[_contentLength*2];
-            Buffer.BlockCopy(_content, 0, buffer, 0, _content.Length);
-            _content = buffer;
+            var buffer = new byte[this.Length*2];
+            Buffer.BlockCopy(this._content, 0, buffer, 0, this._content.Length);
+            this._content = buffer;
         }
 
-        private long GetPosition(FileMode fileMode)
-        {
-            if (Exists)
-            {
-                switch (fileMode)
-                {
+        private long GetPosition(FileMode fileMode) {
+            if (this.Exists) {
+                switch (fileMode) {
                     case FileMode.CreateNew:
                         throw new IOException();
                     case FileMode.Create:
                     case FileMode.Truncate:
-                        _contentLength = 0;
+                        this.Length = 0;
                         return 0;
                     case FileMode.Open:
                     case FileMode.OpenOrCreate:
                         return 0;
                     case FileMode.Append:
-                        return _contentLength;
+                        return this.Length;
                 }
             }
-            else
-            {
-                switch (fileMode)
-                {
+            else {
+                switch (fileMode) {
                     case FileMode.Create:
                     case FileMode.Append:
                     case FileMode.CreateNew:
                     case FileMode.OpenOrCreate:
-                        _exists = true;
-                        return _contentLength;
+                        this.Exists = true;
+                        return this.Length;
                     case FileMode.Open:
                     case FileMode.Truncate:
                         throw new FileNotFoundException();
                 }
             }
             throw new NotSupportedException();
-        }
-
-        public void Delete()
-        {
-            _exists = false;
-            _deleted = true;
         }
     }
 }

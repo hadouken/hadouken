@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Common.Extensibility
-{
-    public enum ComponentLifestyle
-    {
+﻿namespace Hadouken.Common.Extensibility {
+    public enum ComponentLifestyle {
         Singleton,
         Transient
     }

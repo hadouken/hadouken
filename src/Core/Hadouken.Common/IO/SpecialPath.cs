@@ -1,18 +1,16 @@
-﻿namespace Hadouken.Common.IO
-{
+﻿namespace Hadouken.Common.IO {
     /// <summary>
-    /// Represents a special path.
+    ///     Represents a special path.
     /// </summary>
-    public enum SpecialPath
-    {
+    public enum SpecialPath {
         /// <summary>
-        /// The Program Files (X86) folder.
+        ///     The Program Files (X86) folder.
         /// </summary>
         ProgramFilesX86,
 
         /// <summary>
-        /// The Windows folder.
+        ///     The Windows folder.
         /// </summary>
-        Windows,
+        Windows
     }
 }

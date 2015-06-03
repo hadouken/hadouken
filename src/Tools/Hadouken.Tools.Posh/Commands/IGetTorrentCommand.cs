@@ -1,6 +1,3 @@
-﻿namespace Hadouken.Tools.Posh.Commands
-{
-    public interface IGetTorrentCommand : ICommand
-    {
-    }
+﻿namespace Hadouken.Tools.Posh.Commands {
+    public interface IGetTorrentCommand : ICommand {}
 }

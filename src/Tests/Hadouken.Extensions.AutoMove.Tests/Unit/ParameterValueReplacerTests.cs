@@ -6,15 +6,11 @@ using Hadouken.Extensions.AutoMove.Tests.Fixtures;
 using NSubstitute;
 using Xunit;
 
-namespace Hadouken.Extensions.AutoMove.Tests.Unit
-{
-    public sealed class ParameterValueReplacerTests
-    {
-        public sealed class TheConstructor
-        {
+namespace Hadouken.Extensions.AutoMove.Tests.Unit {
+    public sealed class ParameterValueReplacerTests {
+        public sealed class TheConstructor {
             [Fact]
-            public void Should_Throw_Exception_If_Source_Value_Provider_Is_Null()
-            {
+            public void Should_Throw_Exception_If_Source_Value_Provider_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new ParameterValueReplacer(null));
 
@@ -24,11 +20,9 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
         }
 
-        public sealed class TheReplaceMethod
-        {
+        public sealed class TheReplaceMethod {
             [Fact]
-            public void Should_Not_Replace_Parameter_That_Does_Not_Exist()
-            {
+            public void Should_Not_Replace_Parameter_That_Does_Not_Exist() {
                 // Given
                 var replacer = new ParameterValueReplacerFixture().CreateReplacer();
                 var torrent = Substitute.For<ITorrent>();
@@ -41,15 +35,13 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
 
             [Fact]
-            public void Should_Replace_A_Single_Parameter_With_The_Captured_Value()
-            {
+            public void Should_Replace_A_Single_Parameter_With_The_Captured_Value() {
                 // Given
                 var replacer = new ParameterValueReplacerFixture().CreateReplacer();
                 var torrent = Substitute.For<ITorrent>();
                 torrent.Label.Returns("Test label");
 
-                var parameters = new[]
-                {
+                var parameters = new[] {
                     new Parameter {Pattern = "^(?<label>.*)$", Source = ParameterSource.Label}
                 };
 
@@ -61,16 +53,14 @@ namespace Hadouken.Extensions.AutoMove.Tests.Unit
             }
 
             [Fact]
-            public void Should_Replace_Multiple_Parameters_With_Their_Captured_Values()
-            {
+            public void Should_Replace_Multiple_Parameters_With_Their_Captured_Values() {
                 // Given
                 var replacer = new ParameterValueReplacerFixture().CreateReplacer();
                 var torrent = Substitute.For<ITorrent>();
                 torrent.Label.Returns("Misc/Other");
                 torrent.Name.Returns("My test torrent");
 
-                var parameters = new[]
-                {
+                var parameters = new[] {
                     new Parameter {Pattern = "^(?<category>.*)/.*$", Source = ParameterSource.Label},
                     new Parameter {Pattern = "^.*/(?<subcat>.*)$", Source = ParameterSource.Label},
                     new Parameter {Pattern = "^My (?<name>.*) torrent$", Source = ParameterSource.Name}

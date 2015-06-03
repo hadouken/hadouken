@@ -2,24 +2,19 @@
 using Hadouken.Tools.Posh.IO;
 using Hadouken.Tools.Posh.Net;
 
-namespace Hadouken.Tools.Posh
-{
-    internal static class ServiceLocator
-    {
+namespace Hadouken.Tools.Posh {
+    internal static class ServiceLocator {
         private static readonly TinyIoCContainer Container;
 
-        static ServiceLocator()
-        {
+        static ServiceLocator() {
             Container = RegisterComponents();
         }
 
-        public static T Get<T>() where T : class
-        {
+        public static T Get<T>() where T : class {
             return Container.Resolve<T>();
         }
 
-        private static TinyIoCContainer RegisterComponents()
-        {
+        private static TinyIoCContainer RegisterComponents() {
             var container = new TinyIoCContainer();
 
             // Cmdlets

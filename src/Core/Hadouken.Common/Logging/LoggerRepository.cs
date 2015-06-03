@@ -1,33 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Hadouken.Common.Logging
-{
-    public sealed class LoggerRepository : ILoggerRepository, ILogEventSink
-    {
+namespace Hadouken.Common.Logging {
+    public sealed class LoggerRepository : ILoggerRepository, ILogEventSink {
         private readonly IList<LogEntry> _entries = new List<LogEntry>();
 
-        public IEnumerable<LogEntry> GetAll()
-        {
-            return new List<LogEntry>(_entries);
-        }
-
-        public void Emit(LogEvent logEvent)
-        {
+        public void Emit(LogEvent logEvent) {
             var level = TranslateLogLevel(logEvent.Level);
             var source = string.Empty;
 
-            if (logEvent.Properties.ContainsKey("SourceContext"))
-            {
+            if (logEvent.Properties.ContainsKey("SourceContext")) {
                 var ctx = logEvent.Properties["SourceContext"] as ScalarValue;
                 source = ctx != null ? ctx.Value.ToString() : string.Empty;
             }
 
-            _entries.Add(new LogEntry
-            {
+            this._entries.Add(new LogEntry {
                 Level = level,
                 Message = logEvent.RenderMessage(),
                 Source = source,
@@ -36,10 +25,12 @@ namespace Hadouken.Common.Logging
             });
         }
 
-        private LogLevel TranslateLogLevel(LogEventLevel level)
-        {
-            switch (level)
-            {
+        public IEnumerable<LogEntry> GetAll() {
+            return new List<LogEntry>(this._entries);
+        }
+
+        private static LogLevel TranslateLogLevel(LogEventLevel level) {
+            switch (level) {
                 case LogEventLevel.Debug:
                     return LogLevel.Debug;
                 case LogEventLevel.Error:

@@ -1,13 +1,9 @@
 ﻿using System;
 
-namespace Hadouken.Core.JsonRpc
-{
+namespace Hadouken.Core.JsonRpc {
     [Serializable]
-    public class InvalidRequestException : Exception
-    {
+    public class InvalidRequestException : Exception {
         public InvalidRequestException(string message)
-            : base(message)
-        {
-        }
+            : base(message) {}
     }
 }

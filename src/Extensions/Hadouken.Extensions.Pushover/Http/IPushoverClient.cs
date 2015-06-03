@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Extensions.Pushover.Http
-{
-    public interface IPushoverClient
-    {
+﻿namespace Hadouken.Extensions.Pushover.Http {
+    public interface IPushoverClient {
         void Send(PushoverMessage message);
     }
 }

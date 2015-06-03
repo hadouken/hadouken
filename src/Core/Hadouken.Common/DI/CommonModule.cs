@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Autofac;
-using Autofac.Core;
+﻿using Autofac;
 using Hadouken.Common.Data;
 using Hadouken.Common.IO;
 using Hadouken.Common.Logging;
@@ -10,13 +8,11 @@ using Hadouken.Common.Reflection;
 using Hadouken.Common.Text;
 using Hadouken.Common.Timers;
 using Serilog;
+using Path = System.IO.Path;
 
-namespace Hadouken.Common.DI
-{
-    public class CommonModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
+namespace Hadouken.Common.DI {
+    public class CommonModule : Module {
+        protected override void Load(ContainerBuilder builder) {
             builder.RegisterType<JsonSerializer>().As<IJsonSerializer>().SingleInstance();
             builder.RegisterType<HadoukenConsole>().As<IConsole>().SingleInstance();
             builder.RegisterType<HadoukenEnvironment>().As<IEnvironment>().SingleInstance();
@@ -26,8 +22,7 @@ namespace Hadouken.Common.DI
 
             // Common.Data
             builder.RegisterType<SqlMigrator>().As<IMigrator>().SingleInstance();
-            builder.Register<IDbConnection>(c =>
-            {
+            builder.Register<IDbConnection>(c => {
                 var env = c.Resolve<IEnvironment>();
                 return new DbConnection(env.GetConnectionString("Hadouken"));
             });
@@ -38,8 +33,7 @@ namespace Hadouken.Common.DI
                 .As<ILoggerRepository>()
                 .SingleInstance();
 
-            builder.Register(context =>
-            {
+            builder.Register(context => {
                 var repo = context.Resolve<LoggerRepository>();
                 var env = context.Resolve<IEnvironment>();
                 var path = env.GetAppSetting("Path:Logs");
@@ -47,10 +41,9 @@ namespace Hadouken.Common.DI
                 return new LoggerConfiguration()
                     .MinimumLevel.Verbose()
                     .WriteTo.ColoredConsole()
-                    .WriteTo.File(System.IO.Path.Combine(path, "log.txt"))
+                    .WriteTo.File(Path.Combine(path, "log.txt"))
                     .WriteTo.Sink(repo)
                     .CreateLogger();
-
             }).ExternallyOwned()
                 .SingleInstance();
 

@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Tools.Posh
-{
-    public interface ICommand
-    {
+﻿namespace Hadouken.Tools.Posh {
+    public interface ICommand {
         void Process(IRuntime runtime);
     }
 }

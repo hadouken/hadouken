@@ -8,15 +8,21 @@ using Hadouken.Core.Tests.Fakes;
 using NSubstitute;
 using Xunit;
 
-namespace Hadouken.Core.Tests.Unit.JsonRpc
-{
-    public class RequestHandlerTests
-    {
-        public class TheConstructor
-        {
+namespace Hadouken.Core.Tests.Unit.JsonRpc {
+    public class RequestHandlerTests {
+        private static RequestHandler CreateRequestHandler(params IJsonRpcService[] services) {
+            var cacheBuilder = new MethodCacheBuilder(services);
+            var nameResolver = new ByNameResolver(new JsonSerializer());
+            var positionResolver = new ByPositionResolver(new JsonSerializer());
+            var nullResolver = new NullResolver();
+
+            return new RequestHandler(cacheBuilder,
+                new IParameterResolver[] {nameResolver, positionResolver, nullResolver});
+        }
+
+        public class TheConstructor {
             [Fact]
-            public void Throws_ArgumentNullException_If_CacheBuilder_Is_Null()
-            {
+            public void Throws_ArgumentNullException_If_CacheBuilder_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new RequestHandler(null, Enumerable.Empty<IParameterResolver>()));
 
@@ -26,8 +32,7 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Throws_ArgumentNullException_If_ParameterResolvers_Is_Null()
-            {
+            public void Throws_ArgumentNullException_If_ParameterResolvers_Is_Null() {
                 // Given, When
                 var exception = Record.Exception(() => new RequestHandler(Substitute.For<IMethodCacheBuilder>(), null));
 
@@ -37,13 +42,11 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
         }
 
-        public class TheHandleMethod
-        {
+        public class TheHandleMethod {
             [Fact]
-            public void Returns_Method_Not_Found_Error_For_Nonexistent_Method_Name()
-            {
+            public void Returns_Method_Not_Found_Error_For_Nonexistent_Method_Name() {
                 // Given
-                var request = new JsonRpcRequest { Id = 1, MethodName = "nonexistent" };
+                var request = new JsonRpcRequest {Id = 1, MethodName = "nonexistent"};
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
@@ -54,10 +57,9 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Returns_Invalid_Params_Error_For_String_As_Parameter()
-            {
+            public void Returns_Invalid_Params_Error_For_String_As_Parameter() {
                 // Given
-                var request = new JsonRpcRequest { Id = 1, MethodName = "test", Parameters = "invalid" };
+                var request = new JsonRpcRequest {Id = 1, MethodName = "test", Parameters = "invalid"};
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
@@ -68,11 +70,10 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Valid_Request()
-            {
+            public void Returns_Correct_Result_For_Valid_Request() {
                 // Given
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
-                var request = new JsonRpcRequest { Id = 1, MethodName = "test" };
+                var request = new JsonRpcRequest {Id = 1, MethodName = "test"};
 
                 // When
                 var result = (JsonRpcSuccessResponse) handler.Handle(request);
@@ -82,117 +83,102 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Positional_Array_And_Object_Parameters()
-            {
+            public void Returns_Correct_Result_For_Positional_Array_And_Object_Parameters() {
                 // Given
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.array+object",
-                    Parameters = new object[] { new[] { 1, 1, 3 }, new TestDto() }
+                    Parameters = new object[] {new[] {1, 1, 3}, new TestDto()}
                 };
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Named_Array_And_Object_Parameters()
-            {
+            public void Returns_Correct_Result_For_Named_Array_And_Object_Parameters() {
                 // Given
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.array+object",
-                    Parameters = new Dictionary<string, object>
-                    {
+                    Parameters = new Dictionary<string, object> {
                         {"array", new[] {1, 2, 3}},
                         {"obj", new TestDto()}
                     }
                 };
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Positional_String_Parameter()
-            {
+            public void Returns_Correct_Result_For_Positional_String_Parameter() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.string",
-                    Parameters = new object[] { "test" }
+                    Parameters = new object[] {"test"}
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Named_String_Parameter()
-            {
+            public void Returns_Correct_Result_For_Named_String_Parameter() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.string",
-                    Parameters = new Dictionary<string, object>
-                    {
-                        { "val", "test" }
+                    Parameters = new Dictionary<string, object> {
+                        {"val", "test"}
                     }
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Positional_String_And_Boolean_Parameters()
-            {
+            public void Returns_Correct_Result_For_Positional_String_And_Boolean_Parameters() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.string+bool",
-                    Parameters = new object[] { "test", false }
+                    Parameters = new object[] {"test", false}
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Named_String_And_Boolean_Parameters()
-            {
+            public void Returns_Correct_Result_For_Named_String_And_Boolean_Parameters() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.string+bool",
-                    Parameters = new Dictionary<string, object>
-                    {
+                    Parameters = new Dictionary<string, object> {
                         {"str", "test"},
                         {"b", true}
                     }
@@ -200,100 +186,88 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Positional_Array_Parameter()
-            {
+            public void Returns_Correct_Result_For_Positional_Array_Parameter() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.array",
-                    Parameters = new object[] { new[] { "1", "2", "3", "4" } }
+                    Parameters = new object[] {new[] {"1", "2", "3", "4"}}
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.Equal(4, ((string[])result.Result).Length);
+                Assert.Equal(4, ((string[]) result.Result).Length);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Named_Array_Parameter()
-            {
+            public void Returns_Correct_Result_For_Named_Array_Parameter() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.array",
-                    Parameters = new Dictionary<string, object>
-                    {
+                    Parameters = new Dictionary<string, object> {
                         {"arr", new[] {"1", "2", "3", "4"}}
                     }
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.Equal(4, ((string[])result.Result).Length);
+                Assert.Equal(4, ((string[]) result.Result).Length);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Method_Accepting_No_Arguments()
-            {
+            public void Returns_Correct_Result_For_Method_Accepting_No_Arguments() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.noargs"
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.True((bool)result.Result);
+                Assert.True((bool) result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Method_Returning_Void_Given_Positional_Parameters()
-            {
+            public void Returns_Correct_Result_For_Method_Returning_Void_Given_Positional_Parameters() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.void",
-                    Parameters = new[] { 1, 2 }
+                    Parameters = new[] {1, 2}
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
                 Assert.Null(result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Result_For_Method_Returning_Void_Given_Named_Parameters()
-            {
+            public void Returns_Correct_Result_For_Method_Returning_Void_Given_Named_Parameters() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.void",
-                    Parameters = new Dictionary<string, object>
-                    {
+                    Parameters = new Dictionary<string, object> {
                         {"i", 1},
                         {"j", 2}
                     }
@@ -301,59 +275,44 @@ namespace Hadouken.Core.Tests.Unit.JsonRpc
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
                 Assert.Null(result.Result);
             }
 
             [Fact]
-            public void Returns_Correct_Error_Code_For_Method_Throwing_JsonRpcException()
-            {
+            public void Returns_Correct_Error_Code_For_Method_Throwing_JsonRpcException() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.throw"
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcErrorResponse)handler.Handle(request);
+                var result = (JsonRpcErrorResponse) handler.Handle(request);
 
                 // Then
                 Assert.Equal(1000, result.Error.Code);
             }
 
             [Fact]
-            public void Returns_Correct_Enum_For_Dto_With_Enum_Property()
-            {
+            public void Returns_Correct_Enum_For_Dto_With_Enum_Property() {
                 // Given
-                var request = new JsonRpcRequest
-                {
+                var request = new JsonRpcRequest {
                     Id = 1,
                     MethodName = "test.objectEnum",
-                    Parameters = new[] { new TestDto { Enum = TestEnum.Two } }
+                    Parameters = new[] {new TestDto {Enum = TestEnum.Two}}
                 };
                 var handler = CreateRequestHandler(new JsonRpcServiceFake());
 
                 // When
-                var result = (JsonRpcSuccessResponse)handler.Handle(request);
+                var result = (JsonRpcSuccessResponse) handler.Handle(request);
 
                 // Then
-                Assert.Equal(TestEnum.Two, (TestEnum)result.Result);
+                Assert.Equal(TestEnum.Two, (TestEnum) result.Result);
             }
-        }
-
-        private static RequestHandler CreateRequestHandler(params IJsonRpcService[] services)
-        {
-            var cacheBuilder = new MethodCacheBuilder(services);
-            var nameResolver = new ByNameResolver(new JsonSerializer());
-            var positionResolver = new ByPositionResolver(new JsonSerializer());
-            var nullResolver = new NullResolver();
-
-            return new RequestHandler(cacheBuilder,
-                new IParameterResolver[] { nameResolver, positionResolver, nullResolver });
         }
     }
 }

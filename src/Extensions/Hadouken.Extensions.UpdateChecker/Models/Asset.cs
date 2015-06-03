@@ -2,12 +2,10 @@
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-namespace Hadouken.Extensions.UpdateChecker.Models
-{
+namespace Hadouken.Extensions.UpdateChecker.Models {
     [DataContract]
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class Asset
-    {
+    public class Asset {
         [DataMember(Name = "id")]
         public int Id { get; set; }
 
@@ -20,9 +18,8 @@ namespace Hadouken.Extensions.UpdateChecker.Models
         [DataMember(Name = "size")]
         public long Size { get; set; }
 
-        private string DebuggerDisplay
-        {
-            get { return string.Format("{0}", Name); }
+        private string DebuggerDisplay {
+            get { return string.Format("{0}", this.Name); }
         }
     }
 }

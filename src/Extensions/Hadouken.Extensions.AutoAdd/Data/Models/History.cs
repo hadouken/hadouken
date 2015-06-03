@@ -1,18 +1,13 @@
 ﻿using System;
 
-namespace Hadouken.Extensions.AutoAdd.Data.Models
-{
-    public sealed class History
-    {
-        public History()
-        {
-            AddedTime = DateTime.UtcNow;
+namespace Hadouken.Extensions.AutoAdd.Data.Models {
+    public sealed class History {
+        public History() {
+            this.AddedTime = DateTime.UtcNow;
         }
 
         public int Id { get; set; }
-
         public string Path { get; set; }
-
         public DateTime AddedTime { get; set; }
     }
 }

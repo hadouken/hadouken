@@ -7,15 +7,13 @@ using Hadouken.Common.Messaging;
 using Hadouken.Core.BitTorrent.Data;
 using Ragnar;
 
-namespace Hadouken.Core.BitTorrent.Handlers
-{
-    internal sealed class AddTorrentHandler : IMessageHandler<AddTorrentMessage>
-    {
+namespace Hadouken.Core.BitTorrent.Handlers {
+    internal sealed class AddTorrentHandler : IMessageHandler<AddTorrentMessage> {
         private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
-        private readonly ISession _session;
         private readonly IKeyValueStore _keyValueStore;
         private readonly ITorrentMetadataRepository _metadataRepository;
+        private readonly ISession _session;
         private readonly ITorrentInfoRepository _torrentInfoRepository;
 
         public AddTorrentHandler(IEnvironment environment,
@@ -23,49 +21,56 @@ namespace Hadouken.Core.BitTorrent.Handlers
             ISession session,
             IKeyValueStore keyValueStore,
             ITorrentMetadataRepository metadataRepository,
-            ITorrentInfoRepository torrentInfoRepository)
-        {
-            if (environment == null) throw new ArgumentNullException("environment");
-            if (fileSystem == null) throw new ArgumentNullException("fileSystem");
-            if (session == null) throw new ArgumentNullException("session");
-            if (keyValueStore == null) throw new ArgumentNullException("keyValueStore");
-            if (metadataRepository == null) throw new ArgumentNullException("metadataRepository");
-            if (torrentInfoRepository == null) throw new ArgumentNullException("torrentInfoRepository");
+            ITorrentInfoRepository torrentInfoRepository) {
+            if (environment == null) {
+                throw new ArgumentNullException("environment");
+            }
+            if (fileSystem == null) {
+                throw new ArgumentNullException("fileSystem");
+            }
+            if (session == null) {
+                throw new ArgumentNullException("session");
+            }
+            if (keyValueStore == null) {
+                throw new ArgumentNullException("keyValueStore");
+            }
+            if (metadataRepository == null) {
+                throw new ArgumentNullException("metadataRepository");
+            }
+            if (torrentInfoRepository == null) {
+                throw new ArgumentNullException("torrentInfoRepository");
+            }
 
-            _environment = environment;
-            _fileSystem = fileSystem;
-            _session = session;
-            _keyValueStore = keyValueStore;
-            _metadataRepository = metadataRepository;
-            _torrentInfoRepository = torrentInfoRepository;
+            this._environment = environment;
+            this._fileSystem = fileSystem;
+            this._session = session;
+            this._keyValueStore = keyValueStore;
+            this._metadataRepository = metadataRepository;
+            this._torrentInfoRepository = torrentInfoRepository;
         }
 
-        public void Handle(AddTorrentMessage message)
-        {
-            using (var addParams = new AddTorrentParams())
-            {
-                addParams.SavePath = message.SavePath ?? _keyValueStore.Get<string>("bt.save_path");
+        public void Handle(AddTorrentMessage message) {
+            using (var addParams = new AddTorrentParams()) {
+                addParams.SavePath = message.SavePath ?? this._keyValueStore.Get<string>("bt.save_path");
                 addParams.TorrentInfo = new TorrentInfo(message.Data);
 
                 // Set default settings
-                addParams.MaxConnections = _keyValueStore.Get("bt.defaults.max_connections", 200);
-                addParams.MaxUploads = _keyValueStore.Get("bt.defaults.max_uploads", 10);
-                addParams.DownloadLimit = _keyValueStore.Get("bt.defaults.download_limit", 0);
-                addParams.UploadLimit = _keyValueStore.Get("bt.defaults.upload_limit", 0);
+                addParams.MaxConnections = this._keyValueStore.Get("bt.defaults.max_connections", 200);
+                addParams.MaxUploads = this._keyValueStore.Get("bt.defaults.max_uploads", 10);
+                addParams.DownloadLimit = this._keyValueStore.Get("bt.defaults.download_limit", 0);
+                addParams.UploadLimit = this._keyValueStore.Get("bt.defaults.upload_limit", 0);
 
                 // Save torrent info
-                _torrentInfoRepository.Save(addParams.TorrentInfo);
+                this._torrentInfoRepository.Save(addParams.TorrentInfo);
 
                 // Load existing resume data if we have any
-                var resumePath = _environment.GetApplicationDataPath()
+                var resumePath = this._environment.GetApplicationDataPath()
                     .Combine("Torrents")
                     .CombineWithFilePath(addParams.TorrentInfo.InfoHash + ".resume");
-                var resumeFile = _fileSystem.GetFile(resumePath);
+                var resumeFile = this._fileSystem.GetFile(resumePath);
 
-                if (resumeFile.Exists)
-                {
-                    using (var stream = resumeFile.OpenRead())
-                    {
+                if (resumeFile.Exists) {
+                    using (var stream = resumeFile.OpenRead()) {
                         var resumeData = new byte[stream.Length];
                         stream.Read(resumeData, 0, resumeData.Length);
 
@@ -74,10 +79,10 @@ namespace Hadouken.Core.BitTorrent.Handlers
                 }
 
                 // Save metadata
-                _metadataRepository.SetLabel(addParams.TorrentInfo.InfoHash, message.Label);
+                this._metadataRepository.SetLabel(addParams.TorrentInfo.InfoHash, message.Label);
 
                 // Add torrent
-                _session.AsyncAddTorrent(addParams);
+                this._session.AsyncAddTorrent(addParams);
             }
         }
     }

@@ -1,28 +1,24 @@
 ﻿using System;
 
-namespace Hadouken.Common.IO
-{
+namespace Hadouken.Common.IO {
     /// <summary>
-    /// Responsible for retrieving information about the current machine.
+    ///     Responsible for retrieving information about the current machine.
     /// </summary>
-    public static class Machine
-    {
+    public static class Machine {
         /// <summary>
-        /// Determines if the current operative system is 64 bit.
+        ///     Determines if the current operative system is 64 bit.
         /// </summary>
         /// <returns>Whether or not the current operative system is 64 bit.</returns>
-        public static bool Is64BitOperativeSystem()
-        {
+        public static bool Is64BitOperativeSystem() {
             return Environment.Is64BitOperatingSystem;
         }
 
         /// <summary>
-        /// Determines whether the current machine is running Unix.
+        ///     Determines whether the current machine is running Unix.
         /// </summary>
         /// <returns>Whether or not the current machine is running Unix.</returns>
-        public static bool IsUnix()
-        {
-            var platform = (int)Environment.OSVersion.Platform;
+        public static bool IsUnix() {
+            var platform = (int) Environment.OSVersion.Platform;
             return (platform == 4) || (platform == 6) || (platform == 128);
         }
     }

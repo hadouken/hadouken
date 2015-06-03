@@ -5,44 +5,43 @@ using Hadouken.Common.JsonRpc;
 using Hadouken.Extensions.AutoAdd.Data;
 using Hadouken.Extensions.AutoAdd.Data.Models;
 
-namespace Hadouken.Extensions.AutoAdd.Services
-{
-    public sealed class AutoAddService : IJsonRpcService
-    {
+namespace Hadouken.Extensions.AutoAdd.Services {
+    public sealed class AutoAddService : IJsonRpcService {
         private readonly IAutoAddRepository _autoAddRepository;
 
-        public AutoAddService(IAutoAddRepository autoAddRepository)
-        {
-            if (autoAddRepository == null) throw new ArgumentNullException("autoAddRepository");
-            _autoAddRepository = autoAddRepository;
+        public AutoAddService(IAutoAddRepository autoAddRepository) {
+            if (autoAddRepository == null) {
+                throw new ArgumentNullException("autoAddRepository");
+            }
+            this._autoAddRepository = autoAddRepository;
         }
 
         [JsonRpcMethod("autoadd.folders.create")]
-        public Folder CreateFolder(Folder folder)
-        {
-            if (folder == null) throw new ArgumentNullException("folder");
+        public Folder CreateFolder(Folder folder) {
+            if (folder == null) {
+                throw new ArgumentNullException("folder");
+            }
 
-            _autoAddRepository.CreateFolder(folder);
+            this._autoAddRepository.CreateFolder(folder);
             return folder;
         }
 
         [JsonRpcMethod("autoadd.folders.delete")]
-        public void DeleteFolder(int folderId)
-        {
-            _autoAddRepository.DeleteFolder(folderId);
+        public void DeleteFolder(int folderId) {
+            this._autoAddRepository.DeleteFolder(folderId);
         }
 
         [JsonRpcMethod("autoadd.folders.getAll")]
-        public IEnumerable<Folder> GetFolders()
-        {
-            return _autoAddRepository.GetFolders() ?? Enumerable.Empty<Folder>();
+        public IEnumerable<Folder> GetFolders() {
+            return this._autoAddRepository.GetFolders() ?? Enumerable.Empty<Folder>();
         }
 
         [JsonRpcMethod("autoadd.folders.update")]
-        public void UpdateFolder(Folder folder)
-        {
-            if (folder == null) throw new ArgumentNullException("folder");
-            _autoAddRepository.UpdateFolder(folder);
+        public void UpdateFolder(Folder folder) {
+            if (folder == null) {
+                throw new ArgumentNullException("folder");
+            }
+            this._autoAddRepository.UpdateFolder(folder);
         }
     }
 }

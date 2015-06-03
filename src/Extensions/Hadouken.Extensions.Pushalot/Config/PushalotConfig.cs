@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Hadouken.Extensions.Pushalot.Config
-{
-    public sealed class PushalotConfig
-    {
+namespace Hadouken.Extensions.Pushalot.Config {
+    public sealed class PushalotConfig {
         [DataType(DataType.Password)]
         [Display(Name = "Authorization token")]
         [Required]

@@ -1,7 +1,5 @@
-﻿namespace Hadouken.Common.Extensibility.Notifications
-{
-    public enum NotificationType
-    {
+﻿namespace Hadouken.Common.Extensibility.Notifications {
+    public enum NotificationType {
         Test,
         TorrentAdded,
         TorrentCompleted

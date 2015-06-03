@@ -1,27 +1,22 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Hadouken.Core.JsonRpc
-{
-    public class Method : IMethod
-    {
-        private readonly object _target;
+namespace Hadouken.Core.JsonRpc {
+    public class Method : IMethod {
         private readonly MethodInfo _methodInfo;
-        
-        public Method(object target, MethodInfo methodInfo)
-        {
-            _target = target;
-            _methodInfo = methodInfo;
+        private readonly object _target;
+
+        public Method(object target, MethodInfo methodInfo) {
+            this._target = target;
+            this._methodInfo = methodInfo;
         }
 
-        public IParameter[] Parameters
-        {
-            get { return _methodInfo.GetParameters().Select(p => new Parameter(p) as IParameter).ToArray(); }
+        public IParameter[] Parameters {
+            get { return this._methodInfo.GetParameters().Select(p => new Parameter(p) as IParameter).ToArray(); }
         }
 
-        public object Execute(object[] parameters)
-        {
-            return _methodInfo.Invoke(_target, parameters);
+        public object Execute(object[] parameters) {
+            return this._methodInfo.Invoke(this._target, parameters);
         }
     }
 }

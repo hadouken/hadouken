@@ -2,82 +2,68 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Hadouken.Common.Text.BEncoding
-{
-    public sealed class BEncodedList : BEncodedValue, IList<BEncodedValue>
-    {
+namespace Hadouken.Common.Text.BEncoding {
+    public sealed class BEncodedList : BEncodedValue, IList<BEncodedValue> {
         private readonly IList<BEncodedValue> _items;
 
-        public BEncodedList(IList<BEncodedValue> items)
-        {
-            if (items == null) throw new ArgumentNullException("items");
-            _items = items;
+        public BEncodedList(IList<BEncodedValue> items) {
+            if (items == null) {
+                throw new ArgumentNullException("items");
+            }
+            this._items = items;
         }
 
-        public IEnumerator<BEncodedValue> GetEnumerator()
-        {
-            return _items.GetEnumerator();
+        public IEnumerator<BEncodedValue> GetEnumerator() {
+            return this._items.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this.GetEnumerator();
         }
 
-        public void Add(BEncodedValue item)
-        {
-            _items.Add(item);
+        public void Add(BEncodedValue item) {
+            this._items.Add(item);
         }
 
-        public void Clear()
-        {
-            _items.Clear();
+        public void Clear() {
+            this._items.Clear();
         }
 
-        public bool Contains(BEncodedValue item)
-        {
-            return _items.Contains(item);
+        public bool Contains(BEncodedValue item) {
+            return this._items.Contains(item);
         }
 
-        public void CopyTo(BEncodedValue[] array, int arrayIndex)
-        {
-            _items.CopyTo(array, arrayIndex);
+        public void CopyTo(BEncodedValue[] array, int arrayIndex) {
+            this._items.CopyTo(array, arrayIndex);
         }
 
-        public bool Remove(BEncodedValue item)
-        {
-            return _items.Remove(item);
+        public bool Remove(BEncodedValue item) {
+            return this._items.Remove(item);
         }
 
-        public int Count
-        {
-            get { return _items.Count; }
+        public int Count {
+            get { return this._items.Count; }
         }
 
-        public bool IsReadOnly
-        {
-            get { return _items.IsReadOnly; }
+        public bool IsReadOnly {
+            get { return this._items.IsReadOnly; }
         }
 
-        public int IndexOf(BEncodedValue item)
-        {
-            return _items.IndexOf(item);
+        public int IndexOf(BEncodedValue item) {
+            return this._items.IndexOf(item);
         }
 
-        public void Insert(int index, BEncodedValue item)
-        {
-            _items.Insert(index, item);
+        public void Insert(int index, BEncodedValue item) {
+            this._items.Insert(index, item);
         }
 
-        public void RemoveAt(int index)
-        {
-            _items.RemoveAt(index);
+        public void RemoveAt(int index) {
+            this._items.RemoveAt(index);
         }
 
-        public BEncodedValue this[int index]
-        {
-            get { return _items[index]; }
-            set { _items[index] = value; }
+        public BEncodedValue this[int index] {
+            get { return this._items[index]; }
+            set { this._items[index] = value; }
         }
     }
 }

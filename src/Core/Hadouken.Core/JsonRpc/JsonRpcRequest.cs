@@ -7,7 +7,7 @@ namespace Hadouken.Core.JsonRpc
     {
         public JsonRpcRequest()
         {
-            ProtocolVersion = "2.0";
+            this.ProtocolVersion = "2.0";
         }
 
         [DataMember(Name = "id")]

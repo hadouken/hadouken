@@ -3,30 +3,24 @@
 // https://github.com/kthompson/glob-js
 ///////////////////////////////////////////////////////////////////////
 
-namespace Hadouken.Common.IO.Globbing.Nodes
-{
-    internal sealed class IdentifierNode : Node
-    {
+namespace Hadouken.Common.IO.Globbing.Nodes {
+    internal sealed class IdentifierNode : Node {
         private readonly string _identifier;
 
-        public override bool IsWildcard
-        {
+        public IdentifierNode(string identifier) {
+            this._identifier = identifier;
+        }
+
+        public override bool IsWildcard {
             get { return false; }
         }
 
-        public string Identifier
-        {
-            get { return _identifier; }
+        public string Identifier {
+            get { return this._identifier; }
         }
 
-        public IdentifierNode(string identifier)
-        {
-            _identifier = identifier;
-        }
-
-        public override string Render()
-        {
-            return _identifier;
+        public override string Render() {
+            return this._identifier;
         }
     }
 }

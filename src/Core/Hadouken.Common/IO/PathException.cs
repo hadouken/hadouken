@@ -1,14 +1,9 @@
 ﻿using System;
 
-namespace Hadouken.Common.IO
-{
+namespace Hadouken.Common.IO {
     [Serializable]
-    public class PathException : Exception
-    {
+    public class PathException : Exception {
         public PathException(string message)
-            : base(message)
-        {
-            
-        }
+            : base(message) {}
     }
 }
