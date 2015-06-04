@@ -4,7 +4,15 @@
   <Fragment>
     <ComponentGroup Id="ScriptingComponents" Directory="JS_ROOT" Source="$(var.BinDir)\js\">
       <Component>
+        <File Name="auth.js" />
+      </Component>
+
+      <Component>
         <File Name="bittorrent.js" />
+      </Component>
+
+      <Component>
+        <File Name="config.js" />
       </Component>
 
       <Component>

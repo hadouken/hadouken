@@ -9,7 +9,6 @@
         var nativeModules = [
             "benc",
             "bittorrent",
-            "config",
             "core",
             "fs",
             "http",
@@ -24,13 +23,12 @@
             requireNative(id, require, exports, module);
             found = true;
 
-            if(id === "fs" || id === "config") {
+            if(id === "fs") {
                 return src;
             }
         }
 
-        var config = require("config", require, exports, module);
-        var fs     = require("fs", require, exports, module);
+        var fs = require("fs", require, exports, module);
 
         if(!id.endsWith(".js")) {
             id = id + ".js";
@@ -39,8 +37,7 @@
         var file = id;
 
         if(fs.isRelative(id)) {
-            var scriptPath = config.getString("scripting.path");
-            file = fs.combine(scriptPath, id);
+            file = fs.combine(__ROOT__, id);
         }
 
         src = fs.readText(file);
@@ -57,9 +54,12 @@
     };
 
     (function() {
+        var logger = require("logger").get("loader");
+
         try {
             var core = require("core");
 
+            hadouken.authenticator = require("auth").authenticator;
             hadouken.emit = require("events").emitter;
             hadouken.load = core.load;
             hadouken.rpc  = require("rpc").handler;

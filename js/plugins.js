@@ -3,8 +3,7 @@ var fs     = require("fs");
 var logger = require("logger").get("plugins");
 
 function load() {
-    var scriptPath = config.getString("scripting.path");
-    var plugins = fs.getFiles(fs.combine(scriptPath, "./plugins"));
+    var plugins = fs.getFiles(fs.combine(__ROOT__, "plugins"));
 
     for(var i = 0; i < plugins.length; i++) {
         try {

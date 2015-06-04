@@ -1,3 +1,5 @@
+deps/
+
 docs/build
 
 win32/bin

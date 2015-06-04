@@ -7,9 +7,9 @@
       <Component>
         <Condition>NOT WIX_UPGRADE_DETECTED AND NOT Installed</Condition>
 
-        <File Id="ConfigTemplate" Name="config.json.template" Source="$(var.BinDir)\hadoukend.json.template" />
+        <File Id="ConfigTemplate" Name="hadouken.json.template" Source="$(var.BinDir)\hadouken.json.template" />
 
-        <SystemTools:TemplateFile Id="ProcessConfigTemplate" Source="[#ConfigTemplate]" Target="[HDKNDATA]\config.json" ExecuteOnInstall="yes">
+        <SystemTools:TemplateFile Id="ProcessConfigTemplate" Source="[#ConfigTemplate]" Target="[HDKNDATA]\hadouken.json" ExecuteOnInstall="yes">
           <SystemTools:TemplateFileProperty Id="BITTORRENT_SAVE_PATH_prop" Name="BITTORRENT_SAVE_PATH" Value="[HDKN_BITTORRENT_SAVE_PATH_REPLACED]" />
           <SystemTools:TemplateFileProperty Id="DATA_PATH_prop" Name="DATA_PATH" Value="[HDKN_DATA_PATH]" />
           <SystemTools:TemplateFileProperty Id="HTTP_PORT_prop" Name="HTTP_PORT" Value="[HDKN_HTTP_PORT]" />

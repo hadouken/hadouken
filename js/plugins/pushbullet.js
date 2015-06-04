@@ -7,23 +7,6 @@ var session = require("bittorrent").session;
 var url   = "https://api.pushbullet.com/v2/pushes";
 var token = config.getString("extensions.pushbullet.token");
 
-function getEnabledEvents() {
-    var key    = "extensions.pushbullet.enabledEvents";
-    var result = [];
-
-    for(var i = 0; i < Number.MAX_VALUE; i++) {
-        var query = key + "[" + i + "]";
-
-        if(config.has(query)) {
-            result.push(config.getString(query));
-        } else {
-            break;
-        }
-    }
-
-    return result;
-}
-
 function pushNote(title, body) {
     var data = {
         title: title,
@@ -55,19 +38,19 @@ function load() {
         return;
     }
 
-    var events = getEnabledEvents();
+    var events = config.get("extensions.pushbullet.enabledEvents");
     logger.info("Pushbullet enabled with " + events.length + " enabled events.");
 
     if(events.indexOf("torrent.added") > -1) {
-        session.on("torrent.added", function(torrent) {
-            var status = torrent.getStatus();
+        session.on("torrent.added", function(args) {
+            var status = args.torrent.getStatus();
             pushNote("Torrent added", "Torrent '" + status.name + "' was added.");
         });
     }
 
     if(events.indexOf("torrent.finished") > -1) {
-        session.on("torrent.finished", function(torrent) {
-            var status = torrent.getStatus();
+        session.on("torrent.finished", function(args) {
+            var status = args.torrent.getStatus();
             pushNote("Torrent finished", "Torrent '" + status.name + "' finished downloading.");
         });
     }

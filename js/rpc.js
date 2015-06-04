@@ -16,8 +16,7 @@ var methods = {};
 })();
 
 (function() {
-    var scriptPath = config.getString("scripting.path");
-    var rpcFiles   = fs.combine(scriptPath, "rpc");
+    var rpcFiles   = fs.combine(__ROOT__, "rpc");
 
     var files = fs.getFiles(rpcFiles);
 
