@@ -28,7 +28,6 @@
              Description="The Hadouken BitTorrent client."
              Display="expand">
       <ComponentGroupRef Id="ConfigComponents" />
-      <ComponentGroupRef Id="CoreComponents" />
       <ComponentGroupRef Id="ServiceComponents" />
       <ComponentGroupRef Id="RegistryComponents" />
       <ComponentGroupRef Id="ScriptingComponents" />

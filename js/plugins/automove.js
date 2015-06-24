@@ -45,45 +45,29 @@ TagsFilter.prototype.isMatch = function(torrent) {
 }
 
 function getRules() {
-    var key = "extensions.automove.rules";
+    var values  = config.get("extensions.automove.rules");
     var result = [];
 
-    for(var i = 0; i < Number.MAX_VALUE; i++) {
-        var query = key + "[" + i + "]";
+    for(var i = 0; i < values.length; i++) {
+        var path   = values[i].path;
+        var filter = values[i].filter;
 
-        if(config.has(query)) {
-            var path   = config.getString(query + ".path");
-            var filter = config.getString(query + ".filter");
+        if(filter === "pattern") {
+            var pattern = values[i].data.pattern;
+            var field   = values[i].data.field;
 
-            if(filter === "pattern") {
-                var pattern = config.getString(query + ".data.pattern");
-                var field   = config.getString(query + ".data.field");
-
-                result.push(new Rule(path, new PatternFilter(new RegExp(pattern), field)));
-            } else if(filter === "tags") {
-                var tags = [];
-
-                for(var j = 0; j < Number.MAX_VALUE; j++) {
-                    var tagQuery = query + ".data[" + j + "]";
-
-                    if(config.has(tagQuery)) {
-                        tags.push(config.getString(tagQuery));
-                    } else {
-                        break;
-                    }
-                }
-
-                result.push(new Rule(path, new TagsFilter(tags)));
-            }
-        } else {
-            break;
+            result.push(new Rule(path, new PatternFilter(new RegExp(pattern), field)));
+        } else if(filter === "tags") {
+            result.push(new Rule(path, new TagsFilter(values[i].data)));
         }
     }
 
     return result;
 }
 
-function finished(torrent) {
+function finished(args) {
+    var torrent = args.torrent;
+
     for(var i = 0; i < rules.length; i++) {
         var rule = rules[i];
 

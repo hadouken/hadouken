@@ -60,7 +60,7 @@ function loadState() {
     var statePath = config.getString("bittorrent.statePath") || "state";
 
     if(!fs.directoryExists(statePath)) {
-        logger.info("creating state path");
+        logger.info("Creating state path: " + statePath);
         fs.createDirectories(statePath);
     }
 
@@ -102,8 +102,6 @@ function loadTorrents() {
 
         if(fs.fileExists(metadataFile)) {
             var data = JSON.parse(fs.readText(metadataFile));
-            print(data);
-            print(params.torrent.infoHash);
             metadata.replace(params.torrent.infoHash, data);
         }
 

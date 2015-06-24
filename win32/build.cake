@@ -142,33 +142,6 @@ Task("Output")
     .IsDependentOn("Compile")
     .Does(() =>
     {
-        // Copy Boost and libtorrent binaries.
-        var libtorrentBinaries = string.Format("libs/hadouken.libtorrent/win32/bin/" + Configuration + "/*.dll");
-        CopyFiles(GetFiles(libtorrentBinaries), BinariesDirectory);
-
-        // Copy OpenSSL binaries.
-        var opensslBinaries = string.Format("libs/hadouken.openssl/win32/bin/" + Configuration + "/*.dll");
-        CopyFiles(GetFiles(opensslBinaries), BinariesDirectory);
-
-        // Copy Poco binaries.
-        var pocoSuffix = (Configuration == "Release" ? string.Empty : "d");
-        var pocoTemplate = "libs/hadouken.poco/win32/bin/Poco{0}{1}.dll";
-        var pocoBinaries = new[]
-        {
-            string.Format(pocoTemplate, "Crypto", pocoSuffix),
-            string.Format(pocoTemplate, "Foundation", pocoSuffix),
-            string.Format(pocoTemplate, "JSON", pocoSuffix),
-            string.Format(pocoTemplate, "Net", pocoSuffix),
-            string.Format(pocoTemplate, "NetSSL", pocoSuffix),
-            string.Format(pocoTemplate, "Util", pocoSuffix),
-            string.Format(pocoTemplate, "XML", pocoSuffix)
-        };
-
-        CopyFiles(
-            pocoBinaries,
-            BinariesDirectory
-        );
-
         // Copy JS files
         CopyFiles(GetFiles("../js/*.js"),         BinariesDirectory + "/js");
         CopyFiles(GetFiles("../js/plugins/*.js"), BinariesDirectory + "/js/plugins");
@@ -177,8 +150,7 @@ Task("Output")
         // Copy relevant dist files
         var distFiles = new []
         {
-            "../dist/cacert.pem",
-            "../dist/win32/hadoukend.json.template"
+            "../dist/win32/hadouken.json.template"
         };
 
         CopyFiles(distFiles, BinariesDirectory);

@@ -56,6 +56,27 @@ var eventMap = {
     "torrent.urlSeed":             "url_seed_alert"
 };
 
+/*
+A filter for events. Returns true if we should invoke the
+callback for this event. Used for muting eg. torrent.finished
+for torrents with zero downloaded bytes which most probably
+means they were added as seeding files.
+
+The default is to allow all events.
+*/
+function eventFilter(name, args) {
+    if(name === "torrent.finished") {
+        var torrent = args.torrent;
+        var status  = torrent.getStatus();
+
+        if(status.downloadedBytes === 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function on(eventName, callback) {
     if(!eventMap[eventName]) {
         throw new Error("Unknown event: " + eventName);

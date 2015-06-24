@@ -10,23 +10,23 @@
 
 #define DUK_READWRITE_PROPERTY(ctx, index, name, func) \
     duk_push_string(ctx, #name); \
-    duk_push_c_function(ctx, get##func, 0); \
-    duk_push_c_function(ctx, set##func, 1); \
+    duk_push_c_function(ctx, get_##func, 0); \
+    duk_push_c_function(ctx, set_##func, 1); \
     duk_def_prop(ctx, index, DUK_DEFPROP_HAVE_GETTER | DUK_DEFPROP_HAVE_SETTER | DUK_DEFPROP_HAVE_ENUMERABLE | DUK_DEFPROP_ENUMERABLE);
 
-namespace Hadouken
+namespace hadouken
 {
-    namespace Scripting
+    namespace scripting
     {
-        namespace Modules
+        namespace modules
         {
-            class Common
+            class common
             {
             public:
                 template<typename T>
                 static void finalize(duk_context* ctx)
                 {
-                    if (duk_get_prop_string(ctx, -1, getFieldName<T>().c_str()))
+                    if (duk_get_prop_string(ctx, -1, get_field_name<T>().c_str()))
                     {
                         delete static_cast<T*>(duk_get_pointer(ctx, -1));
                         duk_pop(ctx);
@@ -34,13 +34,13 @@ namespace Hadouken
                 }
 
                 template<typename T>
-                static T* getPointer(duk_context* ctx)
+                static T* get_pointer(duk_context* ctx)
                 {
                     duk_push_this(ctx);
 
                     T* res = 0;
 
-                    if (duk_get_prop_string(ctx, -1, getFieldName<T>().c_str()))
+                    if (duk_get_prop_string(ctx, -1, get_field_name<T>().c_str()))
                     {
                         res = static_cast<T*>(duk_get_pointer(ctx, -1));
                         duk_pop(ctx);
@@ -51,11 +51,11 @@ namespace Hadouken
                 }
 
                 template<typename T>
-                static T* getPointer(duk_context* ctx, duk_idx_t idx)
+                static T* get_pointer(duk_context* ctx, duk_idx_t idx)
                 {
                     T* res = 0;
 
-                    if (duk_get_prop_string(ctx, idx, getFieldName<T>().c_str()))
+                    if (duk_get_prop_string(ctx, idx, get_field_name<T>().c_str()))
                     {
                         res = static_cast<T*>(duk_get_pointer(ctx, -1));
                         duk_pop(ctx);
@@ -65,18 +65,18 @@ namespace Hadouken
                 }
 
                 template<typename T>
-                static void setPointer(duk_context* ctx, duk_idx_t idx, T* ptr)
+                static void set_pointer(duk_context* ctx, duk_idx_t idx, T* ptr)
                 {
                     duk_push_pointer(ctx, ptr);
-                    duk_put_prop_string(ctx, idx, getFieldName<T>().c_str());
+                    duk_put_prop_string(ctx, idx, get_field_name<T>().c_str());
                 }
 
             private:
                 template<typename T>
-                static std::string getFieldName()
+                static std::string get_field_name()
                 {
-                    std::string typeName(typeid(T).name());
-                    return std::string("\xff" + typeName);
+                    std::string type(typeid(T).name());
+                    return std::string("\xff" + type);
                 }
             };
         }

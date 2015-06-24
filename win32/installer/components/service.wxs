@@ -4,9 +4,10 @@
   <Fragment>
     <ComponentGroup Id="ServiceComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component Id="HadoukenService">
-        <File Id="HadoukenServiceExecutable" Name="hadoukend.exe" />
+        <File Id="HadoukenServiceExecutable" Name="hadouken.exe" />
 
         <ServiceInstall Id="ServiceInstaller"
+                        Arguments="--daemon"
                         Type="ownProcess"
                         Vital="yes"
                         Name="Hadouken"

@@ -63,7 +63,7 @@ function checkFolders(folders) {
 
 function load() {
     var enabled = config.getBoolean("extensions.autoadd.enabled");
-
+    
     if(!enabled) {
         return;
     }

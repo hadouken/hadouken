@@ -113,32 +113,38 @@ Authentication
 Hadouken supports three modes of authentication, *none*, *HTTP Basic* and
 *Token*. The installer supports the configuration of all three modes.
 
-To activate *Token* authentication, set the `auth` setting to *token* and
-then supply a token.
+To activate *Token* authentication, set the `http.auth.type` setting to
+*token* and then supply a token.
 
 .. code:: javascript
 
   {
     "http":
     {
-      "auth": "token",
-      "token": "YOUR-TOKEN-HERE"
+      "auth":
+      {
+        "type": "token",
+        "token": "YOUR-TOKEN-HERE"        
+      }
     }
   }
 
-To activate *HTTP Basic* authentication, set the `auth` setting to *basic* and
-then provide a username and password.
+To activate *HTTP Basic* authentication, set the `http.auth.type` setting to
+*basic* and then provide a username and password.
 
 .. code:: javascript
 
   {
     "http":
     {
-      "auth": "basic",
-      "basic":
+      "auth":
       {
-        "userName": "YOUR-USERNAME",
-        "password": "YOUR-PASSWORD"
+        "type": "basic",
+        "basic":
+        {
+          "userName": "YOUR-USERNAME",
+          "password": "YOUR-PASSWORD"
+        }
       }
     }
   }

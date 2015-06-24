@@ -8,23 +8,6 @@ var url   = "https://api.pushover.net/1/messages.json";
 var token = config.getString("extensions.pushover.token");
 var user  = config.getString("extensions.pushover.user");
 
-function getEnabledEvents() {
-    var key    = "extensions.pushover.enabledEvents";
-    var result = [];
-
-    for(var i = 0; i < Number.MAX_VALUE; i++) {
-        var query = key + "[" + i + "]";
-
-        if(config.has(query)) {
-            result.push(config.getString(query));
-        } else {
-            break;
-        }
-    }
-
-    return result;
-}
-
 function pushMessage(title, message) {
     var data  = "token=" + token;
         data += "&user=" + user;
@@ -54,19 +37,19 @@ function load() {
         return;
     }
 
-    var events = getEnabledEvents();
+    var events = config.get("extensions.pushover.enabledEvents");
     logger.info("Pushover enabled with " + events.length + " enabled events.");
 
     if(events.indexOf("torrent.added") > -1) {
-        session.on("torrent.added", function(torrent) {
-            var status = torrent.getStatus();
+        session.on("torrent.added", function(args) {
+            var status = args.torrent.getStatus();
             pushMessage("Torrent added", "Torrent '" + status.name + "' was added.");
         });
     }
 
     if(events.indexOf("torrent.finished") > -1) {
-        session.on("torrent.finished", function(torrent) {
-            var status = torrent.getStatus();
+        session.on("torrent.finished", function(args) {
+            var status = args.torrent.getStatus();
             pushMessage("Torrent finished", "Torrent '" + status.name + "' finished downloading.");
         });
     }

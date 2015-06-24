@@ -4,24 +4,18 @@ var process = require("process");
 var session = require("bittorrent").session;
 
 function getApplicationEvents() {
-    var key    = "extensions.launcher.apps";
+    var apps   = config.get("extensions.launcher.apps");
     var result = {};
 
-    for(var i = 0; i < Number.MAX_VALUE; i++) {
-        var query = key + "[" + i + "]";
+    for(var i = 0; i < apps.length; i++) {
+        var eventName   = apps[i][0];
+        var application = apps[i][1];
 
-        if(config.has(query)) {
-            var eventName   = config.getString(query + "[0]");
-            var application = config.getString(query + "[1]");
-
-            if(!result[eventName]) {
-                result[eventName] = [];
-            }
-
-            result[eventName].push(application);
-        } else {
-            break;
+        if(!result[eventName]) {
+            result[eventName] = [];
         }
+
+        result[eventName].push(application);
     }
 
     return result;
@@ -55,18 +49,20 @@ function load() {
 
     var appEvents = getApplicationEvents();
 
-    session.on("torrent.added", function(torrent) {
-        var status = torrent.getStatus();
-        var apps   = appEvents["torrent.added"];
+    session.on("torrent.added", function(args) {
+        var torrent = args.torrent;
+        var status  = torrent.getStatus();
+        var apps    = appEvents["torrent.added"];
 
         if(!apps) { return; }
 
         launch(apps, [ torrent.infoHash, status.name, status.savePath ]);
     });
 
-    session.on("torrent.finished", function(torrent) {
-        var status = torrent.getStatus();
-        var apps   = appEvents["torrent.finished"];
+    session.on("torrent.finished", function(args) {
+        var torrent = args.torrent;
+        var status  = torrent.getStatus();
+        var apps    = appEvents["torrent.finished"];
 
         if(!apps) { return; }
 

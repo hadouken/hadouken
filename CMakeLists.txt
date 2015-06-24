@@ -12,27 +12,36 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if(WIN32)
-    set(LIBTORRENT torrent.lib)
+    set(LIBSSL libeay32.lib ssleay32.lib)
+    set(LIBEXTRAS iphlpapi.lib dbghelp.lib shlwapi.lib)
 
     add_definitions(
-        -DPOCO_NO_UNWINDOWS
+        -DUNICODE
         -DWIN32
         -DWIN32_LEAN_AND_MEAN
-        -D_CRT_SECURE_NO_WARNINGS
-        -D_SCL_SECURE_NO_WARNINGS
-        -D_WIN32_WINNT=0x0501
+        -D_CRT_SECURE_NO_DEPRECATE
+        -D_FILE_OFFSET_BITS=64
+        -D_SCL_SECURE_NO_DEPRECATE
+        -D_UNICODE
+        -D_WIN32
+        -D_WIN32_WINNT=0x0600
+        -D__USE_W32_SOCKETS
+        /Zc:wchar_t
+        /Zc:forScope
+        /MP
     )
 
     include_directories(
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/include
+        ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1
+        ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/include
+        ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/ed25519/src
+        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.boost/include
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/include
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/include
     )
 
     link_directories(
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.libtorrent/win32/lib
+        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.boost/win32/lib
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/lib
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.poco/win32/lib
     )
 
     # Make sure release builds have pdb files.
@@ -41,13 +50,15 @@ if(WIN32)
 else()
     set(LIBBOOST boost_system)
     set(LIBTORRENT libtorrent-rasterbar.so)
-    set(LIBPOCO libPocoFoundation.so libPocoJSON.so libPocoNet.so libPocoNetSSL.so libPocoUtil.so)
     set(PTHREAD pthread)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/hadoukend")
 endif()
+
+# add_definitions() doesn't seem to let you say wich build type to apply it to
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DTORRENT_DEBUG")
 
 # Get our version number
 file (STRINGS "${CMAKE_SOURCE_DIR}/VERSION" VERSION)
@@ -72,48 +83,177 @@ execute_process(
 configure_file("${CMAKE_SOURCE_DIR}/src/version.cpp.in" "${CMAKE_SOURCE_DIR}/src/version.cpp" @ONLY)
 
 add_definitions(
+    -DBOOST_ASIO_ENABLE_CANCELIO
+    -DBOOST_ASIO_HASH_MAP_BUCKETS=1021
     -DBOOST_ASIO_SEPARATE_COMPILATION
-    -DBOOST_ALL_DYN_LINK
-    -DTORRENT_NO_DEPRECATE
+    -DBOOST_EXCEPTION_DISABLE
+    -DBOOST_NETWORK_ENABLE_HTTPS
+    -DTORRENT_USE_I2P=1
     -DTORRENT_USE_OPENSSL
+    -DTORRENT_NO_DEPRECATE
+    -DWITH_SHIPPED_GEOIP_H
 )
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
+set(ltdir ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/src)
+
+# Get sources for libtorrent
+set(sources
+    web_connection_base
+    alert
+    alert_manager
+    allocator
+    asio
+    assert
+    bandwidth_limit
+    bandwidth_manager
+    bandwidth_queue_entry
+    bloom_filter
+    chained_buffer
+    connection_queue
+    create_torrent
+    disk_buffer_holder
+    entry
+    error_code
+    file_storage
+    lazy_bdecode
+    escape_string
+    string_util
+    file
+    gzip
+    hasher
+    http_connection
+    http_stream
+    http_parser
+    i2p_stream
+    identify_client
+    ip_filter
+    ip_voter
+    peer_connection
+    bt_peer_connection
+    web_peer_connection
+    http_seed_connection
+    instantiate_connection
+    natpmp
+    packet_buffer
+    piece_picker
+    policy
+    puff
+    random
+    rss
+    session
+    session_impl
+    settings
+    socket_io
+    socket_type  
+    socks5_stream
+    stat
+    storage
+    time
+    timestamp_history
+    torrent
+    torrent_handle
+    torrent_info
+    tracker_manager
+    http_tracker_connection
+    utf8
+    udp_tracker_connection
+    udp_socket
+    upnp
+    utp_socket_manager
+    utp_stream
+    logger
+    file_pool
+    lsd
+    disk_buffer_pool
+    disk_io_thread
+    enum_net
+    broadcast_socket
+    magnet_uri
+    parse_url
+    ConvertUTF
+    thread
+    xml_parse
+    pe_crypto
+    asio_ssl
+    GeoIP
+
+# -- extensions --
+    metadata_transfer
+    ut_pex
+    ut_metadata
+    smart_ban
+    lt_trackers
+)
+
+# -- kademlia --
+set(kademlia_sources
+    dht_tracker
+    node
+    refresh
+    rpc_manager
+    find_data
+    node_id
+    routing_table
+    traversal_algorithm
+    logging
+    item
+    get_peers
+    get_item
+)
+
+# -- ed25519 --
+set(ed25519_sources
+    add_scalar
+    fe
+    ge
+    key_exchange
+    keypair
+    sc
+    seed
+    sha512
+    sign
+    verify
+)
+
+foreach(s ${sources})
+    list(APPEND LIBTORRENT_SOURCES ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/src/${s})
+endforeach(s)
+
+foreach(s ${kademlia_sources})
+    list(APPEND LIBTORRENT_SOURCES ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/src/kademlia/${s})
+endforeach(s)
+foreach(s ${ed25519_sources})
+    list(APPEND LIBTORRENT_SOURCES ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/ed25519/src/${s})
+endforeach(s)
+
 # Get sources for hadouken (except main.cpp)
 file(GLOB_RECURSE HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 list(APPEND       HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/scripting/duktape.c)
-list(REMOVE_ITEM  HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
-add_library(
-    hadouken
-    SHARED
-    ${HADOUKEN_SOURCES}
+set(CPP_NETLIB_SOURCES
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/client
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/server_request_parsers_impl
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/uri/schemes
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/uri/uri
 )
 
 add_executable(
-    hadoukend
-    src/main.cpp
+    hadouken
+    ${HADOUKEN_SOURCES}
+    ${LIBTORRENT_SOURCES}
+    ${CPP_NETLIB_SOURCES}
 )
 
 target_link_libraries(
     hadouken
-    ${LIBTORRENT}
+    ${LIBEXTRAS}
     ${LIBBOOST}
-    ${LIBPOCO}
+    ${LIBSSL}
     ${PTHREAD}
 )
 
-target_link_libraries(
-    hadoukend
-    hadouken
-    ${LIBTORRENT}
-    ${LIBBOOST}
-    ${LIBPOCO}
-    ${PTHREAD}
-)
-
-install(TARGETS hadouken  DESTINATION lib/hadoukend)
-install(TARGETS hadoukend DESTINATION sbin)
+install(TARGETS hadouken  DESTINATION sbin)

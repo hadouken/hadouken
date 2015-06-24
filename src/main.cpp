@@ -1,113 +1,122 @@
-#include <Hadouken/BitTorrent/TorrentSubsystem.hpp>
-#include <Hadouken/Http/HttpSubsystem.hpp>
-#include <Hadouken/Scripting/ScriptingSubsystem.hpp>
-#include <Hadouken/Platform.hpp>
-#include <Poco/File.h>
-#include <Poco/Path.h>
-#include <Poco/Util/ServerApplication.h>
+#include <boost/asio.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/program_options.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <hadouken/application.hpp>
+#include <hadouken/logging.hpp>
+#include <hadouken/platform.hpp>
+#include <hadouken/hosting/host.hpp>
+#include <hadouken/hosting/console_host.hpp>
 
-#include <boost/asio/impl/src.hpp>
-#include <iostream>
-
-using namespace Poco::Util;
-
-class HadoukenApplication : public ServerApplication
-{
-public:
-    HadoukenApplication()
-    {
-        Application::config().setString("application.logger", "hadouken");
-
-        addSubsystem(new Hadouken::BitTorrent::TorrentSubsystem());
-        addSubsystem(new Hadouken::Http::HttpSubsystem());
-        addSubsystem(new Hadouken::Scripting::ScriptingSubsystem());
-    }
-
-protected:
-    void defineOptions(OptionSet& options)
-    {
-        ServerApplication::defineOptions(options);
-
-        // Add option for separate configuration file
-        options.addOption(Option("config", "c")
-            .argument("a path to a configuration file")
-            .binding("configFile"));
-    }
-
-    void loadServiceConfiguration(Application& app)
-    {
 #ifdef WIN32
-        std::string serviceKey = "application.runAsService";
-#else
-        std::string serviceKey = "application.runAsDaemon";
+#include <hadouken/hosting/service_host.hpp>
 #endif
 
-        if (!app.config().getBool(serviceKey, false))
-        {
-            return;
-        }
+namespace fs = boost::filesystem;
+namespace po = boost::program_options;
+namespace pt = boost::property_tree;
 
-        // If we run as a service (ie. config has property application.runAsService)
-        // and we are on Windows, load the C:/ProgramData/Hadouken/config.json
-        // configuration file. It should've been put there by the installer.
+po::variables_map load_options(int argc,char *argv[])
+{
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("config", "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
+        ("daemon", "Start Hadouken in daemon/service mode.")
+#ifdef WIN32
+        ("install-service", "Install Hadouken in the SCM.")
+        ("uninstall-service", "Uninstall Hadouken from the SCM.")
+#endif
+        ;
 
-        // If we run as a daemon (ie. config has property application.runAsDaemon)
-        // and we are on Linux, load the /etc/hadouken/config.json configuration
-        // file.
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
 
-        Poco::Path dataPath = Hadouken::Platform::getApplicationDataPath();
-        
-        if (dataPath.toString().empty())
-        {
-            app.logger().error("Could not retrieve application data path.");
-            return;
-        }
+    return vm;
+}
 
-        Poco::Path configPath(dataPath, "config.json");
-        Poco::File configFile(configPath);
-
-        if (configFile.exists())
-        {
-            loadConfiguration(configFile.path());
-        }
-        else
-        {
-            app.logger().error("No config file found at '%s'.", configFile.path());
-        }
-    }
-
-    void initialize(Application& self)
+fs::path get_config_path(const po::variables_map& options)
+{
+    if (options.count("config"))
     {
-        loadConfiguration();
-
-        std::string configFile = self.config().getString("configFile", "");
-
-        if (!configFile.empty())
-        {
-            if (Poco::File(configFile).exists())
-            {
-                self.logger().information("Loading configuration from %s.", configFile);
-                loadConfiguration(configFile);
-            }
-            else
-            {
-                self.logger().error("Configuration file %s does not exist.", configFile);
-            }
-        }
-        else
-        {
-            // Load default configuration file
-            loadServiceConfiguration(self);
-        }
-
-        Application::initialize(self);
+        return options["config"].as<std::string>();
     }
-
-    int main(const ArgVec& args)
+    else if (options.count("daemon"))
     {
-        waitForTerminationRequest();
-        return Application::EXIT_OK;
+        return (hadouken::platform::data_path() / "hadouken.json");
     }
-};
+    else
+    {
+        return (hadouken::platform::application_path() / "hadouken.json");
+    }
+}
 
-POCO_SERVER_MAIN(HadoukenApplication)
+std::unique_ptr<hadouken::hosting::host> get_host(const po::variables_map& options)
+{
+    if (options.count("daemon"))
+    {
+#ifdef WIN32
+        return std::unique_ptr<hadouken::hosting::host>(new hadouken::hosting::service_host());
+#endif
+    }
+
+    return std::unique_ptr<hadouken::hosting::host>(new hadouken::hosting::console_host());
+}
+
+int main(int argc, char *argv[])
+{
+    po::variables_map vm = load_options(argc, argv);
+    hadouken::logging::setup(vm);
+
+#ifdef WIN32
+    if (vm.count("install-service"))
+    {
+        hadouken::platform::install_service();
+        return 0;
+    }
+    else if (vm.count("uninstall-service"))
+    {
+        hadouken::platform::uninstall_service();
+        return 0;
+    }
+#endif
+
+    // Do platform-specific initialization as early as possible.
+    hadouken::platform::init();
+
+    fs::path config_file = get_config_path(vm);
+    pt::ptree config;
+
+    if (!fs::exists(config_file))
+    {
+        BOOST_LOG_TRIVIAL(warning) << "Could not find config file at " << config_file;
+    }
+    else
+    {
+        try
+        {
+            pt::read_json(config_file.string(), config);
+            BOOST_LOG_TRIVIAL(info) << "Loaded config file " << config_file;
+        }
+        catch (const std::exception& ex)
+        {
+            // To meet expectations, fail if the configuration file cannot be parsed. Otherwise,
+            // we will revert to the default config which might be totally wrong.
+            BOOST_LOG_TRIVIAL(fatal) << "Error when loading config file " << config_file << ": " << ex.what();
+            return EXIT_FAILURE;
+        }
+    }
+
+    boost::shared_ptr<boost::asio::io_service> io(new boost::asio::io_service());
+    
+    hadouken::application app(io, config);
+    app.script_host().define_global("__CONFIG__", config_file.string());
+
+    app.start();
+    int result = get_host(vm)->wait_for_exit(io);
+    app.stop();
+
+    return result;
+}
