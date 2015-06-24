@@ -2,9 +2,11 @@
 
 #include <hadouken/scripting/modules/bittorrent/alert_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/entry_wrapper.hpp>
+#include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/session_settings_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
 #include <libtorrent/alert_types.hpp>
+#include <libtorrent/rss.hpp>
 #include <libtorrent/session.hpp>
 
 #include "../common.hpp"
@@ -32,9 +34,11 @@ void session_wrapper::initialize(duk_context* ctx, libtorrent::session& session)
     duk_function_list_entry functions[] =
     {
         { "addDhtRouter",   add_dht_router, 2 },
+        { "addFeed",        add_feed,       1 },
         { "addTorrent",     add_torrent,    2 },
         { "findTorrent",    find_torrent,   1 },
         { "getAlerts",      get_alerts,     0 },
+        { "getFeeds",       get_feeds,      0 },
         { "getSettings",    get_settings,   0 },
         { "getStatus",      get_status,     0 },
         { "getTorrents",    get_torrents,   0 },
@@ -59,6 +63,18 @@ duk_ret_t session_wrapper::add_dht_router(duk_context* ctx)
 
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
     sess->add_dht_router(std::make_pair(url, port));
+    return 0;
+}
+
+duk_ret_t session_wrapper::add_feed(duk_context* ctx)
+{
+    libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
+    libtorrent::feed_settings* feed = common::get_pointer<libtorrent::feed_settings>(ctx, 0);
+
+    libtorrent::feed_handle handle = sess->add_feed(*feed);
+
+    // Push feed handle? No
+
     return 0;
 }
 
@@ -122,6 +138,27 @@ duk_ret_t session_wrapper::get_alerts(duk_context* ctx)
     for (auto &alert : alerts)
     {
         alert_wrapper::construct(ctx, alert);
+        duk_put_prop_index(ctx, arrIdx, i);
+
+        ++i;
+    }
+
+    return 1;
+}
+
+duk_ret_t session_wrapper::get_feeds(duk_context* ctx)
+{
+    libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
+
+    std::vector<libtorrent::feed_handle> feed_handles;
+    sess->get_feeds(feed_handles);
+
+    duk_idx_t arrIdx = duk_push_array(ctx);
+    int i = 0;
+
+    for (libtorrent::feed_handle handle : feed_handles)
+    {
+        feed_handle_wrapper::initialize(ctx, handle);
         duk_put_prop_index(ctx, arrIdx, i);
 
         ++i;

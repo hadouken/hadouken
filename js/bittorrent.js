@@ -53,7 +53,8 @@ var eventMap = {
     "tracker.reply":               "tracker_reply_alert",
     "tracker.warning":             "tracker_warning_alert",
     "peer.unwantedBlock":          "unwanted_block_alert",
-    "torrent.urlSeed":             "url_seed_alert"
+    "torrent.urlSeed":             "url_seed_alert",
+    "rss":                         "rss_alert"
 };
 
 /*

@@ -49,7 +49,7 @@ fs::path get_config_path(const po::variables_map& options)
     }
     else
     {
-        return (hadouken::platform::application_path() / "hadouken.json");
+        return (hadouken::platform::get_current_directory() / "hadouken.json");
     }
 }
 
@@ -70,6 +70,9 @@ int main(int argc, char *argv[])
     po::variables_map vm = load_options(argc, argv);
     hadouken::logging::setup(vm);
 
+    // Do platform-specific initialization as early as possible.
+    hadouken::platform::init();
+
 #ifdef WIN32
     if (vm.count("install-service"))
     {
@@ -82,9 +85,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 #endif
-
-    // Do platform-specific initialization as early as possible.
-    hadouken::platform::init();
 
     fs::path config_file = get_config_path(vm);
     pt::ptree config;

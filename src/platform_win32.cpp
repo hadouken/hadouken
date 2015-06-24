@@ -162,6 +162,14 @@ boost::filesystem::path platform::application_path()
     return boost::filesystem::path(szPath).parent_path();
 }
 
+boost::filesystem::path platform::get_current_directory()
+{
+    TCHAR buffer[MAX_PATH];
+    GetCurrentDirectory(MAX_PATH, buffer);
+
+    return boost::filesystem::path(buffer);
+}
+
 int platform::launch_process(std::string executable, std::vector<std::string> args)
 {
     // TODO

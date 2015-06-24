@@ -40,6 +40,10 @@
       </Component>
 
       <Component>
+        <File Name="rss.js" />
+      </Component>
+
+      <Component>
         <File Name="timer.js" />
       </Component>
     </ComponentGroup>
@@ -73,6 +77,14 @@
 
       <Component>
         <File Name="core_getSystemInfo.js" />
+      </Component>
+
+      <Component>
+        <File Name="rss_getFeedItems.js" />
+      </Component>
+
+      <Component>
+        <File Name="rss_getFeeds.js" />
       </Component>
 
       <Component>
