@@ -26,6 +26,8 @@ namespace hadouken
 
         static boost::filesystem::path application_path();
 
+        static boost::filesystem::path get_current_directory();
+
         static int launch_process(std::string executable, std::vector<std::string> args);
     };
 }

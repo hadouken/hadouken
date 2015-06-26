@@ -40,6 +40,7 @@ namespace libtorrent
     struct portmap_log_alert;
     struct read_piece_alert;
     struct request_dropped_alert;
+    struct rss_alert;
     struct save_resume_data_alert;
     struct save_resume_data_failed_alert;
     struct scrape_failed_alert;
@@ -143,6 +144,7 @@ namespace hadouken
                     static int initialize(void* ctx, libtorrent::lsd_peer_alert* alert);
                     static int initialize(void* ctx, libtorrent::trackerid_alert* alert);
                     static int initialize(void* ctx, libtorrent::dht_bootstrap_alert* alert);
+                    static int initialize(void* ctx, libtorrent::rss_alert* alert);
                     static int initialize(void* ctx, libtorrent::torrent_error_alert* alert);
                     static int initialize(void* ctx, libtorrent::torrent_need_cert_alert* alert);
                     static int initialize(void* ctx, libtorrent::incoming_connection_alert* alert);

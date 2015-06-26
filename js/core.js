@@ -4,6 +4,7 @@ var config   = require("config");
 var fs       = require("fs");
 var logger   = require("logger").get("core");
 var metadata = require("metadata");
+var rss      = require("rss");
 var session  = bt.session;
 
 session.on("torrent.removed", function(e) {
@@ -42,7 +43,7 @@ session.on("torrent.metadataReceived", function(e) {
     var file         = fs.combine(torrentsPath, e.torrent.infoHash + ".torrent");
 
     fs.writeBuffer(file, buffer);
-    logger.info("Saved torrent file for '" + e.torrent.getTorrentInfo().name + "' to " + file);
+    logger.info("Saved torrent file for '" + info.name + "' to " + file);
 });
 
 function getTorrentsPath() {
@@ -114,9 +115,23 @@ function load() {
     // Set up listen port for BitTorrent communication
     session.listenOn([6881, 6889]);
 
+    // Set up DHT
+    var dhtEnabled = config.getBoolean("bittorrent.dht.enabled");
+
+    if(dhtEnabled) {
+        session.startDht();
+
+        var routers = config.get("bittorrent.dht.routers") || [];
+
+        for(var i = 0; i < routers.length; i++) {
+            session.addDhtRouter(routers[i][0], routers[i][1]);
+        }
+    }
+
     loadState();
     loadTorrents();
 
+    rss.load();
     require("plugins").load();
 }
 
@@ -202,6 +217,8 @@ function saveTorrents() {
 }
 
 function unload() {
+    rss.unload();
+
     saveState();
     saveTorrents();
 }

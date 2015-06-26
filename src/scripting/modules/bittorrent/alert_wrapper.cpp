@@ -1,6 +1,7 @@
 #include <hadouken/scripting/modules/bittorrent/alert_wrapper.hpp>
 
 #include <hadouken/scripting/modules/bittorrent/entry_wrapper.hpp>
+#include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
 #include <libtorrent/alert_types.hpp>
 
@@ -81,7 +82,7 @@ void alert_wrapper::construct(duk_context* ctx, libtorrent::alert* alert)
         ALERT_CASE(lsd_peer_alert)
         ALERT_CASE(trackerid_alert)
         ALERT_CASE(dht_bootstrap_alert)
-        //ALERT_CASE(rss_alert)
+        ALERT_CASE(rss_alert)
         ALERT_CASE(torrent_error_alert)
         ALERT_CASE(torrent_need_cert_alert)
         //ALERT_CASE(add_torrent_alert)
@@ -796,6 +797,22 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::trackerid_aler
 duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::dht_bootstrap_alert* alert)
 {
     return alert_wrapper::initialize(ctx, static_cast<libtorrent::alert*>(alert));
+}
+
+duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::rss_alert* alert)
+{
+    duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::alert*>(alert));
+
+    duk_push_string(ctx, alert->url.c_str());
+    duk_put_prop_string(ctx, idx, "url");
+
+    duk_push_int(ctx, alert->state);
+    duk_put_prop_string(ctx, idx, "state");
+
+    feed_handle_wrapper::initialize(ctx, alert->handle);
+    duk_put_prop_string(ctx, idx, "feed");
+
+    return idx;
 }
 
 duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::torrent_error_alert* alert)
