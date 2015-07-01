@@ -38,6 +38,8 @@ Features
 * Automatically monitor directories for torrent files and add them based on
   regular expression matching, giving powerful abilities for sorting and tagging
   torrents.
+* Advanced RSS feed monitoring capabilities making subscribing to various feeds
+  a breeze.
 * Move completed torrents matching specific regular expressions or having the
   correct set of tags.
 * Send push notifications to your devices via `Pushbullet <https://www.pushbullet.com>`_
@@ -69,6 +71,15 @@ documentation for your specific platform.
    installing/windows
 
 
+Building Hadouken
+-----------------
+
+.. toctree::
+   :maxdepth: 1
+
+   building/windows
+
+
 Documentation
 -------------
 
@@ -78,3 +89,4 @@ Documentation
    getting-started
    migrating
    configuration
+   for-developers

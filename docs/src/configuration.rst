@@ -11,11 +11,11 @@ text editor.
 
 See the list below for where your configuration file is.
 
-* Windows: :file:`C:/ProgramData/Hadouken/config.json`
+* Windows: :file:`C:/ProgramData/Hadouken/hadouken.json`
 
 .. warning:: The configuration examples below only shows the JSON you need to
              change in order for the setting to have effect. Hadouken *will*
-             fail to start if :file:`config.json` contains invalid JSON.
+             fail to start if :file:`hadouken.json` contains invalid JSON.
 
 
 Extensions
