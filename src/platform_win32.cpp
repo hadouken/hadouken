@@ -2,6 +2,7 @@
 
 #include <hadouken/platform.hpp>
 
+#include <atlstr.h>
 #include <boost/log/trivial.hpp>
 #include <windows.h>
 #include <shlobj.h>
@@ -172,8 +173,43 @@ boost::filesystem::path platform::get_current_directory()
 
 int platform::launch_process(std::string executable, std::vector<std::string> args)
 {
-    // TODO
-    return -1;
+    STARTUPINFO startInfo;
+    PROCESS_INFORMATION procInfo;
+
+    std::string cmd = executable;
+
+    for (std::string arg : args)
+    {
+        cmd.append(" " + arg);
+    }
+
+    TCHAR p[4096];
+    _tcscpy_s(p, CA2T(cmd.c_str()));
+
+    if (!CreateProcess(NULL,
+        p,
+        NULL,
+        NULL,
+        TRUE,
+        CREATE_NEW_PROCESS_GROUP,
+        NULL,
+        NULL,
+        &startInfo,
+        &procInfo))
+    {
+        BOOST_LOG_TRIVIAL(error) << "CreateProcess failed: " << GetLastError();
+        return -999;
+    }
+
+    WaitForSingleObject(procInfo.hProcess, INFINITE);
+
+    DWORD exitCode;
+    GetExitCodeProcess(procInfo.hProcess, &exitCode);
+
+    CloseHandle(procInfo.hThread);
+    CloseHandle(procInfo.hProcess);
+
+    return exitCode;
 }
 
 #endif
