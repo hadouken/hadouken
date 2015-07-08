@@ -18,8 +18,8 @@ See the list below for where your configuration file is.
              fail to start if :file:`hadouken.json` contains invalid JSON.
 
 
-Extensions
-``````````
+In depth
+````````
 
 .. toctree::
    :maxdepth: 1
@@ -29,6 +29,7 @@ Extensions
    configuration/launcher
    configuration/pushbullet
    configuration/pushover
+   configuration/rss
 
 
 BitTorrent configuration
@@ -165,6 +166,31 @@ the listen port to *8880*.
       "port": 8880
     }
   }
+
+
+Enabling HTTPS
+``````````````
+
+By default, HTTPS is disabled. However, enabling it is as easy as generating
+a private key file and adding the required configuration.
+
+.. code:: javascript
+
+   {
+     "http":
+     {
+       "ssl":
+       {
+         "enabled": true,
+         "privateKeyFile": "C:/Keys/my-private-key.pem",
+         "privateKeyPassword": "my-password"
+       }
+     }
+   }
+
+.. note:: Using a private key which is not trusted by the client computer may
+          generate warnings and errors in the client browser. To avoid
+          problems, add the public key to your client system.
 
 
 Custom root path

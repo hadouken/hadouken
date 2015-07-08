@@ -77,6 +77,7 @@ Building Hadouken
 .. toctree::
    :maxdepth: 1
 
+   building/ubuntu
    building/windows
 
 
