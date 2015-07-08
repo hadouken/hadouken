@@ -90,6 +90,11 @@ function onRss(arg) {
 
     var status = arg.feed.getStatus();
     var feed   = Feed.find(status.url);
+
+    if(!feed) {
+        return;
+    }
+
     var items  = status.getItems();
 
     for(var i = 0; i < items.length; i++) {

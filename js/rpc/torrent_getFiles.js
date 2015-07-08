@@ -6,7 +6,7 @@ exports.rpc = {
         var torrent = session.findTorrent(infoHash);
         
         if(!torrent || !torrent.isValid) {
-            return null;
+            throw new Error("Invalid info hash: " + infoHash);
         }
 
         var info = torrent.getTorrentInfo();
@@ -15,9 +15,10 @@ exports.rpc = {
             return null;
         }
 
-        var files    = info.getFiles();
-        var progress = torrent.getFileProgress();
-        var result   = [];
+        var files      = info.getFiles();
+        var progress   = torrent.getFileProgress();
+        var priorities = torrent.getFilePriorities();
+        var result     = [];
 
         for(var i = 0; i < files.length; i++) {
             var file = files[i];
@@ -26,7 +27,8 @@ exports.rpc = {
                 index:    i,
                 path:     file.path,
                 progress: progress[i],
-                size:     file.size
+                size:     file.size,
+                priority: priorities[i]
             });
         }
 

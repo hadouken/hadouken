@@ -44,7 +44,7 @@ duk_ret_t peer_info_wrapper::finalize(duk_context* ctx)
 duk_ret_t peer_info_wrapper::get_country(duk_context* ctx)
 {
     libtorrent::peer_info* info = common::get_pointer<libtorrent::peer_info>(ctx);
-    duk_push_string(ctx, info->country);
+    duk_push_string(ctx, std::string(info->country, 2).c_str());
     return 1;
 }
 

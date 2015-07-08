@@ -8,8 +8,16 @@ exports.rpc = {
         var p      = bt.AddTorrentParams.getDefault();
         p.torrent  = new bt.TorrentInfo(buffer);
 
+        if(params.filePriorities instanceof Array) {
+            p.filePriorities = params.filePriorities;
+        }
+
         if(params.savePath) {
             p.savePath = params.savePath;
+        }
+
+        if(params.trackers) {
+            p.trackers = params.trackers;
         }
 
         return session.addTorrent(p);

@@ -17,6 +17,7 @@ exports.rpc = {
             result[torrent.infoHash] = {
                 name:                 status.name,
                 infoHash:             torrent.infoHash,
+                error:                status.error,
                 progress:             status.progress,
                 savePath:             status.savePath,
                 downloadRate:         status.downloadRate,

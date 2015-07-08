@@ -1,13 +1,12 @@
 var session = require("bittorrent").session;
-var core    = require("core");
 
 exports.rpc = {
     name: "torrent.queueTop",
     method: function(infoHash) {
         var torrent = session.findTorrent(infoHash);
 
-        if(!torrent) {
-            return false;
+        if(!torrent || !torrent.isValid) {
+            throw new Error("Invalid info hash: " + infoHash);
         }
 
         torrent.queueTop();

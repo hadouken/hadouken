@@ -12,6 +12,7 @@ void torrent_status_wrapper::initialize(duk_context* ctx, const libtorrent::torr
     duk_idx_t statusIndex = duk_push_object(ctx);
     common::set_pointer<libtorrent::torrent_status>(ctx, statusIndex, new libtorrent::torrent_status(status));
 
+    DUK_READONLY_PROPERTY(ctx, statusIndex, error, get_error);
     DUK_READONLY_PROPERTY(ctx, statusIndex, name, get_name);
     DUK_READONLY_PROPERTY(ctx, statusIndex, progress, get_progress);
     DUK_READONLY_PROPERTY(ctx, statusIndex, savePath, get_save_path);
@@ -40,6 +41,13 @@ duk_ret_t torrent_status_wrapper::finalize(duk_context* ctx)
 {
     common::finalize<libtorrent::torrent_status>(ctx);
     return 0;
+}
+
+duk_ret_t torrent_status_wrapper::get_error(duk_context* ctx)
+{
+    libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
+    duk_push_string(ctx, status->error.c_str());
+    return 1;
 }
 
 duk_ret_t torrent_status_wrapper::get_name(duk_context* ctx)

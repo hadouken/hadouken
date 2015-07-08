@@ -21,6 +21,8 @@ function findKey(key) {
     return val;
 }
 
+exports.obj = config;
+
 exports.get = function(key) {
     return findKey(key);
 }

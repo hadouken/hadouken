@@ -1,48 +1,36 @@
+var bt      = require("bittorrent");
 var config  = require("config");
 var fs      = require("fs");
 var logger  = require("logger").get("plugins.autoadd");
-var session = require("bittorrent").session;
+var session = bt.session;
 var timer   = require("timer");
 
 // Configuration
 var defaultPattern = ".*\.torrent$";
 var interval       = config.getNumber("extensions.autoadd.interval") || 5;
 
-function getFolders() {
-    var key    = "extensions.autoadd.folders";
-    var result = [];
-
-    for(var i = 0; i < Number.MAX_VALUE; i++) {
-        var query = key + "[" + i + "]";
-
-        if(config.has(query)) {
-            var path    = config.getString(query + ".path");
-            var pattern = config.getString(query + ".pattern");
-
-            result.push({
-                path:    path,
-                pattern: new RegExp(pattern || defaultPattern)
-            });
-        } else {
-            break;
-        }
-    }
-
-    return result;
-}
-
 function checkFiles(folder, files) {
     if(!files || files.length === 0) {
         return;
     }
 
+    var pattern = new RegExp(folder.pattern || defaultPattern);
+
     for(var i = 0; i < files.length; i++) {
         var file = files[i];
 
-        if(folder.pattern.test(file)) {
-            logger.info("Adding file " + file);
+        if(pattern.test(file)) {
+            var buffer = fs.readBuffer(file);
+            var p      = bt.AddTorrentParams.getDefault();
+            p.torrent  = new bt.TorrentInfo(buffer);
 
-            session.addTorrentFile(file, {});
+            if(folder.savePath) {
+                p.savePath = folder.savePath;
+            }
+
+            logger.info("(AUTOADD) Adding torrent " + p.torrent.name + " from file " + file);
+
+            session.addTorrent(p);
             fs.deleteFile(file);
         }
     }
@@ -55,8 +43,12 @@ function checkFolders(folders) {
 
     for(var i = 0; i < folders.length; i++) {
         var folder = folders[i];
-        var files  = fs.getFiles(folder.path);
+        
+        if(!fs.directoryExists(folder.path)) {
+            return;
+        }
 
+        var files = fs.getFiles(folder.path);
         checkFiles(folder, files);
     }
 }
@@ -69,7 +61,7 @@ function load() {
     }
 
     var currentTick = 0;
-    var folders     = getFolders();
+    var folders     = config.get("extensions.autoadd.folders");
 
     logger.info("AutoAdd loaded, monitoring " + folders.length + " folders.");
 

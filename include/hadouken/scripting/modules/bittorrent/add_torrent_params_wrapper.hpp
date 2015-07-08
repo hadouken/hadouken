@@ -17,17 +17,21 @@ namespace hadouken
                 private:
                     static int destruct(void* ctx);
 
+                    static int get_file_priorities(void* ctx);
                     static int get_flags(void* ctx);
                     static int get_resume_data(void* ctx);
                     static int get_save_path(void* ctx);
                     static int get_sparse_mode(void* ctx);
                     static int get_torrent(void* ctx);
+                    static int get_trackers(void* ctx);
                     static int get_url(void* ctx);
+                    static int set_file_priorities(void* ctx);
                     static int set_flags(void* ctx);
                     static int set_resume_data(void* ctx);
                     static int set_save_path(void* ctx);
                     static int set_sparse_mode(void* ctx);
                     static int set_torrent(void* ctx);
+                    static int set_trackers(void* ctx);
                     static int set_url(void* ctx);
                 };
             }

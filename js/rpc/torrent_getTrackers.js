@@ -5,8 +5,8 @@ exports.rpc = {
     method: function(infoHash) {
         var torrent = session.findTorrent(infoHash);
         
-        if(!torrent) {
-            return null;
+        if(!torrent || !torrent.isValid) {
+            throw new Error("Invalid info hash: " + infoHash);
         }
 
         var trackers = torrent.getTrackers();
@@ -16,11 +16,22 @@ exports.rpc = {
             var tracker = trackers[i];
 
             result.push({
-                isUpdating: tracker.isUpdating,
-                isVerified: tracker.isVerified,
-                message:    tracker.message,
-                tier:       tracker.tier,
-                url:        tracker.url
+                failCount:    tracker.failCount,
+                failLimit:    tracker.failLimit,
+                isUpdating:   tracker.isUpdating,
+                isVerified:   tracker.isVerified,
+                lastError:    tracker.lastError,
+                message:      tracker.message,
+                minAnnounce:  tracker.minAnnounce,
+                nextAnnounce: tracker.nextAnnounce,
+                scrape: {
+                    complete: tracker.scrapeComplete,
+                    dowloaded: tracker.scrapeDownloaded,
+                    incomplete: tracker.scrapeIncomplete
+                },
+                source:       tracker.source,
+                tier:         tracker.tier,
+                url:          tracker.url
             });
         }
 

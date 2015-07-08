@@ -6,7 +6,7 @@ exports.rpc = {
         var torrent = session.findTorrent(infoHash);
 
         if(!torrent || !torrent.isValid) {
-            return false;
+            throw new Error("Invalid info hash: " + infoHash);
         }
 
         session.removeTorrent(torrent, removeData || false);

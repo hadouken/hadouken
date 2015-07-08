@@ -7,6 +7,29 @@ var metadata = require("metadata");
 var rss      = require("rss");
 var session  = bt.session;
 
+function saveTorrent(torrent) {
+    var torrentsPath = getTorrentsPath();
+    var file         = fs.combine(torrentsPath, torrent.infoHash + ".torrent");
+
+    if(fs.fileExists(file)) {
+        return;
+    }
+
+    var info = torrent.getTorrentInfo();
+
+    if(!info) {
+        return;
+    }
+
+    var creator = new bt.TorrentCreator(info);
+    var entry   = creator.generate();
+    var buffer  = benc.encode(entry);
+
+    // Save the actual metadata
+    fs.writeBuffer(file, buffer);
+    logger.info("Saved torrent file for '" + info.name + "' to " + file);
+}
+
 session.on("torrent.removed", function(e) {
     var torrentsPath = getTorrentsPath();
 
@@ -33,17 +56,16 @@ session.on("torrent.metadataReceived", function(e) {
         return;
     }
 
-    var info    = e.torrent.getTorrentInfo();
-    var creator = new bt.TorrentCreator(info);
-    var entry   = creator.generate();
-    var buffer  = benc.encode(entry);
+    saveTorrent(e.torrent);
+});
 
-    // Save the actual metadata
-    var torrentsPath = getTorrentsPath();
-    var file         = fs.combine(torrentsPath, e.torrent.infoHash + ".torrent");
+session.on("torrent.added", function(e) {
+    if(!e.torrent.isValid) {
+        logger.error("Invalid torrent added.");
+        return;
+    }
 
-    fs.writeBuffer(file, buffer);
-    logger.info("Saved torrent file for '" + info.name + "' to " + file);
+    saveTorrent(e.torrent);
 });
 
 function getTorrentsPath() {
@@ -88,12 +110,12 @@ function loadTorrents() {
         var file = files[i];
         if(!file.endsWith(".torrent")) { continue; }
 
-        var params = new bt.AddTorrentParams.getDefault();
+        var params = bt.AddTorrentParams.getDefault();
         params.torrent = new bt.TorrentInfo(file);
 
         // Load resume file
         var resumeFile = file.replace(/\.torrent$/i, ".resume");
-        
+
         if(fs.fileExists(resumeFile)) {
             params.resumeData = fs.readBuffer(resumeFile);
         }
@@ -114,6 +136,14 @@ function loadTorrents() {
 function load() {
     // Set up listen port for BitTorrent communication
     session.listenOn([6881, 6889]);
+
+    // Load country database
+    var geoIp = config.getString("bittorrent.geoIpFile");
+
+    if(geoIp) {
+        logger.info("Loading GeoIP database " + geoIp);
+        session.loadCountryDb(geoIp);
+    }
 
     // Set up DHT
     var dhtEnabled = config.getBoolean("bittorrent.dht.enabled");

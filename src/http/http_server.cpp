@@ -1,9 +1,11 @@
 #include <hadouken/http/http_server.hpp>
 
+#include <boost/filesystem.hpp>
 #include <boost/log/trivial.hpp>
 #include <hadouken/http/connection_handler.hpp>
 
 using namespace hadouken::http;
+namespace fs = boost::filesystem;
 
 http_server::http_server(boost::shared_ptr<boost::asio::io_service> io, const boost::property_tree::ptree& config)
     : config_(config)
@@ -20,37 +22,12 @@ http_server::http_server(boost::shared_ptr<boost::asio::io_service> io, const bo
 
     if (https_enabled)
     {
-        std::string privateKeyFile = config.get<std::string>("http.ssl.privateKeyFile");
-        // TODO: Validate the existence of the private key file
+        boost::shared_ptr<boost::asio::ssl::context> ctx = get_ssl_context();
 
-        boost::shared_ptr<boost::asio::ssl::context> ctx = boost::make_shared<boost::asio::ssl::context>(boost::asio::ssl::context::sslv23);
-        ctx->set_options(
-            boost::asio::ssl::context::default_workarounds
-            | boost::asio::ssl::context::no_sslv2
-            | boost::asio::ssl::context::single_dh_use);
-
-        ctx->set_password_callback(boost::bind(&http_server::ssl_password_callback, this, _1, _2));
-
-        boost::system::error_code ec;
-        ctx->use_certificate_chain_file(privateKeyFile, ec);
-
-        if (ec)
+        if (ctx)
         {
-            BOOST_LOG_TRIVIAL(error) << "Error when setting certificate chain file: " << ec.message();
-        }
-
-        ctx->use_private_key_file(privateKeyFile, boost::asio::ssl::context::pem, ec);
-
-        if (ec)
-        {
-            BOOST_LOG_TRIVIAL(error) << "Error when setting private key file: " << ec.message();
-        }
-
-        if (!ec)
-        {
-            // Set SSL context
             opts.context(ctx);
-            BOOST_LOG_TRIVIAL(info) << "HTTPS enabled";
+            BOOST_LOG_TRIVIAL(info) << "HTTPS enabled.";
         }
     }
 
@@ -175,4 +152,42 @@ void http_server::handle_incoming_data(http_server_t::connection_ptr connection,
 std::string http_server::ssl_password_callback(std::size_t max_length, boost::asio::ssl::context_base::password_purpose purpose)
 {
     return config_.get("http.ssl.privateKeyPassword", "");
+}
+
+boost::shared_ptr<boost::asio::ssl::context> http_server::get_ssl_context()
+{
+    std::string privateKeyFile = config_.get<std::string>("http.ssl.privateKeyFile");
+
+    if (!fs::exists(privateKeyFile))
+    {
+        BOOST_LOG_TRIVIAL(error) << "Private key file does not exist.";
+        return nullptr;
+    }
+
+    boost::shared_ptr<boost::asio::ssl::context> ctx = boost::make_shared<boost::asio::ssl::context>(boost::asio::ssl::context::sslv23);
+    ctx->set_options(
+        boost::asio::ssl::context::default_workarounds
+        | boost::asio::ssl::context::no_sslv2
+        | boost::asio::ssl::context::single_dh_use);
+
+    ctx->set_password_callback(boost::bind(&http_server::ssl_password_callback, this, _1, _2));
+
+    boost::system::error_code ec;
+    ctx->use_certificate_chain_file(privateKeyFile, ec);
+
+    if (ec)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Error when setting certificate chain file: " << ec.message();
+        return nullptr;
+    }
+
+    ctx->use_private_key_file(privateKeyFile, boost::asio::ssl::context::pem, ec);
+
+    if (ec)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Error when setting private key file: " << ec.message();
+        return nullptr;
+    }
+
+    return ctx;
 }

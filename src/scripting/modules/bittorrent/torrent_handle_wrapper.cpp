@@ -17,27 +17,28 @@ void torrent_handle_wrapper::initialize(duk_context* ctx, const libtorrent::torr
 {
     duk_function_list_entry functions[] =
     {
-        { "clearError",      clear_error,       0 },
-        { "flushCache",      flush_cache,       0 },
-        { "forceRecheck",    force_recheck,     0 },
-        { "getFileProgress", get_file_progress, 0 },
-        { "getPeers",        get_peers,         0 },
-        { "getStatus",       get_status,        0 },
-        { "getTorrentInfo",  get_torrent_info,  0 },
-        { "getTrackers",     get_trackers,      0 },
-        { "havePiece",       have_piece,        1 },
-        { "moveStorage",     move_storage,      1 },
-        { "pause",           pause,             0 },
-        { "queueBottom",     queue_bottom,      0 },
-        { "queueDown",       queue_down,        0 },
-        { "queueTop",        queue_top,         0 },
-        { "queueUp",         queue_up,          0 },
-        { "readPiece",       read_piece,        1 },
-        { "renameFile",      rename_file,       2 },
-        { "resume",          resume,            0 },
-        { "saveResumeData",  save_resume_data,  0 },
-        { "setPriority",     set_priority,      1 },
-        { NULL,              NULL,              0 }
+        { "clearError",        clear_error,         0 },
+        { "flushCache",        flush_cache,         0 },
+        { "forceRecheck",      force_recheck,       0 },
+        { "getFilePriorities", get_file_priorities, 0 },
+        { "getFileProgress",   get_file_progress,   0 },
+        { "getPeers",          get_peers,           0 },
+        { "getStatus",         get_status,          0 },
+        { "getTorrentInfo",    get_torrent_info,    0 },
+        { "getTrackers",       get_trackers,        0 },
+        { "havePiece",         have_piece,          1 },
+        { "moveStorage",       move_storage,        1 },
+        { "pause",             pause,               0 },
+        { "queueBottom",       queue_bottom,        0 },
+        { "queueDown",         queue_down,          0 },
+        { "queueTop",          queue_top,           0 },
+        { "queueUp",           queue_up,            0 },
+        { "readPiece",         read_piece,          1 },
+        { "renameFile",        rename_file,         2 },
+        { "resume",            resume,              0 },
+        { "saveResumeData",    save_resume_data,    0 },
+        { "setPriority",       set_priority,        1 },
+        { NULL,                NULL,                0 }
     };
 
     duk_idx_t idx = duk_push_object(ctx);
@@ -97,6 +98,24 @@ duk_ret_t torrent_handle_wrapper::is_valid(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
     duk_push_boolean(ctx, handle->is_valid());
+    return 1;
+}
+
+duk_ret_t torrent_handle_wrapper::get_file_priorities(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+
+    duk_idx_t arrIdx = duk_push_array(ctx);
+    int i = 0;
+
+    for (int prio : handle->file_priorities())
+    {
+        duk_push_int(ctx, prio);
+        duk_put_prop_index(ctx, arrIdx, i);
+
+        ++i;
+    }
+
     return 1;
 }
 

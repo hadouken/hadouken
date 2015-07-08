@@ -43,12 +43,15 @@ void session_wrapper::initialize(duk_context* ctx, libtorrent::session& session)
         { "getStatus",      get_status,     0 },
         { "getTorrents",    get_torrents,   0 },
         { "listenOn",       listen_on,      1 },
+        { "loadCountryDb",  load_country_db,1 },
         { "loadState",      load_state,     1 },
         { "pause",          pause,          0 },
         { "removeTorrent",  remove_torrent, 2 },
         { "resume",         resume,         0 },
         { "saveState",      save_state,     0 },
         { "startDht",       start_dht,      0 },
+        { "startNatPmp",    start_nat_pmp,  0 },
+        { "startUpnp",      start_upnp,     0 },
         { "waitForAlert",   wait_for_alert, 1 },
         { NULL, NULL, 0 }
     };
@@ -103,7 +106,7 @@ duk_ret_t session_wrapper::find_torrent(duk_context* ctx)
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
 
     libtorrent::sha1_hash hash;
-    libtorrent::from_hex(ih.c_str(), ih.size(), (char*)&hash[0]);
+    libtorrent::from_hex(ih.c_str(), std::min(ih.size(), (size_t)libtorrent::sha1_hash::size * 2), (char*)&hash[0]);
 
     libtorrent::torrent_handle handle = sess->find_torrent(hash);
     torrent_handle_wrapper::initialize(ctx, handle);
@@ -280,6 +283,12 @@ duk_ret_t session_wrapper::listen_on(duk_context* ctx)
     return 0;
 }
 
+duk_ret_t session_wrapper::load_country_db(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->load_country_db(duk_require_string(ctx, 0));
+    return 0;
+}
+
 duk_ret_t session_wrapper::load_state(duk_context* ctx)
 {
     libtorrent::lazy_entry* entry = common::get_pointer<libtorrent::lazy_entry>(ctx, 0);
@@ -324,6 +333,18 @@ duk_ret_t session_wrapper::save_state(duk_context* ctx)
 duk_ret_t session_wrapper::start_dht(duk_context* ctx)
 {
     common::get_pointer<libtorrent::session>(ctx)->start_dht();
+    return 0;
+}
+
+duk_ret_t session_wrapper::start_nat_pmp(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->start_natpmp();
+    return 0;
+}
+
+duk_ret_t session_wrapper::start_upnp(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->start_upnp();
     return 0;
 }
 
