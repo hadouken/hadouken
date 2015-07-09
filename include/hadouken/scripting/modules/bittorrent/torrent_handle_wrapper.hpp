@@ -1,6 +1,9 @@
 #ifndef HADOUKEN_SCRIPTING_MODULES_BITTORRENT_TORRENTHANDLEWRAPPER_HPP
 #define HADOUKEN_SCRIPTING_MODULES_BITTORRENT_TORRENTHANDLEWRAPPER_HPP
 
+#include <map>
+#include <string>
+
 namespace libtorrent
 {
     struct torrent_handle;
@@ -43,6 +46,8 @@ namespace hadouken
                     static int save_resume_data(void* ctx);
                     static int set_priority(void* ctx);
 
+                    static int metadata(void* ctx);
+
                     static int queue_bottom(void* ctx);
                     static int queue_down(void* ctx);
                     static int queue_top(void* ctx);
@@ -60,6 +65,11 @@ namespace hadouken
                     static int set_sequential_download(void* ctx);
                     static int set_upload_limit(void* ctx);
                     static int set_upload_mode(void* ctx);
+
+                    typedef std::pair<const std::string, std::string> string_pair_t;
+                    typedef std::map<std::string, std::string> string_map_t;
+                    typedef std::map<std::string, string_map_t> metadata_map_t;
+                    static metadata_map_t metadata_;
                 };
             }
         }

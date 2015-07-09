@@ -47,6 +47,7 @@ var eventMap = {
     "torrent.paused":              "torrent_paused_alert",
     "torrent.resumed":             "torrent_resumed_alert",
     "torrent.removed":             "torrent_removed_alert",
+    "torrent.hashUpdated":         "torrent_update_alert",
     "tracker.id":                  "trackerid_alert",
     "tracker.announce":            "tracker_announce_alert",
     "tracker.error":               "tracker_error_alert",

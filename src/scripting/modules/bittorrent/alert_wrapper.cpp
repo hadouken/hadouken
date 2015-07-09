@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/alert_wrapper.hpp>
 
+#include <hadouken/scripting/modules/bittorrent/add_torrent_params_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/entry_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/error_code_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
@@ -932,6 +933,10 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::incoming_conne
 duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::add_torrent_alert* alert)
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
+
+    add_torrent_params_wrapper::initialize(ctx, alert->params);
+    duk_put_prop_string(ctx, idx, "params");
+
     return idx;
 }
 
