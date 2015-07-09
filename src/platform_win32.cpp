@@ -173,7 +173,7 @@ boost::filesystem::path platform::get_current_directory()
 
 int platform::launch_process(std::string executable, std::vector<std::string> args)
 {
-    STARTUPINFO startInfo;
+    STARTUPINFO startInfo = { sizeof(STARTUPINFO) };
     PROCESS_INFORMATION procInfo;
 
     std::string cmd = executable;

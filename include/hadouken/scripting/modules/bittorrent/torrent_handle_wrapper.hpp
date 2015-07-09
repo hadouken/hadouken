@@ -26,6 +26,7 @@ namespace hadouken
                     static int flush_cache(void* ctx);
                     static int force_recheck(void* ctx);
                     static int get_info_hash(void* ctx);
+                    static int get_file_priorities(void* ctx);
                     static int get_file_progress(void* ctx);
                     static int get_peers(void* ctx);
                     static int get_queue_position(void* ctx);

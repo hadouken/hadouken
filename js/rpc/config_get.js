@@ -29,20 +29,6 @@ function getDhtRouters() {
 exports.rpc = {
     name: "config.get",
     method: function() {
-        return {
-            bittorrent: {
-                anonymousMode: get("bittorrent.anonymousMode", config.getBoolean),
-                defaultSavePath: get("bittorrent.defaultSavePath", config.getString),
-                dht: {
-                    enabled: get("bittorrent.dht.enabled", config.getBoolean),
-                    routers: getDhtRouters()
-                },
-                statePath: get("bittorrent.statePath", config.getString)
-            },
-            http: {
-                port: get("http.port", config.getNumber),
-                root: get("http.root", config.getString)
-            }
-        };
+        return config.obj;
     }
 };

@@ -1,6 +1,7 @@
 #include <hadouken/scripting/modules/bittorrent/alert_wrapper.hpp>
 
 #include <hadouken/scripting/modules/bittorrent/entry_wrapper.hpp>
+#include <hadouken/scripting/modules/bittorrent/error_code_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
 #include <libtorrent/alert_types.hpp>
@@ -75,7 +76,7 @@ void alert_wrapper::construct(duk_context* ctx, libtorrent::alert* alert)
         ALERT_CASE(fastresume_rejected_alert)
         ALERT_CASE(peer_blocked_alert)
         //ALERT_CASE(dht_announce_alert)
-        //ALERT_CASE(dht_get_peers_alert)
+        ALERT_CASE(dht_get_peers_alert)
         ALERT_CASE(stats_alert)
         ALERT_CASE(cache_flushed_alert)
         //ALERT_CASE(anonymous_mode_alert)
@@ -85,7 +86,7 @@ void alert_wrapper::construct(duk_context* ctx, libtorrent::alert* alert)
         ALERT_CASE(rss_alert)
         ALERT_CASE(torrent_error_alert)
         ALERT_CASE(torrent_need_cert_alert)
-        //ALERT_CASE(add_torrent_alert)
+        ALERT_CASE(add_torrent_alert)
         //ALERT_CASE(state_update_alert)
         ALERT_CASE(torrent_update_alert)
         //ALERT_CASE(rss_item_alert)
@@ -107,6 +108,9 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::alert* alert)
 
     // Internal pointer. We take ownership of the one passed to us
     common::set_pointer<libtorrent::alert>(ctx, idx, alert);
+
+    duk_push_string(ctx, alert->message().c_str());
+    duk_put_prop_string(ctx, idx, "_message");
 
     duk_push_string(ctx, alert->what());
     duk_put_prop_string(ctx, idx, "name");
@@ -189,7 +193,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::read_piece_ale
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->ec)
+    {
+        error_code_wrapper::initialize(ctx, alert->ec);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     duk_push_int(ctx, alert->piece);
     duk_put_prop_string(ctx, idx, "index");
@@ -234,7 +242,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::file_rename_fa
     duk_push_int(ctx, alert->index);
     duk_put_prop_string(ctx, idx, "index");
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -275,8 +287,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::tracker_error_
     duk_push_string(ctx, alert->msg.c_str());
     duk_put_prop_string(ctx, idx, "message");
 
-    // error
-    // TODO
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -373,7 +388,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::peer_error_ale
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::peer_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -392,7 +411,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::peer_disconnec
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::peer_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -478,7 +501,8 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::block_download
     duk_push_int(ctx, alert->piece_index);
     duk_put_prop_string(ctx, idx, "pieceIndex");
 
-    // TODO peer_speedmsg
+    duk_push_string(ctx, alert->peer_speedmsg);
+    duk_put_prop_string(ctx, idx, "speedMessage");
 
     return idx;
 }
@@ -510,7 +534,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::storage_moved_
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -529,7 +557,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::torrent_delete
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     duk_push_string(ctx, libtorrent::to_hex(alert->info_hash.to_string()).c_str());
     duk_put_prop_string(ctx, idx, "infoHash");
@@ -541,7 +573,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::save_resume_da
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -578,7 +614,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::file_error_ale
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
     
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     duk_push_string(ctx, alert->file.c_str());
     duk_put_prop_string(ctx, idx, "file");
@@ -590,7 +630,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::metadata_faile
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -612,7 +656,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::udp_error_aler
 
     duk_put_prop_string(ctx, idx, "ip");
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -639,7 +687,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::listen_failed_
 
     duk_put_prop_string(ctx, idx, "ip");
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     duk_push_int(ctx, alert->operation);
     duk_put_prop_string(ctx, idx, "operation");
@@ -672,7 +724,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::portmap_error_
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     duk_push_int(ctx, alert->mapping);
     duk_put_prop_string(ctx, idx, "mapping");
@@ -716,7 +772,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::fastresume_rej
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -730,6 +790,16 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::peer_blocked_a
 
     duk_push_int(ctx, alert->reason);
     duk_put_prop_string(ctx, idx, "reason");
+
+    return idx;
+}
+
+duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::dht_get_peers_alert* alert)
+{
+    duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::alert*>(alert));
+
+    duk_push_string(ctx, libtorrent::to_hex(alert->info_hash.to_string()).c_str());
+    duk_put_prop_string(ctx, idx, "infoHash");
 
     return idx;
 }
@@ -819,7 +889,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::torrent_error_
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -828,7 +902,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::torrent_need_c
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }
@@ -851,6 +929,12 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::incoming_conne
     return idx;
 }
 
+duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::add_torrent_alert* alert)
+{
+    duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
+    return idx;
+}
+
 duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::torrent_update_alert* alert)
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::torrent_alert*>(alert));
@@ -868,7 +952,11 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::i2p_alert* ale
 {
     duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::alert*>(alert));
 
-    // TODO error code
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
 
     return idx;
 }

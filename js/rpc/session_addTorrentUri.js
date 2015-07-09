@@ -11,6 +11,10 @@ exports.rpc = {
             p.savePath = params.savePath;
         }
 
+        if(params.trackers) {
+            p.trackers = params.trackers;
+        }
+
         return session.addTorrent(p);
     }
 };

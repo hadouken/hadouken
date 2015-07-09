@@ -16,10 +16,13 @@ duk_ret_t add_torrent_params_wrapper::construct(duk_context* ctx)
 
     common::set_pointer<libtorrent::add_torrent_params>(ctx, -2, new libtorrent::add_torrent_params());
 
+    DUK_READWRITE_PROPERTY(ctx, -4, filePriorities, file_priorities);
     DUK_READWRITE_PROPERTY(ctx, -4, flags, flags);
+    DUK_READWRITE_PROPERTY(ctx, -4, resumeData, resume_data);
     DUK_READWRITE_PROPERTY(ctx, -4, savePath, save_path);
     DUK_READWRITE_PROPERTY(ctx, -4, sparseMode, sparse_mode);
     DUK_READWRITE_PROPERTY(ctx, -4, torrent, torrent);
+    DUK_READWRITE_PROPERTY(ctx, -4, trackers, trackers);
     DUK_READWRITE_PROPERTY(ctx, -4, url, url);
 
     duk_push_c_function(ctx, destruct, 1);
@@ -32,6 +35,24 @@ duk_ret_t add_torrent_params_wrapper::destruct(duk_context* ctx)
 {
     common::finalize<libtorrent::add_torrent_params>(ctx);
     return 0;
+}
+
+duk_ret_t add_torrent_params_wrapper::get_file_priorities(duk_context* ctx)
+{
+    libtorrent::add_torrent_params* p = common::get_pointer<libtorrent::add_torrent_params>(ctx);
+    
+    duk_idx_t arrIdx = duk_push_array(ctx);
+    int i = 0;
+
+    for (int prio : p->file_priorities)
+    {
+        duk_push_int(ctx, prio);
+        duk_put_prop_index(ctx, arrIdx, i);
+
+        ++i;
+    }
+
+    return 1;
 }
 
 duk_ret_t add_torrent_params_wrapper::get_flags(duk_context* ctx)
@@ -87,11 +108,50 @@ duk_ret_t add_torrent_params_wrapper::get_torrent(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t add_torrent_params_wrapper::get_trackers(duk_context* ctx)
+{
+    libtorrent::add_torrent_params* p = common::get_pointer<libtorrent::add_torrent_params>(ctx);
+
+    duk_idx_t arrIdx = duk_push_array(ctx);
+    int i = 0;
+
+    for (std::string tracker : p->trackers)
+    {
+        duk_push_string(ctx, tracker.c_str());
+        duk_put_prop_index(ctx, arrIdx, i);
+
+        ++i;
+    }
+
+    return 1;
+}
+
 duk_ret_t add_torrent_params_wrapper::get_url(duk_context* ctx)
 {
     libtorrent::add_torrent_params* p = common::get_pointer<libtorrent::add_torrent_params>(ctx);
     duk_push_string(ctx, p->url.c_str());
     return 1;
+}
+
+duk_ret_t add_torrent_params_wrapper::set_file_priorities(duk_context* ctx)
+{
+    if (!duk_is_array(ctx, 0))
+    {
+        // TODO break something
+        return 0;
+    }
+
+    libtorrent::add_torrent_params* p = common::get_pointer<libtorrent::add_torrent_params>(ctx);
+    duk_enum(ctx, 0, DUK_ENUM_ARRAY_INDICES_ONLY);
+
+    while (duk_next(ctx, -1, 1))
+    {
+        p->file_priorities.push_back(duk_get_int(ctx, -1));
+        duk_pop_2(ctx);
+    }
+
+    duk_pop(ctx);
+    return 0;
 }
 
 duk_ret_t add_torrent_params_wrapper::set_flags(duk_context* ctx)
@@ -142,6 +202,27 @@ duk_ret_t add_torrent_params_wrapper::set_torrent(duk_context* ctx)
     libtorrent::torrent_info* info = common::get_pointer<libtorrent::torrent_info>(ctx, 0);
 
     p->ti = new libtorrent::torrent_info(*info);
+    return 0;
+}
+
+duk_ret_t add_torrent_params_wrapper::set_trackers(duk_context* ctx)
+{
+    if (!duk_is_array(ctx, 0))
+    {
+        // TODO break something
+        return 0;
+    }
+
+    libtorrent::add_torrent_params* p = common::get_pointer<libtorrent::add_torrent_params>(ctx);
+    duk_enum(ctx, 0, DUK_ENUM_ARRAY_INDICES_ONLY);
+
+    while (duk_next(ctx, -1, 1))
+    {
+        p->trackers.push_back(duk_get_string(ctx, -1));
+        duk_pop_2(ctx);
+    }
+
+    duk_pop(ctx);
     return 0;
 }
 

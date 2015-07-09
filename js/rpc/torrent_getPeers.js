@@ -5,8 +5,8 @@ exports.rpc = {
     method: function(infoHash) {
         var torrent = session.findTorrent(infoHash);
         
-        if(!torrent) {
-            return null;
+        if(!torrent || !torrent.isValid) {
+            throw new Error("Invalid info hash: " + infoHash);
         }
 
         var peers  = torrent.getPeers();

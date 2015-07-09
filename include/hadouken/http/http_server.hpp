@@ -38,6 +38,8 @@ namespace hadouken
 
             std::string ssl_password_callback(std::size_t max_length, boost::asio::ssl::context_base::password_purpose purpose);
 
+            boost::shared_ptr<boost::asio::ssl::context> get_ssl_context();
+
         private:
             boost::property_tree::ptree config_;
             std::unique_ptr<http_server_t> instance_;

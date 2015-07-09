@@ -4,11 +4,13 @@
 namespace libtorrent
 {
     class alert;
+    struct add_torrent_alert;
     struct block_downloading_alert;
     struct block_finished_alert;
     struct block_timeout_alert;
     struct cache_flushed_alert;
     struct dht_bootstrap_alert;
+    struct dht_get_peers_alert;
     struct dht_reply_alert;
     struct external_ip_alert;
     struct fastresume_rejected_alert;
@@ -139,6 +141,7 @@ namespace hadouken
                     static int initialize(void* ctx, libtorrent::portmap_log_alert* alert);
                     static int initialize(void* ctx, libtorrent::fastresume_rejected_alert* alert);
                     static int initialize(void* ctx, libtorrent::peer_blocked_alert* alert);
+                    static int initialize(void* ctx, libtorrent::dht_get_peers_alert* alert);
                     static int initialize(void* ctx, libtorrent::stats_alert* alert);
                     static int initialize(void* ctx, libtorrent::cache_flushed_alert* alert);
                     static int initialize(void* ctx, libtorrent::lsd_peer_alert* alert);
@@ -148,6 +151,7 @@ namespace hadouken
                     static int initialize(void* ctx, libtorrent::torrent_error_alert* alert);
                     static int initialize(void* ctx, libtorrent::torrent_need_cert_alert* alert);
                     static int initialize(void* ctx, libtorrent::incoming_connection_alert* alert);
+                    static int initialize(void* ctx, libtorrent::add_torrent_alert* alert);
                     static int initialize(void* ctx, libtorrent::torrent_update_alert* alert);
                     static int initialize(void* ctx, libtorrent::i2p_alert* alert);
 

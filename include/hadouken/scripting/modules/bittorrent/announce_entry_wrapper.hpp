@@ -24,7 +24,16 @@ namespace hadouken
 
                     static int is_updating(void* ctx);
                     static int is_verified(void* ctx);
+                    static int get_fail_count(void* ctx);
+                    static int get_fail_limit(void* ctx);
+                    static int get_last_error(void* ctx);
                     static int get_message(void* ctx);
+                    static int get_min_announce(void* ctx);
+                    static int get_next_announce(void* ctx);
+                    static int get_scrape_complete(void* ctx);
+                    static int get_scrape_downloaded(void* ctx);
+                    static int get_scrape_incomplete(void* ctx);
+                    static int get_source(void* ctx);
                     static int get_tier(void* ctx);
                     static int get_url(void* ctx);
                 };

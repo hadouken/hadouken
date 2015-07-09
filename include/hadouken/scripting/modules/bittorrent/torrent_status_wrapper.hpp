@@ -22,6 +22,7 @@ namespace hadouken
                 private:
                     static int finalize(void* ctx);
 
+                    static int get_error(void* ctx);
                     static int get_name(void* ctx);
                     static int get_progress(void* ctx);
                     static int get_save_path(void* ctx);

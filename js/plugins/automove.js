@@ -2,9 +2,6 @@ var config  = require("config");
 var logger  = require("logger").get("plugins.automove");
 var session = require("bittorrent").session;
 
-// Configuration
-var rules   = [];
-
 function Rule(path, filter) {
     this.path   = path;
     this.filter = filter;
@@ -65,7 +62,7 @@ function getRules() {
     return result;
 }
 
-function finished(args) {
+function finished(rules, args) {
     var torrent = args.torrent;
 
     for(var i = 0; i < rules.length; i++) {
@@ -86,8 +83,12 @@ function load() {
         return;
     }
     
-    rules = getRules();
-    session.on("torrent.finished", finished);
+    var rules = getRules();
+    logger.info("AutoMove enabled with " + rules.length + " rule(s).");
+
+    session.on("torrent.finished", function(e) {
+        finished(rules, e);
+    });
 }
 
 exports.load = load;

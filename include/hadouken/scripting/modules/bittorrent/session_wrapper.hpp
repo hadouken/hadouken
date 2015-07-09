@@ -34,12 +34,15 @@ namespace hadouken
                     static int is_listening(void* ctx);
                     static int is_paused(void* ctx);
                     static int listen_on(void* ctx);
+                    static int load_country_db(void* ctx);
                     static int load_state(void* ctx);
                     static int pause(void* ctx);
                     static int remove_torrent(void* ctx);
                     static int resume(void* ctx);
                     static int save_state(void* ctx);
                     static int start_dht(void* ctx);
+                    static int start_nat_pmp(void* ctx);
+                    static int start_upnp(void* ctx);
                     static int wait_for_alert(void* ctx);
                 };
             }
