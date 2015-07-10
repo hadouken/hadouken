@@ -1,5 +1,3 @@
-#ifdef WIN32
-
 #include <hadouken/platform.hpp>
 
 #include <atlstr.h>
@@ -211,5 +209,3 @@ int platform::launch_process(std::string executable, std::vector<std::string> ar
 
     return exitCode;
 }
-
-#endif

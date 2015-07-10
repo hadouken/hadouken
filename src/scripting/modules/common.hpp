@@ -1,6 +1,7 @@
 #ifndef HADOUKEN_SCRIPTING_MODULES_COMMON_HPP
 #define HADOUKEN_SCRIPTING_MODULES_COMMON_HPP
 
+#include <typeinfo>
 #include "../duktape.h"
 
 #define DUK_READONLY_PROPERTY(ctx, index, name, func) \
