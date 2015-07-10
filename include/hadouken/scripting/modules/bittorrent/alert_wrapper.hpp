@@ -48,6 +48,7 @@ namespace libtorrent
     struct scrape_failed_alert;
     struct scrape_reply_alert;
     struct state_changed_alert;
+    struct state_update_alert;
     struct stats_alert;
     struct storage_moved_alert;
     struct storage_moved_failed_alert;
@@ -152,6 +153,7 @@ namespace hadouken
                     static int initialize(void* ctx, libtorrent::torrent_need_cert_alert* alert);
                     static int initialize(void* ctx, libtorrent::incoming_connection_alert* alert);
                     static int initialize(void* ctx, libtorrent::add_torrent_alert* alert);
+                    static int initialize(void* ctx, libtorrent::state_update_alert* alert);
                     static int initialize(void* ctx, libtorrent::torrent_update_alert* alert);
                     static int initialize(void* ctx, libtorrent::i2p_alert* alert);
 

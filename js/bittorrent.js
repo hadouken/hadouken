@@ -33,6 +33,7 @@ var eventMap = {
     "tracker.scrapeReply":         "scrape_reply_alert",
     "tracker.scrapeFailed":        "scrape_failed_alert",
     "torrent.stateChanged":        "state_changed_alert",
+    "torrent.stateUpdate":         "state_update_alert",
     "torrent.stats":               "stats_alert",
     "torrent.moved":               "storage_moved_alert",
     "torrent.moveFailed":          "storage_moved_failed_alert",

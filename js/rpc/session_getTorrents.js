@@ -10,7 +10,7 @@ exports.rpc = {
             var torrent = torrents[i];
             var status  = torrent.getStatus();
             var info    = torrent.getTorrentInfo();
-
+            
             var totalSize = -1;
             if(info) totalSize = info.totalSize;
 
@@ -36,7 +36,9 @@ exports.rpc = {
                 isSeeding:            status.isSeeding,
                 isSequentialDownload: status.isSequentialDownload,
                 queuePosition:        torrent.queuePosition,
-                tags:                 torrent.tags
+                tags:                 torrent.metadata("tags"),
+                ratio:                status.ratio,
+                eta:                  status.eta
             };
         }
 

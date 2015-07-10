@@ -5,6 +5,7 @@ var fs       = require("fs");
 var logger   = require("logger").get("core");
 var rss      = require("rss");
 var session  = bt.session;
+var timer    = require("timer");
 
 function saveTorrent(torrent) {
     var torrentsPath = getTorrentsPath();
@@ -59,14 +60,31 @@ session.on("torrent.metadataReceived", function(e) {
 });
 
 session.on("torrent.add", function(e) {
-    var metadata = e.params.metadata;
+    if(e.error) {
+        logger.error("Could not add torrent (code " + e.error.code + "): " +
+                     e.error.message);
+        return;
+    }
 
-    if(metadata) {
-        var keys = Object.keys(metadata);
+    // Add any metadata to the torrent
+    var metadata = e.params.metadata || {};
 
-        for(var i = 0; i < keys.length; i++) {
-            e.torrent.metadata(keys[i], metadata[keys[i]]);
-        }
+    if(!metadata["options"]) {
+        // Add any default options to the metadata
+        var defaultOptions = config.get("bittorrent.defaultOptions") || {};
+
+        var options = {
+            seedRatio: (defaultOptions["seedRatio"] || 2.0),
+            stopOnRatio: !!(defaultOptions["seedRatioAction"] || "none")
+        };
+
+        metadata["options"] = options;
+    }
+
+    var keys = Object.keys(metadata);
+
+    for(var i = 0; i < keys.length; i++) {
+        e.torrent.metadata(keys[i], metadata[keys[i]]);
     }
 });
 
@@ -98,6 +116,42 @@ session.on("torrent.hashUpdated", function(e) {
     */
 
     e.torrent.metadata("_migrate", e.oldInfoHash);
+});
+
+session.on("torrent.stateUpdate", function(e) {
+    for(var i = 0; i < e.status.length; i++) {
+        var status = e.status[i];
+
+        // Only check our seed goal if the torrent is finished
+        // and not paused.
+        if(!status.isFinished || status.isPaused) {
+            return;
+        }
+
+        var torrent = status.torrent;
+        var options = torrent.metadata("options") || {};
+
+        // If no action is set up, ignore this.
+        var action = options.seedRatioAction;
+        if(!action || action === "none") { return; }
+
+        // Check if we have hit our seedRatio for
+        // the torrent
+
+        if(options.seedRatio && status.ratio >= parseFloat(options.seedRatio)) {
+            logger.info("Torrent " + status.name + " reached its seed goal.");
+
+            switch(action) {
+                case "pause":
+                    torrent.pause();
+                    break;
+
+                case "remove":
+                    session.removeTorrent(torrent);
+                    break;
+            }
+        }
+    }
 });
 
 function getTorrentsPath() {
@@ -167,7 +221,13 @@ function loadTorrents() {
 
 function load() {
     // Set up listen port for BitTorrent communication
-    session.listenOn([6881, 6889]);
+    var listenPort = config.get("bittorrent.listenPort") || [ 6881, 6889 ];
+    if(!(listenPort instanceof Array)) {
+        logger.warn("Invalid listen port specified. Using default.");
+        listenPort = [ 6881, 6889 ];
+    }
+
+    session.listenOn(listenPort);
 
     // Load country database
     var geoIp = config.getString("bittorrent.geoIpFile");
@@ -195,6 +255,9 @@ function load() {
 
     rss.load();
     require("plugins").load();
+
+    // Post torrent updates each tick of the timer.
+    timer.tick(function() { session.postTorrentUpdates(); });
 }
 
 function saveState() {

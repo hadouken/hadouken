@@ -46,6 +46,7 @@ void session_wrapper::initialize(duk_context* ctx, libtorrent::session& session)
         { "loadCountryDb",  load_country_db,1 },
         { "loadState",      load_state,     1 },
         { "pause",          pause,          0 },
+        { "postTorrentUpdates", post_torrent_updates, 0 },
         { "removeTorrent",  remove_torrent, 2 },
         { "resume",         resume,         0 },
         { "saveState",      save_state,     0 },
@@ -299,6 +300,12 @@ duk_ret_t session_wrapper::load_state(duk_context* ctx)
 duk_ret_t session_wrapper::pause(duk_context* ctx)
 {
     common::get_pointer<libtorrent::session>(ctx)->pause();
+    return 0;
+}
+
+duk_ret_t session_wrapper::post_torrent_updates(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->post_torrent_updates();
     return 0;
 }
 

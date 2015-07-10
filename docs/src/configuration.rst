@@ -76,6 +76,38 @@ Disabling DHT
 .. note:: The `routers` are ignored if DHT is disabled.
 
 
+Seed goals
+``````````
+
+Each torrent in Hadouken can be paused or removed when it reaches the
+user-specified seed goals. If no default options are specified, the seed
+goal is set to `2.0` however no action is configured.
+
+To pause a torrent when it reaches the seed goal, use the following
+configuration.
+
+.. note:: Only torrents added after the configuration change will get the
+          new default options. Each torrent remembers its own options.
+
+.. code:: javascript
+
+   {
+     "bittorrent":
+     {
+       "defaultOptions":
+       {
+         "seedRatio": 2.0,
+         "seedRatioAction": "pause"
+       }
+     }
+   }
+
+Available actions are,
+
+ * `pause`
+ * `remove`
+
+
 Storage allocation
 ``````````````````
 
