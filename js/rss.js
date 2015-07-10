@@ -2,7 +2,6 @@ var bt       = require("bittorrent");
 var config   = require("config");
 var fs       = require("fs");
 var logger   = require("logger").get("rss");
-var metadata = require("metadata");
 var session  = bt.session;
 
 // Constants

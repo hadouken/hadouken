@@ -3,7 +3,6 @@ var benc     = require("benc");
 var config   = require("config");
 var fs       = require("fs");
 var logger   = require("logger").get("core");
-var metadata = require("metadata");
 var rss      = require("rss");
 var session  = bt.session;
 
@@ -59,6 +58,18 @@ session.on("torrent.metadataReceived", function(e) {
     saveTorrent(e.torrent);
 });
 
+session.on("torrent.add", function(e) {
+    var metadata = e.params.metadata;
+
+    if(metadata) {
+        var keys = Object.keys(metadata);
+
+        for(var i = 0; i < keys.length; i++) {
+            e.torrent.metadata(keys[i], metadata[keys[i]]);
+        }
+    }
+});
+
 session.on("torrent.added", function(e) {
     if(!e.torrent.isValid) {
         logger.error("Invalid torrent added.");
@@ -66,6 +77,27 @@ session.on("torrent.added", function(e) {
     }
 
     saveTorrent(e.torrent);
+});
+
+session.on("torrent.hashUpdated", function(e) {
+    /*
+    On migrating metadata
+    ---------------------
+    When we add a torrent URL (with eg. tags), the info hash
+    is not known at the time. We store each metadata object
+    in a std::map keyed by the info hash.
+
+    When libtorrent receives the torrent file and gets the correct
+    info hash, it sends us this alert.
+
+    We have a special key handler for "_migrate" which takes the
+    old info hash as a value, and then moves the metadata from
+    the old info hash to the new info hash.
+
+    It is a bit of a hack, but works.
+    */
+
+    e.torrent.metadata("_migrate", e.oldInfoHash);
 });
 
 function getTorrentsPath() {
@@ -113,19 +145,19 @@ function loadTorrents() {
         var params = bt.AddTorrentParams.getDefault();
         params.torrent = new bt.TorrentInfo(file);
 
+        // Load metadata file
+        var metadataFile = file.replace(/\.torrent/i, ".metadata");
+
+        if(fs.fileExists(metadataFile)) {
+            var data = fs.readText(metadataFile);
+            params.metadata = JSON.parse(data);
+        }
+
         // Load resume file
         var resumeFile = file.replace(/\.torrent$/i, ".resume");
 
         if(fs.fileExists(resumeFile)) {
             params.resumeData = fs.readBuffer(resumeFile);
-        }
-
-        // Load metadata file
-        var metadataFile = file.replace(/\.torrent$/i, ".metadata");
-
-        if(fs.fileExists(metadataFile)) {
-            var data = JSON.parse(fs.readText(metadataFile));
-            metadata.replace(params.torrent.infoHash, data);
         }
 
         session.addTorrent(params);
@@ -234,7 +266,9 @@ function saveTorrents() {
             var buffer = benc.encode(alert.resumeData);
             var resumeFile = fs.combine(torrentsPath, alert.torrent.infoHash + ".resume");
 
-            var data = metadata.getAll(alert.torrent.infoHash);
+            var data = alert.torrent.metadata();
+            print(data);
+
             if(data) {
                 var metadataFile = fs.combine(torrentsPath, alert.torrent.infoHash + ".metadata");
                 fs.writeText(metadataFile, JSON.stringify(data));

@@ -13,6 +13,8 @@
 using namespace hadouken::scripting::modules;
 using namespace hadouken::scripting::modules::bittorrent;
 
+torrent_handle_wrapper::metadata_map_t torrent_handle_wrapper::metadata_ = torrent_handle_wrapper::metadata_map_t();
+
 void torrent_handle_wrapper::initialize(duk_context* ctx, const libtorrent::torrent_handle& handle)
 {
     duk_function_list_entry functions[] =
@@ -27,6 +29,7 @@ void torrent_handle_wrapper::initialize(duk_context* ctx, const libtorrent::torr
         { "getTorrentInfo",    get_torrent_info,    0 },
         { "getTrackers",       get_trackers,        0 },
         { "havePiece",         have_piece,          1 },
+        { "metadata",          metadata,            DUK_VARARGS },
         { "moveStorage",       move_storage,        1 },
         { "pause",             pause,               0 },
         { "queueBottom",       queue_bottom,        0 },
@@ -215,6 +218,98 @@ duk_ret_t torrent_handle_wrapper::have_piece(duk_context* ctx)
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
     duk_push_boolean(ctx, handle->have_piece(duk_require_int(ctx, 0)));
     return 1;
+}
+
+duk_ret_t torrent_handle_wrapper::metadata(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    std::string info_hash = libtorrent::to_hex(handle->info_hash().to_string());
+
+    int args = duk_get_top(ctx);
+
+    if (args == 0) // return all data
+    {
+        metadata_map_t::iterator it = metadata_.find(info_hash);
+
+        if (it == metadata_.end())
+        {
+            duk_push_null(ctx);
+            return 1;
+        }
+
+        duk_idx_t idx = duk_push_object(ctx);
+
+        for (string_pair_t pair : it->second)
+        {
+            duk_push_string(ctx, pair.second.c_str());
+            duk_json_decode(ctx, -1);
+
+            duk_put_prop_string(ctx, idx, pair.first.c_str());
+        }
+
+        return 1;
+    }
+    else if (args == 1) // return data for specific key
+    {
+        metadata_map_t::iterator it = metadata_.find(info_hash);
+
+        if (it == metadata_.end())
+        {
+            duk_push_null(ctx);
+            return 1;
+        }
+
+        string_map_t::iterator key_it = it->second.find(duk_require_string(ctx, 0));
+
+        if (key_it == it->second.end())
+        {
+            duk_push_null(ctx);
+            return 1;
+        }
+
+        duk_push_string(ctx, key_it->second.c_str());
+        duk_json_decode(ctx, -1);
+
+        return 1;
+    }
+    else if (args == 2) // set data for specific key
+    {
+        std::string key(duk_require_string(ctx, 0));
+
+        // if the key is '_migrate', the value is the old info hash
+        // and we should copy the old metadata to our new info hash
+        // this happens when a torrent is added as a url and the
+        // info hash is not known at the time, and libtorrent updates
+        // our info hash when it receives the torrent file.
+
+        if (key == "_migrate")
+        {
+            std::string val(duk_require_string(ctx, 1));
+            metadata_map_t::iterator it = metadata_.find(val);
+
+            if (it != metadata_.end())
+            {
+                metadata_[info_hash] = it->second;
+                metadata_.erase(val);
+            }
+
+            return 0;
+        }
+        
+        duk_json_encode(ctx, 1);
+        std::string val(duk_require_string(ctx, 1));
+
+        metadata_map_t::iterator it = metadata_.find(info_hash);
+
+        if (it == metadata_.end())
+        {
+            metadata_[info_hash] = string_map_t();
+        }
+
+        metadata_[info_hash][key] = val;
+    }
+
+    return 0;
 }
 
 duk_ret_t torrent_handle_wrapper::move_storage(duk_context* ctx)
