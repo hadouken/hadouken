@@ -37,6 +37,7 @@ namespace hadouken
                     static int load_country_db(void* ctx);
                     static int load_state(void* ctx);
                     static int pause(void* ctx);
+                    static int post_torrent_updates(void* ctx);
                     static int remove_torrent(void* ctx);
                     static int resume(void* ctx);
                     static int save_state(void* ctx);

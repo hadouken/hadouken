@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/torrent_status_wrapper.hpp>
 
+#include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include "../common.hpp"
 #include "../../duktape.h"
@@ -12,8 +13,10 @@ void torrent_status_wrapper::initialize(duk_context* ctx, const libtorrent::torr
     duk_idx_t statusIndex = duk_push_object(ctx);
     common::set_pointer<libtorrent::torrent_status>(ctx, statusIndex, new libtorrent::torrent_status(status));
 
+    DUK_READONLY_PROPERTY(ctx, statusIndex, torrent, get_handle);
     DUK_READONLY_PROPERTY(ctx, statusIndex, error, get_error);
     DUK_READONLY_PROPERTY(ctx, statusIndex, name, get_name);
+    DUK_READONLY_PROPERTY(ctx, statusIndex, eta, get_eta);
     DUK_READONLY_PROPERTY(ctx, statusIndex, progress, get_progress);
     DUK_READONLY_PROPERTY(ctx, statusIndex, savePath, get_save_path);
     DUK_READONLY_PROPERTY(ctx, statusIndex, downloadRate, get_download_rate);
@@ -24,6 +27,7 @@ void torrent_status_wrapper::initialize(duk_context* ctx, const libtorrent::torr
     DUK_READONLY_PROPERTY(ctx, statusIndex, uploadedBytesTotal, get_uploaded_bytes_total);
     DUK_READONLY_PROPERTY(ctx, statusIndex, numPeers, get_num_peers);
     DUK_READONLY_PROPERTY(ctx, statusIndex, numSeeds, get_num_seeds);
+    DUK_READONLY_PROPERTY(ctx, statusIndex, ratio, get_ratio);
     DUK_READONLY_PROPERTY(ctx, statusIndex, state, get_state);
     DUK_READONLY_PROPERTY(ctx, statusIndex, isFinished, is_finished);
     DUK_READONLY_PROPERTY(ctx, statusIndex, isMovingStorage, is_moving_storage);
@@ -43,6 +47,13 @@ duk_ret_t torrent_status_wrapper::finalize(duk_context* ctx)
     return 0;
 }
 
+duk_ret_t torrent_status_wrapper::get_handle(duk_context* ctx)
+{
+    libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
+    torrent_handle_wrapper::initialize(ctx, status->handle);
+    return 1;
+}
+
 duk_ret_t torrent_status_wrapper::get_error(duk_context* ctx)
 {
     libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
@@ -54,6 +65,22 @@ duk_ret_t torrent_status_wrapper::get_name(duk_context* ctx)
 {
     libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
     duk_push_string(ctx, status->name.c_str());
+    return 1;
+}
+
+duk_ret_t torrent_status_wrapper::get_eta(duk_context* ctx)
+{
+    libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
+    libtorrent::size_type remaining = status->total_wanted - status->total_wanted_done;
+
+    float eta = -1;
+    
+    if (remaining > 0 && status->download_rate > 0)
+    {
+        eta = remaining / status->download_rate;
+    }
+    
+    duk_push_number(ctx, eta);
     return 1;
 }
 
@@ -124,6 +151,23 @@ duk_ret_t torrent_status_wrapper::get_num_seeds(duk_context* ctx)
 {
     libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
     duk_push_int(ctx, status->num_seeds);
+    return 1;
+}
+
+duk_ret_t torrent_status_wrapper::get_ratio(duk_context* ctx)
+{
+    libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
+    
+    libtorrent::size_type dl = status->total_done;
+    libtorrent::size_type ul = status->all_time_upload;
+    float ratio = -1;
+    
+    if (dl > 0)
+    {
+        ratio = (float)ul / (float)dl;
+    }
+
+    duk_push_number(ctx, ratio);
     return 1;
 }
 

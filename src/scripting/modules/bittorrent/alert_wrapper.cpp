@@ -5,6 +5,7 @@
 #include <hadouken/scripting/modules/bittorrent/error_code_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
+#include <hadouken/scripting/modules/bittorrent/torrent_status_wrapper.hpp>
 #include <libtorrent/alert_types.hpp>
 
 #include "../common.hpp"
@@ -88,7 +89,7 @@ void alert_wrapper::construct(duk_context* ctx, libtorrent::alert* alert)
         ALERT_CASE(torrent_error_alert)
         ALERT_CASE(torrent_need_cert_alert)
         ALERT_CASE(add_torrent_alert)
-        //ALERT_CASE(state_update_alert)
+        ALERT_CASE(state_update_alert)
         ALERT_CASE(torrent_update_alert)
         //ALERT_CASE(rss_item_alert)
         //ALERT_CASE(dht_error_alert)
@@ -936,6 +937,32 @@ duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::add_torrent_al
 
     add_torrent_params_wrapper::initialize(ctx, alert->params);
     duk_put_prop_string(ctx, idx, "params");
+
+    if (alert->error)
+    {
+        error_code_wrapper::initialize(ctx, alert->error);
+        duk_put_prop_string(ctx, idx, "error");
+    }
+
+    return idx;
+}
+
+duk_idx_t alert_wrapper::initialize(duk_context* ctx, libtorrent::state_update_alert* alert)
+{
+    duk_idx_t idx = alert_wrapper::initialize(ctx, static_cast<libtorrent::alert*>(alert));
+
+    duk_idx_t arrIdx = duk_push_array(ctx);
+    int i = 0;
+
+    for (libtorrent::torrent_status status : alert->status)
+    {
+        torrent_status_wrapper::initialize(ctx, status);
+        duk_put_prop_index(ctx, arrIdx, i);
+
+        ++i;
+    }
+
+    duk_put_prop_string(ctx, idx, "status");
 
     return idx;
 }
