@@ -44,8 +44,8 @@ The :file:`deps/` directory should look like this,
 
 * deps/
 
-  * libtorrent-rasterbar-1.0.5/
-  * cpp-netlib-0.11.1/
+  * libtorrent/
+  * cpp-netlib/
 
 
 Running the build

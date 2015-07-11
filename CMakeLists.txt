@@ -32,9 +32,6 @@ if(WIN32)
     )
 
     include_directories(
-        ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1
-        ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/include
-        ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/ed25519/src
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.boost/include
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/include
     )
@@ -48,14 +45,19 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}    /DEBUG /OPT:REF")
 else()
-    set(LIBBOOST boost_system)
-    set(LIBTORRENT libtorrent-rasterbar.so)
+    set(LIBBOOST libboost_system.a libboost_log.a libboost_program_options.a libboost_filesystem.a libboost_thread.a)
+    set(LIBSSL ssl crypto)
     set(PTHREAD pthread)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/hadoukend")
 endif()
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib
+    ${CMAKE_SOURCE_DIR}/deps/libtorrent/include
+    ${CMAKE_SOURCE_DIR}/deps/libtorrent/ed25519/src
+)
 
 # add_definitions() doesn't seem to let you say wich build type to apply it to
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DTORRENT_DEBUG")
@@ -98,7 +100,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
-set(ltdir ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/src)
+set(ltdir ${CMAKE_SOURCE_DIR}/deps/libtorrent)
 
 # Get sources for libtorrent
 set(sources
@@ -220,25 +222,63 @@ set(ed25519_sources
 )
 
 foreach(s ${sources})
-    list(APPEND LIBTORRENT_SOURCES ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/src/${s})
+    list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/${s})
 endforeach(s)
 
 foreach(s ${kademlia_sources})
-    list(APPEND LIBTORRENT_SOURCES ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/src/kademlia/${s})
+    list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/kademlia/${s})
 endforeach(s)
 foreach(s ${ed25519_sources})
-    list(APPEND LIBTORRENT_SOURCES ${CMAKE_SOURCE_DIR}/deps/libtorrent-rasterbar-1.0.5/ed25519/src/${s})
+    list(APPEND LIBTORRENT_SOURCES ${ltdir}/ed25519/src/${s})
 endforeach(s)
 
-# Get sources for hadouken (except main.cpp)
-file(GLOB_RECURSE HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
-list(APPEND       HADOUKEN_SOURCES ${CMAKE_SOURCE_DIR}/src/scripting/duktape.c)
+
+set(HADOUKEN_SOURCES
+    src/application
+    src/main
+    src/version
+    src/hosting/console_host
+    src/http/connection_handler
+    src/http/http_server
+    src/scripting/duktape
+    src/scripting/script_host
+    src/scripting/modules/bencoding_module
+    src/scripting/modules/bittorrent_module
+    src/scripting/modules/core_module
+    src/scripting/modules/file_system_module
+    src/scripting/modules/http_module
+    src/scripting/modules/logger_module
+    src/scripting/modules/process_module
+    src/scripting/modules/bittorrent/add_torrent_params_wrapper
+    src/scripting/modules/bittorrent/alert_wrapper
+    src/scripting/modules/bittorrent/announce_entry_wrapper
+    src/scripting/modules/bittorrent/entry_wrapper
+    src/scripting/modules/bittorrent/error_code_wrapper
+    src/scripting/modules/bittorrent/feed_handle_wrapper
+    src/scripting/modules/bittorrent/feed_settings_wrapper
+    src/scripting/modules/bittorrent/feed_status_wrapper
+    src/scripting/modules/bittorrent/lazy_entry_wrapper
+    src/scripting/modules/bittorrent/peer_info_wrapper
+    src/scripting/modules/bittorrent/session_settings_wrapper
+    src/scripting/modules/bittorrent/session_wrapper
+    src/scripting/modules/bittorrent/torrent_creator_wrapper
+    src/scripting/modules/bittorrent/torrent_handle_wrapper
+    src/scripting/modules/bittorrent/torrent_info_wrapper
+    src/scripting/modules/bittorrent/torrent_status_wrapper
+)
+
+# Append platform-specific sources
+if(WIN32)
+    list(APPEND HADOUKEN_SOURCES src/platform_win32 src/hosting/service_host)
+else()
+    list(APPEND HADOUKEN_SOURCES src/platform_unix)
+endif(WIN32)
 
 set(CPP_NETLIB_SOURCES
-    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/client
-    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/server_request_parsers_impl
-    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/uri/schemes
-    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib-0.11.1/libs/network/src/uri/uri
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib/libs/network/src/client
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib/libs/network/src/server_request_parsers_impl
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib/libs/network/src/uri/schemes
+    ${CMAKE_SOURCE_DIR}/deps/cpp-netlib/libs/network/src/uri/uri
 )
 
 add_executable(
@@ -255,5 +295,3 @@ target_link_libraries(
     ${LIBSSL}
     ${PTHREAD}
 )
-
-install(TARGETS hadouken  DESTINATION sbin)

@@ -1,20 +1,39 @@
 #ifdef __unix__
 
-#include <Hadouken/Platform.hpp>
-#include <Poco/Path.h>
+#include <boost/filesystem.hpp>
+#include <hadouken/platform.hpp>
+#include <limits.h>
+#include <unistd.h>
 
-using namespace Hadouken;
+using namespace hadouken;
+namespace fs = boost::filesystem;
 
-Poco::Path Platform::getApplicationDataPath()
+void platform::init()
 {
-    // TODO: do something useful.
-    return Poco::Path("/etc/hadouken/");
 }
 
-Poco::Path Platform::getApplicationPath()
+fs::path platform::data_path()
 {
     // TODO: do something useful.
-    return Poco::Path();
+    return "/etc/hadouken/";
+}
+
+fs::path platform::application_path()
+{
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    std::string p(result, (count > 0) ? count : 0);
+
+    return fs::path(p).parent_path();
+}
+
+fs::path platform::get_current_directory()
+{
+    return fs::initial_path();
+}
+
+int platform::launch_process(std::string executable, std::vector<std::string> args)
+{
 }
 
 #endif

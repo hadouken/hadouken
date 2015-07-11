@@ -9,14 +9,14 @@
     duk_ret_t session_settings_wrapper::get_##prop(duk_context* ctx) \
         { \
         libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
-        duk_push_string(ctx, ss->##prop.c_str()); \
+        duk_push_string(ctx, ss->prop.c_str()); \
         return 1; \
         } \
     \
     duk_ret_t session_settings_wrapper::set_##prop(duk_context* ctx) \
         { \
         libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
-        ss->##prop = duk_require_string(ctx, 0); \
+        ss->prop = duk_require_string(ctx, 0); \
         return 0; \
         }
 
@@ -24,14 +24,14 @@
     duk_ret_t session_settings_wrapper::get_##prop(duk_context* ctx) \
         { \
         libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
-        duk_push_int(ctx, ss->##prop); \
+        duk_push_int(ctx, ss->prop); \
         return 1; \
         } \
     \
     duk_ret_t session_settings_wrapper::set_##prop(duk_context* ctx) \
         { \
         libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
-        ss->##prop = duk_require_int(ctx, 0); \
+        ss->prop = duk_require_int(ctx, 0); \
         return 0; \
         }
 

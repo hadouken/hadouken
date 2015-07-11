@@ -1,6 +1,8 @@
 deps/
-
 docs/build
+src/version.cpp
+
+linux/build
 
 win32/bin
 win32/build
@@ -8,5 +10,3 @@ win32/chocolatey/tools/chocolateyInstall.ps1
 win32/libs
 win32/tools/Cake
 win32/wixobj
-
-src/version.cpp

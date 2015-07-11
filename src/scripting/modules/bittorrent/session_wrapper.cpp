@@ -174,7 +174,10 @@ duk_ret_t session_wrapper::get_feeds(duk_context* ctx)
 duk_ret_t session_wrapper::get_settings(duk_context* ctx)
 {
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
-    session_settings_wrapper::initialize(ctx, sess->settings());
+    
+    libtorrent::session_settings settings = sess->settings();
+    session_settings_wrapper::initialize(ctx, settings);
+    
     return 1;
 }
 

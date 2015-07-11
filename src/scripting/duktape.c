@@ -24663,10 +24663,6 @@ DUK_LOCAL void duk__bi_global_resolve_module_id(duk_context *ctx, const char *re
 			}
 			DUK_DD(DUK_DDPRINT("resolve error: term begins with '.' but is not '.' or '..' (not allowed now)"));
 			goto resolve_error;
-		} else if (DUK_UNLIKELY(c == '/')) {
-			/* e.g. require('/foo'), empty terms not allowed */
-			DUK_DD(DUK_DDPRINT("resolve error: empty term (not allowed now)"));
-			goto resolve_error;
 		} else {
 			for (;;) {
 				/* Copy term name until end or '/'. */
