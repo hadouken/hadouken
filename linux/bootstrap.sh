@@ -30,5 +30,5 @@ fi
 
 # unzip cpp netlib
 if [[ ! -d "$DEPS_DIR/$CPPNL_DIR_NEW" ]]; then
-    ( cd $DEPS_DIR ; unzip $CPPNL_FILE ; mv $CPPNL_DIR_ORIG $CPPNL_DIR_NEW )
+    ( cd $DEPS_DIR ; unzip $CPPNL_FILE >> /dev/null ; mv $CPPNL_DIR_ORIG $CPPNL_DIR_NEW )
 fi

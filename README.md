@@ -4,6 +4,8 @@
 
 [![Hadouken documentation](https://readthedocs.org/projects/hadouken/badge/)](http://docs.hdkn.net)
 
+[![Build Status](https://travis-ci.org/hadouken/hadouken.svg?branch=develop)](https://travis-ci.org/hadouken/hadouken)
+
 Hadouken is a modern, open source, cross-platform BitTorrent client written in
 C++14. It is built on Boost and Rasterbar-libtorrent, and designed to run
 headless either as a Linux daemon or Windows Service.
