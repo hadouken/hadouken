@@ -46,11 +46,18 @@ if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}    /DEBUG /OPT:REF")
 else()
     set(LIBBOOST libboost_system.a libboost_log.a libboost_program_options.a libboost_filesystem.a libboost_thread.a)
+    set(LIBEXTRAS rt)
     set(LIBSSL ssl crypto)
     set(PTHREAD pthread)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/hadoukend")
+    
+    if(DEFINED ENV{TRAVIS})
+        # Disable deprecated warnings (for auto_ptr mainly) on travis
+        # since there are so many and travis cuts our log output after
+        # 10k lines.
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+    endif()
 endif()
 
 include_directories(

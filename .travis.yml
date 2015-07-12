@@ -1,0 +1,34 @@
+language: cpp
+
+compiler: gcc
+sudo: false
+
+cache:
+  directories:
+  - $HOME/boost
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.9
+
+before_install:
+- bash linux/install-boost.sh
+
+before_script:
+- export CC=/usr/bin/gcc-4.9
+- export CXX=/usr/bin/g++-4.9
+- export CPATH=$HOME/boost/include
+- export LIBRARY_PATH=$HOME/boost/lib
+- bash linux/bootstrap.sh
+
+script: linux/build.sh
+
+notifications:
+  email:
+    recipients:
+      - viktor+travisci@viktorelofsson.se
+    on_success: change
+    on_failure: always
