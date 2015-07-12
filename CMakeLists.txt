@@ -50,7 +50,7 @@ else()
     set(LIBSSL ssl crypto)
     set(PTHREAD pthread)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
     
     if(DEFINED ENV{TRAVIS})
         # Disable deprecated warnings (for auto_ptr mainly) on travis
