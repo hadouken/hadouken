@@ -1,0 +1,6 @@
+[submodule "deps/libtorrent"]
+	path = deps/libtorrent
+	url = https://github.com/arvidn/libtorrent
+[submodule "deps/cpp-netlib"]
+	path = deps/cpp-netlib
+	url = https://github.com/cpp-netlib/cpp-netlib

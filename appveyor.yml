@@ -1,0 +1,14 @@
+# AppVeyor build configuration
+
+branches:
+  except:
+  - master
+
+install:
+- git submodule update --init --recursive
+
+# Build script
+build_script:
+- powershell -NoProfile -ExecutionPolicy unrestricted -Command .\win32\build.ps1
+
+test: off
