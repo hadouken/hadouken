@@ -7,6 +7,14 @@ Overview
 Gets an object with information about the torrents in the Hadouken instance.
 The object keys are the torrents info hash.
 
+The method takes an optional filter argument which can be used to filter the
+result by tags. If no filter is given (ie. undefined) then all torrents will
+be returned.
+
+The example shows how to filter torrents based on the foo tag. Multiple tags
+can be specified and only torrents having all tags will be returned.
+
+
 Example
 ~~~~~~~
 
@@ -14,7 +22,7 @@ Example
 
   {
     "method": "session.getTorrents",
-    "params": []
+    "params": [ { "tags": [ "foo" ] } ]
   }
 
 Returns,
@@ -43,6 +51,7 @@ Returns,
       "isPaused": false,
       "isSeeding": false,
       "isSequentialDownload": false,
-      "queuePosition": 0
+      "queuePosition": 0,
+      "tags": [ "foo", "bar" ]
     }
   }

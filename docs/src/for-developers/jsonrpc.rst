@@ -19,6 +19,8 @@ Methods
 
    jsonrpc-methods/config-get
    jsonrpc-methods/core-getSystemInfo
+   jsonrpc-methods/core-multiCall
+   jsonrpc-methods/misc-getTags
    jsonrpc-methods/rss-getFeedItems
    jsonrpc-methods/rss-getFeeds
    jsonrpc-methods/session-addTorrentFile

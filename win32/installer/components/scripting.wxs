@@ -76,6 +76,10 @@
       </Component>
 
       <Component>
+        <File Name="misc_getTags.js" />
+      </Component>
+
+      <Component>
         <File Name="rss_getFeedItems.js" />
       </Component>
 
