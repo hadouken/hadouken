@@ -31,7 +31,7 @@ http_server::http_server(boost::shared_ptr<boost::asio::io_service> io, const bo
         }
     }
 
-    instance_ = std::make_unique<http_server_t>(opts.address(address).port(std::to_string(port)).io_service(io));
+    instance_ = std::unique_ptr<http_server_t>(new http_server_t(opts.address(address).port(std::to_string(port)).io_service(io)));
 }
 
 http_server::~http_server()
