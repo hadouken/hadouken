@@ -4,3 +4,6 @@
 [submodule "deps/cpp-netlib"]
 	path = deps/cpp-netlib
 	url = https://github.com/cpp-netlib/cpp-netlib
+[submodule "webui"]
+	path = webui
+	url = https://github.com/hadouken/webui

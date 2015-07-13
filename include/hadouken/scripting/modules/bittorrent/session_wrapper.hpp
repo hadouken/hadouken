@@ -31,6 +31,7 @@ namespace hadouken
                     static int get_settings(void* ctx);
                     static int get_status(void* ctx);
                     static int get_torrents(void* ctx);
+                    static int is_dht_running(void* ctx);
                     static int is_listening(void* ctx);
                     static int is_paused(void* ctx);
                     static int listen_on(void* ctx);
@@ -41,9 +42,15 @@ namespace hadouken
                     static int remove_torrent(void* ctx);
                     static int resume(void* ctx);
                     static int save_state(void* ctx);
+                    static int set_settings(void* ctx);
                     static int start_dht(void* ctx);
+                    static int start_lsd(void* ctx);
                     static int start_nat_pmp(void* ctx);
                     static int start_upnp(void* ctx);
+                    static int stop_dht(void* ctx);
+                    static int stop_lsd(void* ctx);
+                    static int stop_nat_pmp(void* ctx);
+                    static int stop_upnp(void* ctx);
                     static int wait_for_alert(void* ctx);
                 };
             }

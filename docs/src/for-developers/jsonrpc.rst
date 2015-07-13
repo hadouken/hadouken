@@ -17,21 +17,7 @@ Methods
 .. toctree::
    :maxdepth: 1
 
-   jsonrpc-methods/config-get
    jsonrpc-methods/core-getSystemInfo
-   jsonrpc-methods/core-multiCall
-   jsonrpc-methods/misc-getTags
-   jsonrpc-methods/rss-getFeedItems
-   jsonrpc-methods/rss-getFeeds
-   jsonrpc-methods/session-addTorrentFile
-   jsonrpc-methods/session-addTorrentUri
-   jsonrpc-methods/session-getStatus
-   jsonrpc-methods/session-getTorrents
-   jsonrpc-methods/session-pause
-   jsonrpc-methods/session-removeTorrent
-   jsonrpc-methods/session-resume
-   jsonrpc-methods/torrent-clearError
-   jsonrpc-methods/torrent-forceRecheck
-   jsonrpc-methods/torrent-getFiles
-   jsonrpc-methods/torrent-getPeers
-   jsonrpc-methods/torrent-getTrackers
+   jsonrpc-methods/webui-addTorrent
+   jsonrpc-methods/webui-getFiles
+   jsonrpc-methods/webui-getPeers

@@ -44,6 +44,7 @@ namespace hadouken
                     static int rename_file(void* ctx);
                     static int resume(void* ctx);
                     static int save_resume_data(void* ctx);
+                    static int set_file_priority(void* ctx);
                     static int set_priority(void* ctx);
 
                     static int metadata(void* ctx);
@@ -53,16 +54,22 @@ namespace hadouken
                     static int queue_top(void* ctx);
                     static int queue_up(void* ctx);
 
+                    static int get_auto_managed(void* ctx);
+                    static int get_download_limit(void* ctx);
                     static int get_max_connections(void* ctx);
                     static int get_max_uploads(void* ctx);
                     static int get_resolve_countries(void* ctx);
                     static int get_sequential_download(void* ctx);
+                    static int get_super_seed(void* ctx);
                     static int get_upload_limit(void* ctx);
                     static int get_upload_mode(void* ctx);
+                    static int set_auto_managed(void* ctx);
+                    static int set_download_limit(void* ctx);
                     static int set_max_connections(void* ctx);
                     static int set_max_uploads(void* ctx);
                     static int set_resolve_countries(void* ctx);
                     static int set_sequential_download(void* ctx);
+                    static int set_super_seed(void* ctx);
                     static int set_upload_limit(void* ctx);
                     static int set_upload_mode(void* ctx);
 

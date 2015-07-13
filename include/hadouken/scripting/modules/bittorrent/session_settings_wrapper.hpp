@@ -40,6 +40,12 @@ namespace hadouken
                     DUK_PROP(peer_timeout);
                     DUK_PROP(urlseed_timeout);
                     DUK_PROP(urlseed_pipeline_size);
+                    DUK_PROP(download_rate_limit);
+                    DUK_PROP(upload_rate_limit);
+                    DUK_PROP(rate_limit_ip_overhead);
+                    DUK_PROP(rate_limit_utp);
+                    DUK_PROP(connections_limit);
+                    DUK_PROP(mixed_mode_algorithm);
                 };
             }
         }

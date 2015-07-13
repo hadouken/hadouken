@@ -25,6 +25,7 @@ void session_wrapper::initialize(duk_context* ctx, libtorrent::session& session)
     duk_push_string(ctx, LIBTORRENT_VERSION);
     duk_put_prop_string(ctx, sessionIndex, "LIBTORRENT_VERSION");
 
+    DUK_READONLY_PROPERTY(ctx, sessionIndex, isDhtRunning, is_dht_running);
     DUK_READONLY_PROPERTY(ctx, sessionIndex, isListening, is_listening);
     DUK_READONLY_PROPERTY(ctx, sessionIndex, isPaused, is_paused);
     DUK_READONLY_PROPERTY(ctx, sessionIndex, listenPort, get_listen_port);
@@ -50,9 +51,15 @@ void session_wrapper::initialize(duk_context* ctx, libtorrent::session& session)
         { "removeTorrent",  remove_torrent, 2 },
         { "resume",         resume,         0 },
         { "saveState",      save_state,     0 },
+        { "setSettings",    set_settings,   1 },
         { "startDht",       start_dht,      0 },
+        { "startLsd",       start_lsd,      0 },
         { "startNatPmp",    start_nat_pmp,  0 },
         { "startUpnp",      start_upnp,     0 },
+        { "stopDht",        stop_dht,       0 },
+        { "stopLsd",        stop_lsd,       0 },
+        { "stopNatPmp",     stop_nat_pmp,   0 },
+        { "stopUpnp",       stop_upnp,      0 },
         { "waitForAlert",   wait_for_alert, 1 },
         { NULL, NULL, 0 }
     };
@@ -253,6 +260,13 @@ duk_ret_t session_wrapper::get_torrents(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t session_wrapper::is_dht_running(duk_context* ctx)
+{
+    libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
+    duk_push_boolean(ctx, sess->is_dht_running());
+    return 1;
+}
+
 duk_ret_t session_wrapper::is_listening(duk_context* ctx)
 {
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
@@ -340,9 +354,23 @@ duk_ret_t session_wrapper::save_state(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t session_wrapper::set_settings(duk_context* ctx)
+{
+    libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
+    libtorrent::session_settings* settings = common::get_pointer<libtorrent::session_settings>(ctx, 0);
+    sess->set_settings(*settings);
+    return 0;
+}
+
 duk_ret_t session_wrapper::start_dht(duk_context* ctx)
 {
     common::get_pointer<libtorrent::session>(ctx)->start_dht();
+    return 0;
+}
+
+duk_ret_t session_wrapper::start_lsd(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->start_lsd();
     return 0;
 }
 
@@ -355,6 +383,30 @@ duk_ret_t session_wrapper::start_nat_pmp(duk_context* ctx)
 duk_ret_t session_wrapper::start_upnp(duk_context* ctx)
 {
     common::get_pointer<libtorrent::session>(ctx)->start_upnp();
+    return 0;
+}
+
+duk_ret_t session_wrapper::stop_dht(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->stop_dht();
+    return 0;
+}
+
+duk_ret_t session_wrapper::stop_lsd(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->stop_lsd();
+    return 0;
+}
+
+duk_ret_t session_wrapper::stop_nat_pmp(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->stop_natpmp();
+    return 0;
+}
+
+duk_ret_t session_wrapper::stop_upnp(duk_context* ctx)
+{
+    common::get_pointer<libtorrent::session>(ctx)->stop_upnp();
     return 0;
 }
 

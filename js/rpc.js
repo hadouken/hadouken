@@ -24,7 +24,17 @@ var methods = {};
             var name = methodNames[i];
             var method = methods[name];
 
-            result[name] = invoke(method, params[name]);
+            if(method) {
+                result[name] = invoke(method, params[name]);
+            } else {
+                result[name].error = {
+                    code: -32601,
+                    message: "Method not found",
+                    data: name
+                };
+
+                logger.error("Method '" + request.method + "' not found.");
+            }
         }
 
         return result;

@@ -24,6 +24,10 @@ function findKey(key) {
 exports.obj = config;
 
 exports.get = function(key) {
+    if(!key) {
+        return config;
+    }
+    
     return findKey(key);
 }
 
@@ -37,4 +41,23 @@ exports.getNumber = function(key) {
 
 exports.getString = function(key) {
     return findKey(key);
+}
+
+exports.set = function(key, val) {
+    // Split key on ".".
+    var parts = key.split(".");
+    var cfg = config;
+    var len = parts.length;
+
+    for(var i = 0; i < len - 1; i++) {
+        var elem = parts[i];
+        
+        if(!cfg[elem]) {
+            cfg[elem] = {};
+        }
+
+        cfg = cfg[elem];
+    }
+
+    cfg[parts[len - 1]] = val;
 }

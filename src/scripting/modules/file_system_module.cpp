@@ -24,6 +24,8 @@ duk_ret_t file_system_module::initialize(duk_context* ctx)
         { "isRelative",        is_relative,        1 },
         { "readBuffer",        read_buffer,        1 },
         { "readText",          read_text,          1 },
+        { "rename",            rename,             2 },
+        { "space",             space,              1 },
         { "writeBuffer",       write_buffer,       2 },
         { "writeText",         write_text,         2 },
         { NULL, NULL, 0 }
@@ -119,6 +121,16 @@ duk_ret_t file_system_module::is_relative(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t file_system_module::rename(duk_context* ctx)
+{
+    fs::path prev(duk_require_string(ctx, 0));
+    fs::path next(duk_require_string(ctx, 1));
+
+    fs::rename(prev, next);
+
+    return 0;
+}
+
 duk_ret_t file_system_module::read_buffer(duk_context* ctx)
 {
     fs::path path(duk_require_string(ctx, 0));
@@ -163,6 +175,24 @@ duk_ret_t file_system_module::read_text(duk_context* ctx)
     }
 
     return 0;
+}
+
+duk_ret_t file_system_module::space(duk_context* ctx)
+{
+    fs::path path(duk_require_string(ctx, 0));
+    fs::space_info info = fs::space(path);
+
+    duk_idx_t idx = duk_push_object(ctx);
+    duk_push_number(ctx, info.available);
+    duk_put_prop_string(ctx, idx, "available");
+
+    duk_push_number(ctx, info.capacity);
+    duk_put_prop_string(ctx, idx, "capacity");
+
+    duk_push_number(ctx, info.free);
+    duk_put_prop_string(ctx, idx, "free");
+
+    return 1;
 }
 
 duk_ret_t file_system_module::write_buffer(duk_context* ctx)

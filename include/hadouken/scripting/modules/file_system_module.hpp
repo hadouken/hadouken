@@ -22,6 +22,8 @@ namespace hadouken
                 static int is_relative(void* ctx);
                 static int read_buffer(void* ctx);
                 static int read_text(void* ctx);
+                static int rename(void* ctx);
+                static int space(void* ctx);
                 static int write_buffer(void* ctx);
                 static int write_text(void* ctx);
             };

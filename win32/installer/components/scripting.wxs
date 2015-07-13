@@ -68,119 +68,51 @@
 
     <ComponentGroup Id="RpcScriptingComponents" Directory="JS_RPC" Source="$(var.BinDir)\js\rpc\">
       <Component>
-        <File Name="config_get.js" />
-      </Component>
-
-      <Component>
         <File Name="core_getSystemInfo.js" />
       </Component>
 
       <Component>
-        <File Name="misc_getTags.js" />
+        <File Name="webui_addTorrent.js" />
       </Component>
 
       <Component>
-        <File Name="rss_getFeedItems.js" />
+        <File Name="webui_getFiles.js" />
       </Component>
 
       <Component>
-        <File Name="rss_getFeeds.js" />
+        <File Name="webui_getPeers.js" />
       </Component>
 
       <Component>
-        <File Name="session_addTorrentFile.js" />
+        <File Name="webui_getProperties.js" />
       </Component>
 
       <Component>
-        <File Name="session_addTorrentUri.js" />
+        <File Name="webui_getSettings.js" />
       </Component>
 
       <Component>
-        <File Name="session_getStatus.js" />
+        <File Name="webui_list.js" />
       </Component>
 
       <Component>
-        <File Name="session_getTorrents.js" />
+        <File Name="webui_listDirectories.js" />
       </Component>
 
       <Component>
-        <File Name="session_pause.js" />
+        <File Name="webui_perform.js" />
       </Component>
 
       <Component>
-        <File Name="session_removeTorrent.js" />
+        <File Name="webui_setFilePriority.js" />
       </Component>
 
       <Component>
-        <File Name="session_resume.js" />
+        <File Name="webui_setProperties.js" />
       </Component>
 
       <Component>
-        <File Name="torrent_clearError.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_forceRecheck.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_getFiles.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_getMetadata.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_getPeers.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_getPreferences.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_getTrackers.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_moveStorage.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_pause.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_queueBottom.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_queueDown.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_queueTop.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_queueUp.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_renameFile.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_resume.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_setMetadata.js" />
-      </Component>
-
-      <Component>
-        <File Name="torrent_setPreferences.js" />
+        <File Name="webui_setSettings.js" />
       </Component>
     </ComponentGroup>
   </Fragment>

@@ -50,6 +50,9 @@ void torrent_info_wrapper::initialize(duk_context* ctx, const libtorrent::torren
     // Set internal pointers
     common::set_pointer<libtorrent::torrent_info>(ctx, infoIndex, new libtorrent::torrent_info(info));
 
+    DUK_READONLY_PROPERTY(ctx, infoIndex, comment, get_comment);
+    DUK_READONLY_PROPERTY(ctx, infoIndex, creationDate, get_creation_date);
+    DUK_READONLY_PROPERTY(ctx, infoIndex, creator, get_creator);
     DUK_READONLY_PROPERTY(ctx, infoIndex, infoHash, get_info_hash);
     DUK_READONLY_PROPERTY(ctx, infoIndex, name, get_name);
     DUK_READONLY_PROPERTY(ctx, infoIndex, totalSize, get_total_size);
@@ -62,6 +65,36 @@ duk_ret_t torrent_info_wrapper::finalize(duk_context* ctx)
 {
     common::finalize<libtorrent::torrent_info>(ctx);
     return 0;
+}
+
+duk_ret_t torrent_info_wrapper::get_creation_date(duk_context* ctx)
+{
+    libtorrent::torrent_info* info = common::get_pointer<libtorrent::torrent_info>(ctx);
+
+    if (info->creation_date())
+    {
+        duk_push_number(ctx, info->creation_date().get());
+    }
+    else
+    {
+        duk_push_number(ctx, -1);
+    }
+
+    return 1;
+}
+
+duk_ret_t torrent_info_wrapper::get_comment(duk_context* ctx)
+{
+    libtorrent::torrent_info* info = common::get_pointer<libtorrent::torrent_info>(ctx);
+    duk_push_string(ctx, info->comment().c_str());
+    return 1;
+}
+
+duk_ret_t torrent_info_wrapper::get_creator(duk_context* ctx)
+{
+    libtorrent::torrent_info* info = common::get_pointer<libtorrent::torrent_info>(ctx);
+    duk_push_string(ctx, info->creator().c_str());
+    return 1;
 }
 
 duk_ret_t torrent_info_wrapper::get_files(duk_context* ctx)
