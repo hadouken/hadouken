@@ -16,6 +16,24 @@ var methods = {};
 })();
 
 (function() {
+    function multiCall(params) {
+        var methodNames = Object.keys(params);
+        var result = {};
+
+        for(var i = 0; i < methodNames.length; i++) {
+            var name = methodNames[i];
+            var method = methods[name];
+
+            result[name] = invoke(method, params[name]);
+        }
+
+        return result;
+    }
+
+    methods["core.multiCall"] = multiCall;
+})();
+
+(function() {
     var rpcFiles   = fs.combine(__ROOT__, "rpc");
 
     var files = fs.getFiles(rpcFiles);
@@ -31,6 +49,18 @@ var methods = {};
 
 logger.info("Found " + Object.keys(methods).length + " RPC method(s).");
 
+function invoke(method, params) {
+    var fn = null;
+
+    if(params instanceof Array) {
+        fn = function() { return method.apply(method, params); };
+    } else {
+        fn = function() { return method(params); };
+    }
+
+    return fn();
+}
+
 function handleRequest(request) {
     var method = methods[request.method];
     var response = {
@@ -39,16 +69,8 @@ function handleRequest(request) {
     };
 
     if(method) {
-        var fn = null;
-
-        if(request.params instanceof Array) {
-            fn = function() { return method.apply(method, request.params); };
-        } else {
-            fn = function() { return method(request.params); };
-        }
-
         try {
-            response.result = fn();
+            response.result = invoke(method, request.params);
         } catch(e) {
             response.result = undefined;
             response.error = {

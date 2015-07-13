@@ -22,14 +22,20 @@ function checkFiles(folder, files) {
         if(pattern.test(file)) {
             var buffer = fs.readBuffer(file);
             var p      = bt.AddTorrentParams.getDefault();
+            var meta   = {};
             p.torrent  = new bt.TorrentInfo(buffer);
 
             if(folder.savePath) {
                 p.savePath = folder.savePath;
             }
 
+            if(folder.tags) {
+                meta.tags = folder.tags;
+            }
+
             logger.info("(AUTOADD) Adding torrent " + p.torrent.name + " from file " + file);
 
+            p.metadata = meta;
             session.addTorrent(p);
             fs.deleteFile(file);
         }
