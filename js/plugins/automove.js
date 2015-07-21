@@ -27,7 +27,7 @@ function TagsFilter(tags) {
 }
 
 TagsFilter.prototype.isMatch = function(torrent) {
-    var torrentTags = torrent.metadata.get("tags");
+    var torrentTags = torrent.metadata("tags");
     if(!torrentTags) { return false; }
 
     for(var i = 0; i < this._tags.length; i++) {
