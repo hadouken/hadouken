@@ -14,10 +14,28 @@ function set(key, value) {
             session.listenOn([port, port]);
             break;
 
+        case "bt.anonymous_mode":
+            value = !!(value);
+            config.set("bittorrent.anonymousMode", value);
+            settings.anonymousMode = value;
+            break;
+
+        case "bt.allow_same_ip":
+            value = !!(value);
+            config.set("bittorrent.allowMultipleConnectionsPerIp", value);
+            settings.allowMultipleConnectionsPerIp = value;
+            break;
+
         case "dht":
             value = !!(value);
             config.set("bittorrent.dht.enabled", value);
             if(value) { session.startDht(); } else { session.stopDht(); }
+            break;
+
+        case "download_directories":
+            if(Array.isArray(value)) {
+                config.set("bittorrent.downloadDirectories", value);
+            }
             break;
 
         case "enable_bw_management":
@@ -54,6 +72,14 @@ function set(key, value) {
             settings.rateLimitIpOverhead = value;
             break;
 
+        case "net.max_halfopen":
+            value = parseInt(value, 10);
+            if(!isNaN(value)) {
+                config.set("bittorrent.halfOpenLimit", value);
+                settings.halfOpenLimit = value;
+            }
+            break;
+
         case "net.ratelimit_utp":
             value = !!(value);
             config.set("bittorrent.rateLimitUtp", value);
@@ -70,6 +96,10 @@ function set(key, value) {
             value = !!(value);
             config.set("bittorrent.upnp.enabled", value);
             if(value) { session.startUpnp(); } else { session.stopUpnp(); }
+            break;
+
+        case "save_path":
+            config.set("bittorrent.defaultSavePath", value);
             break;
 
         case "webui.cookie":

@@ -1,4 +1,5 @@
 var config  = require("config");
+var fs      = require("fs");
 var session = require("bittorrent").session;
 
 var ACCESS = {
@@ -10,7 +11,8 @@ var ACCESS = {
 var TYPE = {
     NUMBER: 0,
     BOOLEAN: 1,
-    STRING: 2
+    STRING: 2,
+    ARRAY: 3
 };
 
 function get(cfgKey, resKey, type, defaultValue, access) {
@@ -47,21 +49,36 @@ exports.rpc = {
         */
 
         var settings = session.getSettings();
+        var savePath = config.getString("bittorrent.defaultSavePath") || ".";
+        var absoluteSavePath = fs.makeAbsolute(savePath);
+
+        if(savePath === "." && absoluteSavePath.endsWith(".")) {
+            absoluteSavePath = absoluteSavePath.slice(0, -1);
+        }
+
+        var downloadDirectories = config.get("bittorrent.downloadDirectories") || [];
 
         return {
             settings: [
                 [ "bind_port", TYPE.NUMBER, session.listenPort, ACCESS.READWRITE ],
                 [ "conns_globally", TYPE.NUMBER, settings.connectionsLimit, ACCESS.READWRITE ],
                 [ "dht", TYPE.BOOLEAN, session.isDhtRunning.toString(), ACCESS.READWRITE ],
+                [ "download_directories", TYPE.ARRAY, downloadDirectories, ACCESS.READWRITE ],
                 [ "enable_bw_management", TYPE.BOOLEAN, settings.mixedModeAlgorithm === 1 ? "true" : "false", ACCESS.READWRITE ],
                 [ "max_dl_rate", TYPE.NUMBER, settings.downloadRateLimit, ACCESS.READWRITE ],
                 [ "max_ul_rate", TYPE.NUMBER, settings.uploadRateLimit, ACCESS.READWRITE ],
                 [ "net.calc_overhead", TYPE.BOOLEAN, settings.rateLimitIpOverhead.toString(), ACCESS.READWRITE ],
                 [ "net.ratelimit_utp", TYPE.BOOLEAN, settings.rateLimitUtp.toString(), ACCESS.READWRITE ],
+                [ "save_path", TYPE.STRING, absoluteSavePath, ACCESS.READWRITE ],
                 get("bittorrent.lsd.enabled", "lsd", TYPE.BOOLEAN, "false", ACCESS.READWRITE),
                 get("bittorrent.natpmp.enabled", "natpmp", TYPE.BOOLEAN, "false", ACCESS.READWRITE),
                 get("bittorrent.upnp.enabled", "upnp", TYPE.BOOLEAN, "false", ACCESS.READWRITE),
-                get("http.webui.cookie", "webui.cookie", TYPE.STRING, "{}", ACCESS.READWRITE)
+                get("http.webui.cookie", "webui.cookie", TYPE.STRING, "{}", ACCESS.READWRITE),
+
+                // Advanced settings
+                [ "bt.allow_same_ip", TYPE.BOOLEAN, settings.allowMultipleConnectionsPerIp.toString(), ACCESS.READWRITE ],
+                [ "bt.anonymous_mode", TYPE.BOOLEAN, settings.anonymousMode.toString(), ACCESS.READWRITE ],
+                [ "net.max_halfopen", TYPE.NUMBER, (settings.halfOpenLimit >= 2147483647 ? -1 : settings.halfOpenLimit).toString(), ACCESS.READWRITE ]
             ]
         };
     }
