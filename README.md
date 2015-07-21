@@ -16,10 +16,12 @@ headless either as a Linux daemon or Windows Service.
 
 To get started, head over to [the releases](https://github.com/hadouken/hadouken/releases)
 and download a binary for your platform. If none exists, you might need to
-build one yourself.
+[build one yourself](http://docs.hdkn.net/en/latest/#building-hadouken).
 
-Once you have Hadouken running, you can head over to
-[the remote client](http://remote.hdkn.net) to start managing your instance.
+Once Hadouken is installed, access the web interface by heading to
+[http://localhost:7070/gui/index.html](http://localhost:7070/gui/index.html).
+
+[![](https://cdn.rawgit.com/hadouken/hadouken/c3a8ad79a7529368f10f59ba224580ac31ce87ff/docs/src/static/webui_overview.png)](https://cdn.rawgit.com/hadouken/hadouken/c3a8ad79a7529368f10f59ba224580ac31ce87ff/docs/src/static/webui_overview.png)
 
 Please refer to [the documentation](http://docs.hdkn.net) for more information
 on how to configure and run Hadouken on your platform.
