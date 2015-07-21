@@ -36,6 +36,15 @@ First-time install dialog sequence:
             <DialogRef Id="FilesInUse" />
             <DialogRef Id="UserExit" />
 
+            <UIText Id="MenuAbsent">!(loc.UITextMenuAbsent)</UIText>
+            <UIText Id="MenuAdvertise">!(loc.UITextMenuAdvertise)</UIText>
+            <UIText Id="MenuAllCD">!(loc.UITextMenuAllCD)</UIText>
+            <UIText Id="MenuAllLocal">!(loc.UITextMenuAllLocal)</UIText>
+            <UIText Id="MenuAllNetwork">!(loc.UITextMenuAllNetwork)</UIText>
+            <UIText Id="MenuCD">!(loc.UITextMenuCD)</UIText>
+            <UIText Id="MenuLocal">!(loc.UITextMenuLocal)</UIText>
+            <UIText Id="MenuNetwork">!(loc.UITextMenuNetwork)</UIText>
+
             <Publish Dialog="WelcomeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
             <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="ConfigureDlg">1</Publish>
 

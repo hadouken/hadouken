@@ -3,4 +3,13 @@
 <WixLocalization Culture="en-us" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <String Id="NoDowngrading">This installer does not support downgrading.</String>
   <String Id="VCRedistRequired">Hadouken requires the Visual C++ 2013 (x86) redistributable package.</String>
+
+  <String Id="UITextMenuAbsent" Overridable="yes"><!-- _locID_text="UITextMenuAbsent" _locComment="UITextMenuAbsent" -->Entire feature will be unavailable</String>
+  <String Id="UITextMenuAdvertise" Overridable="yes"><!-- _locID_text="UITextMenuAdvertise" _locComment="UITextMenuAdvertise" -->Feature will be installed when required</String>
+  <String Id="UITextMenuAllCD" Overridable="yes"><!-- _locID_text="UITextMenuAllCD" _locComment="UITextMenuAllCD" -->Entire feature will be installed to run from CD</String>
+  <String Id="UITextMenuAllLocal" Overridable="yes"><!-- _locID_text="UITextMenuAllLocal" _locComment="UITextMenuAllLocal" -->Entire feature will be installed on local hard drive</String>
+  <String Id="UITextMenuAllNetwork" Overridable="yes"><!-- _locID_text="UITextMenuAllNetwork" _locComment="UITextMenuAllNetwork" -->Entire feature will be installed to run from network</String>
+  <String Id="UITextMenuCD" Overridable="yes"><!-- _locID_text="UITextMenuCD" _locComment="UITextMenuCD" -->Will be installed to run from CD</String>
+  <String Id="UITextMenuLocal" Overridable="yes"><!-- _locID_text="UITextMenuLocal" _locComment="UITextMenuLocal" -->Will be installed on local hard drive</String>
+  <String Id="UITextMenuNetwork" Overridable="yes"><!-- _locID_text="UITextMenuNetwork" _locComment="UITextMenuNetwork" -->Will be installed to run from network</String>
 </WixLocalization>
