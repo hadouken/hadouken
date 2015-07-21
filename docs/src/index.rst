@@ -28,7 +28,7 @@ Furthermore, it also runs on the following devices,
 Features
 --------
 
-* No GUI. Hadouken runs as a Windows Service/Linux daemon.
+* A powerful embedded web interface.
 * Highly configurable, a single JSON text file to configure all aspects of
   Hadouken.
 * Low memory footprint making it ideal for low-powered devices such as the
@@ -45,8 +45,8 @@ Features
 * Send push notifications to your devices via `Pushbullet <https://www.pushbullet.com>`_
   or `Pushover <https://pushover.net>`_.
 * Launch executables on various events, such as when a torrent finishes.
-* *Experimental* JavaScript extension exposing a Node-like API to enable
-  developers to write extensions in JS.
+* A powerful JavaScript API making it easy to customize and extend Hadouken
+  with plugins.
 * Unattended installations to give domain administrators the ability to set up
   Hadouken clusters with ease.
 
@@ -54,9 +54,9 @@ Features
 Downloads
 ---------
 
-Hadouken is still in beta and only Windows binaries are provided. These can be
-downloaded from `the build server <https://builds.nullreferenceexception.se/>`_.
-
+Hadouken can be downloaded from
+`the release feed <https://github.com/hadouken/hadouken/releases>`_. Binaries
+are provided for Windows. For other platforms you need to build it yourself.
 
 Installation
 ------------

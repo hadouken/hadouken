@@ -5,8 +5,7 @@ Overview
 --------
 
 This will guide you through the process of building Hadouken on Ubuntu.
-*libtorrent* and *cpp-netlib* must be placed in the :file:`deps/` directory.
-If you run the :file:`./bootstrap.sh` script, this will be taken care of.
+The depenencies *libtorrent* and *cpp-netlib* exists as Git submodules.
 
 
 What you need
@@ -21,29 +20,20 @@ applications and libraries installed.
 * :code:`libssl-dev`
 * :code:`libboost-1.58`
 
-.. note:: Hadouken will not compile with a `g++` version lower than 4.9 since
+.. note:: Hadouken will not compile with a `GCC` version lower than 4.9 since
           that is the version which shipped with C++14 support.
 
 
 Cloning the repository
 ----------------------
 
-Clone the Hadouken GitHub repository at https://github.com/hadouken/hadouken.
+Clone `the Hadouken GitHub repository <https://github.com/hadouken/hadouken>`_.
 
 .. code:: bash
 
    $ git clone https://github.com/hadouken/hadouken
-
-
-Bootstrapping
------------------------------
-
-The repository contains a bootstrap script which will prepare your
-environment.
-
-.. code:: bash
-
-   $ ./linux/bootstrap.sh
+   $ cd hadouken
+   $ git submodule update --init
 
 
 Running the build
