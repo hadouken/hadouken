@@ -40,6 +40,7 @@ void torrent_handle_wrapper::initialize(duk_context* ctx, const libtorrent::torr
         { "renameFile",        rename_file,         2 },
         { "resume",            resume,              0 },
         { "saveResumeData",    save_resume_data,    0 },
+        { "setFilePriority",   set_file_priority,   2 },
         { "setPriority",       set_priority,        1 },
         { NULL,                NULL,                0 }
     };
@@ -58,10 +59,13 @@ void torrent_handle_wrapper::initialize(duk_context* ctx, const libtorrent::torr
     duk_set_finalizer(ctx, -2);
 
     // read+write properties
+    DUK_READWRITE_PROPERTY(ctx, idx, autoManaged, auto_managed);
+    DUK_READWRITE_PROPERTY(ctx, idx, downloadLimit, download_limit);
     DUK_READWRITE_PROPERTY(ctx, idx, maxConnections, max_connections);
     DUK_READWRITE_PROPERTY(ctx, idx, maxUploads, max_uploads);
     DUK_READWRITE_PROPERTY(ctx, idx, resolveCountries, resolve_countries);
     DUK_READWRITE_PROPERTY(ctx, idx, sequentialDownload, sequential_download);
+    DUK_READWRITE_PROPERTY(ctx, idx, superSeed, super_seed);
     DUK_READWRITE_PROPERTY(ctx, idx, uploadMode, upload_mode);
     DUK_READWRITE_PROPERTY(ctx, idx, uploadLimit, upload_limit);
 }
@@ -314,20 +318,15 @@ duk_ret_t torrent_handle_wrapper::metadata(duk_context* ctx)
 
 duk_ret_t torrent_handle_wrapper::move_storage(duk_context* ctx)
 {
-    std::string path(duk_require_string(ctx, 0));
-
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
-    handle->move_storage(path);
-
+    handle->move_storage(duk_require_string(ctx, 0));
     return 0;
 }
 
 duk_ret_t torrent_handle_wrapper::pause(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
-    handle->auto_managed(false);
     handle->pause();
-
     return 0;
 }
 
@@ -374,9 +373,7 @@ duk_ret_t torrent_handle_wrapper::rename_file(duk_context* ctx)
 duk_ret_t torrent_handle_wrapper::resume(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
-    handle->auto_managed(true);
     handle->resume();
-
     return 0;
 }
 
@@ -386,10 +383,32 @@ duk_ret_t torrent_handle_wrapper::save_resume_data(duk_context* ctx)
     return 0;
 }
 
+duk_ret_t torrent_handle_wrapper::set_file_priority(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    handle->file_priority(duk_require_int(ctx, 0), duk_require_int(ctx, 1));
+    return 0;
+}
+
+
 duk_ret_t torrent_handle_wrapper::set_priority(duk_context* ctx)
 {
     common::get_pointer<libtorrent::torrent_handle>(ctx)->set_priority(duk_require_int(ctx, 0));
     return 0;
+}
+
+duk_ret_t torrent_handle_wrapper::get_auto_managed(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    duk_push_boolean(ctx, handle->status().auto_managed);
+    return 1;
+}
+
+duk_ret_t torrent_handle_wrapper::get_download_limit(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    duk_push_int(ctx, handle->download_limit());
+    return 1;
 }
 
 duk_ret_t torrent_handle_wrapper::get_max_connections(duk_context* ctx)
@@ -420,6 +439,13 @@ duk_ret_t torrent_handle_wrapper::get_sequential_download(duk_context* ctx)
     return 1;
 }
 
+duk_ret_t torrent_handle_wrapper::get_super_seed(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    duk_push_boolean(ctx, handle->status().super_seeding);
+    return 1;
+}
+
 duk_ret_t torrent_handle_wrapper::get_upload_limit(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
@@ -432,6 +458,20 @@ duk_ret_t torrent_handle_wrapper::get_upload_mode(duk_context* ctx)
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
     duk_push_boolean(ctx, handle->status().upload_mode);
     return 1;
+}
+
+duk_ret_t torrent_handle_wrapper::set_auto_managed(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    handle->auto_managed(duk_require_boolean(ctx, 0) > 0 ? true : false);
+    return 0;
+}
+
+duk_ret_t torrent_handle_wrapper::set_download_limit(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    handle->set_download_limit(duk_require_int(ctx, 0));
+    return 0;
 }
 
 duk_ret_t torrent_handle_wrapper::set_max_connections(duk_context* ctx)
@@ -459,6 +499,13 @@ duk_ret_t torrent_handle_wrapper::set_sequential_download(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
     handle->set_sequential_download(duk_require_boolean(ctx, 0) > 0 ? true : false);
+    return 0;
+}
+
+duk_ret_t torrent_handle_wrapper::set_super_seed(duk_context* ctx)
+{
+    libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
+    handle->super_seeding(duk_require_boolean(ctx, 0) > 0 ? true : false);
     return 0;
 }
 

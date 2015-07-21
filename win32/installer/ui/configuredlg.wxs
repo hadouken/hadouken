@@ -25,45 +25,13 @@
 
                 <Control Id="Port" Type="Edit" X="122" Y="117" Width="45" Height="18" Property="HDKN_HTTP_PORT" />
 
-                <Control Id="AuthTitle" Type="Text" X="17" Y="139" Width="80" Height="12" Text="Authentication" />
+                <Control Id="BasicUserTitle" Type="Text" X="17" Y="139" Width="80" Height="12" Text="Username" />
 
-                <Control Id="AuthGroup" Type="RadioButtonGroup" X="122" Y="136" Width="200" Height="18" Property="HDKN_HTTP_AUTH">
-                    <RadioButtonGroup Property="HDKN_HTTP_AUTH">
-                        <RadioButton Value="none" Text="None" X="0" Y="0" Width="40" Height="18" />
-                        <RadioButton Value="basic" Text="Basic" X="50" Y="0" Width="40" Height="18" />
-                        <RadioButton Value="token" Text="Token" X="100" Y="0" Width="40" Height="18" />
-                    </RadioButtonGroup>
-                </Control>
+                <Control Id="BasicUser" Type="Edit" X="122" Y="136" Width="100" Height="18" Property="HDKN_HTTP_BASIC_USERNAME" />
 
-                <Control Id="TokenTitle" Type="Text" X="17" Y="161" Width="80" Height="12" Text="Token">
-                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "token"]]></Condition>
-                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "token"]]></Condition>
-                </Control>
+                <Control Id="BasicPassTitle" Type="Text" X="17" Y="161" Width="80" Height="12" Text="Password" />
 
-                <Control Id="Token" Type="Edit" X="122" Y="158" Width="140" Height="18" Property="HDKN_HTTP_TOKEN">
-                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "token"]]></Condition>
-                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "token"]]></Condition>
-                </Control>
-
-                <Control Id="BasicUserTitle" Type="Text" X="17" Y="161" Width="80" Height="12" Text="Username">
-                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
-                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
-                </Control>
-
-                <Control Id="BasicUser" Type="Edit" X="122" Y="158" Width="100" Height="18" Property="HDKN_HTTP_BASIC_USERNAME">
-                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
-                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
-                </Control>
-
-                <Control Id="BasicPassTitle" Type="Text" X="17" Y="183" Width="80" Height="12" Text="Password">
-                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
-                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
-                </Control>
-
-                <Control Id="BasicPass" Type="Edit" Password="yes" X="122"  Y="180" Width="100" Height="18" Property="HDKN_HTTP_BASIC_PASSWORD">
-                    <Condition Action="hide"><![CDATA[HDKN_HTTP_AUTH <> "basic"]]></Condition>
-                    <Condition Action="show"><![CDATA[HDKN_HTTP_AUTH  = "basic"]]></Condition>
-                </Control>
+                <Control Id="BasicPass" Type="Edit" Password="yes" X="122"  Y="158" Width="100" Height="18" Property="HDKN_HTTP_BASIC_PASSWORD" />
 
                 <!-- Version and revision -->
                 <Control Id="Version" Type="Text" X="10" Y="248" Width="100" Height="17" Disabled="yes" NoPrefix="yes" Text="v$(var.BuildVersion) (rev: $(var.GitCommitish))" />

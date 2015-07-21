@@ -16,7 +16,7 @@
                     <Condition Action="hide">WIX_UPGRADE_DETECTED</Condition>
                 </Control>
 
-                <Control Id="OpenRemote" Type="CheckBox" X="10" Y="110" Width="220" Height="40" Hidden="yes" Property="HDKN_OPEN_REMOTE" CheckBoxValue="1" Text="Open 'remote.hdkn.net' when I click 'Finish'.">
+                <Control Id="OpenRemote" Type="CheckBox" X="10" Y="110" Width="220" Height="40" Hidden="yes" Property="HDKN_OPEN_REMOTE" CheckBoxValue="1" Text="Open Hadouken when I click 'Finish'.">
                     <Condition Action="show">NOT WIX_UPGRADE_DETECTED AND NOT Installed</Condition>
                 </Control>
 
@@ -39,7 +39,7 @@
             </Dialog>
         </UI>
 
-        <Property Id="WixShellExecTarget" Value="http://remote.hdkn.net/#/configure" />
+        <Property Id="WixShellExecTarget" Value="http://localhost:[HDKN_HTTP_PORT]/gui/index.html#welcome" />
         <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
     </Fragment>
 </Wix>

@@ -35,6 +35,21 @@
         return 0; \
         }
 
+#define DUK_BOOL_PROP(prop) \
+    duk_ret_t session_settings_wrapper::get_##prop(duk_context* ctx) \
+                { \
+        libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
+        duk_push_boolean(ctx, ss->prop); \
+        return 1; \
+                } \
+    \
+    duk_ret_t session_settings_wrapper::set_##prop(duk_context* ctx) \
+                { \
+        libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
+        ss->prop = duk_require_boolean(ctx, 0); \
+        return 0; \
+                }
+
 using namespace hadouken::scripting::modules;
 using namespace hadouken::scripting::modules::bittorrent;
 
@@ -57,6 +72,12 @@ void session_settings_wrapper::initialize(duk_context* ctx, libtorrent::session_
     DUK_READWRITE_PROPERTY(ctx, idx, peerTimeout, peer_timeout);
     DUK_READWRITE_PROPERTY(ctx, idx, urlSeedTimeout, urlseed_timeout);
     DUK_READWRITE_PROPERTY(ctx, idx, urlSeedPipelineSize, urlseed_pipeline_size);
+    DUK_READWRITE_PROPERTY(ctx, idx, downloadRateLimit, download_rate_limit);
+    DUK_READWRITE_PROPERTY(ctx, idx, uploadRateLimit, upload_rate_limit);
+    DUK_READWRITE_PROPERTY(ctx, idx, rateLimitIpOverhead, rate_limit_ip_overhead);
+    DUK_READWRITE_PROPERTY(ctx, idx, rateLimitUtp, rate_limit_utp);
+    DUK_READWRITE_PROPERTY(ctx, idx, connectionsLimit, connections_limit);
+    DUK_READWRITE_PROPERTY(ctx, idx, mixedModeAlgorithm, mixed_mode_algorithm);
 
     // Set finalizer
     duk_push_c_function(ctx, finalize, 1);
@@ -83,3 +104,9 @@ DUK_INT_PROP(whole_pieces_threshold)
 DUK_INT_PROP(peer_timeout)
 DUK_INT_PROP(urlseed_timeout)
 DUK_INT_PROP(urlseed_pipeline_size)
+DUK_INT_PROP(download_rate_limit)
+DUK_INT_PROP(upload_rate_limit)
+DUK_BOOL_PROP(rate_limit_ip_overhead)
+DUK_BOOL_PROP(rate_limit_utp)
+DUK_INT_PROP(connections_limit)
+DUK_INT_PROP(mixed_mode_algorithm)

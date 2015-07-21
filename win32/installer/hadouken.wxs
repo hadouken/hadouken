@@ -33,6 +33,7 @@
       <ComponentGroupRef Id="ScriptingComponents" />
       <ComponentGroupRef Id="PluginsScriptingComponents" />
       <ComponentGroupRef Id="RpcScriptingComponents" />
+      <ComponentGroupRef Id="WebUIComponents" />
 
       <MergeRef Id="VCRedist" />
 
@@ -80,8 +81,9 @@
 
     <Property Id="HDKN_BUILDVERSION" Value="$(var.BuildVersion)" />
     <Property Id="HDKN_GITREV" Value="$(var.GitCommitish)" />
-    <Property Id="HDKN_HTTP_AUTH" Value="none" />
     <Property Id="HDKN_HTTP_PORT" Value="7070" />
+    <Property Id="HDKN_HTTP_BASIC_USERNAME" Value="admin" />
+    <Property Id="HDKN_HTTP_BASIC_PASSWORD" Value="admin" />
 
     <SetProperty Id="HDKN_BITTORRENT_SAVE_PATH" Value="[%USERPROFILE]\Downloads" Before="CostFinalize" /> 
 

@@ -24,6 +24,9 @@ namespace hadouken
                 private:
                     static int finalize(void* ctx);
 
+                    static int get_creation_date(void* ctx);
+                    static int get_comment(void* ctx);
+                    static int get_creator(void* ctx);
                     static int get_files(void* ctx);
                     static int get_info_hash(void* ctx);
                     static int get_name(void* ctx);

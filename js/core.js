@@ -75,7 +75,8 @@ session.on("torrent.add", function(e) {
 
         var options = {
             seedRatio: (defaultOptions["seedRatio"] || 2.0),
-            stopOnRatio: !!(defaultOptions["seedRatioAction"] || "none")
+            seedTime: (defaultOptions["seedTime"] || 0),
+            seedAction: (defaultOptions["seedAction"] || "pause")
         };
 
         metadata["options"] = options;
@@ -131,18 +132,19 @@ session.on("torrent.stateUpdate", function(e) {
         var torrent = status.torrent;
         var options = torrent.metadata("options") || {};
 
-        // If no action is set up, ignore this.
-        var action = options.seedRatioAction;
-        if(!action || action === "none") { return; }
+        var goalRatio = options.seedOverride ? (options.seedRatio || 2.0) : 2.0;
+        var goalTime  = options.seedOverride ? (options.goalTime  ||   0) :   0;
 
-        // Check if we have hit our seedRatio for
-        // the torrent
+        if(status.ratio >= parseFloat(goalRatio)
+            || (goalTime > 0 && status.seedingTime > goalTime)) {
 
-        if(options.seedRatio && status.ratio >= parseFloat(options.seedRatio)) {
             logger.info("Torrent " + status.name + " reached its seed goal.");
+
+            var action = (options.seedAction || "pause");
 
             switch(action) {
                 case "pause":
+                    torrent.autoManaged = false;
                     torrent.pause();
                     break;
 
@@ -221,13 +223,13 @@ function loadTorrents() {
 
 function load() {
     // Set up listen port for BitTorrent communication
-    var listenPort = config.get("bittorrent.listenPort") || [ 6881, 6889 ];
-    if(!(listenPort instanceof Array)) {
-        logger.warn("Invalid listen port specified. Using default.");
-        listenPort = [ 6881, 6889 ];
+    var listenPort = (config.get("bittorrent.listenPort") || 6881);
+    if(isNaN(listenPort)) {
+        logger.warn("Invalid listen port specified. Using default (6881).");
+        listenPort = 6881;
     }
 
-    session.listenOn(listenPort);
+    session.listenOn([listenPort, listenPort]);
 
     // Load country database
     var geoIp = config.getString("bittorrent.geoIpFile");
@@ -237,18 +239,46 @@ function load() {
         session.loadCountryDb(geoIp);
     }
 
-    // Set up DHT
-    var dhtEnabled = config.getBoolean("bittorrent.dht.enabled");
-
-    if(dhtEnabled) {
-        session.startDht();
-
-        var routers = config.get("bittorrent.dht.routers") || [];
-
-        for(var i = 0; i < routers.length; i++) {
-            session.addDhtRouter(routers[i][0], routers[i][1]);
-        }
+    // Add DHT routers.
+    var routers = config.get("bittorrent.dht.routers") || [];
+    for(var i = 0; i < routers.length; i++) {
+        session.addDhtRouter(routers[i][0], routers[i][1]);
     }
+
+    // Enable DHT
+    if(config.get("bittorrent.dht.enabled")) {
+        logger.info("Enabling DHT.");
+        session.startDht();
+    }
+
+    // Enable LSD
+    if(config.get("bittorrent.lsd.enabled")) {
+        logger.info("Enabling LSD.");
+        session.startLsd();
+    }
+
+    // Enable NatPmp
+    if(config.get("bittorrent.natpmp.enabled")) {
+        logger.info("Enabling NATPMP.");
+        session.startNatPmp();
+    }
+
+    // Enable UPnP
+    if(config.get("bittorrent.upnp.enabled")) {
+        logger.info("Enabling UPnP.");
+        session.startUpnp();
+    }
+
+    // Load session settings
+    var settings = session.getSettings();
+    settings.downloadRateLimit = (config.get("bittorrent.downloadRateLimit") || settings.downloadRateLimit);
+    settings.mixedModeAlgorithm = (config.get("bittorrent.mixedModeAlgorithm") || settings.mixedModeAlgorithm);
+    settings.rateLimitIpOverhead = (config.get("bittorrent.rateLimitIpOverhead") || settings.rateLimitIpOverhead);
+    settings.rateLimitUtp = (config.get("bittorrent.rateLimitUtp") || settings.rateLimitUtp);
+    settings.uploadRateLimit = (config.get("bittorrent.uploadRateLimit") || settings.uploadRateLimit);
+    session.setSettings(settings);
+
+    logger.info("Loaded session settings.");
 
     loadState();
     loadTorrents();
@@ -328,9 +358,7 @@ function saveTorrents() {
 
             var buffer = benc.encode(alert.resumeData);
             var resumeFile = fs.combine(torrentsPath, alert.torrent.infoHash + ".resume");
-
             var data = alert.torrent.metadata();
-            print(data);
 
             if(data) {
                 var metadataFile = fs.combine(torrentsPath, alert.torrent.infoHash + ".metadata");
@@ -343,11 +371,27 @@ function saveTorrents() {
     }
 }
 
+function saveConfig() {
+    // This will move the hadouken.json file we loaded *this*
+    // session to hadouken.json.old, and save our current config
+    // as hadouken.json. Safeguarding against failures.
+
+    if(fs.fileExists(__CONFIG__)) {
+        var old = fs.combine(__CONFIG_PATH__, "hadouken.json.old");
+        fs.rename(__CONFIG__, old);
+        logger.info("Configuration backed up.");
+    }
+
+    var data = JSON.stringify(config.get(), null, "  ");
+    fs.writeText(__CONFIG__, data);
+}
+
 function unload() {
     rss.unload();
 
     saveState();
     saveTorrents();
+    saveConfig();
 }
 
 exports.load = load;

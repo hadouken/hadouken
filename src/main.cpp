@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
     
     hadouken::application app(io, config);
     app.script_host().define_global("__CONFIG__", config_file.string());
+    app.script_host().define_global("__CONFIG_PATH__", config_file.parent_path().string());
 
     app.start();
     int result = get_host(vm)->wait_for_exit(io);

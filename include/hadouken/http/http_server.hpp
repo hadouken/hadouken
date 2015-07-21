@@ -4,6 +4,8 @@
 #include <boost/asio.hpp>
 #include <boost/network/protocol/http/server.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <hadouken/http/request_handler.hpp>
+#include <map>
 #include <memory>
 
 namespace hadouken
@@ -32,9 +34,11 @@ namespace hadouken
             void set_auth_callback(boost::function<bool(std::string)> const& fun);
 
         protected:
-            bool is_authenticated(http_server_t::request const &request);
+            void process_request(http_server_t::request const &request, http_server_t::connection_ptr connection);
 
-            void handle_incoming_data(http_server_t::connection_ptr connection, std::string data);
+            std::shared_ptr<request_handler> find_request_handler(std::string virtual_path);
+
+            bool is_authenticated(std::string credentials);
 
             std::string ssl_password_callback(std::size_t max_length, boost::asio::ssl::context_base::password_purpose purpose);
 
@@ -43,6 +47,7 @@ namespace hadouken
         private:
             boost::property_tree::ptree config_;
             std::unique_ptr<http_server_t> instance_;
+            std::map<std::string, std::shared_ptr<request_handler>> request_handlers_;
 
             boost::function<std::string(std::string)> rpc_callback_;
             boost::function<bool(std::string)> auth_callback_;

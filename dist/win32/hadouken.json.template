@@ -77,8 +77,6 @@
 
         "auth":
         {
-            "type": "[HTTP_AUTH_TYPE]",
-            "token": "[HTTP_AUTH_TOKEN]",
             "basic":
             {
                 "userName": "[HTTP_AUTH_BASIC_USERNAME]",
@@ -93,6 +91,11 @@
             "enabled": false,
             "privateKeyFile": "",
             "privateKeyPassword": ""
+        },
+
+        "webui":
+        {
+            "path": "[DATA_PATH]/webui.zip"
         }
     },
 

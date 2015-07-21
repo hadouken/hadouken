@@ -1,56 +1,28 @@
 var config = require("config");
 var logger = require("logger").get("auth");
 
-// How to authenticate
-var authType = config.getString("http.auth.type") || "none";
-    authType = authType.toLowerCase();
+// Get username and password. We default to admin/admin, although
+// this might be a bad idea. Maybe we should fail instead of
+// defaulting.
 
-if(authType === "none") {
-    logger.warn("No HTTP authentication configured.");
-}
+var userName = config.getString("http.auth.basic.userName") || "admin";
+var password = config.getString("http.auth.basic.password") || "admin";
 
 function authenticator(header) {
-    if(authType === "none") {
-        return true;
-    }
-
     var parts = header.split(" ");
 
     if(parts.length === 0) {
         return false;
     }
 
-    if(authType !== String(parts[0]).toLowerCase()) {
+    if("basic" !== String(parts[0]).toLowerCase()) {
         return false;
     }
 
-    if(authType === "token") {
-        var token = config.getString("http.auth.token") || "";
+    var data  = Duktape.dec("base64", String(parts[1])).toString();
+    var combo = data.split(":");
 
-        if(token === "") {
-            logger.warn("No token for HTTP token auth specified.");
-            return false;
-        }
-
-        return token === parts[1];
-    }
-
-    if(authType === "basic") {
-        var data  = Duktape.dec("base64", String(parts[1])).toString();
-        var combo = data.split(":");
-
-        var user = config.getString("http.auth.basic.userName") || "";
-        var pass = config.getString("http.auth.basic.password") || "";
-
-        if(user === "" || pass === "") {
-            logger.warn("No username/password for HTTP basic auth specified.");
-            return false;
-        }
-
-        return (user === combo[0] && pass === combo[1]);
-    }
-
-    return false;
+    return (userName === combo[0] && password === combo[1]);
 }
 
 

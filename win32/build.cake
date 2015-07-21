@@ -147,6 +147,20 @@ Task("Output")
         CopyFiles(GetFiles("../js/plugins/*.js"), BinariesDirectory + "/js/plugins");
         CopyFiles(GetFiles("../js/rpc/*.js"),     BinariesDirectory + "/js/rpc");
 
+        // Pack and copy webui
+        IEnumerable<FilePath> webui = GetFiles("../webui/LICENS*");
+        webui = webui.Union(GetFiles("../webui/*.css"));
+        webui = webui.Union(GetFiles("../webui/*.js"));
+        webui = webui.Union(GetFiles("../webui/*.html"));
+        webui = webui.Union(GetFiles("../webui/images/*.gif"));
+        webui = webui.Union(GetFiles("../webui/images/*.png"));
+        webui = webui.Union(GetFiles("../webui/lang/*.js"));
+
+        Zip("../webui/",
+            BinariesDirectory + "/webui.zip",
+            webui);
+
+
         // Copy relevant dist files
         var distFiles = new []
         {
@@ -166,6 +180,7 @@ Task("Create-Zip-Package")
         files = files.Union(GetFiles(BinariesDirectory + "/js/*.js"));
         files = files.Union(GetFiles(BinariesDirectory + "/js/plugins/*.js"));
         files = files.Union(GetFiles(BinariesDirectory + "/js/rpc/*.js"));
+        files = files.Union(GetFiles(BinariesDirectory + "/webui.zip"));
 
         Zip(BinariesDirectory,
             OutputDirectory + "/hadouken-" + Version + VersionSuffix + ".zip",

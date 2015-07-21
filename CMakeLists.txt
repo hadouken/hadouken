@@ -247,6 +247,8 @@ set(HADOUKEN_SOURCES
     src/hosting/console_host
     src/http/connection_handler
     src/http/http_server
+    src/http/api_request_handler
+    src/http/gui_request_handler
     src/scripting/duktape
     src/scripting/script_host
     src/scripting/modules/bencoding_module

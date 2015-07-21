@@ -1,2 +1,3 @@
+src/http/miniz.c linguist-vendored
 src/scripting/duktape.c linguist-vendored
 src/scripting/duktape.h linguist-vendored

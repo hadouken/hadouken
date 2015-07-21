@@ -1,8 +1,14 @@
 #include <hadouken/http/http_server.hpp>
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/log/trivial.hpp>
 #include <hadouken/http/connection_handler.hpp>
+#include <hadouken/http/api_request_handler.hpp>
+#include <hadouken/http/gui_request_handler.hpp>
+#include <hadouken/platform.hpp>
+#include <hadouken/version.hpp>
+#include <regex>
 
 using namespace hadouken::http;
 namespace fs = boost::filesystem;
@@ -32,6 +38,13 @@ http_server::http_server(boost::shared_ptr<boost::asio::io_service> io, const bo
     }
 
     instance_ = std::make_unique<http_server_t>(opts.address(address).port(std::to_string(port)).io_service(io));
+
+    // register request handlers
+    request_handlers_["^\/api[\/]?$"] = std::make_shared<api_request_handler>([this](std::string f) {
+        return rpc_callback_(f);
+    });
+
+    request_handlers_["^/gui.*$"] = std::make_shared<gui_request_handler>(config);
 }
 
 http_server::~http_server()
@@ -50,60 +63,33 @@ void http_server::stop()
 
 void http_server::operator() (http_server_t::request const &request, http_server_t::connection_ptr connection)
 {
-    // CORS enabling
-    bool enable_cors = config_.get("http.cors.enabled", true);
-    std::string cors_origin = config_.get("http.cors.origin", "*");
-    std::string cors_headers = config_.get("http.cors.headers", "accept, authorization, content-type, x-requested-with");
-    std::string cors_methods = config_.get("http.cors.methods", "POST, GET, OPTIONS");
-    int cors_max_age = config_.get("http.cors.maxAge", 1728000);
+    // Authenticate request. Every request should
+    // be authenticated here before heading down to JS world.
 
-    if (request.method == "OPTIONS" && enable_cors)
+    // 1. Check if we have the "Authorization" header.
+    //    If we do, validate it. If not, send the WWW-Authenticate header.
+
+    auto header = std::find_if(request.headers.begin(), request.headers.end(), [](const boost::network::http::request_header_narrow& h)
     {
-        http_server_t::response_header headers[] =
-        {
-            { "Access-Control-Allow-Origin", cors_origin },
-            { "Access-Control-Allow-Methods", cors_methods },
-            { "Access-Control-Allow-Headers", cors_headers },
-            { "Access-Control-Max-Age", std::to_string(cors_max_age) },
-            { "Content-Length", std::to_string(0) }
-        };
+        return h.name == "Authorization";
+    });
 
-        connection->set_status(http_server_t::connection::ok);
-        connection->set_headers(boost::make_iterator_range(headers, headers + 5));
-        return;
+    // We have the header and it is valid. Allow request.
+    if (header != request.headers.end() && is_authenticated(header->value))
+    {
+        return process_request(request, connection);
     }
 
-    if (!is_authenticated(request))
+    // Send the WWW-Authenticate header back.
+    std::string realm = "\"Hadouken v" + hadouken::version::VERSION() + "\"";
+
+    http_server_t::response_header headers[] =
     {
-        http_server_t::response_header headers[] =
-        {
-            { "Access-Control-Allow-Origin", cors_origin },
-            { "Content-Type", "application/json" }
-        };
+        { "WWW-Authenticate", "Basic realm=" + realm }
+    };
 
-        connection->set_status(http_server_t::connection::unauthorized);
-        connection->set_headers(boost::make_iterator_range(headers, headers + 2));
-        connection->write("\"Unauthorized\"");
-        return;
-    }
-
-    if (request.destination != "/api")
-    {
-        http_server_t::response_header headers[] =
-        {
-            { "Access-Control-Allow-Origin", cors_origin },
-            { "Content-Type", "application/json" }
-        };
-
-        connection->set_status(http_server_t::connection::bad_request);
-        connection->set_headers(boost::make_iterator_range(headers, headers + 2));
-        connection->write("\"Bad request\"");
-        return;
-    }
-
-    boost::shared_ptr<connection_handler> handler(new connection_handler(request));
-    handler->set_data_callback(boost::bind(&http_server::handle_incoming_data, this, _1, _2));
-    (*handler)(connection);
+    connection->set_status(http_server_t::connection::unauthorized);
+    connection->set_headers(boost::make_iterator_range(headers, headers + 1));
 }
 
 void http_server::log(http_server_t::string_type const &info)
@@ -121,32 +107,62 @@ void http_server::set_auth_callback(boost::function<bool(std::string)> const& fu
     auth_callback_ = fun;
 }
 
-bool http_server::is_authenticated(http_server_t::request const &request)
+void http_server::process_request(http_server_t::request const &request, http_server_t::connection_ptr connection)
 {
-    auto header = std::find_if(request.headers.begin(), request.headers.end(), [](const boost::network::http::request_header_narrow& h)
-    {
-        return h.name == "Authorization";
-    });
+    // get path without the configured root.
+    std::string configured_root = config_.get("http.root", "/");
+    if (configured_root.empty()) { configured_root = "/"; }
 
-    std::string val = header == request.headers.end() ? "" : header->value;
-    return auth_callback_(val);
+    // the root path should start with "/" and end with "/".
+    if (configured_root[0] != '/') { configured_root = "/" + configured_root; }
+    if (configured_root[configured_root.size() - 1] != '/') { configured_root = configured_root + "/"; }
+
+    std::string path = request.destination;
+
+    // make sure the requested path is for the configured root path
+    if (path.size() < configured_root.size()
+        || path.substr(0, configured_root.size()) != configured_root)
+    {
+        connection->set_status(http_server_t::connection::not_found);
+        connection->write("404 - Could not find '" + path + "'");
+        return;
+    }
+
+    std::string virtual_path = path.substr(configured_root.size());
+    if (virtual_path.empty()) { virtual_path = "/"; }
+    if (virtual_path[0] != '/') { virtual_path = "/" + virtual_path; }
+
+    std::shared_ptr<request_handler> handler = find_request_handler(virtual_path);
+
+    if (!handler)
+    {
+        connection->set_status(http_server_t::connection::not_found);
+        connection->write("404 - Could not find '" + path + "'");
+        return;
+    }
+
+    // Execute handler
+    handler->execute(virtual_path, request, connection);
 }
 
-void http_server::handle_incoming_data(http_server_t::connection_ptr connection, std::string data)
+std::shared_ptr<request_handler> http_server::find_request_handler(std::string virtual_path)
 {
-    std::string response = rpc_callback_(data);
-
-    http_server_t::response_header headers[] =
+    for (auto pair : request_handlers_)
     {
-        { "Access-Control-Allow-Origin", config_.get("http.cors.origin", "*") },
-        { "Connection", "close" },
-        { "Content-Length", std::to_string(response.size()) },
-        { "Content-Type", "application/json" }
-    };
+        std::regex rx(pair.first);
 
-    connection->set_status(http_server_t::connection::status_t::ok);
-    connection->set_headers(boost::make_iterator_range(headers, headers + 4));
-    connection->write(response);
+        if (std::regex_match(virtual_path, rx))
+        {
+            return pair.second;
+        }
+    }
+
+    return nullptr;
+}
+
+bool http_server::is_authenticated(std::string credentials)
+{
+    return auth_callback_(credentials);
 }
 
 std::string http_server::ssl_password_callback(std::size_t max_length, boost::asio::ssl::context_base::password_purpose purpose)
