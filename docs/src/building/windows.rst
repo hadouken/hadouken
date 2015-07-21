@@ -7,7 +7,7 @@ Overview
 This will guide you through the process of building Hadouken on Windows
 using MSVC 12 (Visual Studio 2013). Most of the dependencies are pre-built
 and will be pulled in during the build process, however *libtorrent* and
-*cpp-netlib* must be manually placed in the :file:`deps/` directory.
+*cpp-netlib* are placed in-source via Git submodules.
 
 
 Prerequisites
@@ -24,28 +24,14 @@ applications installed,
 Cloning the repository
 ----------------------
 
-Clone the Hadouken GitHub repository at https://github.com/hadouken/hadouken.
+Clone `the Hadouken GitHub repository <https://github.com/hadouken/hadouken>`_
+and initialize the submodules.
 
 .. code:: powershell
 
    C:\Code> git clone https://github.com/hadouken/hadouken
-
-
-Obtaining source dependencies
------------------------------
-
-The following source dependencies should be downloaded and extracted to the
-:file:`deps/` directory.
-
-* `libtorrent 1.0.5 <http://sourceforge.net/projects/libtorrent/files/libtorrent/libtorrent-rasterbar-1.0.5.tar.gz/download>`_
-* `cpp-netlib 0.11.1 <http://storage.googleapis.com/cpp-netlib-downloads/0.11.1/cpp-netlib-0.11.1-final.zip>`_
-
-The :file:`deps/` directory should look like this,
-
-* deps/
-
-  * libtorrent/
-  * cpp-netlib/
+   C:\Code> cd hadouken
+   C:\Code\hadouken> git submodule update --init
 
 
 Running the build

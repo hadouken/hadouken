@@ -5,13 +5,17 @@ Configuring Hadouken
 Overview
 --------
 
-Hadouken is configured by editing the :file:`config.json` file. JSON is a
+Hadouken is configured by editing the :file:`hadouken.json` file. JSON is a
 simple structured format and is easily hand-edited using your favourite
 text editor.
 
 See the list below for where your configuration file is.
 
-* Windows: :file:`C:/ProgramData/Hadouken/hadouken.json`
+* Windows (installed): :file:`C:/ProgramData/Hadouken/hadouken.json`
+* Windows (command line): :file:`%CWD%/hadouken.json`
+
+.. note:: Before making changes, stop Hadouken. Otherwise, Hadouken will
+          overwrite your changes.
 
 .. warning:: The configuration examples below only shows the JSON you need to
              change in order for the setting to have effect. Hadouken *will*
@@ -34,6 +38,37 @@ In depth
 
 BitTorrent configuration
 ------------------------
+
+Port
+````
+
+By default, Hadouken will use port *6881* for BitTorrent communications.
+
+.. code:: javascript
+
+   {
+     "bittorrent":
+     {
+       "listenPort": 6881
+     }
+   }
+
+
+Activating GeoIP location
+`````````````````````````
+
+GeoIP is activated by downloading and extracting the
+`MaxMind GeoLite Country database <http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz>`_.
+
+.. code:: javascript
+
+   {
+     "bittorrent":
+     {
+       "geoIpFile": "C:/Data/GeoIP.dat"
+     }
+   }
+
 
 Anonymous mode
 ``````````````
@@ -83,8 +118,8 @@ Each torrent in Hadouken can be paused or removed when it reaches the
 user-specified seed goals. If no default options are specified, the seed
 goal is set to `2.0` however no action is configured.
 
-To pause a torrent when it reaches the seed goal, use the following
-configuration.
+To pause torrents when they have been seeded 200% or for 5 hours (18 000
+seconds), use the configuration below.
 
 .. note:: Only torrents added after the configuration change will get the
           new default options. Each torrent remembers its own options.
@@ -97,7 +132,8 @@ configuration.
        "defaultOptions":
        {
          "seedRatio": 2.0,
-         "seedRatioAction": "pause"
+         "seedTime": 18000,
+         "seedAction": "pause"
        }
      }
    }
@@ -143,11 +179,9 @@ HTTP configuration
 
 Authentication
 ``````````````
-Hadouken supports three modes of authentication, *none*, *HTTP Basic* and
-*Token*. The installer supports the configuration of all three modes.
 
-To activate *Token* authentication, set the `http.auth.type` setting to
-*token* and then supply a token.
+To configure your username and password, the keys *http.auth.basic.userName*
+and *http.auth.basic.password* are used.
 
 .. code:: javascript
 
@@ -156,23 +190,6 @@ To activate *Token* authentication, set the `http.auth.type` setting to
     {
       "auth":
       {
-        "type": "token",
-        "token": "YOUR-TOKEN-HERE"        
-      }
-    }
-  }
-
-To activate *HTTP Basic* authentication, set the `http.auth.type` setting to
-*basic* and then provide a username and password.
-
-.. code:: javascript
-
-  {
-    "http":
-    {
-      "auth":
-      {
-        "type": "basic",
         "basic":
         {
           "userName": "YOUR-USERNAME",
@@ -233,7 +250,8 @@ root path for the HTTP server. The default behavior is to serve requests from
 the root `/`.
 
 The example below will change this to let you serve requests from `/hadouken`,
-which means you will reach the API at `/hadouken/api`.
+which means you will reach the API at `/hadouken/api` and the GUI at
+`/hadouken/gui`.
 
 .. code:: javascript
 
