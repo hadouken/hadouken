@@ -22,6 +22,7 @@ duk_ret_t file_system_module::initialize(duk_context* ctx)
         { "fileExists",        file_exists,        1 },
         { "getFiles",          get_files,          1 },
         { "isRelative",        is_relative,        1 },
+        { "makeAbsolute",      make_absolute,      1 },
         { "readBuffer",        read_buffer,        1 },
         { "readText",          read_text,          1 },
         { "rename",            rename,             2 },
@@ -118,6 +119,13 @@ duk_ret_t file_system_module::is_relative(duk_context* ctx)
 {
     fs::path path(duk_require_string(ctx, 0));
     duk_push_boolean(ctx, path.is_relative());
+    return 1;
+}
+
+duk_ret_t file_system_module::make_absolute(duk_context* ctx)
+{
+    fs::path path(duk_require_string(ctx, 0));
+    duk_push_string(ctx, fs::absolute(path).string().c_str());
     return 1;
 }
 

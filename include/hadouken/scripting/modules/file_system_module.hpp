@@ -20,6 +20,7 @@ namespace hadouken
                 static int file_exists(void* ctx);
                 static int get_files(void* ctx);
                 static int is_relative(void* ctx);
+                static int make_absolute(void* ctx);
                 static int read_buffer(void* ctx);
                 static int read_text(void* ctx);
                 static int rename(void* ctx);

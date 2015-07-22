@@ -70,6 +70,40 @@ GeoIP is activated by downloading and extracting the
    }
 
 
+Download directories
+````````````````````
+
+Hadouken has a default save path as well as other download directories. To
+change the default save path, set the *bittorrent.defaultSavePath*
+configuration value.
+
+.. code:: javascript
+
+   {
+     "bittorrent":
+     {
+       "defaultSavePath": "C:/Downloads"
+     }
+   }
+
+Other than the default save path, you can also add additional directories
+which will show up in the UI when adding torrents.
+
+.. code:: javascript
+
+   {
+     "bittorrent":
+     {
+       "downloadDirectories":
+       [
+         "C:/Other/Path",
+         "E:/Movies",
+         "E:/TV"
+       ]
+     }
+   }
+
+
 Anonymous mode
 ``````````````
 

@@ -276,6 +276,16 @@ function load() {
     settings.rateLimitIpOverhead = (config.get("bittorrent.rateLimitIpOverhead") || settings.rateLimitIpOverhead);
     settings.rateLimitUtp = (config.get("bittorrent.rateLimitUtp") || settings.rateLimitUtp);
     settings.uploadRateLimit = (config.get("bittorrent.uploadRateLimit") || settings.uploadRateLimit);
+
+    // Advanced settings
+    var allowMultipleConnectionsPerIp = config.get("bittorrent.allowMultipleConnectionsPerIp");
+    if(typeof allowMultipleConnectionsPerIp !== "undefined") { settings.allowMultipleConnectionsPerIp = allowMultipleConnectionsPerIp; }
+
+    var anonymousMode = config.get("bittorrent.anonymousMode");
+    if(typeof anonymousMode !== "undefined") { settings.anonymousMode = anonymousMode; }
+
+    settings.halfOpenLimit = (config.get("bittorrent.halfOpenLimit") || settings.halfOpenLimit);
+
     session.setSettings(settings);
 
     logger.info("Loaded session settings.");
