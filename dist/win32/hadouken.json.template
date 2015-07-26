@@ -37,6 +37,11 @@
         "upnp":
         {
             "enabled": true
+        },
+
+        "utp":
+        {
+            "enabled": true
         }
     },
 

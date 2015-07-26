@@ -18,7 +18,7 @@ var TYPE = {
 function get(cfgKey, resKey, type, defaultValue, access) {
     var val = config.get(cfgKey);
 
-    if(val) {
+    if(typeof val !== "undefined") {
         if(type !== TYPE.STRING) {
             val = JSON.stringify(val);
         }
@@ -78,6 +78,7 @@ exports.rpc = {
                 // Advanced settings
                 [ "bt.allow_same_ip", TYPE.BOOLEAN, settings.allowMultipleConnectionsPerIp.toString(), ACCESS.READWRITE ],
                 [ "bt.anonymous_mode", TYPE.BOOLEAN, settings.anonymousMode.toString(), ACCESS.READWRITE ],
+                get("bittorrent.utp.enabled", "net.enable_utp", TYPE.BOOLEAN, "true", ACCESS.READWRITE),
                 [ "net.max_halfopen", TYPE.NUMBER, (settings.halfOpenLimit >= 2147483647 ? -1 : settings.halfOpenLimit).toString(), ACCESS.READWRITE ]
             ]
         };

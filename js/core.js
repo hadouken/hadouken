@@ -284,6 +284,11 @@ function load() {
     var anonymousMode = config.get("bittorrent.anonymousMode");
     if(typeof anonymousMode !== "undefined") { settings.anonymousMode = anonymousMode; }
 
+    var enableUtp = config.get("bittorrent.utp.enabled");
+    if(typeof enableUtp !== "undefined") { enableUtp = true; }
+    settings.enableOutgoingUtp = enableUtp;
+    settings.enableIncomingUtp = enableUtp;
+
     settings.halfOpenLimit = (config.get("bittorrent.halfOpenLimit") || settings.halfOpenLimit);
 
     session.setSettings(settings);
