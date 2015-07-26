@@ -26,6 +26,14 @@ function set(key, value) {
             settings.allowMultipleConnectionsPerIp = value;
             break;
 
+        case "conns_globally":
+            value = parseInt(value, 10);
+            if(!isNaN(value)) {
+                config.set("bittorrent.connectionsLimit", value);
+                settings.connectionsLimit = value;
+            }
+            break;
+
         case "dht":
             value = !!(value);
             config.set("bittorrent.dht.enabled", value);
