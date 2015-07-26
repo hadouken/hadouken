@@ -271,6 +271,7 @@ function load() {
 
     // Load session settings
     var settings = session.getSettings();
+    settings.connectionsLimit = (config.get("bittorrent.connectionsLimit") || settings.connectionsLimit);
     settings.downloadRateLimit = (config.get("bittorrent.downloadRateLimit") || settings.downloadRateLimit);
     settings.mixedModeAlgorithm = (config.get("bittorrent.mixedModeAlgorithm") || settings.mixedModeAlgorithm);
     settings.rateLimitIpOverhead = (config.get("bittorrent.rateLimitIpOverhead") || settings.rateLimitIpOverhead);
