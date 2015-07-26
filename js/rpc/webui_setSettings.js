@@ -72,6 +72,14 @@ function set(key, value) {
             settings.rateLimitIpOverhead = value;
             break;
 
+        case "net.enable_utp":
+            value = !!(value);
+            print(value);
+            config.set("bittorrent.utp.enabled", value);
+            settings.enableOutgoingUtp = value;
+            settings.enableIncomingUtp = value;
+            break;
+
         case "net.max_halfopen":
             value = parseInt(value, 10);
             if(!isNaN(value)) {
