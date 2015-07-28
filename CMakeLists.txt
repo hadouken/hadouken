@@ -16,6 +16,7 @@ if(WIN32)
     set(LIBEXTRAS iphlpapi.lib dbghelp.lib shlwapi.lib)
 
     add_definitions(
+        -DBOOST_ASIO_SEPARATE_COMPILATION
         -DUNICODE
         -DWIN32
         -DWIN32_LEAN_AND_MEAN
@@ -32,6 +33,8 @@ if(WIN32)
     )
 
     include_directories(
+        ${CMAKE_SOURCE_DIR}/deps/libtorrent/include
+        ${CMAKE_SOURCE_DIR}/deps/libtorrent/ed25519/src
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.boost/include
         ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/include
     )
@@ -48,6 +51,7 @@ else()
     set(LIBBOOST libboost_system.a libboost_log.a libboost_program_options.a libboost_filesystem.a libboost_thread.a)
     set(LIBEXTRAS rt)
     set(LIBSSL ssl crypto)
+    set(LIBTORRENT libtorrent-rasterbar.a)
     set(PTHREAD pthread)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -62,8 +66,6 @@ endif()
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/deps/cpp-netlib
-    ${CMAKE_SOURCE_DIR}/deps/libtorrent/include
-    ${CMAKE_SOURCE_DIR}/deps/libtorrent/ed25519/src
 )
 
 # add_definitions() doesn't seem to let you say wich build type to apply it to
@@ -94,7 +96,6 @@ configure_file("${CMAKE_SOURCE_DIR}/src/version.cpp.in" "${CMAKE_SOURCE_DIR}/src
 add_definitions(
     -DBOOST_ASIO_ENABLE_CANCELIO
     -DBOOST_ASIO_HASH_MAP_BUCKETS=1021
-    -DBOOST_ASIO_SEPARATE_COMPILATION
     -DBOOST_EXCEPTION_DISABLE
     -DBOOST_NETWORK_ENABLE_HTTPS
     -DTORRENT_USE_I2P=1
@@ -228,16 +229,18 @@ set(ed25519_sources
     verify
 )
 
-foreach(s ${sources})
-    list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/${s})
-endforeach(s)
+if(WIN32)
+    foreach(s ${sources})
+        list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/${s})
+    endforeach(s)
 
-foreach(s ${kademlia_sources})
-    list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/kademlia/${s})
-endforeach(s)
-foreach(s ${ed25519_sources})
-    list(APPEND LIBTORRENT_SOURCES ${ltdir}/ed25519/src/${s})
-endforeach(s)
+    foreach(s ${kademlia_sources})
+        list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/kademlia/${s})
+    endforeach(s)
+    foreach(s ${ed25519_sources})
+        list(APPEND LIBTORRENT_SOURCES ${ltdir}/ed25519/src/${s})
+    endforeach(s)
+endif(WIN32)
 
 
 set(HADOUKEN_SOURCES
@@ -299,6 +302,7 @@ add_executable(
 
 target_link_libraries(
     hadouken
+    ${LIBTORRENT}
     ${LIBEXTRAS}
     ${LIBBOOST}
     ${LIBSSL}
