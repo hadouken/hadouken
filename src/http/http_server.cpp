@@ -37,7 +37,8 @@ http_server::http_server(boost::shared_ptr<boost::asio::io_service> io, const bo
         }
     }
 
-    instance_ = std::make_unique<http_server_t>(opts.address(address).port(std::to_string(port)).io_service(io));
+    instance_ = std::unique_ptr<http_server_t>(
+        new http_server_t(opts.address(address).port(std::to_string(port)).io_service(io)));
 
     // register request handlers
     request_handlers_["^\/api[\/]?$"] = std::make_shared<api_request_handler>([this](std::string f) {
