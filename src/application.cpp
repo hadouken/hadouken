@@ -17,14 +17,14 @@ application::application(boost::shared_ptr<boost::asio::io_service> io, const pt
     : io_(io),
     config_(config)
 {
-    script_host_ = std::make_unique<hadouken::scripting::script_host>(*this);
+    script_host_ = std::unique_ptr<hadouken::scripting::script_host>(new hadouken::scripting::script_host(*this));
     
-    http_ = std::make_unique<hadouken::http::http_server>(io, config);
+    http_ = std::unique_ptr<hadouken::http::http_server>(new hadouken::http::http_server(io, config));
     http_->set_auth_callback(boost::bind(&application::is_authenticated, this, _1));
     http_->set_rpc_callback(boost::bind(&application::rpc, this, _1));
 
     libtorrent::fingerprint fingerprint("LT", LIBTORRENT_VERSION_MAJOR, LIBTORRENT_VERSION_MINOR, 0, 0);
-    session_ = std::make_unique<libtorrent::session>(fingerprint, 0);
+    session_ = std::unique_ptr<libtorrent::session>(new libtorrent::session(fingerprint, 0));
 }
 
 application::~application()

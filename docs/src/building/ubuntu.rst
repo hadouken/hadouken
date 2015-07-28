@@ -4,8 +4,9 @@ Building Hadouken on Ubuntu
 Overview
 --------
 
-This will guide you through the process of building Hadouken on Ubuntu.
-The depenencies *libtorrent* and *cpp-netlib* exists as Git submodules.
+This will guide you through the process of building Hadouken on Ubuntu 14.04.2
+(Trusty Tahr). The depenencies *libtorrent* and *cpp-netlib* exists as Git
+submodules.
 
 
 What you need
@@ -14,14 +15,10 @@ What you need
 In order to successfully clone and build Hadouken you need the following
 applications and libraries installed.
 
-* :code:`g++-4.9`
 * :code:`cmake`
 * :code:`git`
 * :code:`libssl-dev`
 * :code:`libboost-1.58`
-
-.. note:: Hadouken will not compile with a `GCC` version lower than 4.9 since
-          that is the version which shipped with C++14 support.
 
 
 Cloning the repository
