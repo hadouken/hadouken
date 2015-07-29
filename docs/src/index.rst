@@ -10,7 +10,7 @@ daemon/Windows Service and provides a JSONRPC API over HTTP to control it. In
 addition to running headless, Hadouken also has a powerful extension system
 that gives developers freedom to extend it in various ways.
 
-Hadouken runs on the following operating systems,
+Hadouken is known to run on the following platforms,
 
 * Windows 7, 8, 8.1 and 10
 * Windows Server 2008 R2, 2012, 2012 R2
@@ -47,16 +47,18 @@ Features
 * Launch executables on various events, such as when a torrent finishes.
 * A powerful JavaScript API making it easy to customize and extend Hadouken
   with plugins.
-* Unattended installations to give domain administrators the ability to set up
-  Hadouken clusters with ease.
+* (Windows) Unattended installations to give domain administrators the ability
+  to set up Hadouken clusters.
 
 
 Downloads
 ---------
 
 Hadouken can be downloaded from
-`the release feed <https://github.com/hadouken/hadouken/releases>`_. Binaries
-are provided for Windows. For other platforms you need to build it yourself.
+`the release feed <https://github.com/hadouken/hadouken/releases>`_. Installer
+packages are provided for Windows and Debian/Ubuntu. For other platforms you
+need to build it yourself.
+
 
 Installation
 ------------
@@ -67,6 +69,7 @@ documentation for your specific platform.
 .. toctree::
    :maxdepth: 1
 
+   installing/ubuntu
    installing/windows
 
 
