@@ -22,7 +22,7 @@ po::variables_map load_options(int argc,char *argv[])
 {
     po::options_description desc("Allowed options");
     desc.add_options()
-        ("config", "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
+        ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
         ("daemon", "Start Hadouken in daemon/service mode.")
 #ifdef WIN32
         ("install-service", "Install Hadouken in the SCM.")

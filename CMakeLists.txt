@@ -308,3 +308,17 @@ target_link_libraries(
     ${LIBSSL}
     ${PTHREAD}
 )
+
+if(UNIX)
+    install(TARGETS hadouken DESTINATION bin)
+    install(FILES ${CMAKE_SOURCE_DIR}/linux/build/bin/webui.zip DESTINATION share/hadouken)
+    install(FILES ${CMAKE_SOURCE_DIR}/dist/linux/hadouken.json.template DESTINATION /etc/hadouken)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/js DESTINATION share/hadouken)
+
+    # To generate deb packages.
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_PACKAGE_VERSION "${VERSION}")
+    set(CPACK_STRIP_FILES "bin/hadouken")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Viktor Elofsson and contributors.")
+    include(CPack)
+endif(UNIX)
