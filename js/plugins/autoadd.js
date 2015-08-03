@@ -29,6 +29,10 @@ function checkFiles(folder, files) {
                 p.savePath = folder.savePath;
             }
 
+            if(folder.label) {
+                meta.label = folder.label;
+            }
+
             if(folder.tags) {
                 meta.tags = folder.tags;
             }

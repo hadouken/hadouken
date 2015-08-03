@@ -20,8 +20,10 @@ specified feed.
   {
     "feeds":
     [
-      "url":    "http://some-rss.net/feed",
-      "filter": "*"
+      {
+        "url":    "http://some-rss.net/feed",
+        "filter": "*"
+      }
     ]
   }
 
@@ -40,8 +42,10 @@ The exclude filter is optional.
   {
     "feeds":
     [
-      "url":    "http://some-rss.net/feed",
-      "filter": [ "regex", "720p", "NUKED" ]
+      {
+        "url":    "http://some-rss.net/feed",
+        "filter": [ "regex", "720p", "NUKED" ]
+      }
     ]
   }
 
@@ -60,10 +64,12 @@ Save path
   {
     "feeds":
     [
-      "url": "http://some-rss.net/feed",
-      "options":
       {
-        "savePath": "C:/Downloads/from-some-rss"
+        "url": "http://some-rss.net/feed",
+        "options":
+        {
+          "savePath": "C:/Downloads/from-some-rss"
+        }
       }
     ]
   }
@@ -79,8 +85,10 @@ start. The `ttl` value indicates the poll rate in minutes.
   {
     "feeds":
     [
-      "url": "http://some-rss.net/feed",
-      "ttl": 2
+      {
+        "url": "http://some-rss.net/feed",
+        "ttl": 2
+      }
     ]
   }
 
@@ -96,10 +104,12 @@ debug regular expression filters.
   {
     "feeds":
     [
-      "url": "http://some-rss.net/feed",
-      "options":
       {
-        "dryRun": true
+        "url": "http://some-rss.net/feed",
+        "options":
+        {
+          "dryRun": true
+        }
       }
     ]
   }
