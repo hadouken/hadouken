@@ -41,6 +41,17 @@ TagsFilter.prototype.isMatch = function(torrent) {
     return true;
 }
 
+function LabelFilter(label) {
+    this._label = label;
+}
+
+LabelFilter.prototype.isMatch = function(torrent) {
+    var label = torrent.metadata("label");
+    if(!label) { return false; }
+
+    return (this._label === label);
+}
+
 function getRules() {
     var values  = config.get("extensions.automove.rules");
     var result = [];
@@ -56,6 +67,8 @@ function getRules() {
             result.push(new Rule(path, new PatternFilter(new RegExp(pattern), field)));
         } else if(filter === "tags") {
             result.push(new Rule(path, new TagsFilter(values[i].data)));
+        } else if(filter === "label") {
+            result.push(new Rule(path, new LabelFilter(values[i].data)));
         }
     }
 

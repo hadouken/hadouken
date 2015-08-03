@@ -107,3 +107,26 @@ two tags to each torrent it finds.
       }
     }
   }
+
+
+Adding a label
+--------------
+
+.. code:: javascript
+
+  {
+    "extensions":
+    {
+      "autoadd":
+      {
+        "enabled": true,
+        "folders":
+        [
+          {
+            "path": "C:/Torrents",
+            "label": "my-awesome-label"
+          }
+        ]
+      }
+    }
+  }

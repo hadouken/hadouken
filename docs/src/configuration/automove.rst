@@ -90,3 +90,30 @@ matching and moving rules.
       }
     }
   }
+
+
+Label-based moving
+------------------
+
+The label filter will match a torrent against a label. If the torrent has the
+provided label, it will be moved to the path.
+
+.. code:: javascript
+
+  {
+    "extensions":
+    {
+      "automove":
+      {
+        "enabled": true,
+        "rules":
+        [
+          {
+            "path": "C:/Downloads/Debian ISOs",
+            "filter": "label",
+            "data": "my-awesome-label"
+          }
+        ]
+      }
+    }
+  }
