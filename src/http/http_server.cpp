@@ -120,6 +120,19 @@ void http_server::process_request(http_server_t::request const &request, http_se
 
     std::string path = request.destination;
 
+    // If we request the root path ('/'), 301 redirect to the gui path.
+    if (path == "/")
+    {
+        http_server_t::response_header headers[] =
+        {
+            { "Location", configured_root + "gui/index.html" }
+        };
+
+        connection->set_status(http_server_t::connection::moved_permanently);
+        connection->set_headers(boost::make_iterator_range(headers, headers + 1));
+        return;
+    }
+
     // make sure the requested path is for the configured root path
     if (path.size() < configured_root.size()
         || path.substr(0, configured_root.size()) != configured_root)
