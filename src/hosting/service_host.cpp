@@ -2,6 +2,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/make_shared.hpp>
 #include <windows.h>
 
 using namespace hadouken::hosting;
@@ -13,7 +14,7 @@ int service_host::wait_for_exit(boost::shared_ptr<boost::asio::io_service> io)
     {
         instance_ = this;
         io_ = io;
-        signals_ = boost::shared_ptr<boost::asio::signal_set>(new boost::asio::signal_set(*io));
+        signals_ = boost::make_shared<boost::asio::signal_set>(*io);
     }
 
     SERVICE_TABLE_ENTRY tbl[] =
@@ -56,6 +57,7 @@ DWORD service_host::service_control_handler(DWORD control, DWORD event_type, LPV
 
     switch (control)
     {
+    case SERVICE_CONTROL_SHUTDOWN:
     case SERVICE_CONTROL_STOP:
         host->set_status(SERVICE_STOP_PENDING);
         host->signals_->cancel();
@@ -69,7 +71,7 @@ DWORD service_host::service_control_handler(DWORD control, DWORD event_type, LPV
 void service_host::set_status(DWORD state)
 {
     status_.dwCheckPoint = 0;
-    status_.dwControlsAccepted = SERVICE_ACCEPT_STOP;
+    status_.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
     status_.dwCurrentState = state;
     status_.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
     status_.dwWin32ExitCode = 0;
