@@ -29,6 +29,21 @@ function perform(action, torrent) {
             break;
 
         case "recheck":
+            var status = torrent.getStatus();
+
+            if(!status.hasMetadata) {
+                return;
+            }
+
+            // If the torrent is paused and *not* automanaged,
+            // set a flag to pause if after recheck and then
+            // resume it so the recheck can start.
+
+            if(status.isPaused && !torrent.autoManaged) {
+                torrent.metadata("_pauseAfterRecheck", true);
+                torrent.resume();
+            }
+
             torrent.forceRecheck();
             break;
 

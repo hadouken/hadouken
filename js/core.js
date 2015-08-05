@@ -98,6 +98,17 @@ session.on("torrent.added", function(e) {
     saveTorrent(e.torrent);
 });
 
+session.on("torrent.checked", function(e) {
+    var torrent = e.torrent;
+
+    if(torrent.metadata("_pauseAfterRecheck")) {
+        torrent.pause();
+        torrent.metadata("_pauseAfterRecheck", false);
+    }
+
+    logger.debug("Torrent '" + e.torrent.infoHash + "' hash checked.");
+});
+
 session.on("torrent.hashUpdated", function(e) {
     /*
     On migrating metadata
