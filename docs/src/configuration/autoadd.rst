@@ -132,8 +132,8 @@ Adding a label
   }
 
 
-Keeping files after adding
---------------------------
+Keeping .torrent files after adding
+-----------------------------------
 
 When using a utility such as Ketarin or other automated software downloading
 utility, it may be more beneficial to keep the .torrent file in your autoadd
