@@ -130,3 +130,29 @@ Adding a label
       }
     }
   }
+
+
+Keeping files after adding
+--------------------------
+
+When using a utility such as Ketarin or other automated software downloading
+utility, it may be more beneficial to keep the .torrent file in your autoadd
+path to prevent your software re-downloading the .torrent with every run.
+
+.. code:: javascript
+  {
+    "extensions":
+    {
+      "autoadd":
+      {
+        "enabled": true,
+        "folders":
+        [
+          {
+            "path": "C:/Torrents",
+            "keep": true
+          }
+        ]
+      }
+    }
+  }
