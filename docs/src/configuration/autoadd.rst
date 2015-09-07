@@ -140,6 +140,7 @@ utility, it may be more beneficial to keep the .torrent file in your autoadd
 path to prevent your software re-downloading the .torrent with every run.
 
 .. code:: javascript
+
   {
     "extensions":
     {
