@@ -23,8 +23,8 @@ application::application(boost::shared_ptr<boost::asio::io_service> io, const pt
     http_->set_auth_callback(boost::bind(&application::is_authenticated, this, _1));
     http_->set_rpc_callback(boost::bind(&application::rpc, this, _1));
 
-    libtorrent::fingerprint fingerprint("LT", LIBTORRENT_VERSION_MAJOR, LIBTORRENT_VERSION_MINOR, 0, 0);
-    session_ = std::unique_ptr<libtorrent::session>(new libtorrent::session(fingerprint, 0));
+    libtorrent::settings_pack settings;
+    session_ = std::unique_ptr<libtorrent::session>(new libtorrent::session(settings, 0));
 }
 
 application::~application()
@@ -34,8 +34,8 @@ application::~application()
 void application::start()
 {
     // session settings
-    session_->set_alert_mask(libtorrent::alert::category_t::all_categories);
-    session_->set_alert_dispatch(std::bind(&application::alert_dispatch, this, std::placeholders::_1));
+    //session_->set_alert_mask(libtorrent::alert::category_t::all_categories);
+    //session_->set_alert_dispatch(std::bind(&application::alert_dispatch, this, std::placeholders::_1));
 
     // session extensions
     session_->add_extension(&libtorrent::create_lt_trackers_plugin);
@@ -54,7 +54,7 @@ void application::start()
 void application::stop()
 {
     http_->stop();
-    session_->set_alert_dispatch(dispatch_function_t());
+    //session_->set_alert_dispatch(dispatch_function_t());
     script_host_->unload();
 }
 

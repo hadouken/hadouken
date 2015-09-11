@@ -12,11 +12,16 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if(WIN32)
+    # Set dependency directories
+    set(BOOST_ROOT      $ENV{BOOST_ROOT})
+    set(LIBTORRENT_ROOT $ENV{LIBTORRENT_ROOT})
+    set(OPENSSL_ROOT    $ENV{OPENSSL_ROOT})
+
     set(LIBSSL libeay32.lib ssleay32.lib)
     set(LIBEXTRAS iphlpapi.lib dbghelp.lib shlwapi.lib)
+    set(LIBTORRENT libtorrent.lib)
 
     add_definitions(
-        -DBOOST_ASIO_SEPARATE_COMPILATION
         -DUNICODE
         -DWIN32
         -DWIN32_LEAN_AND_MEAN
@@ -33,15 +38,15 @@ if(WIN32)
     )
 
     include_directories(
-        ${CMAKE_SOURCE_DIR}/deps/libtorrent/include
-        ${CMAKE_SOURCE_DIR}/deps/libtorrent/ed25519/src
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.boost/include
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/include
+        ${BOOST_ROOT}
+        ${LIBTORRENT_ROOT}/include
+        ${OPENSSL_ROOT}/inc32
     )
 
     link_directories(
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.boost/win32/lib
-        ${CMAKE_SOURCE_DIR}/win32/libs/hadouken.openssl/win32/lib
+        ${BOOST_ROOT}/stage/lib
+        ${LIBTORRENT_ROOT}/bin/msvc-14.0/$(ConfigurationName)/address-model-64/crypto-openssl/deprecated-functions-off/link-static/threading-multi
+        ${OPENSSL_ROOT}/out32
     )
 
     # Make sure release builds have pdb files.
@@ -108,141 +113,6 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
-set(ltdir ${CMAKE_SOURCE_DIR}/deps/libtorrent)
-
-# Get sources for libtorrent
-set(sources
-    web_connection_base
-    alert
-    alert_manager
-    allocator
-    asio
-    assert
-    bandwidth_limit
-    bandwidth_manager
-    bandwidth_queue_entry
-    bloom_filter
-    chained_buffer
-    connection_queue
-    create_torrent
-    disk_buffer_holder
-    entry
-    error_code
-    file_storage
-    lazy_bdecode
-    escape_string
-    string_util
-    file
-    gzip
-    hasher
-    http_connection
-    http_stream
-    http_parser
-    i2p_stream
-    identify_client
-    ip_filter
-    ip_voter
-    peer_connection
-    bt_peer_connection
-    web_peer_connection
-    http_seed_connection
-    instantiate_connection
-    natpmp
-    packet_buffer
-    piece_picker
-    policy
-    puff
-    random
-    rss
-    session
-    session_impl
-    settings
-    socket_io
-    socket_type  
-    socks5_stream
-    stat
-    storage
-    time
-    timestamp_history
-    torrent
-    torrent_handle
-    torrent_info
-    tracker_manager
-    http_tracker_connection
-    utf8
-    udp_tracker_connection
-    udp_socket
-    upnp
-    utp_socket_manager
-    utp_stream
-    logger
-    file_pool
-    lsd
-    disk_buffer_pool
-    disk_io_thread
-    enum_net
-    broadcast_socket
-    magnet_uri
-    parse_url
-    ConvertUTF
-    thread
-    xml_parse
-    pe_crypto
-    asio_ssl
-    GeoIP
-
-# -- extensions --
-    metadata_transfer
-    ut_pex
-    ut_metadata
-    smart_ban
-    lt_trackers
-)
-
-# -- kademlia --
-set(kademlia_sources
-    dht_tracker
-    node
-    refresh
-    rpc_manager
-    find_data
-    node_id
-    routing_table
-    traversal_algorithm
-    logging
-    item
-    get_peers
-    get_item
-)
-
-# -- ed25519 --
-set(ed25519_sources
-    add_scalar
-    fe
-    ge
-    key_exchange
-    keypair
-    sc
-    seed
-    sha512
-    sign
-    verify
-)
-
-if(WIN32)
-    foreach(s ${sources})
-        list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/${s})
-    endforeach(s)
-
-    foreach(s ${kademlia_sources})
-        list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/kademlia/${s})
-    endforeach(s)
-    foreach(s ${ed25519_sources})
-        list(APPEND LIBTORRENT_SOURCES ${ltdir}/ed25519/src/${s})
-    endforeach(s)
-endif(WIN32)
-
-
 set(HADOUKEN_SOURCES
     src/application
     src/main
@@ -296,7 +166,6 @@ set(CPP_NETLIB_SOURCES
 add_executable(
     hadouken
     ${HADOUKEN_SOURCES}
-    ${LIBTORRENT_SOURCES}
     ${CPP_NETLIB_SOURCES}
 )
 
@@ -308,6 +177,18 @@ target_link_libraries(
     ${LIBSSL}
     ${PTHREAD}
 )
+
+if(WIN32)
+    target_link_libraries(
+        hadouken
+        debug libboost_random-vc140-mt-gd-1_59.lib
+    )
+
+    target_link_libraries(
+        hadouken
+        optimized libboost_random-vc140-mt-1_59.lib
+    )
+endif(WIN32)
 
 if(UNIX)
     install(TARGETS hadouken DESTINATION bin)

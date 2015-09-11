@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/session_settings_wrapper.hpp>
 
+/*
 #include <libtorrent/session_settings.hpp>
 
 #include "../common.hpp"
@@ -116,3 +117,4 @@ DUK_INT_PROP(connections_limit)
 DUK_INT_PROP(mixed_mode_algorithm)
 DUK_INT_PROP(half_open_limit);
 DUK_BOOL_PROP(anonymous_mode);
+*/

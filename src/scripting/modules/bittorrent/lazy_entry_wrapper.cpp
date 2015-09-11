@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/lazy_entry_wrapper.hpp>
 
+/*
 #include <libtorrent/lazy_entry.hpp>
 
 #include "../common.hpp"
@@ -44,3 +45,4 @@ duk_ret_t lazy_entry_wrapper::get_type(duk_context* ctx)
     duk_push_int(ctx, entry->type());
     return 1;
 }
+*/

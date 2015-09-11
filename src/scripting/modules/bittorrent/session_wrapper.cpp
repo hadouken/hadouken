@@ -79,10 +79,10 @@ duk_ret_t session_wrapper::add_dht_router(duk_context* ctx)
 
 duk_ret_t session_wrapper::add_feed(duk_context* ctx)
 {
-    libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
+    /*libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
     libtorrent::feed_settings* feed = common::get_pointer<libtorrent::feed_settings>(ctx, 0);
 
-    libtorrent::feed_handle handle = sess->add_feed(*feed);
+    libtorrent::feed_handle handle = sess->add_feed(*feed);*/
 
     // Push feed handle? No
 
@@ -140,7 +140,7 @@ duk_ret_t session_wrapper::get_alerts(duk_context* ctx)
 {
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
 
-    std::deque<libtorrent::alert*> alerts;
+    std::vector<libtorrent::alert*> alerts;
     sess->pop_alerts(&alerts);
 
     duk_idx_t arrIdx = duk_push_array(ctx);
@@ -158,7 +158,7 @@ duk_ret_t session_wrapper::get_alerts(duk_context* ctx)
 }
 
 duk_ret_t session_wrapper::get_feeds(duk_context* ctx)
-{
+{/*
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
 
     std::vector<libtorrent::feed_handle> feed_handles;
@@ -173,7 +173,7 @@ duk_ret_t session_wrapper::get_feeds(duk_context* ctx)
         duk_put_prop_index(ctx, arrIdx, i);
 
         ++i;
-    }
+    }*/ duk_push_undefined(ctx);
 
     return 1;
 }
@@ -181,10 +181,10 @@ duk_ret_t session_wrapper::get_feeds(duk_context* ctx)
 duk_ret_t session_wrapper::get_settings(duk_context* ctx)
 {
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
-    
+    /*
     libtorrent::session_settings settings = sess->settings();
     session_settings_wrapper::initialize(ctx, settings);
-    
+    */ duk_push_undefined(ctx);
     return 1;
 }
 
@@ -195,10 +195,10 @@ duk_ret_t session_wrapper::get_settings(duk_context* ctx)
 duk_ret_t session_wrapper::get_status(duk_context* ctx)
 {
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
-    libtorrent::session_status status = sess->status();
+    //libtorrent::session_status status = sess->status();
 
     duk_idx_t statusIndex = duk_push_object(ctx);
-
+    /*
     DUK_SESSIONSTATUS_PROP(boolean, status.has_incoming_connections, "hasIncomingConnections");
     DUK_SESSIONSTATUS_PROP(int, status.upload_rate, "totalUploadRate");
     DUK_SESSIONSTATUS_PROP(int, status.download_rate, "totalDownloadRate");
@@ -238,7 +238,7 @@ duk_ret_t session_wrapper::get_status(duk_context* ctx)
     DUK_SESSIONSTATUS_PROP(int, status.dht_torrents, "dhtTorrents");
     DUK_SESSIONSTATUS_PROP(number, static_cast<duk_double_t>(status.dht_global_nodes), "dhtGlobalNodes");
     DUK_SESSIONSTATUS_PROP(int, status.dht_total_allocations, "dhtTotalAllocations");
-
+    */
     return 1;
 }
 
@@ -294,7 +294,7 @@ duk_ret_t session_wrapper::listen_on(duk_context* ctx)
     duk_pop(ctx);
 
     libtorrent::error_code ec;
-    sess->listen_on(std::make_pair(min, max), ec);
+    //sess->listen_on(std::make_pair(min, max), ec);
 
     // TODO error checking
 
@@ -303,14 +303,14 @@ duk_ret_t session_wrapper::listen_on(duk_context* ctx)
 
 duk_ret_t session_wrapper::load_country_db(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->load_country_db(duk_require_string(ctx, 0));
+    //common::get_pointer<libtorrent::session>(ctx)->load_country_db(duk_require_string(ctx, 0));
     return 0;
 }
 
 duk_ret_t session_wrapper::load_state(duk_context* ctx)
 {
-    libtorrent::lazy_entry* entry = common::get_pointer<libtorrent::lazy_entry>(ctx, 0);
-    common::get_pointer<libtorrent::session>(ctx)->load_state(*entry);
+    /*libtorrent::lazy_entry* entry = common::get_pointer<libtorrent::lazy_entry>(ctx, 0);
+    common::get_pointer<libtorrent::session>(ctx)->load_state(*entry);*/
     return 0;
 }
 
@@ -357,56 +357,56 @@ duk_ret_t session_wrapper::save_state(duk_context* ctx)
 duk_ret_t session_wrapper::set_settings(duk_context* ctx)
 {
     libtorrent::session* sess = common::get_pointer<libtorrent::session>(ctx);
-    libtorrent::session_settings* settings = common::get_pointer<libtorrent::session_settings>(ctx, 0);
-    sess->set_settings(*settings);
+    //libtorrent::session_settings* settings = common::get_pointer<libtorrent::session_settings>(ctx, 0);
+    //sess->set_settings(*settings);
     return 0;
 }
 
 duk_ret_t session_wrapper::start_dht(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->start_dht();
+    //common::get_pointer<libtorrent::session>(ctx)->start_dht();
     return 0;
 }
 
 duk_ret_t session_wrapper::start_lsd(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->start_lsd();
+    //common::get_pointer<libtorrent::session>(ctx)->start_lsd();
     return 0;
 }
 
 duk_ret_t session_wrapper::start_nat_pmp(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->start_natpmp();
+    //common::get_pointer<libtorrent::session>(ctx)->start_natpmp();
     return 0;
 }
 
 duk_ret_t session_wrapper::start_upnp(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->start_upnp();
+    //common::get_pointer<libtorrent::session>(ctx)->start_upnp();
     return 0;
 }
 
 duk_ret_t session_wrapper::stop_dht(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->stop_dht();
+    //common::get_pointer<libtorrent::session>(ctx)->stop_dht();
     return 0;
 }
 
 duk_ret_t session_wrapper::stop_lsd(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->stop_lsd();
+    //common::get_pointer<libtorrent::session>(ctx)->stop_lsd();
     return 0;
 }
 
 duk_ret_t session_wrapper::stop_nat_pmp(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->stop_natpmp();
+    //common::get_pointer<libtorrent::session>(ctx)->stop_natpmp();
     return 0;
 }
 
 duk_ret_t session_wrapper::stop_upnp(duk_context* ctx)
 {
-    common::get_pointer<libtorrent::session>(ctx)->stop_upnp();
+    //common::get_pointer<libtorrent::session>(ctx)->stop_upnp();
     return 0;
 }
 

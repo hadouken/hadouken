@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 
+/*
 #include <hadouken/scripting/modules/bittorrent/feed_status_wrapper.hpp>
 #include <libtorrent/rss.hpp>
 
@@ -56,3 +57,4 @@ duk_ret_t feed_handle_wrapper::set_settings(duk_context* ctx)
 {
     return 0;
 }
+*/

@@ -130,13 +130,13 @@ duk_ret_t torrent_handle_wrapper::get_file_progress(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
     
-    std::vector<libtorrent::size_type> progress;
+    std::vector<time_t> progress;
     handle->file_progress(progress);
 
     duk_idx_t arrIdx = duk_push_array(ctx);
     int i = 0;
 
-    for (libtorrent::size_type size : progress)
+    for (time_t size : progress)
     {
         duk_push_number(ctx, size);
         duk_put_prop_index(ctx, arrIdx, i);
@@ -185,7 +185,7 @@ duk_ret_t torrent_handle_wrapper::get_status(duk_context* ctx)
 duk_ret_t torrent_handle_wrapper::get_torrent_info(duk_context* ctx)
 {
     libtorrent::torrent_handle* handle = common::get_pointer<libtorrent::torrent_handle>(ctx);
-    boost::intrusive_ptr<libtorrent::torrent_info const> info = handle->torrent_file();
+    boost::shared_ptr<libtorrent::torrent_info const> info = handle->torrent_file();
 
     if (info)
     {

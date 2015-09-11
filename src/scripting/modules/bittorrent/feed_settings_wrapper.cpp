@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/feed_settings_wrapper.hpp>
 
+/*
 #include <libtorrent/rss.hpp>
 
 #include "../common.hpp"
@@ -73,3 +74,4 @@ duk_ret_t feed_settings_wrapper::set_ttl(duk_context* ctx)
     common::get_pointer<libtorrent::feed_settings>(ctx)->default_ttl = ttl;
     return 0;
 }
+*/

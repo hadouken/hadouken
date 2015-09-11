@@ -1,5 +1,6 @@
 #include <hadouken/scripting/modules/bittorrent/feed_status_wrapper.hpp>
 
+/*
 #include <libtorrent/rss.hpp>
 
 #include "../common.hpp"
@@ -119,3 +120,4 @@ duk_ret_t feed_status_wrapper::get_title(duk_context* ctx)
     duk_push_string(ctx, status->title.c_str());
     return 1;
 }
+*/
