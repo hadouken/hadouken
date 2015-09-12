@@ -235,20 +235,15 @@ function loadTorrents() {
 function load() {
     // Set up listen port for BitTorrent communication
     var listenPort = (config.get("bittorrent.listenPort") || 6881);
+    var listenInterface = (config.get("bittorrent.listenInterface") || "0.0.0.0");
+
     if(isNaN(listenPort)) {
         logger.warn("Invalid listen port specified. Using default (6881).");
         listenPort = 6881;
     }
 
-    session.listenOn([listenPort, listenPort]);
-
-    // Load country database
-    var geoIp = config.getString("bittorrent.geoIpFile");
-
-    if(geoIp) {
-        logger.info("Loading GeoIP database " + geoIp);
-        session.loadCountryDb(geoIp);
-    }
+    var settings = session.getSettings();
+    settings.setStr("listen_interfaces", listenInterface + ":" + listenPort);
 
     // Add DHT routers.
     var routers = config.get("bittorrent.dht.routers") || [];
@@ -259,51 +254,45 @@ function load() {
     // Enable DHT
     if(config.get("bittorrent.dht.enabled")) {
         logger.info("Enabling DHT.");
-        session.startDht();
+        settings.setBool("enable_dht", true);
     }
 
     // Enable LSD
     if(config.get("bittorrent.lsd.enabled")) {
         logger.info("Enabling LSD.");
-        session.startLsd();
+        settings.setBool("enable_lsd", true);
     }
 
     // Enable NatPmp
     if(config.get("bittorrent.natpmp.enabled")) {
         logger.info("Enabling NATPMP.");
-        session.startNatPmp();
+        settings.setBool("enable_natpmp", true);
     }
 
     // Enable UPnP
     if(config.get("bittorrent.upnp.enabled")) {
         logger.info("Enabling UPnP.");
-        session.startUpnp();
+        settings.setBool("enable_upnp", true);
     }
 
-    // Load session settings
-    var settings = session.getSettings();
-    settings.connectionsLimit = (config.get("bittorrent.connectionsLimit") || settings.connectionsLimit);
-    settings.downloadRateLimit = (config.get("bittorrent.downloadRateLimit") || settings.downloadRateLimit);
-    settings.mixedModeAlgorithm = (config.get("bittorrent.mixedModeAlgorithm") || settings.mixedModeAlgorithm);
-    settings.rateLimitIpOverhead = (config.get("bittorrent.rateLimitIpOverhead") || settings.rateLimitIpOverhead);
-    settings.rateLimitUtp = (config.get("bittorrent.rateLimitUtp") || settings.rateLimitUtp);
-    settings.uploadRateLimit = (config.get("bittorrent.uploadRateLimit") || settings.uploadRateLimit);
+    settings.setInt("connections_limit", (config.get("bittorrent.connectionsLimit") || settings.getInt("connections_limit")));
+    settings.setInt("download_rate_limit", (config.get("bittorrent.downloadRateLimit") || settings.getInt("download_rate_limit")));
+    settings.setBool("rate_limit_ip_overhead", (config.get("bittorrent.rateLimitIpOverhead") || settings.getBool("rate_limit_ip_overhead")));
+    settings.setInt("upload_rate_limit", (config.get("bittorrent.uploadRateLimit") || settings.getInt("upload_rate_limit")));
 
     // Advanced settings
     var allowMultipleConnectionsPerIp = config.get("bittorrent.allowMultipleConnectionsPerIp");
-    if(typeof allowMultipleConnectionsPerIp !== "undefined") { settings.allowMultipleConnectionsPerIp = allowMultipleConnectionsPerIp; }
+    if(typeof allowMultipleConnectionsPerIp !== "undefined") { settings.setBool("allow_multiple_connections_per_ip", allowMultipleConnectionsPerIp); }
 
     var anonymousMode = config.get("bittorrent.anonymousMode");
-    if(typeof anonymousMode !== "undefined") { settings.anonymousMode = anonymousMode; }
+    if(typeof anonymousMode !== "undefined") { settings.setBool("anonymous_mode", anonymousMode); }
 
     var enableUtp = config.get("bittorrent.utp.enabled");
-    if(typeof enableUtp !== "undefined") { enableUtp = true; }
-    settings.enableOutgoingUtp = enableUtp;
-    settings.enableIncomingUtp = enableUtp;
+    if(typeof enableUtp === "undefined") { enableUtp = true; }
+    settings.setBool("enable_incoming_utp", enableUtp);
+    settings.setBool("enable_outgoing_utp", enableUtp);
 
-    settings.halfOpenLimit = (config.get("bittorrent.halfOpenLimit") || settings.halfOpenLimit);
-
-    session.setSettings(settings);
+    session.applySettings(settings);
 
     logger.info("Loaded session settings.");
 
