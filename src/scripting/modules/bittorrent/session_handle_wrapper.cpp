@@ -34,17 +34,13 @@ void session_handle_wrapper::initialize(duk_context* ctx, lt::session_handle& se
     duk_function_list_entry functions[] =
     {
         { "addDhtRouter",   add_dht_router, 2 },
-        { "addFeed",        add_feed,       1 },
         { "addTorrent",     add_torrent,    2 },
         { "applySettings",  apply_settings, 1 },
         { "findTorrent",    find_torrent,   1 },
         { "getAlerts",      get_alerts,     0 },
-        { "getFeeds",       get_feeds,      0 },
         { "getSettings",    get_settings,   0 },
         { "getStatus",      get_status,     0 },
         { "getTorrents",    get_torrents,   0 },
-        { "listenOn",       listen_on,      1 },
-        { "loadCountryDb",  load_country_db,1 },
         { "loadState",      load_state,     1 },
         { "pause",          pause,          0 },
         { "postTorrentUpdates", post_torrent_updates, 0 },
@@ -65,18 +61,6 @@ duk_ret_t session_handle_wrapper::add_dht_router(duk_context* ctx)
 
     lt::session_handle* sess = common::get_pointer<lt::session_handle>(ctx);
     sess->add_dht_router(std::make_pair(url, port));
-    return 0;
-}
-
-duk_ret_t session_handle_wrapper::add_feed(duk_context* ctx)
-{
-    /*lt::session_handle* sess = common::get_pointer<lt::session_handle>(ctx);
-    lt::feed_settings* feed = common::get_pointer<lt::feed_settings>(ctx, 0);
-
-    lt::feed_handle handle = sess->add_feed(*feed);*/
-
-    // Push feed handle? No
-
     return 0;
 }
 
@@ -154,27 +138,6 @@ duk_ret_t session_handle_wrapper::get_alerts(duk_context* ctx)
 
         ++i;
     }
-
-    return 1;
-}
-
-duk_ret_t session_handle_wrapper::get_feeds(duk_context* ctx)
-{/*
-    lt::session_handle* sess = common::get_pointer<lt::session_handle>(ctx);
-
-    std::vector<lt::feed_handle> feed_handles;
-    sess->get_feeds(feed_handles);
-
-    duk_idx_t arrIdx = duk_push_array(ctx);
-    int i = 0;
-
-    for (lt::feed_handle handle : feed_handles)
-    {
-        feed_handle_wrapper::initialize(ctx, handle);
-        duk_put_prop_index(ctx, arrIdx, i);
-
-        ++i;
-    }*/ duk_push_undefined(ctx);
 
     return 1;
 }
@@ -282,36 +245,10 @@ duk_ret_t session_handle_wrapper::is_paused(duk_context* ctx)
     return 1;
 }
 
-duk_ret_t session_handle_wrapper::listen_on(duk_context* ctx)
-{
-    lt::session_handle* sess = common::get_pointer<lt::session_handle>(ctx);
-
-    duk_get_prop_index(ctx, 0, 0);
-    int min = duk_to_int(ctx, -1);
-    duk_pop(ctx);
-
-    duk_get_prop_index(ctx, 0, 1);
-    int max = duk_to_int(ctx, -1);
-    duk_pop(ctx);
-
-    lt::error_code ec;
-    //sess->listen_on(std::make_pair(min, max), ec);
-
-    // TODO error checking
-
-    return 0;
-}
-
-duk_ret_t session_handle_wrapper::load_country_db(duk_context* ctx)
-{
-    //common::get_pointer<lt::session_handle>(ctx)->load_country_db(duk_require_string(ctx, 0));
-    return 0;
-}
-
 duk_ret_t session_handle_wrapper::load_state(duk_context* ctx)
 {
-    /*lt::lazy_entry* entry = common::get_pointer<lt::lazy_entry>(ctx, 0);
-    common::get_pointer<lt::session_handle>(ctx)->load_state(*entry);*/
+    lt::bdecode_node* node = common::get_pointer<lt::bdecode_node>(ctx, 0);
+    common::get_pointer<lt::session_handle>(ctx)->load_state(*node);
     return 0;
 }
 
