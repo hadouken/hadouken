@@ -61,14 +61,13 @@ exports.rpc = {
         return {
             settings: [
                 [ "bind_port", TYPE.NUMBER, session.listenPort, ACCESS.READWRITE ],
-                [ "conns_globally", TYPE.NUMBER, settings.connectionsLimit, ACCESS.READWRITE ],
+                [ "conns_globally", TYPE.NUMBER, settings.getInt("connections_limit"), ACCESS.READWRITE ],
                 [ "dht", TYPE.BOOLEAN, session.isDhtRunning.toString(), ACCESS.READWRITE ],
                 [ "download_directories", TYPE.ARRAY, downloadDirectories, ACCESS.READWRITE ],
-                [ "enable_bw_management", TYPE.BOOLEAN, settings.mixedModeAlgorithm === 1 ? "true" : "false", ACCESS.READWRITE ],
-                [ "max_dl_rate", TYPE.NUMBER, settings.downloadRateLimit, ACCESS.READWRITE ],
-                [ "max_ul_rate", TYPE.NUMBER, settings.uploadRateLimit, ACCESS.READWRITE ],
-                [ "net.calc_overhead", TYPE.BOOLEAN, settings.rateLimitIpOverhead.toString(), ACCESS.READWRITE ],
-                [ "net.ratelimit_utp", TYPE.BOOLEAN, settings.rateLimitUtp.toString(), ACCESS.READWRITE ],
+                [ "enable_bw_management", TYPE.BOOLEAN, settings.getInt("mixed_mode_algorithm") === 1 ? "true" : "false", ACCESS.READWRITE ],
+                [ "max_dl_rate", TYPE.NUMBER, settings.getInt("download_rate_limit"), ACCESS.READWRITE ],
+                [ "max_ul_rate", TYPE.NUMBER, settings.getInt("upload_rate_limit"), ACCESS.READWRITE ],
+                [ "net.calc_overhead", TYPE.BOOLEAN, settings.getBool("rate_limit_ip_overhead").toString(), ACCESS.READWRITE ],
                 [ "save_path", TYPE.STRING, absoluteSavePath, ACCESS.READWRITE ],
                 get("bittorrent.lsd.enabled", "lsd", TYPE.BOOLEAN, "false", ACCESS.READWRITE),
                 get("bittorrent.natpmp.enabled", "natpmp", TYPE.BOOLEAN, "false", ACCESS.READWRITE),
@@ -76,10 +75,9 @@ exports.rpc = {
                 get("http.webui.cookie", "webui.cookie", TYPE.STRING, "{}", ACCESS.READWRITE),
 
                 // Advanced settings
-                [ "bt.allow_same_ip", TYPE.BOOLEAN, settings.allowMultipleConnectionsPerIp.toString(), ACCESS.READWRITE ],
-                [ "bt.anonymous_mode", TYPE.BOOLEAN, settings.anonymousMode.toString(), ACCESS.READWRITE ],
-                get("bittorrent.utp.enabled", "net.enable_utp", TYPE.BOOLEAN, "true", ACCESS.READWRITE),
-                [ "net.max_halfopen", TYPE.NUMBER, (settings.halfOpenLimit >= 2147483647 ? -1 : settings.halfOpenLimit).toString(), ACCESS.READWRITE ]
+                [ "bt.allow_same_ip", TYPE.BOOLEAN, settings.getBool("allow_multiple_connections_per_ip").toString(), ACCESS.READWRITE ],
+                [ "bt.anonymous_mode", TYPE.BOOLEAN, settings.getBool("anonymous_mode").toString(), ACCESS.READWRITE ],
+                get("bittorrent.utp.enabled", "net.enable_utp", TYPE.BOOLEAN, "true", ACCESS.READWRITE)
             ]
         };
     }
