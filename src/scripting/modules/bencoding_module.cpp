@@ -1,9 +1,9 @@
 #include <hadouken/scripting/modules/bencoding_module.hpp>
 
-#include <hadouken/scripting/modules/bittorrent/lazy_entry_wrapper.hpp>
+#include <hadouken/scripting/modules/bittorrent/bdecode_node_wrapper.hpp>
+#include <libtorrent/bdecode.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/entry.hpp>
-#include <libtorrent/lazy_entry.hpp>
 
 #include "common.hpp"
 #include "../duktape.h"
@@ -26,14 +26,14 @@ duk_ret_t bencoding_module::initialize(duk_context* ctx)
 
 duk_ret_t bencoding_module::decode(duk_context* ctx)
 {
-    /*duk_size_t size;
+    duk_size_t size;
     const char* buffer = static_cast<const char*>(duk_require_buffer(ctx, 0, &size));
 
     libtorrent::error_code ec;
-    libtorrent::lazy_entry entry;
-    libtorrent::lazy_bdecode(buffer, buffer + size, entry, ec);
+    libtorrent::bdecode_node node;
+    libtorrent::bdecode(buffer, buffer + size, node, ec);
 
-    lazy_entry_wrapper::initialize(ctx, entry);*/
+    bdecode_node_wrapper::initialize(ctx, node);
     return 1;
 }
 

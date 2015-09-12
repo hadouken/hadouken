@@ -1,9 +1,9 @@
-#ifndef HADOUKEN_SCRIPTING_MODULES_BITTORRENT_LAZYENTRYWRAPPER_HPP
-#define HADOUKEN_SCRIPTING_MODULES_BITTORRENT_LAZYENTRYWRAPPER_HPP
+#ifndef HADOUKEN_SCRIPTING_MODULES_BITTORRENT_BDECODENODEWRAPPER_HPP
+#define HADOUKEN_SCRIPTING_MODULES_BITTORRENT_BDECODENODEWRAPPER_HPP
 
 namespace libtorrent
 {
-    struct lazy_entry;
+    struct bdecode_node;
 }
 
 namespace hadouken
@@ -14,10 +14,10 @@ namespace hadouken
         {
             namespace bittorrent
             {
-                class lazy_entry_wrapper
+                class bdecode_node_wrapper
                 {
                 public:
-                    static void initialize(void* ctx, libtorrent::lazy_entry& entry);
+                    static void initialize(void* ctx, libtorrent::bdecode_node& entry);
 
                 private:
                     static int finalize(void* ctx);

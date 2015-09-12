@@ -134,12 +134,12 @@ set(HADOUKEN_SOURCES
     src/scripting/modules/bittorrent/add_torrent_params_wrapper
     src/scripting/modules/bittorrent/alert_wrapper
     src/scripting/modules/bittorrent/announce_entry_wrapper
+    src/scripting/modules/bittorrent/bdecode_node_wrapper
     src/scripting/modules/bittorrent/entry_wrapper
     src/scripting/modules/bittorrent/error_code_wrapper
     src/scripting/modules/bittorrent/feed_handle_wrapper
     src/scripting/modules/bittorrent/feed_settings_wrapper
     src/scripting/modules/bittorrent/feed_status_wrapper
-    src/scripting/modules/bittorrent/lazy_entry_wrapper
     src/scripting/modules/bittorrent/peer_info_wrapper
     src/scripting/modules/bittorrent/session_handle_wrapper
     src/scripting/modules/bittorrent/settings_pack_wrapper
