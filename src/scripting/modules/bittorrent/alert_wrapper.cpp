@@ -3,7 +3,6 @@
 #include <hadouken/scripting/modules/bittorrent/add_torrent_params_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/entry_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/error_code_wrapper.hpp>
-#include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_status_wrapper.hpp>
 #include <libtorrent/alert_types.hpp>

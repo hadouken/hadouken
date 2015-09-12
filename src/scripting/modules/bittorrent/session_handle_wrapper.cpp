@@ -2,7 +2,6 @@
 
 #include <hadouken/scripting/modules/bittorrent/alert_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/entry_wrapper.hpp>
-#include <hadouken/scripting/modules/bittorrent/feed_handle_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/settings_pack_wrapper.hpp>
 #include <hadouken/scripting/modules/bittorrent/torrent_handle_wrapper.hpp>
 #include <libtorrent/alert_types.hpp>
