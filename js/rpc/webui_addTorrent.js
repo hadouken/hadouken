@@ -47,7 +47,7 @@ exports.rpc = {
                 var dirs = config.get("bittorrent.downloadDirectories") || [];
 
                 if(idx < dirs.length) {
-                    p.savePath = dirs[idx];
+                    p.savePath = dirs[idx - 1];
                 }
             }
         }
