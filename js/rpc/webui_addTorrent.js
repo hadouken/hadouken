@@ -46,7 +46,7 @@ exports.rpc = {
             if(!isNaN(idx) && idx > 0) {
                 var dirs = config.get("bittorrent.downloadDirectories") || [];
 
-                if(idx < dirs.length) {
+                if(idx <= dirs.length) {
                     p.savePath = dirs[idx - 1];
                 }
             }
