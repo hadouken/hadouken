@@ -41,7 +41,9 @@ function checkFiles(folder, files) {
 
             p.metadata = meta;
             session.addTorrent(p);
-            fs.deleteFile(file);
+            if(!folder.keep) {
+                fs.deleteFile(file);
+            }
         }
     }
 }
