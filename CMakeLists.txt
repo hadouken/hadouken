@@ -57,7 +57,7 @@ elseif(APPLE)
     include_directories(/usr/local/include)
     link_directories(/usr/local/lib)
 
-    find_package(Boost REQUIRED COMPONENTS system log program_options filesystem log thread)
+    find_package(Boost REQUIRED COMPONENTS system program_options filesystem log thread)
 
     set(LIBSSL ssl crypto)
     set(PTHREAD pthread)
