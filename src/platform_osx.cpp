@@ -17,7 +17,8 @@ fs::path platform::data_path()
 
     char *home_path = getenv("HOME");
 
-    if(home_path != nullptr) {
+    if(home_path != nullptr) 
+    {
         std::string p(home_path);
         p += "/Downloads";
         return fs::path(p);
@@ -31,7 +32,8 @@ fs::path platform::application_path()
     char path[2048];
     uint32_t size = sizeof(path);
 
-    if (_NSGetExecutablePath(path, &size) == 0) {
+    if (_NSGetExecutablePath(path, &size) == 0) 
+    {
         return fs::path(path).parent_path();
     }
 
