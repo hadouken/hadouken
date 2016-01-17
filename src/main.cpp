@@ -22,6 +22,7 @@ po::variables_map load_options(int argc,char *argv[])
 {
     po::options_description desc("Allowed options");
     desc.add_options()
+        ("help,h", "Display available commandline options")
         ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
         ("daemon", "Start Hadouken in daemon/service mode.")
 #ifdef WIN32
@@ -33,7 +34,12 @@ po::variables_map load_options(int argc,char *argv[])
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-
+    
+    if (vm.count("help")) {
+        cout << desc << "\n";
+        return 1;
+    }
+    
     return vm;
 }
 
