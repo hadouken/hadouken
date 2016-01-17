@@ -36,7 +36,8 @@ po::variables_map load_options(int argc,char *argv[])
     po::notify(vm);
     
     // Print Help and exit if we get --help or -h on the command-line.
-    if (vm.count("help")) {
+    if (vm.count("help"))
+    {
         std::cout << desc << "\n";
         exit (EXIT_SUCCESS);
     }
