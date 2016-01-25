@@ -23,7 +23,7 @@ var GitCommitish     = EnvironmentVariable("BUILD_VCS_NUMBER");
 var GitHubRepository = "hadouken/hadouken";
 
 // CHOCOLATEY
-var ChocolateyApiKey = EnvironmentVariable("CHOCOLATEY_API_KEY");
+var ChocoApiKey = EnvironmentVariable("CHOCOLATEY_API_KEY");
 
 public string RunCommand(string executable, string args)
 {
@@ -320,7 +320,7 @@ Task("Publish-Release")
         // Publish nupkg to chocolatey
         var pushSettings = new NuGetPushSettings
         {
-            ApiKey = ChocolateyApiKey,
+            ApiKey = ChocoApiKey,
             Source = "https://chocolatey.org/"
         };
 
