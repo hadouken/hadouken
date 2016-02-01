@@ -80,6 +80,8 @@ session.on("torrent.add", function(e) {
         };
 
         metadata["options"] = options;
+
+        logger.debug("Torrent '" + e.torrent.infoHash + "' assigned Seed Ratio: " + options.seedRatio + "%, Seed Time: " + options.seedTime + " seconds , Seed Action: " + options.seedAction);
     }
 
     var keys = Object.keys(metadata);
@@ -143,13 +145,13 @@ session.on("torrent.stateUpdate", function(e) {
         var torrent = status.torrent;
         var options = torrent.metadata("options") || {};
 
-        var goalRatio = options.seedOverride ? (options.seedRatio || 2.0) : 2.0;
-        var goalTime  = options.seedOverride ? (options.goalTime  ||   0) :   0;
+        var goalRatio = options.seedRatio || 2.0;
+        var goalTime  = options.goalTime || 0;
 
         if(status.ratio >= parseFloat(goalRatio)
             || (goalTime > 0 && status.seedingTime > goalTime)) {
 
-            logger.info("Torrent " + status.name + " reached its seed goal.");
+            logger.info("Torrent '" + status.name + "' reached its seed goal of " + (status.ratio >= parseFloat(goalRatio) ? (goalRatio + "%") : (goalTime + " seconds")));
 
             var action = (options.seedAction || "pause");
 
