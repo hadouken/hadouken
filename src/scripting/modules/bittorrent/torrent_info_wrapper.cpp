@@ -120,13 +120,12 @@ duk_ret_t torrent_info_wrapper::get_files(duk_context* ctx)
 
     for (int i = 0; i < storage.num_files(); i++)
     {
-        libtorrent::file_entry entry = storage.at(i);
-
         duk_idx_t entryIndex = duk_push_object(ctx);
-        duk_push_string(ctx, entry.path.c_str());
+
+        duk_push_string(ctx, storage.file_path(i).c_str());
         duk_put_prop_string(ctx, entryIndex, "path");
 
-        duk_push_number(ctx, static_cast<duk_double_t>(entry.size));
+        duk_push_number(ctx, static_cast<duk_double_t>(storage.file_size(i)));
         duk_put_prop_string(ctx, entryIndex, "size");
 
         // Put entry object

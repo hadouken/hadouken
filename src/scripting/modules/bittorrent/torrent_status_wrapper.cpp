@@ -91,7 +91,7 @@ duk_ret_t torrent_status_wrapper::get_name(duk_context* ctx)
 duk_ret_t torrent_status_wrapper::get_eta(duk_context* ctx)
 {
     libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
-    libtorrent::size_type remaining = status->total_wanted - status->total_wanted_done;
+    int64_t remaining = status->total_wanted - status->total_wanted_done;
 
     float eta = -1;
     
@@ -226,8 +226,8 @@ duk_ret_t torrent_status_wrapper::get_ratio(duk_context* ctx)
 {
     libtorrent::torrent_status* status = common::get_pointer<libtorrent::torrent_status>(ctx);
     
-    libtorrent::size_type dl = status->total_done;
-    libtorrent::size_type ul = status->all_time_upload;
+    int64_t dl = status->total_done;
+    int64_t ul = status->all_time_upload;
     float ratio = -1;
     
     if (dl > 0)

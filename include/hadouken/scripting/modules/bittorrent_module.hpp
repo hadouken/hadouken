@@ -3,7 +3,7 @@
 
 namespace libtorrent
 {
-    class session;
+    class session_handle;
 }
 
 namespace hadouken
@@ -15,7 +15,7 @@ namespace hadouken
             class bittorrent_module
             {
             public:
-                static int initialize(void* ctx, libtorrent::session& session);
+                static int initialize(void* ctx, libtorrent::session_handle& session);
             };
         }
     }

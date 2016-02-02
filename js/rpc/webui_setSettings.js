@@ -1,9 +1,7 @@
 var config  = require("config");
 var session = require("bittorrent").session; 
 
-function set(key, value) {
-    var settings = session.getSettings();
-
+function set(settings, key, value) {
     switch(key) {
         case "bind_port":
             var port = parseInt(value, 10);
@@ -11,33 +9,33 @@ function set(key, value) {
                 "Invalid port";
             }
             config.set("bittorrent.listenPort", port);
-            session.listenOn([port, port]);
+            settings.setStr("listen_interfaces", "0.0.0.0" + port);
             break;
 
         case "bt.anonymous_mode":
             value = !!(value);
             config.set("bittorrent.anonymousMode", value);
-            settings.anonymousMode = value;
+            settings.setBool("anonymous_mode", value);
             break;
 
         case "bt.allow_same_ip":
             value = !!(value);
             config.set("bittorrent.allowMultipleConnectionsPerIp", value);
-            settings.allowMultipleConnectionsPerIp = value;
+            settings.setBool("allow_multiple_connections_per_ip", value);
             break;
 
         case "conns_globally":
             value = parseInt(value, 10);
             if(!isNaN(value)) {
                 config.set("bittorrent.connectionsLimit", value);
-                settings.connectionsLimit = value;
+                settings.setInt("connections_limit", value);
             }
             break;
 
         case "dht":
             value = !!(value);
             config.set("bittorrent.dht.enabled", value);
-            if(value) { session.startDht(); } else { session.stopDht(); }
+            settings.setBool("enable_dht", value);
             break;
 
         case "download_directories":
@@ -49,20 +47,20 @@ function set(key, value) {
         case "enable_bw_management":
             value = (!!(value) ? 1 : 0);
             config.set("bittorrent.mixedModeAlgorithm", value);
-            settings.mixedModeAlgorithm = value;
+            settings.setBool("mixed_mode_algorithm", value);
             break;
 
         case "lsd":
             value = !!(value);
             config.set("bittorrent.lsd.enabled", value);
-            if(value) { session.startLsd(); } else { session.stopLsd(); }
+            settings.setBool("enable_lsd", value);
             break;
 
         case "max_dl_rate":
             var rate = parseInt(value, 10);
             if(!isNaN(rate)) {
                 config.set("bittorrent.downloadRateLimit", rate);
-                settings.downloadRateLimit = rate;
+                settings.setInt("download_rate_limit", rate);
             }
             break;
 
@@ -70,48 +68,33 @@ function set(key, value) {
             var rate = parseInt(value, 10);
             if(!isNaN(rate)) {
                 config.set("bittorrent.uploadRateLimit", rate);
-                settings.uploadRateLimit = rate;
+                settings.setInt("upload_rate_limit", rate);
             }
             break;
 
         case "net.calc_overhead":
             value = !!(value);
             config.set("bittorrent.rateLimitIpOverhead", value);
-            settings.rateLimitIpOverhead = value;
+            settings.setInt("rate_limit_ip_overhead", value);
             break;
 
         case "net.enable_utp":
             value = !!(value);
-            print(value);
             config.set("bittorrent.utp.enabled", value);
-            settings.enableOutgoingUtp = value;
-            settings.enableIncomingUtp = value;
-            break;
-
-        case "net.max_halfopen":
-            value = parseInt(value, 10);
-            if(!isNaN(value)) {
-                config.set("bittorrent.halfOpenLimit", value);
-                settings.halfOpenLimit = value;
-            }
-            break;
-
-        case "net.ratelimit_utp":
-            value = !!(value);
-            config.set("bittorrent.rateLimitUtp", value);
-            settings.rateLimitUtp = value;
+            settings.setBool("enable_incoming_utp", value);
+            settings.setBool("enable_outgoing_utp", value);
             break;
 
         case "natpmp":
             value = !!(value);
             config.set("bittorrent.natpmp.enabled", value);
-            if(value) { session.startNatPmp(); } else { session.stopNatPmp(); }
+            settings.setBool("enable_natpmp", value);
             break;
 
         case "upnp":
             value = !!(value);
             config.set("bittorrent.upnp.enabled", value);
-            if(value) { session.startUpnp(); } else { session.stopUpnp(); }
+            settings.setBool("enable_upnp", value);
             break;
 
         case "save_path":
@@ -122,18 +105,19 @@ function set(key, value) {
             config.set("http.webui.cookie", value);
             break;
     }
-
-    session.setSettings(settings);
 }
 
 exports.rpc = {
     name: "webui.setSettings",
     method: function(settings) {
         var keys = Object.keys(settings);
+        var sessionSettings = session.getSettings();
 
         for(var i = 0; i < keys.length; i++) {
             var key = keys[i];
-            set(key, settings[key]);
+            set(sessionSettings, key, settings[key]);
         }
+
+        session.applySettings(sessionSettings);
     }
 };

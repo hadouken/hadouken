@@ -90,6 +90,10 @@ function on(eventName, callback) {
 
 exports.session.on = on;
 
+exports.session.settings = {
+    listenInterfaces: 5
+};
+
 exports.AddTorrentParams.getDefault = function() {
     var p        = new exports.AddTorrentParams();
     p.flags     |= 0x1000;

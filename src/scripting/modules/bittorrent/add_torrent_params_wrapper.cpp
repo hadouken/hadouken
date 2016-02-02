@@ -251,7 +251,7 @@ duk_ret_t add_torrent_params_wrapper::set_torrent(duk_context* ctx)
     libtorrent::add_torrent_params* p = common::get_pointer<libtorrent::add_torrent_params>(ctx);
     libtorrent::torrent_info* info = common::get_pointer<libtorrent::torrent_info>(ctx, 0);
 
-    p->ti = new libtorrent::torrent_info(*info);
+    p->ti = boost::make_shared<libtorrent::torrent_info>(*info);
     return 0;
 }
 
