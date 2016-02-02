@@ -21,28 +21,33 @@ function checkFiles(folder, files) {
 
         if(pattern.test(file)) {
             var buffer = fs.readBuffer(file);
-            var p      = bt.AddTorrentParams.getDefault();
-            var meta   = {};
-            p.torrent  = new bt.TorrentInfo(buffer);
+            if(typeof buffer != "undefined") {
+                var p      = bt.AddTorrentParams.getDefault();
+                var meta   = {};
+                p.torrent  = new bt.TorrentInfo(buffer);
 
-            if(folder.savePath) {
-                p.savePath = folder.savePath;
+                if(folder.savePath) {
+                    p.savePath = folder.savePath;
+                }
+
+                if(folder.label) {
+                    meta.label = folder.label;
+                }
+
+                if(folder.tags) {
+                    meta.tags = folder.tags;
+                }
+
+                logger.info("(AUTOADD) Adding torrent " + p.torrent.name + " from file " + file);
+
+                p.metadata = meta;
+                session.addTorrent(p);
+                if(!folder.keep) {
+                    fs.deleteFile(file);
+                }
             }
-
-            if(folder.label) {
-                meta.label = folder.label;
-            }
-
-            if(folder.tags) {
-                meta.tags = folder.tags;
-            }
-
-            logger.info("(AUTOADD) Adding torrent " + p.torrent.name + " from file " + file);
-
-            p.metadata = meta;
-            session.addTorrent(p);
-            if(!folder.keep) {
-                fs.deleteFile(file);
+            else {
+                logger.info("(AUTOADD) Could not read contents of file " + file);
             }
         }
     }
