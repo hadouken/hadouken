@@ -11,6 +11,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Windows DLLs are "runtime" for CMake. Output them to "bin" like the Visual Studio projects do.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Options used for *nix platforms to make boost link statically
+
+option(Boost_USE_STATIC_LIBS "Static linking to boost libraries" ON)
+option(Boost_USE_STATIC_RUNTIME "Static runtime" ON)
+
+
 if(WIN32)
     set(LIBSSL libeay32.lib ssleay32.lib)
     set(LIBEXTRAS iphlpapi.lib dbghelp.lib shlwapi.lib)
@@ -47,21 +53,40 @@ if(WIN32)
     # Make sure release builds have pdb files.
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}    /DEBUG /OPT:REF")
-else()
-    set(LIBBOOST libboost_system.a libboost_log.a libboost_program_options.a libboost_filesystem.a libboost_thread.a)
-    set(LIBEXTRAS rt)
-    set(LIBSSL ssl crypto)
-    set(LIBTORRENT libtorrent-rasterbar.a)
-    set(PTHREAD pthread)
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+elseif(APPLE)
     
+    # Some libraries installed via homebrew or macports are installed in these paths
+
+    include_directories(/usr/local/include)
+    link_directories(/usr/local/lib)
+
+else()
+
+    set(LIBEXTRAS rt)
+
     if(DEFINED ENV{TRAVIS})
         # Disable deprecated warnings (for auto_ptr mainly) on travis
         # since there are so many and travis cuts our log output after
         # 10k lines.
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
     endif()
+endif()
+
+if(UNIX)
+    find_package(Boost REQUIRED COMPONENTS system program_options filesystem log thread)
+
+    set(LIBSSL ssl crypto)
+    set(PTHREAD pthread)
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+    include_directories(${CMAKE_SOURCE_DIR}/deps/libtorrent/include) 
+
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+
+    set(LIBBOOST ${Boost_LIBRARIES})
+   
 endif()
 
 include_directories(
@@ -229,18 +254,17 @@ set(ed25519_sources
     verify
 )
 
-if(WIN32)
-    foreach(s ${sources})
-        list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/${s})
-    endforeach(s)
+foreach(s ${sources})
+    list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/${s})
+endforeach(s)
 
-    foreach(s ${kademlia_sources})
-        list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/kademlia/${s})
-    endforeach(s)
-    foreach(s ${ed25519_sources})
-        list(APPEND LIBTORRENT_SOURCES ${ltdir}/ed25519/src/${s})
-    endforeach(s)
-endif(WIN32)
+foreach(s ${kademlia_sources})
+    list(APPEND LIBTORRENT_SOURCES ${ltdir}/src/kademlia/${s})
+endforeach(s)
+
+foreach(s ${ed25519_sources})
+    list(APPEND LIBTORRENT_SOURCES ${ltdir}/ed25519/src/${s})
+endforeach(s)
 
 
 set(HADOUKEN_SOURCES
@@ -282,6 +306,8 @@ set(HADOUKEN_SOURCES
 # Append platform-specific sources
 if(WIN32)
     list(APPEND HADOUKEN_SOURCES src/platform_win32 src/hosting/service_host)
+elseif(APPLE)
+    list(APPEND HADOUKEN_SOURCES src/platform_osx)
 else()
     list(APPEND HADOUKEN_SOURCES src/platform_unix)
 endif(WIN32)
