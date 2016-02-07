@@ -4,8 +4,11 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/scoped_array.hpp>
 
 #include <sstream>
+#include <functional>
+#include <memory>
 
 #include "../duktape.h"
 
@@ -13,6 +16,50 @@ using namespace hadouken::scripting;
 using namespace hadouken::scripting::modules;
 
 namespace fs = boost::filesystem;
+
+size_t read_impl(const fs::path& path, std::function<char*(size_t)> alloc)
+{
+    try
+    {
+        if (fs::exists(path))
+        {
+            boost::filesystem::ifstream file(path, std::ios::binary);
+
+            file.seekg(0, std::ios_base::end);
+            size_t size = file.tellg();
+            char* buffer = alloc(size);
+
+            file.seekg(0, std::ios_base::beg);
+            file.read(buffer, size);
+
+            return size;
+        }
+    }
+    catch (boost::filesystem::filesystem_error& ex)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Failed to read file: " << ex.what();
+
+        return 0;
+    }
+}
+
+size_t write_impl(const fs::path& path, const char* data, size_t size)
+{
+    try
+    {
+        boost::filesystem::ofstream file(path, std::ios::binary);
+
+        file.write(data, size);
+
+        return size;
+    }
+    catch (boost::filesystem::filesystem_error& ex)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Failed to write file: " << ex.what();
+
+        return 0;
+    }
+}
 
 duk_ret_t file_system_module::initialize(duk_context* ctx)
 {
@@ -153,40 +200,32 @@ duk_ret_t file_system_module::rename(duk_context* ctx)
 
 duk_ret_t file_system_module::read_buffer(duk_context* ctx)
 {
-    void* buffer = nullptr;
-
     try
     {
         boost::filesystem::detail::utf8_codecvt_facet facet;
         fs::path path(duk_require_string(ctx, 0), facet);
 
-        if (fs::exists(path))
+        auto deleter = [&ctx](char*){ duk_pop(ctx); }; // In case of failure, make sure any allocated buffer is popped off the stack before returning to duk
+        std::unique_ptr<char, decltype(deleter)> buffer(nullptr, deleter);
+
+        size_t size_read = read_impl(path, [&ctx, &buffer](size_t size)-> char*
         {
-            boost::filesystem::ifstream file(path, std::ios::binary);
+            void* buf = duk_push_buffer(ctx, size, false);
+            buffer.reset(reinterpret_cast<char*>(buf));
+            return buffer.get();
+        });
 
-            file.seekg(0, std::ios_base::end);
-            size_t size = file.tellg();
-            buffer = duk_push_buffer(ctx, size, false);
-
-            file.seekg(0, std::ios_base::beg);
-            file.read(reinterpret_cast<char*>(buffer), size);
-
+        if (size_read > 0 && buffer)
+        {
+            buffer.release();
             return 1;
         }
-
-        return 0;
     }
-    catch (boost::filesystem::filesystem_error& ex)
+    catch (std::exception&)
     {
-        BOOST_LOG_TRIVIAL(error) << "Failed to read file: " << ex.what();
-
-        if (buffer)
-        {
-            duk_pop(ctx);
-        }
-
-        return 0;
     }
+
+    return 0;
 }
 
 duk_ret_t file_system_module::read_text(duk_context* ctx)
@@ -194,18 +233,24 @@ duk_ret_t file_system_module::read_text(duk_context* ctx)
     boost::filesystem::detail::utf8_codecvt_facet facet;
     fs::path path(duk_require_string(ctx, 0), facet);
 
-    if (fs::exists(path))
+    try
     {
-        std::ifstream reader(path.string(), std::ios::binary);
-        std::stringstream ss;
+        boost::scoped_array<char> data;
+        size_t size_read = read_impl(path, [&data](size_t size)-> char*
+        {
+            data.reset(new char[size + 1 /*+1 for null-terminator*/]);
+            return data.get();
+        });
 
-        std::copy(
-            std::istreambuf_iterator<char>(reader),
-            std::istreambuf_iterator<char>(),
-            std::ostreambuf_iterator<char>(ss));
-
-        duk_push_string(ctx, ss.str().c_str());
-        return 1;
+        if (size_read > 0 && data)
+        {
+            data[size_read] = '\0'; // Data is not guaranteed to be null-terminated, so add an explicit null at the end
+            duk_push_string(ctx, data.get());
+            return 1;
+        }
+    }
+    catch (std::exception&)
+    {
     }
 
     return 0;
@@ -232,8 +277,6 @@ duk_ret_t file_system_module::space(duk_context* ctx)
 
 duk_ret_t file_system_module::write_buffer(duk_context* ctx)
 {
-    void* buffer = nullptr;
-
     try
     {
         boost::filesystem::detail::utf8_codecvt_facet facet;
@@ -242,43 +285,41 @@ duk_ret_t file_system_module::write_buffer(duk_context* ctx)
         duk_size_t size;
         const char* buffer = static_cast<const char*>(duk_require_buffer(ctx, 1, &size));
 
-        boost::filesystem::ofstream file(path, std::ios::binary);
+        duk_size_t size_written = write_impl(path, buffer, size);
 
-        file.write(buffer, size);
-        duk_push_number(ctx, size);
-
-        return 1;
-    }
-    catch (boost::filesystem::filesystem_error& ex)
-    {
-        BOOST_LOG_TRIVIAL(error) << "Failed to read file: " << ex.what();
-
-        if (buffer)
+        if (size_written == size)
         {
-            duk_pop(ctx);
+            duk_push_number(ctx, size_written);
+            return 1;
         }
-
-        return 0;
     }
+    catch (std::exception&)
+    {
+    }
+
+    return 0;
 }
 
 duk_ret_t file_system_module::write_text(duk_context* ctx)
 {
-    boost::filesystem::detail::utf8_codecvt_facet facet;
-    fs::path path(duk_require_string(ctx, 0), facet);
-
-    duk_size_t size;
-    const char* text = duk_require_lstring(ctx, 1, &size);
-
-    std::FILE *fp = std::fopen(path.string().c_str(), "wb");
-
-    if (fp)
+    try
     {
-        size_t written = std::fwrite(text, sizeof(char), size, fp);
-        std::fclose(fp);
+        boost::filesystem::detail::utf8_codecvt_facet facet;
+        fs::path path(duk_require_string(ctx, 0), facet);
 
-        duk_push_number(ctx, written);
-        return 1;
+        duk_size_t size;
+        const char* text = duk_require_lstring(ctx, 1, &size);
+
+        duk_size_t size_written = write_impl(path, text, size);
+
+        if (size_written == size)
+        {
+            duk_push_number(ctx, size_written);
+            return 1;
+        }
+    }
+    catch (std::exception&)
+    {
     }
 
     return 0;
