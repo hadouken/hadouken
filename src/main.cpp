@@ -18,18 +18,10 @@ namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 
+static po::options_description desc("Allowed options");
+
 po::variables_map load_options(int argc,char *argv[])
 {
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
-        ("daemon", "Start Hadouken in daemon/service mode.")
-#ifdef WIN32
-        ("install-service", "Install Hadouken in the SCM.")
-        ("uninstall-service", "Uninstall Hadouken from the SCM.")
-#endif
-        ;
-
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
@@ -67,7 +59,28 @@ std::unique_ptr<hadouken::hosting::host> get_host(const po::variables_map& optio
 
 int main(int argc, char *argv[])
 {
-    po::variables_map vm = load_options(argc, argv);
+    desc.add_options()
+        ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
+        ("daemon", "Start Hadouken in daemon/service mode.")
+#ifdef WIN32
+        ("install-service", "Install Hadouken in the SCM.")
+        ("uninstall-service", "Uninstall Hadouken from the SCM.")
+#endif
+        ;
+
+    po::variables_map vm;
+    try
+    {
+        vm = load_options(argc, argv);
+    }
+    catch (po::unknown_option& ex)
+    {
+        BOOST_LOG_TRIVIAL(error) << ex.what();
+        std::cerr << std::endl << desc << std::endl;
+
+        return EXIT_FAILURE;
+    }
+
     hadouken::logging::setup(vm);
 
     // Do platform-specific initialization as early as possible.
