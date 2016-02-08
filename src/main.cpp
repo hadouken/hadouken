@@ -19,11 +19,15 @@ namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 
 static po::options_description desc("Allowed options");
+static po::options_description hidden_options("Hidden options");
 
 po::variables_map load_options(int argc,char *argv[])
 {
+    po::options_description cmdline_options;
+    cmdline_options.add(desc).add(hidden_options);
+
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
     po::notify(vm);
 
     return vm;
@@ -68,6 +72,12 @@ int main(int argc, char *argv[])
 #endif
         ;
 
+    hidden_options.add_options()
+#ifdef WIN32
+        ("runas", "Do not attempt to relaunch as a different user when configuring the service. Used by Hadouken itself to prevent recursive relaunches.")
+#endif
+        ;
+
     po::variables_map vm;
     try
     {
@@ -87,14 +97,16 @@ int main(int argc, char *argv[])
     hadouken::platform::init();
 
 #ifdef WIN32
+    bool attempt_elevation = !vm.count("runas");
+
     if (vm.count("install-service"))
     {
-        hadouken::platform::install_service();
+        hadouken::platform::install_service(attempt_elevation);
         return 0;
     }
     else if (vm.count("uninstall-service"))
     {
-        hadouken::platform::uninstall_service();
+        hadouken::platform::uninstall_service(attempt_elevation);
         return 0;
     }
 #endif

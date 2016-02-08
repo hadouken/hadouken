@@ -3,6 +3,7 @@
 #include <atlstr.h>
 #include <boost/log/trivial.hpp>
 #include <windows.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <dbghelp.h>
@@ -51,13 +52,33 @@ LONG WINAPI UnhandledException(LPEXCEPTION_POINTERS exceptionInfo)
 
     return EXCEPTION_EXECUTE_HANDLER;
 }
+DWORD relaunch_as_different_user(LPCWSTR path, LPCWSTR parameters)
+{
+    SHELLEXECUTEINFOW info = { 0 };
+    info.cbSize = sizeof(SHELLEXECUTEINFO);
+    info.lpVerb = L"runas";
+    info.lpFile = path;
+    info.lpParameters = parameters;
+    info.nShow = SW_HIDE;
+
+    if (!ShellExecuteExW(&info))
+    {
+        DWORD errorCode2 = GetLastError();
+
+        return errorCode2;
+    }
+    else
+    {
+        return ERROR_SUCCESS;
+    }
+}
 
 void platform::init()
 {
     SetUnhandledExceptionFilter(UnhandledException);
 }
 
-void platform::install_service()
+void platform::install_service(bool relaunch_if_needed)
 {
     wchar_t path[MAX_PATH] = { 0 };
 
@@ -71,8 +92,31 @@ void platform::install_service()
 
     if (!managerHandle)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
-        return;
+        DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_ACCESS_DENIED)
+        {
+            DWORD errorCode2 = errorCode;
+            if (relaunch_if_needed)
+            {
+                errorCode2 = relaunch_as_different_user(path, L"--install-service --runas");
+            }
+
+            if (errorCode2 != ERROR_SUCCESS)
+            {
+                BOOST_LOG_TRIVIAL(error) << "The current user account does not have permission to install a service.";
+
+                return;
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(info) << "Program relaunched as a different user";
+                return;
+            }
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
+        }
     }
 
     std::wstring arg(path);
@@ -105,13 +149,46 @@ void platform::install_service()
     BOOST_LOG_TRIVIAL(info) << "Service installed.";
 }
 
-void platform::uninstall_service()
+void platform::uninstall_service(bool relaunch_if_needed)
 {
     SC_HANDLE managerHandle = OpenSCManager(NULL, SERVICES_ACTIVE_DATABASE, SC_MANAGER_ALL_ACCESS);
 
     if (!managerHandle)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
+        DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_ACCESS_DENIED)
+        {
+            wchar_t path[MAX_PATH] = { 0 };
+
+            if (!GetModuleFileName(NULL, path, MAX_PATH))
+            {
+                BOOST_LOG_TRIVIAL(error) << "Could not get filename.";
+                return;
+            }
+
+            DWORD errorCode2 = errorCode;
+            if (relaunch_if_needed)
+            {
+                errorCode2 = relaunch_as_different_user(path, L"--uninstall-service --runas");
+            }
+
+            if (errorCode2 != ERROR_SUCCESS)
+            {
+                BOOST_LOG_TRIVIAL(error) << "The current user account does not have permission to uninstall a service.";
+
+                return;
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(info) << "Program relaunched as a different user";
+                return;
+            }
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
+        }
+
         return;
     }
 
