@@ -75,7 +75,7 @@ int service_host::wait_for_exit()
 {
     signals_->async_wait([this](const boost::system::error_code& error, int signal)
     {
-        BOOST_LOG_TRIVIAL(info) << "Service stopping";
+        BOOST_LOG_TRIVIAL(info) << "Service stopping: " << error.message();
         io_->stop();
         set_status(SERVICE_STOP_PENDING);
     });
