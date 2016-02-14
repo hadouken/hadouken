@@ -2,16 +2,38 @@
 
 using namespace hadouken::hosting;
 
-int console_host::wait_for_exit(boost::shared_ptr<boost::asio::io_service> io)
+int console_host::initialization_start(boost::shared_ptr<boost::asio::io_service> io)
 {
-    boost::asio::signal_set signals(*io, SIGINT, SIGTERM);
+    io_ = io;
 
-    signals.async_wait([io](const boost::system::error_code& ec, int sig)
+    return EXIT_SUCCESS;
+}
+
+int console_host::initialization_complete(int success_code)
+{
+    return EXIT_SUCCESS;
+}
+
+int console_host::wait_for_exit()
+{
+    boost::asio::signal_set signals(*io_, SIGINT, SIGTERM);
+
+    signals.async_wait([this](const boost::system::error_code& ec, int sig)
     {
-        io->stop();
+        io_->stop();
     });
 
-    io->run();
+    io_->run();
 
-    return 0;
+    return EXIT_SUCCESS;
+}
+
+int console_host::shutdown_start()
+{
+    return EXIT_SUCCESS;
+}
+
+int console_host::shutdown_complete(int success_code)
+{
+    return EXIT_SUCCESS;
 }

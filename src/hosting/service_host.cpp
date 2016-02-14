@@ -8,7 +8,16 @@
 using namespace hadouken::hosting;
 service_host* service_host::instance_ = 0;
 
-int service_host::wait_for_exit(boost::shared_ptr<boost::asio::io_service> io)
+service_host::service_host()
+    : status_handle_(NULL)
+    , startup_event_(NULL)
+    , signals_()
+    , io_()
+    , host()
+{
+}
+
+int service_host::initialization_start(boost::shared_ptr<boost::asio::io_service> io)
 {
     if (instance_ == 0)
     {
@@ -17,18 +26,79 @@ int service_host::wait_for_exit(boost::shared_ptr<boost::asio::io_service> io)
         signals_ = boost::make_shared<boost::asio::signal_set>(*io);
     }
 
-    SERVICE_TABLE_ENTRY tbl[] =
+    startup_event_ = CreateEvent(NULL, TRUE, FALSE, NULL);
+    if (startup_event_ == NULL)
     {
-        { L"Hadouken",  service_main_entry },
-        { NULL, NULL }
-    };
-
-    if (!StartServiceCtrlDispatcher(tbl))
-    {
-        return GetLastError();
+        BOOST_LOG_TRIVIAL(error) << "Service startup handle creation failed " << GetLastError();
+        return ERROR_INVALID_HANDLE;
     }
 
-    return 0;
+    HANDLE thread = CreateThread(NULL, 0, service_startup_threadproc, this, 0, NULL);
+    if (thread == NULL)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Service thread creation failed " << GetLastError();
+        CloseHandle(startup_event_);
+        return ERROR_INVALID_HANDLE;
+    }
+
+    CloseHandle(thread);
+
+    if (WaitForSingleObject(startup_event_, 30000) != WAIT_OBJECT_0)
+    {
+        BOOST_LOG_TRIVIAL(error) << "Service startup timed out";
+        CloseHandle(startup_event_);
+        return WAIT_TIMEOUT;
+    }
+
+    CloseHandle(startup_event_);
+
+    return NO_ERROR;
+}
+
+int service_host::initialization_complete(int success_code)
+{
+    if (success_code == NO_ERROR)
+    {
+        BOOST_LOG_TRIVIAL(info) << "Service running";
+        set_status(SERVICE_RUNNING);
+    }
+    else
+    {
+        BOOST_LOG_TRIVIAL(info) << "Startup failed, service stopping";
+        set_status(SERVICE_STOP_PENDING);
+    }
+
+    return NO_ERROR;
+}
+
+int service_host::wait_for_exit()
+{
+    signals_->async_wait([this](const boost::system::error_code& error, int signal)
+    {
+        BOOST_LOG_TRIVIAL(info) << "Service stopping";
+        io_->stop();
+        set_status(SERVICE_STOP_PENDING);
+    });
+
+    io_->run();
+
+    return NO_ERROR;
+}
+
+int service_host::shutdown_start()
+{
+    BOOST_LOG_TRIVIAL(info) << "Service stopping";
+   set_status(SERVICE_STOP_PENDING);
+
+   return NO_ERROR;
+}
+
+int service_host::shutdown_complete(int success_code)
+{
+    BOOST_LOG_TRIVIAL(info) << "Service stopped";
+    set_status(SERVICE_STOPPED, static_cast<DWORD>(success_code));
+
+    return NO_ERROR;
 }
 
 void service_host::service_main(DWORD argc, LPWSTR* argv)
@@ -41,14 +111,9 @@ void service_host::service_main(DWORD argc, LPWSTR* argv)
         return;
     }
 
-    signals_->async_wait([this](const boost::system::error_code& error, int signal)
-    {
-        io_->stop();
-        set_status(SERVICE_STOPPED);
-    });
+    set_status(SERVICE_START_PENDING);
 
-    set_status(SERVICE_RUNNING);
-    io_->run();
+    SetEvent(startup_event_);
 }
 
 DWORD service_host::service_control_handler(DWORD control, DWORD event_type, LPVOID event_data, LPVOID context)
@@ -68,15 +133,44 @@ DWORD service_host::service_control_handler(DWORD control, DWORD event_type, LPV
     return NO_ERROR;
 }
 
-void service_host::set_status(DWORD state)
+DWORD service_host::service_startup_threadproc(LPVOID lpParameter)
 {
-    status_.dwCheckPoint = 0;
-    status_.dwControlsAccepted = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
-    status_.dwCurrentState = state;
-    status_.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
-    status_.dwWin32ExitCode = 0;
+    SERVICE_TABLE_ENTRY tbl[] =
+    {
+        { L"Hadouken", service_main_entry },
+        { NULL, NULL }
+    };
 
-    if (!SetServiceStatus(status_handle_, &status_))
+    BOOST_LOG_TRIVIAL(info) << "Service initialization start";
+
+    if (!StartServiceCtrlDispatcher(tbl))
+    {
+        BOOST_LOG_TRIVIAL(error) << "Service failed to start " << GetLastError();
+        return GetLastError();
+    }
+
+    return NO_ERROR;
+}
+
+void service_host::set_status(DWORD state, DWORD exit_code)
+{
+    if (status_handle_ == NULL)
+    {
+        return;
+    }
+
+    if (exit_code == EXIT_FAILURE)
+    {
+        exit_code = ERROR_FATAL_APP_EXIT;
+    }
+
+    SERVICE_STATUS status = { 0 };
+    status.dwControlsAccepted = (state == SERVICE_START_PENDING) ? 0 : SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
+    status.dwCurrentState = state;
+    status.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+    status.dwWin32ExitCode = exit_code;
+
+    if (!SetServiceStatus(status_handle_, &status))
     {
         BOOST_LOG_TRIVIAL(error) << "Could not set service status to: " << state;
     }
