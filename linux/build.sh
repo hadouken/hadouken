@@ -19,4 +19,4 @@ export LIBRARY_PATH=$LIBRARY_PATH:$HOME/libtorrent/lib
 ( cp -R ../js build/bin/ )
 
 # Build and package Hadouken
-( mkdir -p build ; cd build ; cmake ../../ ; make ; make package )
+( mkdir -p build ; cd build ; cmake ../../ -DBOOST_ROOT=$HOME/boost ; make ; make package )

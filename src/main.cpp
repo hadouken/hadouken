@@ -18,23 +18,28 @@ namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 
+static po::options_description desc("Allowed options");
+static po::options_description hidden_options("Hidden options");
+
 po::variables_map load_options(int argc,char *argv[])
 {
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Display available commandline options")
         ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
-        ("daemon", "Start Hadouken in daemon/service mode.")
 #ifdef WIN32
+        ("daemon", "Start Hadouken in daemon/service mode.")
         ("install-service", "Install Hadouken in the SCM.")
         ("uninstall-service", "Uninstall Hadouken from the SCM.")
 #endif
         ;
+    po::options_description cmdline_options;
+    cmdline_options.add(desc).add(hidden_options);
 
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
     po::notify(vm);
-    
+
     // Print Help and exit if we get --help or -h on the command-line.
     if (vm.count("help"))
     {
@@ -75,21 +80,50 @@ std::unique_ptr<hadouken::hosting::host> get_host(const po::variables_map& optio
 
 int main(int argc, char *argv[])
 {
-    po::variables_map vm = load_options(argc, argv);
+    desc.add_options()
+        ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
+        ("daemon", "Start Hadouken in daemon/service mode.")
+#ifdef WIN32
+        ("install-service", "Install Hadouken in the SCM.")
+        ("uninstall-service", "Uninstall Hadouken from the SCM.")
+#endif
+        ;
+
+    hidden_options.add_options()
+#ifdef WIN32
+        ("runas", "Do not attempt to relaunch as a different user when configuring the service. Used by Hadouken itself to prevent recursive relaunches.")
+#endif
+        ;
+
+    po::variables_map vm;
+    try
+    {
+        vm = load_options(argc, argv);
+    }
+    catch (po::unknown_option& ex)
+    {
+        BOOST_LOG_TRIVIAL(error) << ex.what();
+        std::cerr << std::endl << desc << std::endl;
+
+        return EXIT_FAILURE;
+    }
+
     hadouken::logging::setup(vm);
 
     // Do platform-specific initialization as early as possible.
     hadouken::platform::init();
 
 #ifdef WIN32
+    bool attempt_elevation = !vm.count("runas");
+
     if (vm.count("install-service"))
     {
-        hadouken::platform::install_service();
+        hadouken::platform::install_service(attempt_elevation);
         return 0;
     }
     else if (vm.count("uninstall-service"))
     {
-        hadouken::platform::uninstall_service();
+        hadouken::platform::uninstall_service(attempt_elevation);
         return 0;
     }
 #endif

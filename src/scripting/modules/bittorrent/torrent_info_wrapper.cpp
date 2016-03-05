@@ -1,4 +1,5 @@
 #include <hadouken/scripting/modules/bittorrent/torrent_info_wrapper.hpp>
+#include <boost/log/trivial.hpp>
 
 #include <libtorrent/torrent_info.hpp>
 
@@ -13,25 +14,36 @@ duk_ret_t torrent_info_wrapper::construct(duk_context* ctx)
     int t = duk_get_type(ctx, 0);
     libtorrent::torrent_info* info;
 
-    if (t == DUK_TYPE_STRING)
+    try
     {
-        std::string file(duk_require_string(ctx, 0));
-        // TODO: error handling
-        info = new libtorrent::torrent_info(file);
+        if (t == DUK_TYPE_STRING)
+        {
+            std::string file(duk_require_string(ctx, 0));
+            info = new libtorrent::torrent_info(file);
+        }
+        else if (t == DUK_TYPE_BUFFER)
+        {
+            duk_size_t size;
+            const char* buffer = static_cast<const char*>(duk_require_buffer(ctx, 0, &size));
+            info = new libtorrent::torrent_info(buffer, size);
+        }
+
+        duk_push_this(ctx);
+        common::set_pointer<libtorrent::torrent_info>(ctx, -2, info);
+
+        duk_push_c_function(ctx, finalize, 1);
+        duk_set_finalizer(ctx, -2);
     }
-    else if (t == DUK_TYPE_BUFFER)
+    catch (const libtorrent::libtorrent_exception& ex)
     {
-        duk_size_t size;
-        const char* buffer = static_cast<const char*>(duk_require_buffer(ctx, 0, &size));
-        // TODO: error handling
-        info = new libtorrent::torrent_info(buffer, size);
+        BOOST_LOG_TRIVIAL(warning) << "Invalid torrent file: " << ex.what();
+        return DUK_RET_UNSUPPORTED_ERROR;
     }
-
-    duk_push_this(ctx);
-    common::set_pointer<libtorrent::torrent_info>(ctx, -2, info);
-
-    duk_push_c_function(ctx, finalize, 1);
-    duk_set_finalizer(ctx, -2);
+    catch (const std::exception& ex)
+    {
+        BOOST_LOG_TRIVIAL(warning) << "Error adding torrent: " << ex.what();
+        return DUK_RET_ERROR;
+    }
 
     return 0;
 }
