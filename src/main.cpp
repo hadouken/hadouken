@@ -23,12 +23,29 @@ static po::options_description hidden_options("Hidden options");
 
 po::variables_map load_options(int argc,char *argv[])
 {
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help,h", "Display available commandline options")
+        ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
+#ifdef WIN32
+        ("daemon", "Start Hadouken in daemon/service mode.")
+        ("install-service", "Install Hadouken in the SCM.")
+        ("uninstall-service", "Uninstall Hadouken from the SCM.")
+#endif
+        ;
     po::options_description cmdline_options;
     cmdline_options.add(desc).add(hidden_options);
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
     po::notify(vm);
+
+    // Print Help and exit if we get --help or -h on the command-line.
+    if (vm.count("help"))
+    {
+        std::cout << desc << "\n";
+        exit (EXIT_SUCCESS);
+    }
 
     return vm;
 }
