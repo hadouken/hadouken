@@ -64,6 +64,7 @@ std::unique_ptr<hadouken::hosting::host> get_host(const po::variables_map& optio
 int main(int argc, char *argv[])
 {
     desc.add_options()
+        ("help,h", "Display available commandline options")
         ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
         ("daemon", "Start Hadouken in daemon/service mode.")
 #ifdef WIN32
@@ -91,6 +92,13 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    // Print Help and exit if we get --help or -h on the command-line.
+    if (vm.count("help"))
+    {
+        std::cout << desc << std::endl;
+        return EXIT_SUCCESS;
+    }
+
     hadouken::logging::setup(vm);
 
     // Do platform-specific initialization as early as possible.
@@ -102,12 +110,12 @@ int main(int argc, char *argv[])
     if (vm.count("install-service"))
     {
         hadouken::platform::install_service(attempt_elevation);
-        return 0;
+        return EXIT_SUCCESS;
     }
     else if (vm.count("uninstall-service"))
     {
         hadouken::platform::uninstall_service(attempt_elevation);
-        return 0;
+        return EXIT_SUCCESS;
     }
 #endif
 

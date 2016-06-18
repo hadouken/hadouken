@@ -6,7 +6,6 @@
 #include <boost/log/trivial.hpp>
 #include <boost/scoped_array.hpp>
 
-#include <sstream>
 #include <functional>
 #include <memory>
 
@@ -33,6 +32,12 @@ size_t read_impl(const fs::path& path, std::function<char*(size_t)> alloc)
             file.read(buffer, size);
 
             return size;
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(error) << "File does not exist: " << path.c_str();
+
+            return 0;
         }
     }
     catch (boost::filesystem::filesystem_error& ex)
