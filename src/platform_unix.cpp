@@ -32,7 +32,7 @@ fs::path platform::get_current_directory()
     return fs::initial_path();
 }
 
-int platform::launch_process(std::string executable, std::vector<std::string> args)
+int platform::launch_process(const std::string& executable, const std::vector<std::string>& args)
 {
 }
 
