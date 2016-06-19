@@ -68,7 +68,7 @@ size_t write_impl(const fs::path& path, const char* data, size_t size)
 
 duk_ret_t file_system_module::initialize(duk_context* ctx)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "combine",           combine,            DUK_VARARGS },
         { "createDirectories", create_directories, 1 },

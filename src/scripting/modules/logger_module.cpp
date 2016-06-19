@@ -7,7 +7,7 @@ using namespace hadouken::scripting::modules;
 
 duk_ret_t logger_module::initialize(duk_context* ctx)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "get", get, 1 },
         { NULL, NULL, 0 }
@@ -23,7 +23,7 @@ duk_ret_t logger_module::get(duk_context* ctx)
 
     duk_idx_t logIdx = duk_push_object(ctx);
 
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "trace", log_trace, DUK_VARARGS },
         { "debug", log_debug, DUK_VARARGS },

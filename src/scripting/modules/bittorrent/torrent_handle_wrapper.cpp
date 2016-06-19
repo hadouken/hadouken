@@ -17,7 +17,7 @@ torrent_handle_wrapper::metadata_map_t torrent_handle_wrapper::metadata_ = torre
 
 void torrent_handle_wrapper::initialize(duk_context* ctx, const libtorrent::torrent_handle& handle)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "clearError",        clear_error,         0 },
         { "flushCache",        flush_cache,         0 },

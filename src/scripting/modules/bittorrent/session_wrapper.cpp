@@ -32,7 +32,7 @@ void session_wrapper::initialize(duk_context* ctx, libtorrent::session& session)
     DUK_READONLY_PROPERTY(ctx, sessionIndex, sslListenPort, get_ssl_listen_port);
 
     // Session functions
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "addDhtRouter",   add_dht_router, 2 },
         { "addFeed",        add_feed,       1 },
@@ -249,7 +249,7 @@ duk_ret_t session_wrapper::get_torrents(duk_context* ctx)
     int arrayIndex = duk_push_array(ctx);
     int i = 0;
 
-    for (libtorrent::torrent_handle handle : sess->get_torrents())
+    for (const libtorrent::torrent_handle& handle : sess->get_torrents())
     {
         torrent_handle_wrapper::initialize(ctx, handle);
         duk_put_prop_index(ctx, arrayIndex, i);
