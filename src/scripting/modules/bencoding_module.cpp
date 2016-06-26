@@ -13,7 +13,7 @@ using namespace hadouken::scripting::modules::bittorrent;
 
 duk_ret_t bencoding_module::initialize(duk_context* ctx)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "decode", decode, 1 },
         { "encode", encode, 1 },

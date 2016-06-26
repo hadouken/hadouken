@@ -12,7 +12,7 @@ void lazy_entry_wrapper::initialize(duk_context* ctx, libtorrent::lazy_entry& en
 {
     duk_idx_t entryIndex = duk_push_object(ctx);
 
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { NULL, NULL, 0 }
     };

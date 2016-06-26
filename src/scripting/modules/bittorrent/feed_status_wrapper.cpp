@@ -12,7 +12,7 @@ void feed_status_wrapper::initialize(duk_context* ctx, const libtorrent::feed_st
 {
     duk_idx_t idx = duk_push_object(ctx);
 
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "getItems", get_items, 0 },
         { NULL,       NULL,      0 }

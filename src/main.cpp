@@ -81,6 +81,7 @@ std::unique_ptr<hadouken::hosting::host> get_host(const po::variables_map& optio
 int main(int argc, char *argv[])
 {
     desc.add_options()
+        ("help,h", "Display available commandline options")
         ("config", po::value<std::string>(), "Set path to a JSON configuration file. The default is %appdir%/hadouken.json")
         ("daemon", "Start Hadouken in daemon/service mode.")
 #ifdef WIN32
@@ -108,6 +109,13 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    // Print Help and exit if we get --help or -h on the command-line.
+    if (vm.count("help"))
+    {
+        std::cout << desc << std::endl;
+        return EXIT_SUCCESS;
+    }
+
     hadouken::logging::setup(vm);
 
     // Do platform-specific initialization as early as possible.
@@ -119,14 +127,22 @@ int main(int argc, char *argv[])
     if (vm.count("install-service"))
     {
         hadouken::platform::install_service(attempt_elevation);
-        return 0;
+        return EXIT_SUCCESS;
     }
     else if (vm.count("uninstall-service"))
     {
         hadouken::platform::uninstall_service(attempt_elevation);
-        return 0;
+        return EXIT_SUCCESS;
     }
 #endif
+
+    boost::shared_ptr<boost::asio::io_service> io(new boost::asio::io_service());
+    std::unique_ptr<hadouken::hosting::host> host = get_host(vm);
+    int result = EXIT_FAILURE;
+
+    // Start initialization as early as possible so that failures can be reported to the SCM if running as a service on Windows.
+    // Otherwise the SCM will wait for some timeout before declaring Hadouken as failing to start.
+    result = host->initialization_start(io);
 
     fs::path config_file = get_config_path(vm);
     pt::ptree config;
@@ -141,25 +157,54 @@ int main(int argc, char *argv[])
         {
             pt::read_json(config_file.string(), config);
             BOOST_LOG_TRIVIAL(info) << "Loaded config file " << config_file;
+            result = EXIT_SUCCESS;
         }
         catch (const std::exception& ex)
         {
             // To meet expectations, fail if the configuration file cannot be parsed. Otherwise,
             // we will revert to the default config which might be totally wrong.
             BOOST_LOG_TRIVIAL(fatal) << "Error when loading config file " << config_file << ": " << ex.what();
-            return EXIT_FAILURE;
+            result = EXIT_FAILURE;
         }
     }
 
-    boost::shared_ptr<boost::asio::io_service> io(new boost::asio::io_service());
-    
     hadouken::application app(io, config);
-    app.script_host().define_global("__CONFIG__", config_file.string());
-    app.script_host().define_global("__CONFIG_PATH__", config_file.parent_path().string());
 
-    app.start();
-    int result = get_host(vm)->wait_for_exit(io);
-    app.stop();
+    if (result == EXIT_SUCCESS)
+    {
+        try
+        {
+            app.script_host().define_global("__CONFIG__", config_file.string());
+            app.script_host().define_global("__CONFIG_PATH__", config_file.parent_path().string());
+
+            app.start();
+        }
+        catch (std::exception& ex)
+        {
+            BOOST_LOG_TRIVIAL(fatal) << "Error starting Hadouken " << ex.what();
+            result = EXIT_FAILURE;
+        }
+    }
+
+    host->initialization_complete(result);
+
+    if (result == EXIT_SUCCESS)
+    {
+        result = host->wait_for_exit();
+    }
+
+    host->shutdown_start();
+
+    try
+    {
+        app.stop();
+    }
+    catch (const std::exception&)
+    {
+    }
+
+    // If running as a service, the process may be terminated at any time after calling this function
+    host->shutdown_complete(result);
 
     return result;
 }

@@ -6,7 +6,6 @@
 #include <boost/log/trivial.hpp>
 #include <boost/scoped_array.hpp>
 
-#include <sstream>
 #include <functional>
 #include <memory>
 
@@ -33,6 +32,12 @@ size_t read_impl(const fs::path& path, std::function<char*(size_t)> alloc)
             file.read(buffer, size);
 
             return size;
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(error) << "File does not exist: " << path.c_str();
+
+            return 0;
         }
     }
     catch (boost::filesystem::filesystem_error& ex)
@@ -63,7 +68,7 @@ size_t write_impl(const fs::path& path, const char* data, size_t size)
 
 duk_ret_t file_system_module::initialize(duk_context* ctx)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "combine",           combine,            DUK_VARARGS },
         { "createDirectories", create_directories, 1 },

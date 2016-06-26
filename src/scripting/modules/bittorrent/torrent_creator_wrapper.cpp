@@ -19,7 +19,7 @@ duk_ret_t torrent_creator_wrapper::construct(duk_context* ctx)
 
     common::set_pointer<libtorrent::create_torrent>(ctx, -2, creator);
 
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "generate", generate, 0 },
         { NULL, NULL, 0 }
