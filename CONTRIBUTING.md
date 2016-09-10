@@ -6,7 +6,7 @@ You want to contribute to Hadouken? That is great. Please read through these doc
 
  * Make sure your code builds on both Windows and Linux. The `develop` branch is continuously built on Windows and Ubuntu.
  * Keep to standard C++11.
- * Keep to existing code style, i.e braces on new lines, space between statement and brackes (`if (condition)`). If in doubt, trust Visual Studio.
+ * Keep to existing code style, i.e braces on new lines, space between statement and braces (`if (condition)`). If in doubt, trust Visual Studio.
 
 ## Pull requests
 
