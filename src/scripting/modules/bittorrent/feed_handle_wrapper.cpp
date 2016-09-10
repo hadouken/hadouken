@@ -11,7 +11,7 @@ using namespace hadouken::scripting::modules::bittorrent;
 
 void feed_handle_wrapper::initialize(duk_context* ctx, const libtorrent::feed_handle& handle)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "updateFeed",  update_feed,     0 },
         { "getStatus",   get_feed_status, 0 },

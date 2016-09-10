@@ -8,7 +8,7 @@ using namespace hadouken::scripting::modules;
 
 duk_ret_t process_module::initialize(duk_context* ctx)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "launch", launch, 2 },
         { NULL,     NULL,   0 }

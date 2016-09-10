@@ -50,7 +50,7 @@ duk_ret_t torrent_info_wrapper::construct(duk_context* ctx)
 
 void torrent_info_wrapper::initialize(duk_context* ctx, const libtorrent::torrent_info& info)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "getFiles", get_files, 0 },
         { NULL, NULL, 0 }

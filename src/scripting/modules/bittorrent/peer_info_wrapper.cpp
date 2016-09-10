@@ -10,7 +10,7 @@ using namespace hadouken::scripting::modules::bittorrent;
 
 void peer_info_wrapper::initialize(duk_context* ctx, libtorrent::peer_info& peer)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { NULL, NULL, 0 }
     };

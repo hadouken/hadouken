@@ -1,28 +1,27 @@
 #include <hadouken/platform.hpp>
 
-#include <atlstr.h>
 #include <boost/log/trivial.hpp>
 #include <windows.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <dbghelp.h>
-#include <tchar.h>
 
 using namespace hadouken;
 
-LONG WINAPI UnhandledException(LPEXCEPTION_POINTERS exceptionInfo)
+static LONG WINAPI UnhandledException(LPEXCEPTION_POINTERS exceptionInfo)
 {
-    TCHAR tempPath[MAX_PATH];
-    DWORD res = GetTempPath(MAX_PATH, tempPath);
+    WCHAR tempPath[MAX_PATH];
+    DWORD res = GetTempPath(ARRAYSIZE(tempPath), tempPath);
 
-    if (res > MAX_PATH || res == 0)
+    if (res > ARRAYSIZE(tempPath) || res == 0)
     {
         BOOST_LOG_TRIVIAL(error) << "Could not get temporary path for minidump.";
         return EXCEPTION_CONTINUE_SEARCH;
     }
 
-    TCHAR dmpPath[MAX_PATH + 2] = { 0 };
-    PathCombine(dmpPath, tempPath, TEXT("hadouken.dmp"));
+    WCHAR dmpPath[MAX_PATH + 2] = { 0 };
+    PathCombine(dmpPath, tempPath, L"hadouken.dmp");
 
     HANDLE file = CreateFile(dmpPath, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -52,16 +51,53 @@ LONG WINAPI UnhandledException(LPEXCEPTION_POINTERS exceptionInfo)
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
+static DWORD relaunch_as_different_user(LPCWSTR path, LPCWSTR parameters)
+{
+    SHELLEXECUTEINFOW info = { 0 };
+    info.cbSize = sizeof(SHELLEXECUTEINFO);
+    info.lpVerb = L"runas";
+    info.lpFile = path;
+    info.lpParameters = parameters;
+    info.nShow = SW_HIDE;
+
+    if (!ShellExecuteExW(&info))
+    {
+        DWORD errorCode2 = GetLastError();
+
+        return errorCode2;
+    }
+    else
+    {
+        return ERROR_SUCCESS;
+    }
+}
+
+static std::wstring utf8_to_utf16(const std::string& input)
+{
+    std::wstring output;
+    int size = MultiByteToWideChar(CP_UTF8, 0, input.c_str(), input.size(), NULL, 0);
+    if (size > 0)
+    {
+        output.resize(size);
+
+        size = MultiByteToWideChar(CP_UTF8, 0, input.c_str(), input.size(), &output[0], size);
+    }
+
+    output.resize(size);
+
+    return output;
+}
+
 void platform::init()
 {
     SetUnhandledExceptionFilter(UnhandledException);
 }
 
-void platform::install_service()
+void platform::install_service(bool relaunch_if_needed)
 {
-    wchar_t path[MAX_PATH] = { 0 };
+    WCHAR path[MAX_PATH] = { 0 };
 
-    if (!GetModuleFileName(NULL, path, MAX_PATH))
+    if (!GetModuleFileName(NULL, path, ARRAYSIZE(path)))
     {
         BOOST_LOG_TRIVIAL(error) << "Could not get filename.";
         return;
@@ -71,8 +107,31 @@ void platform::install_service()
 
     if (!managerHandle)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
-        return;
+        DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_ACCESS_DENIED)
+        {
+            DWORD errorCode2 = errorCode;
+            if (relaunch_if_needed)
+            {
+                errorCode2 = relaunch_as_different_user(path, L"--install-service --runas");
+            }
+
+            if (errorCode2 != ERROR_SUCCESS)
+            {
+                BOOST_LOG_TRIVIAL(error) << "The current user account does not have permission to install a service.";
+
+                return;
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(info) << "Program relaunched as a different user";
+                return;
+            }
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
+        }
     }
 
     std::wstring arg(path);
@@ -105,13 +164,46 @@ void platform::install_service()
     BOOST_LOG_TRIVIAL(info) << "Service installed.";
 }
 
-void platform::uninstall_service()
+void platform::uninstall_service(bool relaunch_if_needed)
 {
     SC_HANDLE managerHandle = OpenSCManager(NULL, SERVICES_ACTIVE_DATABASE, SC_MANAGER_ALL_ACCESS);
 
     if (!managerHandle)
     {
-        BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
+        DWORD errorCode = GetLastError();
+        if (errorCode == ERROR_ACCESS_DENIED)
+        {
+            WCHAR path[MAX_PATH] = { 0 };
+
+            if (!GetModuleFileName(NULL, path, ARRAYSIZE(path)))
+            {
+                BOOST_LOG_TRIVIAL(error) << "Could not get filename.";
+                return;
+            }
+
+            DWORD errorCode2 = errorCode;
+            if (relaunch_if_needed)
+            {
+                errorCode2 = relaunch_as_different_user(path, L"--uninstall-service --runas");
+            }
+
+            if (errorCode2 != ERROR_SUCCESS)
+            {
+                BOOST_LOG_TRIVIAL(error) << "The current user account does not have permission to uninstall a service.";
+
+                return;
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(info) << "Program relaunched as a different user";
+                return;
+            }
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(error) << "Could not open Service Control Manager";
+        }
+
         return;
     }
 
@@ -139,13 +231,15 @@ void platform::uninstall_service()
 
 boost::filesystem::path platform::data_path()
 {
-    TCHAR szPath[MAX_PATH];
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, szPath);
+    WCHAR* szPath;
+    HRESULT result = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &szPath);
 
     if (SUCCEEDED(result))
     {
         boost::filesystem::path programData(szPath);
         programData /= "Hadouken";
+
+        CoTaskMemFree(szPath);
 
         return programData;
     }
@@ -155,21 +249,21 @@ boost::filesystem::path platform::data_path()
 
 boost::filesystem::path platform::application_path()
 {
-    TCHAR szPath[MAX_PATH];
-    GetModuleFileName(NULL, szPath, sizeof(szPath));
+    WCHAR szPath[MAX_PATH];
+    GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath));
 
     return boost::filesystem::path(szPath).parent_path();
 }
 
 boost::filesystem::path platform::get_current_directory()
 {
-    TCHAR buffer[MAX_PATH];
-    GetCurrentDirectory(MAX_PATH, buffer);
+    WCHAR buffer[MAX_PATH];
+    GetCurrentDirectory(ARRAYSIZE(buffer), buffer);
 
     return boost::filesystem::path(buffer);
 }
 
-int platform::launch_process(std::string executable, std::vector<std::string> args)
+int platform::launch_process(const std::string& executable, const std::vector<std::string>& args)
 {
     STARTUPINFO startInfo = { sizeof(STARTUPINFO) };
     PROCESS_INFORMATION procInfo;
@@ -181,11 +275,10 @@ int platform::launch_process(std::string executable, std::vector<std::string> ar
         cmd.append(" " + arg);
     }
 
-    TCHAR p[4096];
-    _tcscpy_s(p, CA2T(cmd.c_str()));
+    std::wstring p = utf8_to_utf16(cmd);
 
     if (!CreateProcess(NULL,
-        p,
+        &p[0],
         NULL,
         NULL,
         TRUE,

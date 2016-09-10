@@ -17,7 +17,7 @@ client_t;
 
 duk_ret_t http_module::initialize(duk_context* ctx)
 {
-    duk_function_list_entry functions[] =
+    static duk_function_list_entry functions[] =
     {
         { "post", post, 3 },
         { NULL,   NULL, 0 }
