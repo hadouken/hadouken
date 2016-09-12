@@ -54,11 +54,14 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF")
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}    /DEBUG /OPT:REF")
 elseif(APPLE)
-    
+
     # Some libraries installed via homebrew or macports are installed in these paths
 
     include_directories(/usr/local/include)
     link_directories(/usr/local/lib)
+
+    # Include Foundation lib to support the Objective-C++ platform specific code
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Foundation")
 
 else()
 
@@ -80,13 +83,13 @@ if(UNIX)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-    include_directories(${CMAKE_SOURCE_DIR}/deps/libtorrent/include) 
+    include_directories(${CMAKE_SOURCE_DIR}/deps/libtorrent/include)
 
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})
 
     set(LIBBOOST ${Boost_LIBRARIES})
-   
+
 endif()
 
 include_directories(
@@ -183,7 +186,7 @@ set(sources
     session_impl
     settings
     socket_io
-    socket_type  
+    socket_type
     socks5_stream
     stat
     storage
