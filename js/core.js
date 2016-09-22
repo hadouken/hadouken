@@ -146,7 +146,7 @@ session.on("torrent.stateUpdate", function(e) {
         var options = torrent.metadata("options") || {};
 
         var goalRatio = options.seedRatio || 2.0;
-        var goalTime  = options.goalTime || 0;
+        var goalTime  = options.seedTime || 0;
 
         if(status.ratio >= parseFloat(goalRatio)
             || (goalTime > 0 && status.seedingTime > goalTime)) {
