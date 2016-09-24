@@ -79,7 +79,11 @@ exports.rpc = {
                 [ "bt.allow_same_ip", TYPE.BOOLEAN, settings.allowMultipleConnectionsPerIp.toString(), ACCESS.READWRITE ],
                 [ "bt.anonymous_mode", TYPE.BOOLEAN, settings.anonymousMode.toString(), ACCESS.READWRITE ],
                 get("bittorrent.utp.enabled", "net.enable_utp", TYPE.BOOLEAN, "true", ACCESS.READWRITE),
-                [ "net.max_halfopen", TYPE.NUMBER, (settings.halfOpenLimit >= 2147483647 ? -1 : settings.halfOpenLimit).toString(), ACCESS.READWRITE ]
+                [ "net.max_halfopen", TYPE.NUMBER, (settings.halfOpenLimit >= 2147483647 ? -1 : settings.halfOpenLimit).toString(), ACCESS.READWRITE ],
+                get("bittorrent.activeDownloads", "bt.active_downloads", TYPE.NUMBER, (settings.activeDownloads > 2147483647 ? -1 : settings.activeDownloads).toString(), ACCESS.READWRITE ),
+                get("bittorrent.activeSeeds", "bt.active_seeds", TYPE.NUMBER, (settings.activeSeeds > 2147483647 ? -1 : settings.activeSeeds).toString(), ACCESS.READWRITE ),
+                get("bittorrent.activeLimit", "bt.active_limit", TYPE.NUMBER, (settings.activeLimit > 2147483647 ? -1 : settings.activeLimit).toString(), ACCESS.READWRITE ),
+                get("bittorrent.dontCountSlowTorrents", "bt.dont_count_slow_torrents", TYPE.BOOLEAN, "true", ACCESS.READWRITE )
             ]
         };
     }

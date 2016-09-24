@@ -49,6 +49,10 @@ namespace hadouken
                     DUK_PROP(mixed_mode_algorithm);
                     DUK_PROP(half_open_limit);
                     DUK_PROP(anonymous_mode);
+                    DUK_PROP(active_downloads);
+                    DUK_PROP(active_seeds);
+                    DUK_PROP(active_limit);
+                    DUK_PROP(dont_count_slow_torrents);
                 };
             }
         }

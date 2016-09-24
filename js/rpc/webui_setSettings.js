@@ -1,5 +1,5 @@
 var config  = require("config");
-var session = require("bittorrent").session; 
+var session = require("bittorrent").session;
 
 function set(key, value) {
     var settings = session.getSettings();
@@ -12,6 +12,36 @@ function set(key, value) {
             }
             config.set("bittorrent.listenPort", port);
             session.listenOn([port, port]);
+            break;
+            
+        case "bt.active_downloads":
+            value = parseInt(value, 10);
+            if(!isNaN(value)) {
+                config.set("bittorrent.activeDownloads", value);
+                settings.activeDownloads = value;
+            }
+            break;
+            
+        case "bt.active_seeds":
+            value = parseInt(value, 10);
+            if(!isNaN(value)) {
+                config.set("bittorrent.activeSeeds", value);
+                settings.activeSeeds = value;
+            }
+            break;
+            
+        case "bt.active_limit":
+            value = parseInt(value, 10);
+            if(!isNaN(value)) {
+                config.set("bittorrent.activeLimit", value);
+                settings.activeLimit = value;
+            }
+            break;
+            
+        case "bt.dont_count_slow_torrents":
+            value = !!(value);
+            config.set("bittorrent.dontCountSlowTorrents", value);
+            settings.dontCountSlowTorrents = value;
             break;
 
         case "bt.anonymous_mode":
