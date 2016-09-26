@@ -43,6 +43,15 @@ void application::start()
     session_->add_extension(&libtorrent::create_ut_metadata_plugin);
     session_->add_extension(&libtorrent::create_ut_pex_plugin);
 
+    // User-configured bittorrent settings
+    auto settings = session_->settings();
+    settings.active_downloads = config_.get("bittorrent.activeDownloads", settings.active_downloads);
+    settings.active_seeds = config_.get("bittorrent.activeSeeds", settings.active_seeds);
+    settings.active_limit = config_.get("bittorrent.activeLimit", settings.active_limit);
+    settings.dont_count_slow_torrents = config_.get("bittorrent.dontCountSlowTorrents", settings.dont_count_slow_torrents);
+
+    session_->set_settings(settings);
+
     // load scripting host
     fs::path defaultPath = (hadouken::platform::application_path() / "js");
     fs::path scriptPath = config_.get<std::string>("scripting.path", defaultPath.string());

@@ -46,7 +46,7 @@
     duk_ret_t session_settings_wrapper::set_##prop(duk_context* ctx) \
                 { \
         libtorrent::session_settings* ss = common::get_pointer<libtorrent::session_settings>(ctx); \
-        ss->prop = duk_require_boolean(ctx, 0); \
+        ss->prop = !!duk_require_boolean(ctx, 0); \
         return 0; \
                 }
 
@@ -81,6 +81,10 @@ void session_settings_wrapper::initialize(duk_context* ctx, libtorrent::session_
     DUK_READWRITE_PROPERTY(ctx, idx, mixedModeAlgorithm, mixed_mode_algorithm);
     DUK_READWRITE_PROPERTY(ctx, idx, halfOpenLimit, half_open_limit);
     DUK_READWRITE_PROPERTY(ctx, idx, anonymousMode, anonymous_mode);
+    DUK_READWRITE_PROPERTY(ctx, idx, activeDownloads, active_downloads);
+    DUK_READWRITE_PROPERTY(ctx, idx, activeSeeds, active_seeds);
+    DUK_READWRITE_PROPERTY(ctx, idx, activeLimit, active_limit);
+    DUK_READWRITE_PROPERTY(ctx, idx, dontCountSlowTorrents, dont_count_slow_torrents);
 
     // Set finalizer
     duk_push_c_function(ctx, finalize, 1);
@@ -116,3 +120,7 @@ DUK_INT_PROP(connections_limit)
 DUK_INT_PROP(mixed_mode_algorithm)
 DUK_INT_PROP(half_open_limit);
 DUK_BOOL_PROP(anonymous_mode);
+DUK_INT_PROP(active_downloads);
+DUK_INT_PROP(active_seeds);
+DUK_INT_PROP(active_limit);
+DUK_BOOL_PROP(dont_count_slow_torrents);
